@@ -8,14 +8,14 @@ import { createContext } from "octane";
  * `SidebarNavProps { url }` queda intacto (cambio interno del organismo).
  */
 export interface SidebarCollapseValue {
-  /** ¿El panel del sidebar está colapsado? (deriva de `onResize` del panel). */
-  readonly collapsed: boolean;
-  /** Colapsa/expande el panel vía `PanelHandle` del binding. */
-  toggle(): void;
+ /** ¿El panel del sidebar está colapsado? (deriva de `onResize` del panel). */
+ readonly collapsed: boolean;
+ /** Colapsa/expande el panel vía `PanelHandle` del binding. */
+ toggle(): void;
 }
 
 /** Default inerte (expandido, sin-op): solo se usa fuera del shell. */
 export const SidebarCollapseContext = createContext<SidebarCollapseValue>({
-  collapsed: false,
-  toggle: () => {},
+ collapsed: false,
+ toggle: () => {},
 });
