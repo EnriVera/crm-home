@@ -43,6 +43,12 @@ export default defineConfig({
         before: [rootRedirect],
       }),
       ...SHELL_ROUTES.map((path) => shellRoute(path, shellEntry(path))),
+      // Rutas públicas de auth (D9): layout __auth con tema del SO (§6.8).
+      authRoute("/login", ["LoginRoute", "/src/routes/login.tsrx"]),
+      authRoute("/login-verification", [
+        "LoginVerificationRoute",
+        "/src/routes/login-verification.tsrx",
+      ]),
     ],
   },
 });

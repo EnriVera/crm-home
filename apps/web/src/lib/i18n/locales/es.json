@@ -24,5 +24,33 @@
     "expand": "Expandir navegación",
     "placeholder": "Esta sección está en construcción. La navegación y el tema ya funcionan; el módulo llega en una próxima entrega.",
     "redirectFallback": "Ir a iniciar sesión"
+  },
+  "auth": {
+    "footer": {
+      "terms": "Términos",
+      "privacy": "Privacidad",
+      "cookies": "Cookies"
+    },
+    "login": {
+      "title": "Ingresar a CRM Home",
+      "subtitle": "Ingresa tu email y te enviamos un código de 6 dígitos para entrar. Sin contraseña.",
+      "emailLabel": "Email",
+      "emailPlaceholder": "tu@email.com",
+      "submit": "Continuar",
+      "errorInvalidEmail": "Ese email no parece válido. Revísalo e intenta de nuevo."
+    },
+    "otp": {
+      "title": "Revisa tu email",
+      "subtitlePrefix": "Te enviamos un código de 6 dígitos a",
+      "missingEmail": "No encontramos el email de destino del código. Vuelve e ingrésalo de nuevo.",
+      "backToLogin": "Volver a iniciar sesión",
+      "inputLabel": "Código de verificación",
+      "verifying": "Verificando el código…",
+      "errorInvalid": "Ese código no es correcto.",
+      "attemptsLabel": "Intentos restantes:",
+      "expired": "El código venció (dura 10 minutos). Vuelve a iniciar sesión para pedir uno nuevo.",
+      "resend": "Reenviar código",
+      "resendDisabled": "El reenvío estará disponible cuando se conecte el envío de códigos."
+    }
   }
 }
