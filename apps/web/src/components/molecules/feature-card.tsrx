@@ -4,11 +4,11 @@ import { useT } from "../vendor/i18n";
 export function FeatureCard() @{
   const t = useT();
 
-  <article class="max-w-xl rounded-xl border border-(--color-border) bg-(--color-surface) p-5">
-    <h2 class="m-0 text-base font-semibold text-(--color-primary)">
+  <article class="max-w-xl rounded-xl border border-border bg-surface p-5">
+    <h2 class="m-0 text-base font-semibold text-primary">
       {t("smoke.feature.title")}
     </h2>
-    <p class="m-0 mt-2 leading-relaxed text-(--color-text-secondary)">
+    <p class="m-0 mt-2 leading-relaxed text-text-secondary">
       {t("smoke.feature.body")}
     </p>
   </article>

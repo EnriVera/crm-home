@@ -1,8 +1,17 @@
 /*
- * Tokens semánticos de tema (D7). tailwind v4 los consume vía `@theme`:
- * la escala primary (verde) genera utilities `*-primary-*`; las variables
- * semánticas cambian con la clase `.dark` en <html> (estrategia §9).
+ * Tokens semánticos de tema — única fuente de verdad visual (PRD §9, D6).
+ * Estructura de tres capas:
+ *   1. `@theme` estático: escala primary (verde) y Poppins; NO cambia por tema.
+ *   2. Variables semánticas `:root` / `.dark`: valores por tema (tabla D6.2,
+ *      contraste AA verificado: error/success/focus ≥ 4.5:1 como texto pequeño
+ *      sobre el fondo de su tema).
+ *   3. `@theme inline`: registra las variables semánticas para que tailwind
+ *      genere utilities reales (`bg-background`, `text-error`, `outline-focus`)
+ *      que responden a la clase `.dark` en <html> (sin arbitrary values).
+ * La variante `dark:` responde a la CLASE `.dark` (no a la media query).
  */
+
+/* Capa 1 — estática */
 @theme {
   --color-primary-50: #f0fdf4;
   --color-primary-100: #dcfce7;
@@ -18,22 +27,45 @@
     Roboto, Helvetica, Arial, sans-serif;
 }
 
+/* Capa 2 — semántica por tema */
 :root {
-  --color-primary: var(--color-primary-600); /* verde claro #16a34a */
+  --color-primary: var(--color-primary-600); /* #16a34a: rellenos de acción, no texto pequeño */
   --color-background: #ffffff;
   --color-surface: #f6f8f7;
   --color-border: #e2e8f0;
   --color-text-primary: #0f172a;
   --color-text-secondary: #52606d;
+  --color-error: #dc2626; /* 4.5:1 sobre #ffffff */
+  --color-success: #15803d; /* ≈5:1 sobre #ffffff */
+  --color-focus: #15803d; /* foco visible canónico */
   color-scheme: light;
 }
 
 .dark {
-  --color-primary: var(--color-primary-500); /* verde oscuro #22c55e */
+  --color-primary: var(--color-primary-500); /* #22c55e */
   --color-background: #0b120c;
   --color-surface: #111a12;
   --color-border: #243324;
   --color-text-primary: #f1f5f9;
   --color-text-secondary: #9fb3a4;
+  --color-error: #f87171; /* ≈7:1 sobre #0b120c */
+  --color-success: #4ade80; /* ≈9:1 sobre #0b120c */
+  --color-focus: #4ade80;
   color-scheme: dark;
 }
+
+/* Capa 3 — utilities semánticas generadas desde las variables del tema activo */
+@theme inline {
+  --color-primary: var(--color-primary);
+  --color-background: var(--color-background);
+  --color-surface: var(--color-surface);
+  --color-border: var(--color-border);
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-error: var(--color-error);
+  --color-success: var(--color-success);
+  --color-focus: var(--color-focus);
+}
+
+/* Variante dark por clase (el default de tailwind v4 es media query) */
+@custom-variant dark (&:where(.dark, .dark *));

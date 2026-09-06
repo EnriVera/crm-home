@@ -11,7 +11,7 @@ export function SmokePage() @{
 
   <section class="flex max-w-2xl flex-col items-center gap-5 px-6 py-12 text-center">
     <AppTitle />
-    <p class="m-0 text-lg leading-relaxed text-(--color-text-secondary)">
+    <p class="m-0 text-lg leading-relaxed text-text-secondary">
       {t("smoke.description")}
     </p>
     <FeatureCard />

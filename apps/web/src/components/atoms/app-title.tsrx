@@ -4,7 +4,7 @@ import { useT } from "../vendor/i18n";
 export function AppTitle() @{
   const t = useT();
 
-  <h1 class="m-0 text-4xl font-semibold tracking-tight text-(--color-text-primary)">
+  <h1 class="m-0 text-4xl font-semibold tracking-tight text-text-primary">
     {t("app.title")}
   </h1>
 }

@@ -14,7 +14,7 @@ interface RootLayoutProps {
  */
 export function RootLayout(props: RootLayoutProps) @{
   <I18nProvider>
-    <main class="flex min-h-dvh items-center justify-center bg-(--color-background)">
+    <main class="flex min-h-dvh items-center justify-center bg-background">
       {props.children}
     </main>
   </I18nProvider>

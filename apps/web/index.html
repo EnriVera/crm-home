@@ -1,6 +1,34 @@
 <!doctype html>
 <html lang="es">
   <head>
+    <!--
+      Script anti-FOUC (bloqueante, primer hijo de <head>, antes del CSS):
+      aplica la clase `dark` a <html> antes del primer paint.
+      ATENCIÓN — duplicación deliberada de `src/lib/theme/core.ts`
+      (resolveTheme/isPublicPath, lista PUBLIC_PATHS): debe correr pre-paint,
+      sin módulos. SI CAMBIAS UNA, CAMBIA LA OTRA.
+      Regla: rutas públicas (PRD §6.8) o ausencia de preferencia guardada →
+      sigue al SO; el resto honra localStorage (`crm-theme`).
+      Deuda conocida: si se endurece CSP, este script inline del template
+      estático necesita un placeholder de nonce (el mecanismo de nonce de
+      app-core solo cubre scripts generados por el renderer).
+    -->
+    <script>
+      (function () {
+        var pub = /^\/(login|login-verification|terms|privacy|cookies)(\/|$|\?)/.test(
+          location.pathname,
+        );
+        var stored = null;
+        try {
+          stored = localStorage.getItem("crm-theme");
+        } catch (e) {}
+        var dark =
+          pub || !stored
+            ? matchMedia("(prefers-color-scheme: dark)").matches
+            : stored === "dark";
+        if (dark) document.documentElement.classList.add("dark");
+      })();
+    </script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>CRM Home</title>
