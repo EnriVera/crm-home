@@ -2,11 +2,27 @@
   "app": {
     "title": "CRM Home"
   },
-  "smoke": {
-    "description": "Andamiaje del monorepo verificado: interfaz servida con Octane, tokens de tema claro/oscuro y catálogo i18n en español.",
-    "feature": {
-      "title": "Diseño atómico con frontera vendor",
-      "body": "Los componentes consumen únicamente wrappers de vendor/: i18n, tema y futuras librerías de UI quedan detrás de la frontera."
-    }
+  "nav": {
+    "ariaLabel": "Navegación principal",
+    "dashboard": "Dashboard",
+    "tasks": "Tareas",
+    "schedule": "Schedule",
+    "clients": "Clients",
+    "finance": "Finance",
+    "income": "Income",
+    "expenses": "Expenses",
+    "transfers": "Transfers",
+    "config": "Config"
+  },
+  "theme": {
+    "toLight": "Cambiar a tema claro",
+    "toDark": "Cambiar a tema oscuro"
+  },
+  "shell": {
+    "skipToContent": "Saltar al contenido",
+    "collapse": "Colapsar navegación",
+    "expand": "Expandir navegación",
+    "placeholder": "Esta sección está en construcción. La navegación y el tema ya funcionan; el módulo llega en una próxima entrega.",
+    "redirectFallback": "Ir a iniciar sesión"
   }
 }
