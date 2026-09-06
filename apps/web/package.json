@@ -15,6 +15,8 @@
     "@fontsource/poppins": "5.3.0",
     "@octanejs/phosphor-icons": "0.0.32",
     "@octanejs/resizable-panels": "0.0.10",
+    "@octanejs/sonner": "0.1.47",
+    "@octanejs/usehooks-ts": "0.0.34",
     "@octanejs/vite-plugin": "0.1.52",
     "@octanejs/xstate": "0.0.10",
     "@octanejs/zag": "0.0.18",
@@ -28,6 +30,7 @@
     "@crm/tsconfig": "workspace:*",
     "@tailwindcss/vite": "4.3.3",
     "@tsrx/typescript-plugin": "0.3.133",
+    "@types/lodash.debounce": "^4.0.9",
     "tailwindcss": "4.3.3",
     "typescript": "5.9.3",
     "vite": "8.2.2"
