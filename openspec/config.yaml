@@ -1,0 +1,129 @@
+# OpenSpec SDD configuration — CRM-HOME
+# Generado por sdd-init.
+# Fuente de verdad del producto: docs/PRD-v2.md y PRODUCT.md.
+
+project:
+  name: crm-home
+  description: >
+    CRM-HOME — app web multi-user para freelancers: tareas + time-tracking +
+    finanzas sobre un único modelo de datos (tipos, categorías y clientes
+    compartidos).
+  repo_root: /run/media/enri/DISCO DURO/crm-home/crm
+  platform: web
+  # español por defecto; todas las cadenas en i18next desde el día uno
+  language_ui: es
+  docs:
+    # fuente única de verdad del producto (PRD.md es histórico)
+    prd: docs/PRD-v2.md
+    product: PRODUCT.md
+
+stack:
+  architecture: >
+    monolito-monorepo (turborepo); frontend atomic design; backend clean
+    architecture (ports & adapters)
+  runtime: bun # runtime y package manager
+  backend:
+    server: [nitro, h3]
+    rpc: orpc
+    db: [kysely, postgresql]
+    extra: [vite, effect, xstate, shiki, opentelemetry-otlp]
+  frontend:
+    framework: octanejs (tsrx)
+    build: vite
+    styling: [tailwindcss, "@fontsource/poppins"]
+    components: zagjs
+    tanstack:
+      - store
+      - db
+      - router
+      - query
+      - router-ssr-query
+      - form
+      - virtual
+      - table
+      - charts
+    extra:
+      - i18next
+      - nuqs
+      - input-otp
+      - lexical
+      - dnd-kit
+      - sonner
+      - day-picker
+      - usehooks-ts
+      - react-error-boundary
+      - resizable-panels
+      - phosphor-icons
+  binding_rules:
+    - >
+      Ports & adapters en backend: el dominio NO importa kysely, h3, nitro ni
+      SDKs externos; solo los adapters.
+    - >
+      Wrappers de librerías en frontend: ninguna herramienta de terceros se
+      importa desde la lógica de negocio.
+    - "Multi-user con aislamiento total: ninguna query cruza usuarios."
+    - "Saldos y estado calculados, no mutados."
+    - >
+      El websocket solo transporta eventos de invalidación y heartbeat del
+      timer; ningún CRUD depende de él.
+
+testing:
+  runner: bun test
+  # workspace raíz (cuando exista el scaffold del monorepo; hoy no hay código)
+  scope: workspace-root
+  strict_tdd: true
+  tdd_exceptions:
+    - change: monorepo-scaffold
+      reason: >
+        Configuración de infraestructura sin lógica de negocio. Excepción
+        puntual aceptada explícitamente por el usuario (size:exception). NO
+        debilita el strict_tdd para lógica de negocio: todo cambio posterior
+        con lógica de dominio/aplicación sigue ciclo red-green-refactor con
+        tests primero.
+
+git:
+  branches:
+    main: producto (permanente)
+    develop: desarrollo activo (permanente; rama actual)
+  commits:
+    convention: conventional-commits
+    # hook commit-msg activo con @commitlint/config-conventional
+    enforced_by: [husky, commitlint]
+
+sdd:
+  artifact_store: openspec
+  execution: auto
+  delivery_strategy:
+    default: ask-on-risk
+    exceptions:
+      - change: monorepo-scaffold
+        # usuario aceptó size:exception explícitamente
+        strategy: exception-ok
+  # líneas; PRs mayores se evalúan para split (chained-pr)
+  review_budget: 400
+
+phases:
+  order: [init, specify, plan, tasks, implement, verify, archive]
+  rules:
+    specify: >
+      specs en español, alineadas a docs/PRD-v2.md (módulos §8,
+      transversales §9)
+    plan: >
+      respetar reglas arquitectónicas vinculantes (ports & adapters /
+      wrappers)
+    implement: >
+      strict_tdd según testing.strict_tdd; excepciones solo las listadas en
+      testing.tdd_exceptions
+    verify: >
+      bun test verde en workspace raíz + cumplimiento de acceptance criteria
+      del spec
+
+product_principles:
+  - Un solo modelo de datos para trabajo, tiempo y dinero.
+  - >
+    El timer nunca pierde tiempo (heartbeat 30 s; sobrevive cierres y cruce
+    de medianoche).
+  - >
+    Aislamiento de herramientas: cambiar librería/proveedor = cambiar un
+    adapter.
+  - Accesibilidad WCAG 2.2 AA en ambos temas (claro/oscuro).
