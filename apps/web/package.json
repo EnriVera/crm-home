@@ -16,6 +16,8 @@
     "@octanejs/phosphor-icons": "0.0.32",
     "@octanejs/vite-plugin": "0.1.52",
     "@octanejs/xstate": "0.0.10",
+    "@octanejs/zag": "0.0.18",
+    "@zag-js/pin-input": "1.42.0",
     "effect": "3.22.1",
     "i18next": "26.4.2",
     "octane": "0.2.3",
