@@ -5,7 +5,7 @@
 node_modules/
 
 # Impeccable engine binaries (downloaded per machine)
-.impeccable/
+.impeccable/config.local.json
 
 # Turborepo
 .turbo/
