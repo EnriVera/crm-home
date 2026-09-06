@@ -6,3 +6,18 @@ node_modules/
 
 # Impeccable engine binaries (downloaded per machine)
 .impeccable/
+
+# Turborepo
+.turbo/
+
+# Build outputs
+dist/
+.output/
+.nitro/
+
+# TypeScript incremental build info
+*.tsbuildinfo
+
+# Environment files
+.env
+.env.local
