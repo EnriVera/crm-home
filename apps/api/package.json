@@ -12,16 +12,19 @@
   },
   "dependencies": {
     "@crm/types": "workspace:*",
+    "@octanejs/xstate": "0.0.10",
     "@opentelemetry/api": "1.9.1",
     "@opentelemetry/exporter-trace-otlp-http": "0.222.0",
     "@opentelemetry/resources": "2.11.0",
     "@opentelemetry/sdk-node": "0.222.0",
     "@opentelemetry/semantic-conventions": "1.43.0",
     "@orpc/server": "1.15.0",
+    "effect": "3.22.1",
     "h3": "2.0.1-rc.31",
     "kysely": "0.29.5",
     "nitro": "3.0.0",
-    "pg": "8.23.0"
+    "pg": "8.23.0",
+    "xstate": "5.32.6"
   },
   "devDependencies": {
     "@crm/tsconfig": "workspace:*",

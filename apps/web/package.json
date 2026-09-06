@@ -14,8 +14,11 @@
   "dependencies": {
     "@fontsource/poppins": "5.3.0",
     "@octanejs/vite-plugin": "0.1.52",
+    "@octanejs/xstate": "0.0.10",
+    "effect": "3.22.1",
     "i18next": "26.4.2",
-    "octane": "0.2.3"
+    "octane": "0.2.3",
+    "xstate": "5.32.6"
   },
   "devDependencies": {
     "@crm/tsconfig": "workspace:*",
