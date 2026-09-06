@@ -1,0 +1,39 @@
+/*
+ * Tokens semánticos de tema (D7). tailwind v4 los consume vía `@theme`:
+ * la escala primary (verde) genera utilities `*-primary-*`; las variables
+ * semánticas cambian con la clase `.dark` en <html> (estrategia §9).
+ */
+@theme {
+  --color-primary-50: #f0fdf4;
+  --color-primary-100: #dcfce7;
+  --color-primary-200: #bbf7d0;
+  --color-primary-300: #86efac;
+  --color-primary-400: #4ade80;
+  --color-primary-500: #22c55e;
+  --color-primary-600: #16a34a;
+  --color-primary-700: #15803d;
+  --color-primary-800: #166534;
+  --color-primary-900: #14532d;
+  --font-sans: "Poppins", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+}
+
+:root {
+  --color-primary: var(--color-primary-600); /* verde claro #16a34a */
+  --color-background: #ffffff;
+  --color-surface: #f6f8f7;
+  --color-border: #e2e8f0;
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #52606d;
+  color-scheme: light;
+}
+
+.dark {
+  --color-primary: var(--color-primary-500); /* verde oscuro #22c55e */
+  --color-background: #0b120c;
+  --color-surface: #111a12;
+  --color-border: #243324;
+  --color-text-primary: #f1f5f9;
+  --color-text-secondary: #9fb3a4;
+  color-scheme: dark;
+}

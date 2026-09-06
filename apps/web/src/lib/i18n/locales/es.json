@@ -1,0 +1,12 @@
+{
+  "app": {
+    "title": "CRM Home"
+  },
+  "smoke": {
+    "description": "Andamiaje del monorepo verificado: interfaz servida con Octane, tokens de tema claro/oscuro y catálogo i18n en español.",
+    "feature": {
+      "title": "Diseño atómico con frontera vendor",
+      "body": "Los componentes consumen únicamente wrappers de vendor/: i18n, tema y futuras librerías de UI quedan detrás de la frontera."
+    }
+  }
+}
