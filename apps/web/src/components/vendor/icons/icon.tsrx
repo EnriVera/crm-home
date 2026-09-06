@@ -1,7 +1,7 @@
-import { ICON_PATHS, type IconName } from "./paths";
+import { ICON_COMPONENTS, type IconName } from "./paths";
 
 export interface IconProps {
-  /** Nombre del ícono; union cerrada decidida en design (D4). */
+  /** Nombre del ícono; union cerrada decidida en design (D4, superseded por D-SA8). */
   name: IconName;
   /** Tamaño en px (ancho = alto). Default 20 (nav del shell). */
   size?: number;
@@ -11,23 +11,21 @@ export interface IconProps {
 }
 
 /**
- * Ícono del design system (D4): SVG inline vendored de phosphor (regular),
- * `fill="currentColor"` para heredar el color de texto del contexto.
+ * Ícono del design system (D-SA8): delega en el componente de
+ * `@octanejs/phosphor-icons` con peso `regular` y `fill="currentColor"`
+ * para heredar el color de texto del contexto. Contrato `IconProps` intacto.
  */
 export function Icon(props: IconProps) @{
   const size = props.size ?? 20;
+  const PhosphorIcon = ICON_COMPONENTS[props.name];
 
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 256 256"
-    width={size}
-    height={size}
-    fill="currentColor"
+  <PhosphorIcon
+    size={size}
+    weight="regular"
+    color="currentColor"
     role={props["aria-label"] ? "img" : undefined}
     aria-label={props["aria-label"]}
     aria-hidden={props["aria-label"] ? undefined : true}
     class={props.class}
-  >
-    <path d={ICON_PATHS[props.name]} />
-  </svg>
+  />
 }

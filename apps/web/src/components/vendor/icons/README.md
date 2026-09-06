@@ -1,17 +1,22 @@
 # vendor/icons
 
-Wrapper de íconos del design system (D4). ÚNICO módulo del codebase que
-contiene SVGs de íconos (regla §9); los consumidores usan `<Icon name="…" />`
+Wrapper de íconos del design system (D4 → **D-SA8**). ÚNICO módulo del codebase
+que importa íconos (regla §9); los consumidores usan `<Icon name="…" />`
 con la union cerrada `IconName` — usar un ícono fuera del set no compila.
 
 ## Provenance
 
-- **Origen:** [phosphor-icons](https://phosphoricons.com),
-  paquete `@phosphor-icons/core` **v2.1.1**, peso `regular`
+- **Origen:** [phosphor-icons](https://phosphoricons.com), generado desde
+  `@phosphor-icons/core` **v2.1.1**, peso `regular` en uso
   (viewBox `0 0 256 256`, `fill="currentColor"`).
 - **Licencia:** MIT — © phosphor-icons (ver LICENSE del paquete de origen).
-- **Forma:** path data copiado inline en `paths.ts` (assets estáticos).
-  NO es dependencia de runtime: cero paquetes nuevos en `package.json`.
+- **Forma (D-SA8, supersede D4):** dependencia de runtime
+  `@octanejs/phosphor-icons@0.0.32` (pin exacto). `paths.ts` es el mapa
+  `IconName` → componente del binding (`ICON_COMPONENTS`); el path data
+  inline vendored (`ICON_PATHS`) fue eliminado. `icon.tsrx` delega en el
+  componente phosphor con `size`, `weight="regular"`, `color="currentColor"`
+  y el mismo manejo de `role`/`aria-hidden`. Tree-shaking verificado por
+  build: solo los 12 íconos del set llegan al bundle.
 
 ## Set inicial (decisión de design D4)
 
@@ -21,5 +26,4 @@ con la union cerrada `IconName` — usar un ícono fuera del set no compila.
 `gear` (Config), `sun`/`moon` (toggle de tema), `sidebar` (colapsar).
 
 Ampliar el set = decisión de design del change que lo necesite, editando
-`paths.ts`. Si el set crece mucho, el upgrade path es `@phosphor-icons/core`
-DENTRO de este wrapper, sin tocar consumidores.
+`paths.ts` (agregar el nombre a la union y al mapa `ICON_COMPONENTS`).

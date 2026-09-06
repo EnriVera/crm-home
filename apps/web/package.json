@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@fontsource/poppins": "5.3.0",
+    "@octanejs/phosphor-icons": "0.0.32",
     "@octanejs/vite-plugin": "0.1.52",
     "@octanejs/xstate": "0.0.10",
     "effect": "3.22.1",
