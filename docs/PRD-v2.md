@@ -112,7 +112,7 @@ Tabla canónica de rutas (fuente única de verdad — cualquier otra mención de
 
 Las páginas legales son **públicas** (no requieren sesión) y se linkean desde el footer del login y del layout principal de la app.
 
-Toda acción que consulta/crea un registro o levanta una modal se refleja en la URL usando **nuqs** (deep-linking y estado compartible).
+Toda acción que consulta/crea un registro o levanta una modal se refleja en la URL usando el router MPA propio de Octane + `URLSearchParams` (deep-linking y estado compartible). **nuqs NO aplica** (su rol lo cubre el router propio).
 
 ---
 
@@ -188,7 +188,7 @@ Reglas de seguridad (obligatorias):
    - Al escribir, se buscan tareas existentes (popup debajo del input). Seleccionar una tarea liga el schedule a esa tarea y autocompleta tipo/categoría/cliente desde ella.
    - Si el texto no corresponde a ninguna tarea, se crea un **schedule libre** (sin tarea, sin cliente; tipo/categoría opcionales). NUNCA crea una tarea implícita.
 2. **Lista de schedules previos** con botón para reiniciar uno: completa la barra superior y arranca el timer. Si había otro corriendo, el anterior **se cierra automáticamente** (se persiste su fin) y arranca el nuevo. Tiene buscador.
-3. **Gráfico de torta** con el tiempo total por schedule (tanstack charts).
+3. **Gráfico de torta** con el tiempo total por schedule (`@octanejs/recharts` — diferido al change de schedule; SSR no testeado).
 4. **Detalle por día:** cada ejecución con tarea (o texto libre), tipo, categoría, hora inicio, hora fin y **tipo de ejecución** (`manual` = arrancado desde la barra, `resumed` = reiniciado desde el historial). Buscador + filtros por tipo, categoría y tarea.
 
 **Regla de timer y desconexión (obligatoria):**
@@ -300,17 +300,22 @@ Ningún componente de negocio importa una librería de UI de terceros directamen
 
 | Wrapper propio | Encapsula |
 | --- | --- |
-| `RichTextEditor` | lexical |
-| `OtpInput` | input-otp |
-| `DragDrop` | dnd-kit |
-| `DatePicker` | day-picker |
-| `Charts` | tanstack charts |
-| `DataTable` / `VirtualList` | tanstack table / virtual |
-| `Icons` | phosphor-icons |
-| `Toast` | sonner |
-| `ColorPicker` | colorful |
-| `Motion` | spring |
-| `I18nProvider` / `t()` | i18next |
+| `Icons` | `@octanejs/phosphor-icons` (adoptado) |
+| `OtpInput` | `@octanejs/zag` (pin-input de zag; adoptado) |
+| Sidebar resizable | `@octanejs/resizable-panels` (adoptado) |
+| `Toast` | `@octanejs/sonner` (adoptado) |
+| `Hooks` | `@octanejs/usehooks-ts` — **cohorte parcial** host-safe (adoptado; ausentes storage/media/DOM-observer, se deciden en su change consumidor) |
+| `I18nProvider` / `t()` | `i18next` — **integración propia mantenida** (variante equivalente; `@octanejs/i18next` en gate de re-evaluación: se adopta cuando un change necesite `Trans`/ICU/pluralización) |
+| ErrorBoundary | **nativa de Octane 0.2.3** (`ErrorBoundary`/`@try`-`@catch`; NO `react-error-boundary` ni su binding — divergencia component-stack vacío documentada) |
+| `RichTextEditor` | `@octanejs/lexical` (diferido → change tasks) |
+| `DragDrop` | `@octanejs/dnd-kit` (diferido → change tasks, kanban) |
+| `DatePicker` | day-picker (diferido → change schedule) |
+| `Charts` | `@octanejs/recharts` (diferido → change schedule; SSR no testeado, Brush/Treemap no soportados) |
+| `DataTable` / `VirtualList` | tanstack table / virtual (diferido → change data layer) |
+| `ColorPicker` | colorful (diferido → change config, categorías) |
+| `Motion` | spring (diferido → primer change con animación) |
+
+NO aplican: tanstack `router` / `router-ssr-query` y `nuqs` (router MPA propio de Octane + `URLSearchParams`).
 
 Regla verificable: un import de cualquiera de esas librerías fuera de `components/vendor/` es un error de review (y, cuando exista tooling, de lint).
 
@@ -318,8 +323,8 @@ Regla verificable: un import de cualquiera de esas librerías fuera de `componen
 
 - Componentes modulares y reutilizables (atomic design en frontend).
 - Adjuntos: se suben a Server Assets de nitro; se guarda el id + metadata en `attachments` y la relación en la tabla intermedia del módulo.
-- Descripciones con **lexical**; colores con **colorful**; íconos con **phosphor-icons**; toasts con **sonner**; errores de UI con **react-error-boundary**; fechas con **day-picker**; animaciones con **spring**; utilidades TS con **usehooks-ts**.
-- Laterales izquierdo y derecho resizables con **resizable-panels**.
+- Descripciones con **lexical** (`@octanejs/lexical`); colores con **colorful**; íconos con **`@octanejs/phosphor-icons`**; toasts con **`@octanejs/sonner`**; errores de UI con la **ErrorBoundary nativa de Octane** (`@try`-`@catch`; NO react-error-boundary); fechas con **day-picker**; animaciones con **spring**; utilidades TS con **`@octanejs/usehooks-ts`** (cohorte parcial host-safe).
+- Laterales izquierdo y derecho resizables con **`@octanejs/resizable-panels`**.
 - Emails: registro en `email_sending` + task de nitro que procesa la cola.
 
 ---
@@ -358,7 +363,7 @@ Telemetría de frontend (web vitals, trazas de navegación) y logs estructurados
 
 **Backend:** nitro, h3, orpc, kysely, PostgreSQL, bun, vite, effect, xstate, shiki, OpenTelemetry (SDK + instrumentations + exporter OTLP), Makefile.
 **Tooling de repo:** husky + @commitlint (Conventional Commits en hook `commit-msg`).
-**Frontend:** octanejs (tsrx), vite, bun, tailwindcss, @fontsource/poppins, zagjs, effect, xstate, tanstack (store, db, router, query, router-ssr-query, form, virtual, table, charts), i18next, nuqs, input-otp, lexical, colorful, phosphor-icons, usehooks-ts, react-error-boundary, resizable-panels, day-picker, spring, dnd-kit, sonner.
+**Frontend:** octanejs (tsrx), vite, bun, tailwindcss, @fontsource/poppins, effect, xstate + @octanejs/xstate, i18next (integración propia; `@octanejs/i18next` en gate de re-evaluación). Bindings adoptados: @octanejs/zag (+@zag-js/pin-input), @octanejs/phosphor-icons, @octanejs/resizable-panels, @octanejs/sonner, @octanejs/usehooks-ts (cohorte parcial). Diferidos con change consumidor: @octanejs/lexical (tasks), @octanejs/dnd-kit (tasks/kanban), day-picker (schedule), @octanejs/recharts (schedule; SSR no testeado), colorful (config/categorías), tanstack store/db/query/form/table/virtual (data layer), spring (primera animación), shiki (sin consumidor en frontend). NO aplican: tanstack router / router-ssr-query / nuqs (router MPA propio de Octane + URLSearchParams); @octanejs/react-error-boundary (ErrorBoundary nativa de Octane 0.2.3).
 
 ---
 
