@@ -1,0 +1,23 @@
+{
+  "name": "@crm/types",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "echo '@crm/types: sin tests (paquete de tipos y contratos)'",
+    "lint": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@orpc/contract": "1.15.0",
+    "zod": "4.5.4"
+  },
+  "devDependencies": {
+    "@crm/tsconfig": "workspace:*",
+    "typescript": "5.9.3"
+  }
+}
