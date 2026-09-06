@@ -1,9 +1,10 @@
-import { useEffect, useState } from "octane";
+import { useContext } from "octane";
 import {
   isGroupActive,
   isItemActive,
   pathnameOf,
 } from "../../../lib/nav/active";
+import { SidebarCollapseContext } from "../../../lib/nav/sidebar-collapse";
 import { NAV_TREE } from "../../../lib/nav/tree";
 import { NavGroup } from "../../molecules/nav-group.tsrx";
 import { NavItem } from "../../molecules/nav-item.tsrx";
@@ -20,49 +21,25 @@ export interface SidebarNavProps {
   url: string;
 }
 
-/** Persistencia del colapso (D7): una key, sin abstraer framework. */
-const SIDEBAR_STORAGE_KEY = "crm-sidebar";
-
 /**
- * Organismo de navegación lateral (D8, árbol §7): `<nav>` con `<ul>`,
+ * Organismo de navegación lateral (D8 → D-SA6, árbol §7): `<nav>` con `<ul>`,
  * NavItem/NavGroup con `aria-current="page"` en el activo, ThemeToggle y
- * toggle de colapso al pie (260px ↔ 64px, persistido en localStorage).
- * Todo es `<a>`/`<button>` nativo: cero handlers de teclado custom (WCAG 2.1.1).
+ * toggle de colapso al pie. El estado `collapsed` deriva del panel del shell
+ * vía `SidebarCollapseContext` (el ancho lo controla el binding
+ * resizable-panels; la clave booleana `"crm-sidebar"` quedó abandonada) y el
+ * toggle llama `panelRef.collapse()/expand()` del shell. Todo es
+ * `<a>`/`<button>` nativo: cero handlers de teclado custom (WCAG 2.1.1).
  */
 export function SidebarNav(props: SidebarNavProps) @{
   const t = useT();
   const pathname = pathnameOf(props.url);
-
-  // SSR e hidratación inicial renderizan EXPANDIDO (snapshot estable); la
-  // preferencia persistida se aplica tras montar (única lectura del storage).
-  const [collapsed, setCollapsed] = useState(false);
-
-  useEffect(() => {
-    try {
-      setCollapsed(localStorage.getItem(SIDEBAR_STORAGE_KEY) === "collapsed");
-    } catch {
-      // Storage inaccesible (modo privado estricto): queda expandido.
-    }
-  }, []);
-
-  const toggleCollapsed = () => {
-    const next = !collapsed;
-    setCollapsed(next);
-    try {
-      localStorage.setItem(
-        SIDEBAR_STORAGE_KEY,
-        next ? "collapsed" : "expanded",
-      );
-    } catch {
-      // Sin persistencia disponible: el estado vive solo en memoria.
-    }
-  };
+  const { collapsed, toggle } = useContext(SidebarCollapseContext);
 
   const collapseLabel = collapsed ? t("shell.expand") : t("shell.collapse");
 
   <nav
     aria-label={t("nav.ariaLabel")}
-    class={`sticky top-0 flex h-dvh shrink-0 flex-col border-r border-border bg-background transition-[width] ${collapsed ? "w-16" : "w-65"}`}
+    class="sticky top-0 flex h-dvh flex-col overflow-x-hidden border-r border-border bg-background"
   >
     <ul class="m-0 flex list-none flex-col gap-0.5 overflow-y-auto p-3">
       {NAV_TREE.map((node) =>
@@ -106,7 +83,7 @@ export function SidebarNav(props: SidebarNavProps) @{
       />
       <button
         type="button"
-        onClick={toggleCollapsed}
+        onClick={toggle}
         aria-label={collapseLabel}
         aria-expanded={!collapsed}
         title={collapseLabel}

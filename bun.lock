@@ -44,6 +44,7 @@
       "dependencies": {
         "@fontsource/poppins": "5.3.0",
         "@octanejs/phosphor-icons": "0.0.32",
+        "@octanejs/resizable-panels": "0.0.10",
         "@octanejs/vite-plugin": "0.1.52",
         "@octanejs/xstate": "0.0.10",
         "@octanejs/zag": "0.0.18",
@@ -205,6 +206,8 @@
     "@octanejs/app-core": ["@octanejs/app-core@0.0.48", "", { "dependencies": { "@ripple-ts/adapter": "^0.3.125", "esbuild": "^0.28.1" }, "peerDependencies": { "octane": "^0.1.51 || ^0.2.0" } }, "sha512-74HCeWHxax4HhIcOhS9yRygJoRfQCrpAgxJQSjco/8yqeIcvVH4uOKTLBeAZVTC7dX/ospCHlhG+fNJCYhToiQ=="],
 
     "@octanejs/phosphor-icons": ["@octanejs/phosphor-icons@0.0.32", "", { "peerDependencies": { "octane": "^0.1.51 || ^0.2.0" } }, "sha512-FdWG+DnvyshqgjNlRnUZX8LqqHUyBP4gCln6T8aQxWMCnuyTrFoeV94MbIoF0FUcCW0XVzmDY3jbYiRgjOFt2Q=="],
+
+    "@octanejs/resizable-panels": ["@octanejs/resizable-panels@0.0.10", "", { "peerDependencies": { "octane": "^0.1.51 || ^0.2.0" } }, "sha512-XMBfOFkXASLCS4JAn+Zu4hy0cu4LK6mCRt/+8vtuHsm1gt8fzrORkxR8vNm+ZB9fSvreG+90KA+DhS/H8evBEQ=="],
 
     "@octanejs/vite-plugin": ["@octanejs/vite-plugin@0.1.52", "", { "dependencies": { "@octanejs/app-core": "0.0.48", "@ripple-ts/adapter": "^0.3.125" }, "peerDependencies": { "octane": "^0.1.51 || ^0.2.0", "vite": "^8.0.16" }, "bin": { "octane-preview": "src/bin/preview.js" } }, "sha512-IMf18VCWFOV121hC8eFL+grbej10yYlrnaF5s/YcSFsaLkrBRDS7/OohPo5HeH8FlJTNc0wRyt4y3a5BFSgLMw=="],
 

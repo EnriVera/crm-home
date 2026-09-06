@@ -14,6 +14,7 @@
   "dependencies": {
     "@fontsource/poppins": "5.3.0",
     "@octanejs/phosphor-icons": "0.0.32",
+    "@octanejs/resizable-panels": "0.0.10",
     "@octanejs/vite-plugin": "0.1.52",
     "@octanejs/xstate": "0.0.10",
     "@octanejs/zag": "0.0.18",
