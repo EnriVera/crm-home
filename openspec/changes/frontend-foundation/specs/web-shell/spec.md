@@ -3,6 +3,11 @@
 > Change: `frontend-foundation` · Dominio nuevo (spec completa).
 > Deriva de las decisiones D3, D4, D5 y D8 del design. Árbol de navegación
 > canónico: PRD §7. Brief visual: `.impeccable/surface-briefs/app-shell.md`.
+> Addendum (stack-alignment): D4 queda **superseded por D-SA8** (icons →
+> `@octanejs/phosphor-icons`, contrato `Icon`/`IconName` idéntico) y D8
+> **evoluciona con D-SA6** (sidebar resizable con
+> `@octanejs/resizable-panels`; storage `"crm-sidebar"` abandonado →
+> `"crm-sidebar-layout"` gestionado por el binding, sin migración).
 
 ## Purpose
 

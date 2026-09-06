@@ -2,6 +2,9 @@
 
 > Change: `frontend-foundation` · Dominio nuevo (spec completa).
 > Deriva de las decisiones D1 y D9 del design. Flujo de referencia: PRD §8.1.
+> Addendum (stack-alignment): D1 queda **superseded por D-SA1** — `OtpInput`
+> encapsula `@octanejs/zag` (pin-input); el contrato `OtpInputProps` es
+> idéntico y esta spec sigue vigente sin cambios de requisitos.
 > Brief visual: `.impeccable/surface-briefs/auth.md`. UI sola: SIN backend de
 > auth (OTP real, sesión, cookies y rate limiting son de otro change).
 

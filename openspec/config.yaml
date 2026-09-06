@@ -31,29 +31,41 @@ stack:
     framework: octanejs (tsrx)
     build: vite
     styling: [tailwindcss, "@fontsource/poppins"]
-    components: zagjs
-    tanstack:
-      - store
-      - db
-      - router
-      - query
-      - router-ssr-query
-      - form
-      - virtual
-      - table
-      - charts
-    extra:
-      - i18next
-      - nuqs
-      - input-otp
-      - lexical
-      - dnd-kit
-      - sonner
-      - day-picker
-      - usehooks-ts
-      - react-error-boundary
-      - resizable-panels
-      - phosphor-icons
+    # alineado por stack-alignment (D-SA1…D-SA8); bindings pineados exactos
+    adoptados:
+      - "@octanejs/zag@0.0.18 + @zag-js/pin-input (OtpInput; D-SA1)"
+      - "@octanejs/phosphor-icons@0.0.32 (Icons; D-SA8)"
+      - "@octanejs/resizable-panels@0.0.10 (sidebar resizable; D-SA6)"
+      - "@octanejs/sonner@0.1.47 (Toast; D-SA5)"
+      # cohorte PARCIAL host-safe (useBoolean, useCounter, useToggle,
+      # useMap, useStep, useDebounceCallback, useDebounceValue,
+      # useInterval, useTimeout, useIsMounted, useUnmount); ausentes
+      # storage/media/DOM-observer: variante en el change consumidor
+      - "@octanejs/usehooks-ts@0.0.34 (cohorte parcial; D-SA5)"
+      - "@octanejs/xstate@0.0.10 + xstate (FSM otp web + api; D-SA4/D-SA7)"
+      - "effect (api y web; wiring real diferido a adapter consumidor)"
+      # gate D-SA3 ejecutado (rama B): integración propia mantenida como
+      # variante equivalente §9; se re-evalúa @octanejs/i18next cuando un
+      # change necesite Trans/ICU/pluralización o el contrato crezca
+      - "i18next (integración propia; gate de re-evaluación abierto)"
+    no_aplican:
+      - "tanstack router / router-ssr-query (router MPA propio de Octane)"
+      - "nuqs (estado en URL vía URLSearchParams del router propio)"
+      # D-SA2: octane@0.2.3 expone ErrorBoundary/@try-@catch nativos;
+      # divergencia component-stack vacío documentada; wiring de raíz
+      # diferido al primer change con UI de error
+      - "@octanejs/react-error-boundary (ErrorBoundary nativa de Octane)"
+    diferidos:
+      - "@octanejs/lexical → change tasks (rich text)"
+      - "@octanejs/dnd-kit → change tasks (kanban)"
+      - "day-picker → change schedule"
+      # SSR no testeado; Brush/Treemap no soportados
+      - "@octanejs/recharts → change schedule"
+      - "colorful → change config (categorías)"
+      - "tanstack store/db/query/form/table/virtual → change data layer"
+      - "spring → primer change con animación"
+      - "testing-library → primer test DOM"
+      - "shiki → sin consumidor"
   binding_rules:
     - >
       Ports & adapters en backend: el dominio NO importa kysely, h3, nitro ni
