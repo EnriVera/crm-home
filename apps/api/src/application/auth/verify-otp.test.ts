@@ -5,6 +5,7 @@ import type { IdGenerator } from "../../domain/ports/id-generator";
 import type { Login, LoginRepository } from "../../domain/ports/login-repository";
 import type { SecureComparator } from "../../domain/ports/secure-comparator";
 import type { Session, SessionRepository } from "../../domain/ports/session-repository";
+import type { TokenHasher } from "../../domain/ports/token-hasher";
 import type { TransactionManager } from "../../domain/ports/transaction-manager";
 import type { Transaction } from "../../domain/ports/transaction";
 import type { User, UserRepository } from "../../domain/ports/user-repository";
@@ -28,6 +29,15 @@ class FakeIdGenerator implements IdGenerator {
 class FakeSecureComparator implements SecureComparator {
   areEqual(a: string, b: string): boolean {
     return a === b;
+  }
+}
+
+class FakeTokenHasher implements TokenHasher {
+  hash(token: string): string {
+    return `hash:${token}`;
+  }
+  verify(token: string, hash: string): boolean {
+    return hash === this.hash(token);
   }
 }
 
@@ -85,6 +95,10 @@ class InMemorySessionRepository implements SessionRepository {
 class InMemoryUserRepository implements UserRepository {
   readonly users: User[] = [];
 
+  async findById(id: string): Promise<User | undefined> {
+    return this.users.find((u) => u.id === id);
+  }
+
   async findByEmail(email: string): Promise<User | undefined> {
     return this.users.find((u) => u.email === email);
   }
@@ -136,6 +150,7 @@ function createUseCase(overrides: {
   userRepository?: InMemoryUserRepository;
   userSeedService?: UserSeedService;
   comparator?: SecureComparator;
+  tokenHasher?: TokenHasher;
   transactionManager?: TransactionManager;
 } = {}) {
   const now = new Date("2025-01-15T12:00:00.000Z");
@@ -158,6 +173,7 @@ function createUseCase(overrides: {
         overrides.userSeedService ??
         new FakeUserSeedService(userRepository.users),
       comparator: overrides.comparator ?? new FakeSecureComparator(),
+      tokenHasher: overrides.tokenHasher ?? new FakeTokenHasher(),
       transactionManager:
         overrides.transactionManager ?? new NoopTransactionManager(),
     }),

@@ -3,6 +3,7 @@ import type { IdGenerator } from "../../domain/ports/id-generator";
 import type { LoginRepository } from "../../domain/ports/login-repository";
 import type { SecureComparator } from "../../domain/ports/secure-comparator";
 import type { SessionRepository } from "../../domain/ports/session-repository";
+import type { TokenHasher } from "../../domain/ports/token-hasher";
 import type { TransactionManager } from "../../domain/ports/transaction-manager";
 import type { UserRepository } from "../../domain/ports/user-repository";
 import type { UserSeedService } from "../../domain/ports/user-seed-service";
@@ -27,6 +28,7 @@ export interface VerifyOtpDependencies {
   userRepository: UserRepository;
   userSeedService: UserSeedService;
   comparator: SecureComparator;
+  tokenHasher: TokenHasher;
   transactionManager: TransactionManager;
 }
 
@@ -57,6 +59,7 @@ export class VerifyOtp {
     }
 
     const sessionToken = this.deps.idGenerator.generate();
+    const sessionTokenHash = this.deps.tokenHasher.hash(sessionToken);
 
     await this.deps.transactionManager.run(async (trx) => {
       await this.deps.loginRepository.markConsumed(login.id, trx);
@@ -70,7 +73,7 @@ export class VerifyOtp {
         {
           id: this.deps.idGenerator.generate(),
           userId: user.id,
-          tokenHash: sessionToken,
+          tokenHash: sessionTokenHash,
           expiresAt: new Date(now.getTime() + SESSION_TTL_MS),
         },
         trx,

@@ -11,6 +11,7 @@ export interface User {
 }
 
 export interface UserRepository {
+  findById(id: string, trx?: Transaction): Promise<User | undefined>;
   findByEmail(email: string, trx?: Transaction): Promise<User | undefined>;
   create(user: User, trx?: Transaction): Promise<void>;
   markEmailVerified(id: string, trx?: Transaction): Promise<void>;
