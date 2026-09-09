@@ -9,6 +9,10 @@ import type { OtpGenerator } from "../../domain/ports/otp-generator";
  * valores fuera del rango completo de bloques). El resultado se formatea con
  * `padStart(6, '0')` para preservar ceros a la izquierda.
  */
-export function createOtpGenerator(): OtpGenerator["generate"] {
-  return () => randomInt(0, 1_000_000).toString().padStart(6, "0");
+export function createOtpGenerator(): OtpGenerator {
+  return {
+    generate(): string {
+      return randomInt(0, 1_000_000).toString().padStart(6, "0");
+    },
+  };
 }

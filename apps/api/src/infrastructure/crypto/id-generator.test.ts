@@ -3,15 +3,15 @@ import { createIdGenerator } from "./id-generator";
 
 describe("createIdGenerator", () => {
   test("genera UUIDv7 con formato correcto", () => {
-    const generate = createIdGenerator();
-    const id = generate();
+    const generator = createIdGenerator();
+    const id = generator.generate();
 
     expect(/^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)).toBe(true);
   });
 
   test("valida versión 7 y variant bits", () => {
-    const generate = createIdGenerator();
-    const id = generate();
+    const generator = createIdGenerator();
+    const id = generator.generate();
     const parts = id.split("-");
 
     const versionGroup = parts[2];
@@ -28,10 +28,10 @@ describe("createIdGenerator", () => {
   });
 
   test("cada llamada genera un id distinto", () => {
-    const generate = createIdGenerator();
+    const generator = createIdGenerator();
     const ids = new Set<string>();
     for (let i = 0; i < 100; i += 1) {
-      ids.add(generate());
+      ids.add(generator.generate());
     }
 
     expect(ids.size).toBe(100);

@@ -6,4 +6,13 @@ export default defineNitroConfig({
   compatibilityDate: "latest",
   preset: "bun",
   handlers: [{ route: "/**", handler: "./src/http/composition-root.ts" }],
+  tasks: {
+    "email-sending": {
+      handler: "./tasks/email-sending.ts",
+      description: "Drena la cola email_sending y envía los mensajes pendientes",
+    },
+  },
+  scheduledTasks: {
+    "*/1 * * * *": ["email-sending"],
+  },
 });
