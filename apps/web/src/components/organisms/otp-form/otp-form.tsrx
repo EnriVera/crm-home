@@ -1,10 +1,10 @@
 import { useRef, useState } from "octane";
 import {
   createOtpMachine,
-  FakeOtpVerifier,
   type OtpMachine,
   type OtpState,
 } from "../../../lib/otp/otp-machine";
+import { createRpcOtpVerifier } from "../../../lib/otp/rpc-verifier";
 import { StatusMessage } from "../../atoms/status-message.tsrx";
 import { useT } from "../../vendor/i18n";
 import { OtpInput } from "../../vendor/otp-input";
@@ -17,9 +17,8 @@ export interface OtpFormProps {
 /**
  * Organismo del formulario OTP (D9, PRD §8.1): `OtpInput` (wrapper vendor) +
  * máquina de estados pura. Intentos y expiración se muestran como DATOS de la
- * máquina (nunca strings hardcodeados). Este change compone con
- * `FakeOtpVerifier` (siempre inválido tras latencia): el change de auth
- * inyecta el verifier real vía RPC sin tocar UI ni máquina.
+ * máquina (nunca strings hardcodeados). El change de auth inyecta el verifier
+ * real vía RPC sin tocar UI ni máquina.
  */
 export function OtpForm(props: OtpFormProps) @{
   const t = useT();
@@ -27,7 +26,7 @@ export function OtpForm(props: OtpFormProps) @{
   const machineRef = useRef<OtpMachine | null>(null);
   if (machineRef.current === null) {
     machineRef.current = createOtpMachine({
-      verifier: new FakeOtpVerifier(),
+      verifier: createRpcOtpVerifier(props.email),
     });
   }
   const machine = machineRef.current;

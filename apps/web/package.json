@@ -20,6 +20,7 @@
     "@octanejs/vite-plugin": "0.1.52",
     "@octanejs/xstate": "0.0.10",
     "@octanejs/zag": "0.0.18",
+    "@orpc/client": "1.15.0",
     "@zag-js/pin-input": "1.42.0",
     "effect": "3.22.1",
     "i18next": "26.4.2",
@@ -28,6 +29,7 @@
   },
   "devDependencies": {
     "@crm/tsconfig": "workspace:*",
+    "@orpc/contract": "1.15.0",
     "@tailwindcss/vite": "4.3.3",
     "@tsrx/typescript-plugin": "0.3.133",
     "@types/lodash.debounce": "^4.0.9",

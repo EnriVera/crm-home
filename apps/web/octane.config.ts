@@ -3,7 +3,9 @@ import {
   RenderRoute,
   type RenderRouteEntry,
 } from "@octanejs/vite-plugin";
-import { rootRedirect } from "./src/lib/nav/redirect";
+import { createAuthRedirect } from "./src/lib/nav/redirect";
+import { createRequireSession } from "./src/lib/nav/session-guard";
+import { createRpcClient } from "./src/lib/api/rpc";
 import { SHELL_ROUTES } from "./src/lib/nav/routes";
 
 /**
@@ -12,13 +14,32 @@ import { SHELL_ROUTES } from "./src/lib/nav/routes";
  * El modelo plano de Octane (un `layout` por ruta, sin herencia) se colapsa
  * con dos helpers; la tabla del shell se genera desde la lista canónica
  * `SHELL_ROUTES` (compartida con `lib/nav/tree.ts` — un test garantiza que
- * nav y rutas registradas no divergen). El futuro auth-guard se enchufa como
+ * nav y rutas registradas no divergen). El auth-guard se enchufa como
  * `before` en `shellRoute` sin tocar las 8 declaraciones.
  */
 
+const baseURL = import.meta.env.VITE_API_URL ?? "/rpc";
+const rpc = createRpcClient(baseURL);
+
+async function getSession() {
+  try {
+    return await rpc.session();
+  } catch {
+    return null;
+  }
+}
+
+const authRedirect = createAuthRedirect(getSession);
+const requireSession = createRequireSession(getSession);
+
 /** Ruta del shell autenticado: layout `__app-shell.tsrx`. */
 export const shellRoute = (path: string, entry: RenderRouteEntry): RenderRoute =>
-  new RenderRoute({ path, entry, layout: "/src/routes/__app-shell.tsrx" });
+  new RenderRoute({
+    path,
+    entry,
+    layout: "/src/routes/__app-shell.tsrx",
+    before: [requireSession],
+  });
 
 /** Ruta pública de auth: layout `__auth.tsrx` (tema del SO, PRD §6.8). */
 export const authRoute = (path: string, entry: RenderRouteEntry): RenderRoute =>
@@ -34,13 +55,11 @@ const shellEntry = (path: string): RenderRouteEntry => {
 export default defineConfig({
   router: {
     routes: [
-      // `/` no monta página: el middleware `before` responde 302 a /login (D2).
-      // El entry es un fallback defensivo con anchor manual (no renderiza en
-      // la práctica; cuando exista sesión, el mismo punto irá a /dashboard).
+      // `/` no monta página: el middleware `before` responde 302 según sesión.
       new RenderRoute({
         path: "/",
         entry: ["IndexRoute", "/src/routes/index.tsrx"],
-        before: [rootRedirect],
+        before: [authRedirect],
       }),
       ...SHELL_ROUTES.map((path) => shellRoute(path, shellEntry(path))),
       // Rutas públicas de auth (D9): layout __auth con tema del SO (§6.8).

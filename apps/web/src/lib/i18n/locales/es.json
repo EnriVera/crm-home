@@ -37,7 +37,9 @@
       "emailLabel": "Email",
       "emailPlaceholder": "tu@email.com",
       "submit": "Continuar",
-      "errorInvalidEmail": "Ese email no parece válido. Revísalo e intenta de nuevo."
+      "submitLoading": "Enviando…",
+      "errorInvalidEmail": "Ese email no parece válido. Revísalo e intenta de nuevo.",
+      "errorRequestOtp": "No pudimos enviar el código. Revisa tu conexión o espera unos minutos si ya pediste uno."
     },
     "otp": {
       "title": "Revisa tu email",

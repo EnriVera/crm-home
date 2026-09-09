@@ -1,32 +1,34 @@
 import { useState } from "octane";
 import { isValidEmail } from "../../../lib/validation/email";
+import { createRpcClient } from "../../../lib/api/rpc";
 import { Button } from "../../atoms/button.tsrx";
 import { FormField } from "../../molecules/form-field.tsrx";
 import { useT } from "../../vendor/i18n";
+import { createLoginSubmitHandler } from "./login-form.logic";
 
 /**
  * Organismo del formulario de login (D9): UN campo (email) y UN botón
  * primario (una acción primaria por pantalla). Valida formato client-side con
- * `isValidEmail()`; si es válido navega (MPA) a
- * `/login-verification?email=<encodeURIComponent(email)>`.
+ * `isValidEmail()`; si es válido solicita un OTP vía RPC y solo navega a
+ * `/login-verification?email=<email>` en éxito.
  */
 export function LoginForm() @{
   const t = useT();
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (event: Event) => {
-    event.preventDefault();
-    if (!isValidEmail(email)) {
-      setError(t("auth.login.errorInvalidEmail"));
-      return;
-    }
-    location.assign(
-      `/login-verification?email=${encodeURIComponent(email.trim())}`,
-    );
-  };
+  const rpc = createRpcClient(import.meta.env.VITE_API_URL ?? "/rpc");
+  const handleSubmit = createLoginSubmitHandler({
+    requestOtp: (email: string) => rpc.requestOtp({ email }),
+    navigate: (url: string) => location.assign(url),
+    setError,
+    setIsLoading,
+    translate: t,
+    isValidEmail,
+  });
 
-  <form novalidate onSubmit={handleSubmit} class="flex flex-col gap-4">
+  <form novalidate onSubmit={(event) => handleSubmit(event, email)} class="flex flex-col gap-4">
     <FormField
       id="email"
       label={t("auth.login.emailLabel")}
@@ -41,8 +43,8 @@ export function LoginForm() @{
         if (error !== null) setError(null);
       }}
     />
-    <Button type="submit" class="w-full">
-      {t("auth.login.submit")}
+    <Button type="submit" disabled={isLoading} class="w-full">
+      {isLoading ? t("auth.login.submitLoading") : t("auth.login.submit")}
     </Button>
   </form>
 }

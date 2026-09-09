@@ -1,13 +1,21 @@
-/**
- * Middleware de redirect de `/` (D2): responde 302 a `/login` y nunca llama
- * a `next` (el entry fallback no renderiza en la práctica). Cuando exista
- * sesión (change de auth), este mismo punto cambia el destino a `/dashboard`.
- * TS puro: testeable sin DOM (`redirect.test.ts`).
- */
 import type { Middleware } from "@octanejs/vite-plugin";
 
-export const rootRedirect: Middleware = () =>
-  new Response(null, {
+export type SessionQuery = () => Promise<{ user: { id: string; email: string; name: string } } | null>
+
+export function redirectResponse(location: string): Response {
+  return new Response(null, {
     status: 302,
-    headers: { Location: "/login" },
+    headers: { Location: location },
   });
+}
+
+export function createAuthRedirect(getSession: SessionQuery): Middleware {
+  return async () => {
+    try {
+      const session = await getSession();
+      return redirectResponse(session ? "/dashboard" : "/login");
+    } catch {
+      return redirectResponse("/login");
+    }
+  };
+}
