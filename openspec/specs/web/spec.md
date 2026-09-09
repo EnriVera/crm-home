@@ -113,26 +113,33 @@ para claro y oscuro como base del PRD §9.)
 - WHEN se inspeccionan los tokens
 - THEN cumple los requisitos de la spec `design-system` (tres capas, estado/foco, `@custom-variant dark`)
 
-### Requirement: Redirect de la ruta raíz a /login
+### Requirement: Redirect de la ruta raíz según sesión
 
-La ruta `/` DEBE dejar de montar la página de humo y pasar a un `RenderRoute`
-con middleware `before` que responda `302 Location: /login`. El `entry`
-(requerido por el tipo) DEBE ser una página mínima de fallback con un anchor a
-`/login` (defensa ante un entorno que no ejecute middleware). La función del
-middleware DEBE ser TS puro testeable sin DOM. Cuando exista sesión (change de
-auth), el mismo middleware PUEDE cambiar el destino a `/dashboard`.
+La ruta `/` DEBE ser un `RenderRoute` con middleware `before` que consulte la
+sesión activa (vía el endpoint RPC `session` con la cookie del request) y
+responda `302 Location: /dashboard` cuando EXISTA sesión vigente, o
+`302 Location: /login` cuando NO exista. El `entry` (requerido por el tipo)
+DEBE ser una página mínima de fallback con un anchor a `/login` (defensa ante
+un entorno que no ejecute middleware). La función del middleware DEBE ser TS
+puro testeable sin DOM, con la consulta de sesión inyectable.
 
-#### Scenario: Redirect 302 desde la raíz
+#### Scenario: Redirect 302 a /login sin sesión
 
-- GIVEN la tabla de rutas con el redirect configurado
+- GIVEN la tabla de rutas con el redirect configurado y un request sin cookie de sesión válida
 - WHEN llega un request a `/`
 - THEN la respuesta es `302` con header `Location: /login`
 
+#### Scenario: Redirect 302 a /dashboard con sesión activa
+
+- GIVEN un request a `/` con cookie de sesión vigente
+- WHEN el middleware consulta la sesión
+- THEN la respuesta es `302` con header `Location: /dashboard`
+
 #### Scenario: Middleware testeable sin DOM
 
-- GIVEN la función del middleware
+- GIVEN la función del middleware con la consulta de sesión inyectada (stub con y sin sesión)
 - WHEN se invoca con un Context de request a `/` en un test `bun test`
-- THEN devuelve una `Response` con status 302 y `Location: /login`
+- THEN devuelve una `Response` con status 302 y el `Location` correspondiente a cada caso
 
 ### Requirement: Tabla de rutas ampliada con helpers de layout
 

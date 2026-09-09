@@ -79,17 +79,27 @@ de OTel PUEDE importarse únicamente en el adapter bajo `src/infrastructure/otel
 - WHEN se inspeccionan los imports del SDK de OpenTelemetry
 - THEN aparecen únicamente bajo `src/infrastructure/otel/`, y `src/domain/`, `src/application/` y `src/http/` consumen la interfaz `Telemetry`
 
-### Requirement: Kysely cableado sin migraciones
+### Requirement: Kysely cableado con migraciones versionadas
 
 `apps/api` DEBE incluir kysely con dialect postgres cableado en un adapter bajo
-`src/infrastructure/kysely/`, leyendo la conexión de `DATABASE_URL`, SIN
-migraciones ni schema de base de datos (diferidos al primer change de dominio).
+`src/infrastructure/kysely/`, leyendo la conexión de `DATABASE_URL`, CON
+migraciones versionadas mediante kysely migrator nativo
+(`FileMigrationProvider`) bajo `src/infrastructure/kysely/migrations/` y un
+runner explícito (`bun run db:migrate`); las migraciones NUNCA DEBEN ejecutarse
+automáticamente al arrancar nitro. `DatabaseSchema` DEBE reflejar las tablas
+creadas por las migraciones aplicadas.
 
 #### Scenario: Adapter kysely presente y confinado
 
 - GIVEN el scaffold de `apps/api`
 - WHEN se inspecciona `src/infrastructure/kysely/`
-- THEN existe el adapter de conexión configurado con dialect postgres y `DATABASE_URL`, y no existen archivos de migración
+- THEN existe el adapter de conexión configurado con dialect postgres y `DATABASE_URL`, junto con el directorio de migraciones y el runner explícito
+
+#### Scenario: Migraciones solo vía script explícito
+
+- GIVEN `apps/api` con migraciones versionadas
+- WHEN se arranca el servidor en modo dev sin ejecutar `db:migrate`
+- THEN ninguna migración corre implícitamente durante el arranque
 
 ### Requirement: Smoke test de arranque
 
