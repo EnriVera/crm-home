@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { KyselyLoginRepository } from "./login-repository";
 import { KyselyUserRepository } from "./user-repository";
 import { createDatabase, type Database } from "./database";
+import { cleanupAuthTables } from "./test-cleanup";
 
 const databaseUrl = process.env.TEST_DATABASE_URL;
 
@@ -18,9 +19,9 @@ describe.skipIf(!databaseUrl)("KyselyLoginRepository (integration)", () => {
   });
 
   afterAll(async () => {
-    if (db) {
-      await db.destroy();
-    }
+    if (!db) return;
+    await cleanupAuthTables(db);
+    await db.destroy();
   });
 
   test("CRUD básico de login", async () => {

@@ -1,5 +1,7 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { createAppFetch } from "./composition-root";
+import { createDatabase } from "../infrastructure/kysely/database";
+import { cleanupAuthTables } from "../infrastructure/kysely/test-cleanup";
 
 const databaseUrl = process.env.TEST_DATABASE_URL;
 
@@ -24,7 +26,10 @@ describe.skipIf(!databaseUrl)("auth HTTP endpoints (integration)", () => {
   });
 
   afterAll(async () => {
-    // No-op: db lifecycle is managed by the test runner / migrations.
+    if (!databaseUrl) return;
+    const db = createDatabase(databaseUrl);
+    await cleanupAuthTables(db);
+    await db.destroy();
   });
 
   test("requestOtp devuelve 200 y encola email", async () => {
