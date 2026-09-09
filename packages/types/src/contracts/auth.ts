@@ -11,8 +11,11 @@ export const verifyOtpInputSchema = z.object({
   email: emailSchema,
   code: otpCodeSchema,
 });
+export const verdictSchema = z.enum(["valid", "invalid", "expired"]);
+export type Verdict = z.infer<typeof verdictSchema>;
+
 export const verifyOtpOutputSchema = z.object({
-  verdict: z.enum(["valid", "invalid", "expired"]),
+  verdict: verdictSchema,
 });
 
 export const sessionOutputSchema = z.object({
