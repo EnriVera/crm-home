@@ -5,150 +5,25 @@ import {
   expect,
   test,
 } from "bun:test";
-import type { TaskRepository } from "../../domain/ports/task-repository";
-import type { TaskStateRepository } from "../../domain/ports/task-state-repository";
-import type {
-  Attributes,
-  SpanHandle,
-  Telemetry,
-} from "../../domain/ports/telemetry";
-import type { TransactionManager } from "../../domain/ports/transaction-manager";
 import type { Transaction } from "../../domain/ports/transaction";
-import type { TaskRow } from "../../domain/tasks/types";
+import type { TransactionManager } from "../../domain/ports/transaction-manager";
 import {
   InvalidKanbanOrder,
   TaskNotFound,
 } from "./errors";
 import { KANBAN_DEFAULT_STEP } from "./constants";
 import { MoveTask } from "./move-task";
+import {
+  InMemoryTaskRepository,
+  InMemoryTaskStateRepository,
+  InMemoryTelemetry,
+  InMemoryTransactionManager,
+  makeTask,
+} from "./test-helpers";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// In-memory test doubles (REFACTOR: extraer a apps/api/src/application/tasks/
-// test-helpers/ en PR-B1.b junto con el resto de los use cases de escritura).
-// ─────────────────────────────────────────────────────────────────────────────
-
-class InMemoryTaskRepository implements TaskRepository {
-  rows = new Map<string, TaskRow>();
-
-  async findById(id: string): Promise<TaskRow | undefined> {
-    return this.rows.get(id);
-  }
-  async listByUser(userId: string): Promise<TaskRow[]> {
-    return Array.from(this.rows.values()).filter(
-      (r) => r.userId === userId && !r.deletedAt,
-    );
-  }
-  async listByColumn(userId: string, stateId: string): Promise<TaskRow[]> {
-    return Array.from(this.rows.values())
-      .filter((r) => r.userId === userId && r.stateId === stateId && !r.deletedAt)
-      .sort((a, b) => a.kanbanOrder - b.kanbanOrder);
-  }
-  async insert(task: TaskRow): Promise<void> {
-    this.rows.set(task.id, task);
-  }
-  async update(id: string, patch: Partial<TaskRow>): Promise<void> {
-    const current = this.rows.get(id);
-    if (!current) throw new Error(`task ${id} not found`);
-    this.rows.set(id, { ...current, ...patch });
-  }
-  async softDelete(id: string): Promise<void> {
-    const current = this.rows.get(id);
-    if (current) this.rows.set(id, { ...current, deletedAt: new Date() });
-  }
-  async moveTask(params: {
-    taskId: string;
-    targetStateId: string;
-    prevTaskId?: string;
-    nextTaskId?: string;
-  }): Promise<void> {
-    const current = this.rows.get(params.taskId);
-    if (!current) return;
-    this.rows.set(params.taskId, { ...current, stateId: params.targetStateId });
-  }
-  async rebalanceColumn(rows: TaskRow[]): Promise<void> {
-    for (const row of rows) {
-      const current = this.rows.get(row.id);
-      if (current) this.rows.set(row.id, { ...current, kanbanOrder: row.kanbanOrder });
-    }
-  }
-  async persistOrders(rows: Array<{ id: string; order: number }>): Promise<void> {
-    for (const { id, order } of rows) {
-      const current = this.rows.get(id);
-      if (current) this.rows.set(id, { ...current, kanbanOrder: order });
-    }
-  }
-}
-
-class InMemoryTaskStateRepository implements TaskStateRepository {
-  // No usado en MoveTask, pero requerido por la interface para cablear en deps.
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  async findById(): Promise<undefined> { return undefined; }
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  async findByUser(): Promise<[]> { return []; }
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  async insert(): Promise<void> {}
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  async update(): Promise<void> {}
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  async softDelete(): Promise<void> {}
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  async persistOrder(): Promise<void> {}
-}
-
-class InMemoryTransactionManager implements TransactionManager {
-  async run<T>(work: (trx: Transaction) => Promise<T>): Promise<T> {
-    return work({} as Transaction);
-  }
-}
-
-class CapturedSpan {
-  attributes: Attributes = {};
-  ended = false;
-  exception: unknown = undefined;
-  setAttribute(key: string, value: string | number | boolean): void {
-    this.attributes[key] = value;
-  }
-  recordException(error: unknown): void {
-    this.exception = error;
-  }
-  end(): void {
-    this.ended = true;
-  }
-}
-
-class InMemoryTelemetry implements Telemetry {
-  spans: CapturedSpan[] = [];
-  startSpan(_name: string, attributes?: Attributes): SpanHandle {
-    const span = new CapturedSpan();
-    if (attributes) span.attributes = { ...attributes };
-    this.spans.push(span);
-    return span;
-  }
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  async shutdown(): Promise<void> {}
-}
-
-function makeTask(overrides: Partial<TaskRow>): TaskRow {
-  return {
-    id: "task-id",
-    userId: "u1",
-    title: "T",
-    description: null,
-    clientId: null,
-    typeId: "type-id",
-    categoryId: null,
-    stateId: "state-1",
-    kanbanOrder: 0,
-    createdAt: new Date(0),
-    updatedAt: new Date(0),
-    deletedAt: null,
-    ...overrides,
-  };
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
+// ───────────────────────────────────────────────────────────────────────────
 // Tests
-// ─────────────────────────────────────────────────────────────────────────────
+// ───────────────────────────────────────────────────────────────────────────
 
 describe("MoveTask", () => {
   let taskRepo: InMemoryTaskRepository;
