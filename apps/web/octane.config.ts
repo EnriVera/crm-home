@@ -68,6 +68,16 @@ export default defineConfig({
         "LoginVerificationRoute",
         "/src/routes/login-verification.tsrx",
       ]),
-    ],
-  },
-});
+          // PR-F: rutas adicionales del módulo tasks (sin item en SHELL_ROUTES).
+          // Heredan `before: [requireSession]` vía shellRoute.
+          shellRoute("/tasks/:id", [
+            "TaskDetailRoute",
+            "/src/routes/tasks/$id.tsrx",
+          ]),
+          shellRoute("/tasks-config", [
+            "TasksConfigRoute",
+            "/src/routes/tasks-config.tsrx",
+          ]),
+        ],
+      },
+    });
