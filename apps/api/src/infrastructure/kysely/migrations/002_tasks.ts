@@ -64,17 +64,9 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     )
   `.execute(db);
 
-  // 4. task_attachments (Fase 2 — join table; PK compuesta).
-  await sql`
-    CREATE TABLE IF NOT EXISTS task_attachments (
-      taat_task_id UUID NOT NULL REFERENCES task(task_id),
-      taat_atta_id UUID NOT NULL REFERENCES attachments(atta_id),
-      taat_created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-      PRIMARY KEY (taat_task_id, taat_atta_id)
-    )
-  `.execute(db);
-
-  // 5. task (núcleo del change).
+  // 4. task (núcleo del change). Va ANTES que task_attachments porque
+  // task_attachments declara FK → task(task_id). Postgres requiere que la
+  // tabla target exista antes de declarar la FK.
   await sql`
     CREATE TABLE IF NOT EXISTS task (
       task_id UUID PRIMARY KEY,
@@ -100,6 +92,16 @@ export async function up(db: Kysely<unknown>): Promise<void> {
   await sql`
     CREATE INDEX IF NOT EXISTS idx_task_kanban
       ON task (task_user_id, task_tast_id, task_kanban_order)
+  `.execute(db);
+
+  // 5. task_attachments (Fase 2 — join table; PK compuesta).
+  await sql`
+    CREATE TABLE IF NOT EXISTS task_attachments (
+      taat_task_id UUID NOT NULL REFERENCES task(task_id),
+      taat_atta_id UUID NOT NULL REFERENCES attachments(atta_id),
+      taat_created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      PRIMARY KEY (taat_task_id, taat_atta_id)
+    )
   `.execute(db);
 }
 
