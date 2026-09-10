@@ -31,10 +31,10 @@
 :root {
   --color-primary: var(--color-primary-600); /* #16a34a: rellenos de acción, no texto pequeño */
   --color-background: #ffffff;
-  --color-surface: #f6f8f7;
-  --color-border: #e2e8f0;
-  --color-text-primary: #0f172a;
-  --color-text-secondary: #52606d;
+  --color-surface: #f5f5f5; /* neutral-100 — pure neutral (Operate) */
+  --color-border: #e5e5e5; /* neutral-200 — pure neutral (Operate) */
+  --color-text-primary: #171717; /* neutral-900 — near-black */
+  --color-text-secondary: #737373; /* neutral-500 — AA 4.65:1 sobre #ffffff */
   --color-error: #dc2626; /* 4.5:1 sobre #ffffff */
   --color-success: #15803d; /* ≈5:1 sobre #ffffff */
   --color-focus: #15803d; /* foco visible canónico */
@@ -43,13 +43,13 @@
 
 .dark {
   --color-primary: var(--color-primary-500); /* #22c55e */
-  --color-background: #0b120c;
-  --color-surface: #111a12;
-  --color-border: #243324;
-  --color-text-primary: #f1f5f9;
-  --color-text-secondary: #9fb3a4;
-  --color-error: #f87171; /* ≈7:1 sobre #0b120c */
-  --color-success: #4ade80; /* ≈9:1 sobre #0b120c */
+  --color-background: #0a0a0a; /* user-verbatim: pure neutral, sin tinte verde */
+  --color-surface: #141414; /* user-verbatim */
+  --color-border: #262626; /* user-verbatim */
+  --color-text-primary: #fafafa; /* user-verbatim */
+  --color-text-secondary: #a3a3a3; /* user-verbatim — AA 8.3:1 sobre #0a0a0a */
+  --color-error: #f87171; /* ≈7.1:1 sobre #0a0a0a (AAA) */
+  --color-success: #4ade80; /* ≈9:1 sobre #0a0a0a */
   --color-focus: #4ade80;
   color-scheme: dark;
 }
