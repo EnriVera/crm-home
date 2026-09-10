@@ -15,8 +15,10 @@ const BASE_CLASS =
 const VARIANT_CLASS: Record<NonNullable<ButtonProps["variant"]>, string> = {
   // Verde como RELLENO de acción primaria con texto blanco (regla D6.5).
   primary: "bg-primary text-white hover:bg-primary-700 dark:hover:bg-primary-400",
-  // Texto interactivo pequeño: primary-700 en claro / primary-400 en oscuro.
-  ghost: "bg-transparent text-primary-700 hover:bg-surface dark:text-primary-400",
+  // Ghost: texto neutral para heredar contraste AA sin quemar el acento. La
+  // lista cerrada reserva el verde a CTA primario, nav activo, foco, éxito y
+  // links inline; `hover:bg-surface` compensa la affordance perdida.
+  ghost: "bg-transparent text-text-primary hover:bg-surface dark:text-text-primary",
 };
 
 /** Atom botón (D8): estados primary/ghost, foco visible canónico. */

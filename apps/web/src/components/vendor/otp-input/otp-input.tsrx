@@ -16,8 +16,12 @@ export interface OtpInputProps {
   "aria-label"?: string;
 }
 
+// `caret-text-primary` hereda --color-text-primary del tema activo
+// (#171717 light / #fafafa dark). Soporte: Chrome 57+, Firefox 53+,
+// Safari 11.1+. Fallback silencioso al color del sistema en navegadores
+// antiguos (sin regresión funcional).
 const CELL_CLASS =
-  "size-11 rounded-md border border-border bg-background text-center text-lg font-semibold text-text-primary caret-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:opacity-50 data-[invalid]:border-error";
+  "size-11 rounded-md border border-border bg-background text-center text-lg font-semibold text-text-primary caret-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:opacity-50 data-[invalid]:border-error";
 
 /**
  * Input de código OTP (PRD §8.1) sobre la máquina zag pin-input vía

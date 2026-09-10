@@ -17,8 +17,12 @@ export interface NavGroupProps {
  * + lista de hijos. El encabezado se marca activo cuando algún hijo lo está.
  */
 export function NavGroup(props: NavGroupProps) @{
+  // Cabecera activa: jerarquía por peso + contraste neutral. El verde se
+  // queda en el NavItem hijo (caso canónico de la lista cerrada: nav activo);
+  // duplicar el tinte aquí sería una segunda señal cromática para el mismo
+  // hecho visual.
   const stateClass = props.active
-    ? "text-primary-700 dark:text-primary-400"
+    ? "text-text-primary font-medium"
     : "text-text-secondary";
 
   <li>
