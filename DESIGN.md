@@ -14,8 +14,20 @@ por pantalla, ningún ornamento. La interfaz desaparece dentro de la tarea; el
 verde aparece solo donde hay algo que hacer o algo que confirmar.
 
 **Estrategia de color:** *Restrained* — neutrales + un solo acento (verde).
-El acento se usa para: acción primaria, selección actual (nav activo, foco) e
-indicadores de estado de éxito. Nunca como decoración.
+El acento se usa **solo** en el elenco cerrado que sigue:
+
+1. **Acción primaria** — relleno del único botón primario por pantalla
+   (`Button` variante `primary`).
+2. **Selección actual de navegación** — item activo del sidebar (`NavItem`
+   con `aria-current="page"`).
+3. **Foco visible** — anillo `outline-focus` de 2 px con offset 2 px.
+4. **Indicador de éxito** — mensajes de éxito inline (`StatusMessage`
+   variante `success`).
+5. **Links inline** — anchors dentro de prosa o de breadcrumbs
+   (`login-verification-page`, `routes/index`).
+
+Nunca como decoración. La prueba es: si un elemento no encaja en uno de
+los cinco casos, no lleva verde.
 
 **Escena física:** freelancer en su escritorio, de día y de noche; la app se
 usa en sesiones largas de trabajo. Ambos temas (claro/oscuro) son ciudadanos de
@@ -37,11 +49,11 @@ se define como token semántico ajustable en ese único archivo.
 | Token | Claro | Oscuro | Uso |
 | --- | --- | --- | --- |
 | `primary` | `#16a34a` (600) | `#22c55e` (500) | Relleno de acción primaria, indicadores |
-| `background` | `#ffffff` | `#0b120c` | Fondo de página |
-| `surface` | `#f6f8f7` | `#111a12` | Cards, sidebar, paneles |
-| `border` | `#e2e8f0` | `#243324` | Separadores y bordes de control |
-| `text-primary` | `#0f172a` | `#f1f5f9` | Texto principal |
-| `text-secondary` | `#52606d` | `#9fb3a4` | Texto secundario, labels inactivos |
+| `background` | `#ffffff` | `#0a0a0a` | Fondo de página |
+| `surface` | `#f5f5f5` | `#141414` | Cards, sidebar, paneles |
+| `border` | `#e5e5e5` | `#262626` | Separadores y bordes de control |
+| `text-primary` | `#171717` | `#fafafa` | Texto principal |
+| `text-secondary` | `#737373` | `#a3a3a3` | Texto secundario, labels inactivos |
 | `error` | `#dc2626` | `#f87171` | Mensajes de error (AA como texto) |
 | `success` | `#15803d` | `#4ade80` | Mensajes de éxito (AA como texto) |
 | `focus` | `#15803d` | `#4ade80` | Anillo de foco visible |
@@ -51,13 +63,18 @@ más clara que `background`); en claro, igual relación.
 
 ### 2.3 Regla de contraste WCAG 2.2 AA (vinculante)
 
-- **Claro:** texto interactivo pequeño (links, labels de nav, texto de botones
-  ghost) usa **`primary-700` o más oscuro** (`#15803d` ≈ 5:1 sobre blanco).
-  `#16a34a` (~3.3:1) queda reservado a: texto grande (≥24px, o ≥18.66px en
-  bold), íconos y gráficos de UI (mínimo 3:1), y **rellenos** de acción
-  primaria con texto blanco encima.
-- **Oscuro:** texto interactivo usa `primary-400`/`primary-500` sobre
-  `background`/`surface` (≥4.5:1).
+- **Claro:** texto interactivo pequeño usa verde **únicamente** en (a) el
+  `NavItem` activo (caso nav activo) y (b) links inline (`<a>` dentro de
+  prosa o breadcrumb). En ambos casos el verde es `primary-700` (#15803d,
+  ≈5:1). Ghost buttons, cabeceras de grupo, caretas de input y skip-link
+  fill **no llevan verde**; usan `text-text-primary` o
+  `text-text-secondary`.
+- **Claro, texto grande / íconos:** `primary-600` (#16a34a, ~3.3:1) se
+  reserva a texto ≥24px (o ≥18.66px bold), íconos/gráficos de UI y
+  rellenos de acción primaria con texto blanco encima.
+- **Oscuro:** texto interactivo verde usa `primary-400`/`primary-500`
+  sobre `background`/`surface` (≥4.5:1), **únicamente** en los casos
+  (a)–(b) ya listados para claro. Mismas exclusiones que en claro.
 - `error` y `success` son AA como texto pequeño en ambos temas; los mensajes de
   estado usan esos tokens, no la escala primaria.
 - **Foco visible canónico:** `outline: 2px solid <focus>; outline-offset: 2px`.
@@ -101,8 +118,10 @@ más clara que `background`); en claro, igual relación.
 
 - Todo componente interactivo tiene: **default, hover, focus, active, disabled,
   loading, error** (no se entregan a medias).
-- Una **única acción primaria por pantalla** (verde sólido, texto blanco). El
-  resto son ghost/secondary con `text-secondary`/`primary-700`.
+- Una **única acción primaria por pantalla** (verde sólido, texto blanco).
+  El resto son ghost/secondary con `text-text-primary` /
+  `text-text-secondary` (sin acento). El verde queda reservado para los
+  cinco usos del §1.
 - Mismo vocabulario en todas las pantallas: misma forma de botón, mismo
   control de formulario, mismo estilo de ícono. Si "guardar" se ve distinto en
   dos lugares, uno está mal.
@@ -121,6 +140,10 @@ más clara que `background`); en claro, igual relación.
 
 ## 8. Qué NO hacer (bans absolutos)
 
+- No verde en ghost buttons, cabeceras de grupo de nav activas, caret de
+  input, ni en el fill del skip-link.
+- No dos señales cromáticas para el mismo hecho visual (la cabecera de
+  grupo activa no se pinta en verde: el item hijo activo ya lo hace).
 - Ningún hex, fuente o sombra fuera de `tokens.css`.
 - Ninguna librería de UI importada fuera de `components/vendor/` (regla §9).
 - No display fonts en labels, botones o datos; no gradientes decorativos; no
