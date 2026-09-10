@@ -156,6 +156,7 @@ listos; el commit se materializa en **WU8 / PR-D** (no aquí), según el plan.
 | WU0 | checklist de spike (arriba) | registry + peers OK | pin + `--frozen-lockfile` EXIT 0 | gate cerrado PASS; no se commitea `apps/web/package.json` aquí (queda para WU8) | `bun install --frozen-lockfile` → EXIT 0 (43 packages, sin warnings) |
 | WU1 | test rojo: `Cannot find module './tasks'` | 60/60 pass; router shape con prefijos `/tasks/*` | router shape + edge cases (Unicode, `min(1)`, defaults, lookups re-exportados) | `uuidSchema` extraído a `_shared.ts`; re-exports desde `packages/types/src/index.ts`; typecheck OK | `bun test packages/types/` → 78/78 pass (60 nuevos + 18 previos `auth`) |
 | WU2 | test rojo: `Cannot find module './002_tasks'` | 5 tablas + 3 índices + 8 FKs verificados vía `information_schema`; typecheck OK | idempotencia (2× `up`), `down` post-`up` deja `task_state` intacto, `down` con datos sembrados respeta orden inverso de FKs | orden de `DROP` revisado; `cleanupTasksTables` añadido a `test-cleanup.ts` sin tocar `cleanupAuthTables` | `bun test apps/api/` → 78 pass + 22 skip (integration sin `TEST_DATABASE_URL`), 0 fail; `tsc -p tsconfig.json` exit 0 |
+| WU3 | 3 tests rojos: `Cannot find module './constants' / './errors' / './task-repository'` | 10/10 pass (4 constants + 5 errors + 1 type-shape de `TaskRepository`); typecheck OK | 2 grep-gate tests: ports purity (no importan kysely/h3/nitro/pg/nodemailer) + attachment-repository no cableado al composition root | tipos compartidos extraídos a `apps/api/src/domain/tasks/types.ts` para reuso entre ports y futuros adapters | `bun test apps/api/` → 90 pass + 22 skip + 0 fail (12 tests nuevos); `tsc -p tsconfig.json` exit 0 |
 
 ## WU1 — Notas
 
@@ -179,13 +180,23 @@ listos; el commit se materializa en **WU8 / PR-D** (no aquí), según el plan.
 - **`down` preserva `task_state`**: test dedicado siembra `task_state` con datos y verifica que el `down` de 002 NO lo toca (pertenece a 001).
 - **`cleanupTasksTables` ordering**: `task_attachments` → `attachments` → `task` → `type_categories_client` → `client` (hijo→padre, inverso a `up`).
 - **`bun run db:migrate`**: NO ejecutado — `DATABASE_URL` no está configurado en el entorno. La verificación end-to-end real queda pendiente hasta que el usuario provea `TEST_DATABASE_URL`. Mientras tanto, la cobertura TDD es a nivel de contrato de código (`up`/`down` tipados correctamente, schema esperado verificado por introspección SQL al ejecutarse en CI).
-- **Estado de commit**: WU2 está **uncommitted** (working tree). El commit se materializa en **PR-A**, según el plan.
+- **Commit**: `8637e59 feat(api): migration 002_tasks + 5-table schema + tasks cleanup (PR-A1)`. PR-A1 aislado (subdivisión del plan original PR-A, recomendada por exceder ~400 líneas con WU3 incluido).
+
+## WU3 — Notas
+
+- **~12 archivos nuevos, ~416 LOC**: 6 ports de dominio (`task-repository`, `task-state-repository`, `attachment-repository`, `client-lookup-repository`, `type-lookup-repository`, `category-lookup-repository`), 1 módulo de types compartidos (`apps/api/src/domain/tasks/types.ts`), 1 constants, 1 errors, 3 tests nuevos (constants, errors, type-shape de TaskRepository).
+- **Constantes** (`apps/api/src/application/tasks/constants.ts`): `KANBAN_DEFAULT_STEP = 1024`, `KANBAN_GAP_REBALANCE_THRESHOLD = 1e-6`, `TASK_TITLE_MAX = 200`, `TASK_DESCRIPTION_MAX = 50_000` (valores literales verificados por tests).
+- **Errores** (`apps/api/src/application/tasks/errors.ts`): 5 clases tipadas extienden `TaskDomainError` base abstracta. Cada una expone `readonly code` discriminable mapeable a status HTTP en WU6: `TaskNotFound` (`TASK_NOT_FOUND`), `TaskStateNotFound` (`TASK_STATE_NOT_FOUND`), `InvalidKanbanOrder` (`INVALID_KANBAN_ORDER`), `InvalidStateTransition` (`INVALID_STATE_TRANSITION`), `Unauthorized` (`UNAUTHORIZED`).
+- **Purity gate (TRIANGULATE)**: `__no-external-imports.test.ts` parsea cada uno de los 6 ports nuevos y verifica que NO importen `kysely`, `h3`, `nitro`, `pg` ni `nodemailer`. Garantiza que los use cases (WU4) puedan testearse con repos in-memory sin levantar infraestructura.
+- **MVP gate (TRIANGULATE)**: `__attachment-not-in-composition.test.ts` verifica que `attachment-repository` NO esté cableado al `composition-root.ts`. Recordatorio de Fase 2 (sin endpoint sobre attachments en MVP). Cuando Fase 2 arranque, este test se BORRA (no se relaja).
+- **Tipos compartidos** (`apps/api/src/domain/tasks/types.ts`): `TaskRow`, `TaskStateRow`, `ClientRow`, `TypeRow`, `CategoryRow`, `AttachmentRow`, `TypeCategoriesClientRow`, más `TaskPatch`, `TaskStatePatch` y `MoveTaskParams`. Field names sin prefijos (`id`, `userId`, etc.) y `Date` en lugar de strings ISO. El adapter kysely (WU5) implementará la conversión `Database row → Domain row` en el borde de infraestructura.
+- **Estado de commit**: WU3 está **uncommitted** (working tree). Listo para commit como PR-A2 aislado (subdivisión de PR-A, ya aplicada en WU2 → PR-A1).
 
 ## Estado de las WUs restantes
 
-Las WUs WU2–WU15 (~3,000 líneas) quedan pendientes para el próximo attempt. La estructura del trabajo está clara:
+Las WUs WU3–WU15 (~3,000 líneas) quedan pendientes para el próximo attempt. La estructura del trabajo está clara:
 
-- **WU2** migration `002_tasks.ts` + extension de `DatabaseSchema` + `cleanupTasksTables` + integration test.
+- **WU2** ~~migration `002_tasks.ts` + extension de `DatabaseSchema` + `cleanupTasksTables` + integration test~~ ✅ **CERRADO** — commit `8637e59` (PR-A1).
 - **WU3** 6 puertos de dominio + constants + errors (sin lógica de aplicación, sin imports de kysely/h3/otel).
 - **WU4** 13 casos de uso + helpers kanban puros + tests in-memory.
 - **WU5** 6 adapters kysely + tests integración opt-in.
