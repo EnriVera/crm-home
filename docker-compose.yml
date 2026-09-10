@@ -16,5 +16,25 @@ services:
       timeout: 5s
       retries: 5
 
+  # SMTP de desarrollo (D5/D6 transactional-email). Imagen pineada por digest
+  # para que el contrato sea reproducible. SMTP en :1025 (text/html) y UI en
+  # :8025. Auth-any + allow-insecure son aceptables SOLO para dev local.
+  # Para override de puertos, crear docker-compose.override.yml.
+  mailpit:
+    image: >-
+      axllent/mailpit:v1.24@sha256:3ad9483ac2dea937ae402b95435ab12c3355d2373a1002a49491db0be536d8fa
+    container_name: crm-home-mailpit
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8025/"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
 volumes:
   crm_pgdata:

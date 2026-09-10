@@ -53,18 +53,36 @@ comentario en `package.json`/Makefile) y ser funcional para los mismos scripts.
 ### Requirement: Tooling de entorno (docker-compose, .env.example, .gitignore, Makefile)
 
 El repo DEBE incluir: (a) `docker-compose.yml` con servicio `postgres:17-alpine`
-y volumen persistente; (b) `.env.example` con `DATABASE_URL`,
-`OTEL_EXPORTER_OTLP_ENDPOINT` (vacío → telemetría no-op) y puertos de dev;
-(c) `.gitignore` ampliado con `.turbo/`, `dist/`, `.output/`, `.nitro/`, `.env`,
-`.env.local` y `*.tsbuildinfo` además de los patrones existentes; (d) `Makefile`
-en raíz con targets `dev`, `build`, `test`, `db-up` y `db-down` que orquesten
-turbo y docker compose.
+y volumen persistente, y un servicio `mailpit` (imagen `axllent/mailpit`
+pineada por digest) con puertos `1025` (SMTP) y `8025` (UI) expuestos para
+soporte de email transaccional; (b) `.env.example` con `DATABASE_URL`,
+`OTEL_EXPORTER_OTLP_ENDPOINT` (vacío → telemetría no-op), puertos de dev y un
+placeholder opcional `SMTP_URL` para activar el adapter SMTP (ausencia o vacío
+→ fallback al adapter consola); (c) `.gitignore` ampliado con `.turbo/`,
+`dist/`, `.output/`, `.nitro/`, `.env`, `.env.local` y `*.tsbuildinfo` además
+de los patrones existentes; (d) `Makefile` en raíz con targets `dev`, `build`,
+`test`, `db-up`, `db-down`, `mail-up`, `mail-down`, `up` y `down` que orquesten
+turbo y docker compose (`db-up` mantiene solo postgres; `mail-up` solo
+mailpit; `up` levanta ambos).
+(Previously: el tooling no incluía Mailpit ni `SMTP_URL`; solo `db-up`/`db-down`.)
 
 #### Scenario: PostgreSQL de desarrollo levanta vía compose
 
 - GIVEN el repo con `docker-compose.yml` y `.env.example`
 - WHEN se ejecuta `docker compose up -d` (o `make db-up`)
 - THEN el contenedor `postgres:17-alpine` queda accesible con la `DATABASE_URL` de `.env.example` y sus datos persisten en el volumen declarado
+
+#### Scenario: Mailpit levanta como servicio independiente
+
+- GIVEN el repo con `docker-compose.yml` (servicio `mailpit` configurado)
+- WHEN se ejecuta `make mail-up`
+- THEN el contenedor `mailpit` queda accesible con SMTP en `localhost:1025` y UI en `http://localhost:8025` y `docker compose ps` lo reporta healthy
+
+#### Scenario: Stack completo de dev local
+
+- GIVEN el repo con `docker-compose.yml` y `Makefile`
+- WHEN se ejecuta `make up`
+- THEN postgres y mailpit quedan healthy en paralelo y la `DATABASE_URL`/`SMTP_URL` por defecto del `.env.example` son utilizables sin retoques
 
 #### Scenario: Artefactos de build no se commitean
 
