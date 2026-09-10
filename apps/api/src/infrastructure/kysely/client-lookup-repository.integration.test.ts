@@ -30,7 +30,9 @@ describe.skipIf(!databaseUrl)(
       const userB = crypto.randomUUID();
       await sql`INSERT INTO "user" (user_id, user_email, user_name)
                 VALUES (${userA}, ${`a-${Date.now()}@example.com`}, 'A'),
-                       (${userB}, ${`b-${Date.now()}@example.com`}, 'B')`.execute(db);
+                       (${userB}, ${`b-${Date.now()}@example.com`}, 'B')`.execute(
+        db,
+      );
 
       const clientA = crypto.randomUUID();
       const clientB = crypto.randomUUID();
@@ -51,11 +53,15 @@ describe.skipIf(!databaseUrl)(
     test("searchByNamePrefix es case-insensitive (ILIKE)", async () => {
       const userId = crypto.randomUUID();
       await sql`INSERT INTO "user" (user_id, user_email, user_name)
-                VALUES (${userId}, ${`c-${Date.now()}@example.com`}, 'C')`.execute(db);
+                VALUES (${userId}, ${`c-${Date.now()}@example.com`}, 'C')`.execute(
+        db,
+      );
 
       const clientId = crypto.randomUUID();
       await sql`INSERT INTO client (clie_id, clie_user_id, clie_name)
-                VALUES (${clientId}, ${userId}, 'Globex Industries')`.execute(db);
+                VALUES (${clientId}, ${userId}, 'Globex Industries')`.execute(
+        db,
+      );
 
       const lower = await repository.searchByNamePrefix({
         userId,
@@ -75,11 +81,15 @@ describe.skipIf(!databaseUrl)(
     test("searchByNamePrefix aplica cap automático en 50", async () => {
       const userId = crypto.randomUUID();
       await sql`INSERT INTO "user" (user_id, user_email, user_name)
-                VALUES (${userId}, ${`d-${Date.now()}@example.com`}, 'D')`.execute(db);
+                VALUES (${userId}, ${`d-${Date.now()}@example.com`}, 'D')`.execute(
+        db,
+      );
 
       for (let i = 0; i < 60; i += 1) {
         await sql`INSERT INTO client (clie_id, clie_user_id, clie_name)
-                  VALUES (${crypto.randomUUID()}, ${userId}, ${`Match ${i}`})`.execute(db);
+                  VALUES (${crypto.randomUUID()}, ${userId}, ${`Match ${i}`})`.execute(
+          db,
+        );
       }
 
       const results = await repository.searchByNamePrefix({

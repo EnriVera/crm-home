@@ -2,12 +2,12 @@ import type { TypeLookupRepository } from "../../domain/ports/type-lookup-reposi
 import type { TypeCategoriesClientRow } from "../../domain/tasks/types";
 
 export interface ListTypesForFormInput {
-  userId: string;
-  clieId?: string;
+ userId: string;
+ clieId?: string;
 }
 
 export interface ListTypesForFormDependencies {
-  typeLookupRepository: TypeLookupRepository;
+ typeLookupRepository: TypeLookupRepository;
 }
 
 /**
@@ -19,12 +19,14 @@ export interface ListTypesForFormDependencies {
  * El adapter materializa el filtro `tccl_clie_id`; aquí sólo se pasa el input.
  */
 export class ListTypesForForm {
-  constructor(private readonly deps: ListTypesForFormDependencies) {}
+ constructor(private readonly deps: ListTypesForFormDependencies) {}
 
-  async execute(input: ListTypesForFormInput): Promise<TypeCategoriesClientRow[]> {
-    return this.deps.typeLookupRepository.listForForm({
-      userId: input.userId,
-      clieId: input.clieId,
-    });
-  }
+ async execute(
+  input: ListTypesForFormInput,
+ ): Promise<TypeCategoriesClientRow[]> {
+  return this.deps.typeLookupRepository.listForForm({
+   userId: input.userId,
+   clieId: input.clieId,
+  });
+ }
 }

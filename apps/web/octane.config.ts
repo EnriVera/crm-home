@@ -33,7 +33,10 @@ const authRedirect = createAuthRedirect(getSession);
 const requireSession = createRequireSession(getSession);
 
 /** Ruta del shell autenticado: layout `__app-shell.tsrx`. */
-export const shellRoute = (path: string, entry: RenderRouteEntry): RenderRoute =>
+export const shellRoute = (
+  path: string,
+  entry: RenderRouteEntry,
+): RenderRoute =>
   new RenderRoute({
     path,
     entry,
@@ -68,16 +71,16 @@ export default defineConfig({
         "LoginVerificationRoute",
         "/src/routes/login-verification.tsrx",
       ]),
-          // PR-F: rutas adicionales del módulo tasks (sin item en SHELL_ROUTES).
-          // Heredan `before: [requireSession]` vía shellRoute.
-          shellRoute("/tasks/:id", [
-            "TaskDetailRoute",
-            "/src/routes/tasks/$id.tsrx",
-          ]),
-          shellRoute("/tasks-config", [
-            "TasksConfigRoute",
-            "/src/routes/tasks-config.tsrx",
-          ]),
-        ],
-      },
-    });
+      // PR-F: rutas adicionales del módulo tasks (sin item en SHELL_ROUTES).
+      // Heredan `before: [requireSession]` vía shellRoute.
+      shellRoute("/tasks/:id", [
+        "TaskDetailRoute",
+        "/src/routes/tasks/$id.tsrx",
+      ]),
+      shellRoute("/tasks-config", [
+        "TasksConfigRoute",
+        "/src/routes/tasks-config.tsrx",
+      ]),
+    ],
+  },
+});

@@ -73,7 +73,8 @@ describe("prependOrder", () => {
   });
 
   test("mínimo estable con múltiples entradas", () => {
-    expect(prependOrder([{ order: 5000 }, { order: 3000 }, { order: 8000 }]))
-      .toBe(3000 / 2);
+    expect(
+      prependOrder([{ order: 5000 }, { order: 3000 }, { order: 8000 }]),
+    ).toBe(3000 / 2);
   });
 });

@@ -11,10 +11,7 @@ import { mapTaskRow, type TaskDbRow } from "./_mappers";
 export class KyselyTaskRepository implements TaskRepository {
   constructor(private readonly db: Database) {}
 
-  async findById(
-    id: string,
-    trx?: Transaction,
-  ): Promise<TaskRow | undefined> {
+  async findById(id: string, trx?: Transaction): Promise<TaskRow | undefined> {
     const db = this.resolve(trx);
     const row = await db
       .selectFrom("task")
@@ -75,11 +72,7 @@ export class KyselyTaskRepository implements TaskRepository {
       .execute();
   }
 
-  async update(
-    id: string,
-    patch: TaskPatch,
-    trx?: Transaction,
-  ): Promise<void> {
+  async update(id: string, patch: TaskPatch, trx?: Transaction): Promise<void> {
     const db = this.resolve(trx);
     const set: Partial<{
       task_title: string;
@@ -90,7 +83,8 @@ export class KyselyTaskRepository implements TaskRepository {
       task_tast_id: string;
     }> = {};
     if (patch.title !== undefined) set.task_title = patch.title;
-    if (patch.description !== undefined) set.task_description = patch.description;
+    if (patch.description !== undefined)
+      set.task_description = patch.description;
     if (patch.clientId !== undefined) set.task_clie_id = patch.clientId;
     if (patch.typeId !== undefined) set.task_type_id = patch.typeId;
     if (patch.categoryId !== undefined) set.task_cate_id = patch.categoryId;
@@ -108,10 +102,7 @@ export class KyselyTaskRepository implements TaskRepository {
       .execute();
   }
 
-  async moveTask(
-    params: MoveTaskParams,
-    trx?: Transaction,
-  ): Promise<void> {
+  async moveTask(params: MoveTaskParams, trx?: Transaction): Promise<void> {
     const db = this.resolve(trx);
     // UPDATE atómico: cambia estado y conserva orden (que se persiste
     // en la llamada separada a persistOrders).

@@ -33,7 +33,9 @@ describe.skipIf(!databaseUrl)(
     }> {
       const userId = crypto.randomUUID();
       await sql`INSERT INTO "user" (user_id, user_email, user_name)
-                VALUES (${userId}, ${`wu5-move-${Date.now()}-${Math.random()}@example.com`}, 'WU5 move')`.execute(db);
+                VALUES (${userId}, ${`wu5-move-${Date.now()}-${Math.random()}@example.com`}, 'WU5 move')`.execute(
+        db,
+      );
       const typeId = crypto.randomUUID();
       await sql`INSERT INTO types (type_id, type_user_id, type_name, type_module)
                 VALUES (${typeId}, ${userId}, 'Task', 'tasks')`.execute(db);
@@ -79,7 +81,11 @@ describe.skipIf(!databaseUrl)(
 
     test("rebalanceColumn aplica múltiplos de KANBAN_DEFAULT_STEP", async () => {
       const { userId, typeId, state1 } = await seedGraph();
-      const ids = [crypto.randomUUID(), crypto.randomUUID(), crypto.randomUUID()];
+      const ids = [
+        crypto.randomUUID(),
+        crypto.randomUUID(),
+        crypto.randomUUID(),
+      ];
       for (let i = 0; i < ids.length; i += 1) {
         await repository.insert({
           id: ids[i]!,

@@ -26,7 +26,9 @@ describe.skipIf(!databaseUrl)("KyselyTaskRepository (integration)", () => {
   async function seedUser(): Promise<string> {
     const userId = crypto.randomUUID();
     await sql`INSERT INTO "user" (user_id, user_email, user_name)
-              VALUES (${userId}, ${`wu5-task-${Date.now()}-${Math.random()}@example.com`}, 'WU5')`.execute(db);
+              VALUES (${userId}, ${`wu5-task-${Date.now()}-${Math.random()}@example.com`}, 'WU5')`.execute(
+      db,
+    );
     return userId;
   }
 
@@ -37,7 +39,9 @@ describe.skipIf(!databaseUrl)("KyselyTaskRepository (integration)", () => {
     return stateId;
   }
 
-  async function seedTypeAndCategory(userId: string): Promise<{ typeId: string; cateId: string }> {
+  async function seedTypeAndCategory(
+    userId: string,
+  ): Promise<{ typeId: string; cateId: string }> {
     const typeId = crypto.randomUUID();
     const cateId = crypto.randomUUID();
     await sql`INSERT INTO types (type_id, type_user_id, type_name, type_module)

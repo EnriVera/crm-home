@@ -1,16 +1,7 @@
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  test,
-} from "bun:test";
+import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import type { Transaction } from "../../domain/ports/transaction";
 import type { TransactionManager } from "../../domain/ports/transaction-manager";
-import {
-  InvalidKanbanOrder,
-  TaskNotFound,
-} from "./errors";
+import { InvalidKanbanOrder, TaskNotFound } from "./errors";
 import { KANBAN_DEFAULT_STEP } from "./constants";
 import { MoveTask } from "./move-task";
 import {
@@ -74,8 +65,12 @@ describe("MoveTask", () => {
   });
 
   test("lanza InvalidKanbanOrder si el vecino no pertenece a la columna destino", async () => {
-    await taskRepo.insert(makeTask({ id: "t1", kanbanOrder: 1024, stateId: "state-2" }));
-    await taskRepo.insert(makeTask({ id: "t2", kanbanOrder: 2048, stateId: "state-2" }));
+    await taskRepo.insert(
+      makeTask({ id: "t1", kanbanOrder: 1024, stateId: "state-2" }),
+    );
+    await taskRepo.insert(
+      makeTask({ id: "t2", kanbanOrder: 2048, stateId: "state-2" }),
+    );
     await expect(
       sut.execute({
         userId: "u1",
@@ -95,7 +90,9 @@ describe("MoveTask", () => {
     test("(1) gap normal entre A=1024 y B=4096 → order = 2560, NO persistOrders de rebalance", async () => {
       await taskRepo.insert(makeTask({ id: "a", kanbanOrder: 1024 }));
       await taskRepo.insert(makeTask({ id: "b", kanbanOrder: 4096 }));
-      await taskRepo.insert(makeTask({ id: "x", kanbanOrder: 2048, stateId: "state-2" }));
+      await taskRepo.insert(
+        makeTask({ id: "x", kanbanOrder: 2048, stateId: "state-2" }),
+      );
 
       await sut.execute({
         userId: "u1",
@@ -118,7 +115,9 @@ describe("MoveTask", () => {
     test("(2) gap < 1e-6 (A=1024, B=1024.0000005) → persistOrders llamado con [{a,1024},{b,2048}] + span.rebalanced=true", async () => {
       await taskRepo.insert(makeTask({ id: "a", kanbanOrder: 1024 }));
       await taskRepo.insert(makeTask({ id: "b", kanbanOrder: 1024.0000005 }));
-      await taskRepo.insert(makeTask({ id: "x", kanbanOrder: 0, stateId: "state-2" }));
+      await taskRepo.insert(
+        makeTask({ id: "x", kanbanOrder: 0, stateId: "state-2" }),
+      );
 
       await sut.execute({
         userId: "u1",
@@ -148,7 +147,9 @@ describe("MoveTask", () => {
     test("(3) append al final → appendOrder", async () => {
       await taskRepo.insert(makeTask({ id: "a", kanbanOrder: 1024 }));
       await taskRepo.insert(makeTask({ id: "b", kanbanOrder: 2048 }));
-      await taskRepo.insert(makeTask({ id: "x", kanbanOrder: 0, stateId: "state-2" }));
+      await taskRepo.insert(
+        makeTask({ id: "x", kanbanOrder: 0, stateId: "state-2" }),
+      );
 
       await sut.execute({
         userId: "u1",
@@ -166,7 +167,9 @@ describe("MoveTask", () => {
     test("(4) prepend al inicio → prependOrder", async () => {
       await taskRepo.insert(makeTask({ id: "a", kanbanOrder: 1024 }));
       await taskRepo.insert(makeTask({ id: "b", kanbanOrder: 2048 }));
-      await taskRepo.insert(makeTask({ id: "x", kanbanOrder: 0, stateId: "state-2" }));
+      await taskRepo.insert(
+        makeTask({ id: "x", kanbanOrder: 0, stateId: "state-2" }),
+      );
 
       await sut.execute({
         userId: "u1",
@@ -182,10 +185,18 @@ describe("MoveTask", () => {
     });
 
     test("(5) cross-column → task_tast_id actualizado + orden estable", async () => {
-      await taskRepo.insert(makeTask({ id: "a", kanbanOrder: 1024, stateId: "state-1" }));
-      await taskRepo.insert(makeTask({ id: "b", kanbanOrder: 2048, stateId: "state-1" }));
-      await taskRepo.insert(makeTask({ id: "c", kanbanOrder: 1024, stateId: "state-2" }));
-      await taskRepo.insert(makeTask({ id: "x", kanbanOrder: 9999, stateId: "state-1" }));
+      await taskRepo.insert(
+        makeTask({ id: "a", kanbanOrder: 1024, stateId: "state-1" }),
+      );
+      await taskRepo.insert(
+        makeTask({ id: "b", kanbanOrder: 2048, stateId: "state-1" }),
+      );
+      await taskRepo.insert(
+        makeTask({ id: "c", kanbanOrder: 1024, stateId: "state-2" }),
+      );
+      await taskRepo.insert(
+        makeTask({ id: "x", kanbanOrder: 9999, stateId: "state-1" }),
+      );
 
       await sut.execute({
         userId: "u1",
@@ -224,7 +235,9 @@ describe("MoveTask", () => {
 
       await taskRepo.insert(makeTask({ id: "a", kanbanOrder: 1024 }));
       await taskRepo.insert(makeTask({ id: "b", kanbanOrder: 2048 }));
-      await taskRepo.insert(makeTask({ id: "x", kanbanOrder: 0, stateId: "state-2" }));
+      await taskRepo.insert(
+        makeTask({ id: "x", kanbanOrder: 0, stateId: "state-2" }),
+      );
 
       await localSut.execute({
         userId: "u1",
@@ -241,7 +254,9 @@ describe("MoveTask", () => {
   describe("atributos PII-safe allowlist §D6", () => {
     test("el span emite SOLO los 4 atributos permitidos; nunca title/description/email", async () => {
       await taskRepo.insert(makeTask({ id: "a", kanbanOrder: 1024 }));
-      await taskRepo.insert(makeTask({ id: "x", kanbanOrder: 0, stateId: "state-2" }));
+      await taskRepo.insert(
+        makeTask({ id: "x", kanbanOrder: 0, stateId: "state-2" }),
+      );
 
       await sut.execute({
         userId: "u1",
@@ -260,10 +275,11 @@ describe("MoveTask", () => {
       expect(attrs).toContain("result.success");
 
       // Forbidden
-      const forbiddenAttrs = attrs.filter((k) =>
-        k.includes("title") ||
-        k.includes("description") ||
-        k.includes("email")
+      const forbiddenAttrs = attrs.filter(
+        (k) =>
+          k.includes("title") ||
+          k.includes("description") ||
+          k.includes("email"),
       );
       expect(forbiddenAttrs).toEqual([]);
     });

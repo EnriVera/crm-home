@@ -7,7 +7,9 @@ import { mapCategoryRow, type CategoryDbRow } from "./_mappers";
  * Lookup de categorías filtradas por `type_id`. Usado por el select dependiente
  * del form de tasks.
  */
-export class KyselyCategoryLookupRepository implements CategoryLookupRepository {
+export class KyselyCategoryLookupRepository
+  implements CategoryLookupRepository
+{
   constructor(private readonly db: Database) {}
 
   async listByType(params: {

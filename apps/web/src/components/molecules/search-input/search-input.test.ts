@@ -14,7 +14,9 @@ const WRAPPER_PATH = join(import.meta.dir, "search-input.tsrx");
 describe("search-input molecule — type contract", () => {
   test("exporta SearchInput como función", () => {
     const content = readFileSync(WRAPPER_PATH, "utf-8");
-    expect(content).toMatch(/export function SearchInput|export const SearchInput/);
+    expect(content).toMatch(
+      /export function SearchInput|export const SearchInput/,
+    );
   });
 
   test("acepta props value, onChange, delayMs opcional", () => {

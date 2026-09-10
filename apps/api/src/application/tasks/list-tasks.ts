@@ -2,12 +2,12 @@ import type { TaskRepository } from "../../domain/ports/task-repository";
 import type { TaskRow } from "../../domain/tasks/types";
 
 export interface ListTasksInput {
-  userId: string;
-  search?: string;
+ userId: string;
+ search?: string;
 }
 
 export interface ListTasksDependencies {
-  taskRepository: TaskRepository;
+ taskRepository: TaskRepository;
 }
 
 /**
@@ -17,14 +17,14 @@ export interface ListTasksDependencies {
  * Devuelve `TaskRow[]` (shape de dominio). Soft-deleted se excluyen en el adapter.
  */
 export class ListTasks {
-  constructor(private readonly deps: ListTasksDependencies) {}
+ constructor(private readonly deps: ListTasksDependencies) {}
 
-  async execute(input: ListTasksInput): Promise<TaskRow[]> {
-    const rows = await this.deps.taskRepository.listByUser(input.userId);
+ async execute(input: ListTasksInput): Promise<TaskRow[]> {
+  const rows = await this.deps.taskRepository.listByUser(input.userId);
 
-    if (!input.search) return rows;
+  if (!input.search) return rows;
 
-    const needle = input.search.toLowerCase();
-    return rows.filter((row) => row.title.toLowerCase().includes(needle));
-  }
+  const needle = input.search.toLowerCase();
+  return rows.filter((row) => row.title.toLowerCase().includes(needle));
+ }
 }

@@ -13,8 +13,8 @@
 export type TaskStateFormMode = "create" | "update";
 
 export interface TaskStateFormInput {
-  tast_name: string;
-  tast_order: number;
+ tast_name: string;
+ tast_order: number;
 }
 
 export const TASK_STATE_NAME_MAX = 50;
@@ -22,16 +22,16 @@ export const TASK_STATE_NAME_MIN = 1;
 export const TASK_STATE_ORDER_MIN = 0;
 
 export function taskStateNameError(value: string): string | null {
-  const trimmed = value.trim();
-  if (trimmed.length < TASK_STATE_NAME_MIN) return "tasks.statuses.nameRequired";
-  if (trimmed.length > TASK_STATE_NAME_MAX) return "tasks.statuses.nameTooLong";
-  return null;
+ const trimmed = value.trim();
+ if (trimmed.length < TASK_STATE_NAME_MIN) return "tasks.statuses.nameRequired";
+ if (trimmed.length > TASK_STATE_NAME_MAX) return "tasks.statuses.nameTooLong";
+ return null;
 }
 
 export function taskStateOrderError(value: number): string | null {
-  if (!Number.isInteger(value)) return "tasks.statuses.orderInvalid";
-  if (value < TASK_STATE_ORDER_MIN) return "tasks.statuses.orderInvalid";
-  return null;
+ if (!Number.isInteger(value)) return "tasks.statuses.orderInvalid";
+ if (value < TASK_STATE_ORDER_MIN) return "tasks.statuses.orderInvalid";
+ return null;
 }
 
 // Re-exporte silencioso de las constantes MIN/MAX para uso externo
@@ -44,28 +44,29 @@ void TASK_STATE_ORDER_MIN;
  * el primer error de validación. La .tsrx lo bindea al display.
  */
 export interface TaskStateFormState extends TaskStateFormInput {
-  errorKey: string | null;
+ errorKey: string | null;
 }
 
 export function initialTaskStateFormState(
-  initial: Partial<TaskStateFormInput> = {},
+ initial: Partial<TaskStateFormInput> = {},
 ): TaskStateFormState {
-  return {
-    tast_name: "",
-    tast_order: 0,
-    errorKey: null,
-    ...initial,
-  };
+ return {
+  tast_name: "",
+  tast_order: 0,
+  errorKey: null,
+  ...initial,
+ };
 }
 
 /**
  * Valida el form completo y retorna la primera key i18n con error, o null.
  */
-export function validateTaskStateForm(state: TaskStateFormState): string | null {
-  return (
-    taskStateNameError(state.tast_name) ??
-    taskStateOrderError(state.tast_order)
-  );
+export function validateTaskStateForm(
+ state: TaskStateFormState,
+): string | null {
+ return (
+  taskStateNameError(state.tast_name) ?? taskStateOrderError(state.tast_order)
+ );
 }
 
 /**
@@ -73,22 +74,25 @@ export function validateTaskStateForm(state: TaskStateFormState): string | null 
  * El caller provee `mode` para decidir qué RPC invocar.
  */
 export function buildStateSubmitParams(
-  mode: TaskStateFormMode,
-  state: TaskStateFormState,
-  existingStateId: string | null,
-): { stateId: string | null; input: { tast_name: string; tast_order: number } } {
-  if (mode === "update" && !existingStateId) {
-    throw new Error("existingStateId requerido para modo update");
-  }
-  const validationError = validateTaskStateForm(state);
-  if (validationError) {
-    throw new Error(`Validación falló: ${validationError}`);
-  }
-  return {
-    stateId: existingStateId,
-    input: {
-      tast_name: state.tast_name.trim(),
-      tast_order: state.tast_order,
-    },
-  };
+ mode: TaskStateFormMode,
+ state: TaskStateFormState,
+ existingStateId: string | null,
+): {
+ stateId: string | null;
+ input: { tast_name: string; tast_order: number };
+} {
+ if (mode === "update" && !existingStateId) {
+  throw new Error("existingStateId requerido para modo update");
+ }
+ const validationError = validateTaskStateForm(state);
+ if (validationError) {
+  throw new Error(`Validación falló: ${validationError}`);
+ }
+ return {
+  stateId: existingStateId,
+  input: {
+   tast_name: state.tast_name.trim(),
+   tast_order: state.tast_order,
+  },
+ };
 }

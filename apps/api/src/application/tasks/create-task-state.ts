@@ -23,8 +23,13 @@ export class CreateTaskState {
   constructor(private readonly deps: CreateTaskStateDependencies) {}
 
   async execute(input: CreateTaskStateInput): Promise<TaskStateRow> {
-    const existing = await this.deps.taskStateRepository.findByUser(input.userId);
-    const maxOrder = existing.reduce((acc, row) => Math.max(acc, row.order), -1);
+    const existing = await this.deps.taskStateRepository.findByUser(
+      input.userId,
+    );
+    const maxOrder = existing.reduce(
+      (acc, row) => Math.max(acc, row.order),
+      -1,
+    );
 
     const now = this.deps.clock.now();
     const row: TaskStateRow = {

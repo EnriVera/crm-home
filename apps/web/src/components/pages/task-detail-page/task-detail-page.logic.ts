@@ -7,13 +7,13 @@
  */
 
 export interface DeleteTaskParams {
-  taskId: string;
-  userId: string;
+ taskId: string;
+ userId: string;
 }
 
 export interface DeleteConfirmationState {
-  visible: boolean;
-  taskId: string | null;
+ visible: boolean;
+ taskId: string | null;
 }
 
 /**
@@ -23,7 +23,7 @@ export interface DeleteConfirmationState {
  * - La page lee `searchParams.get("edit") === "true"` y monta el TaskForm.
  */
 export function editUrl(taskId: string): string {
-  return `/tasks/${taskId}?edit=true`;
+ return `/tasks/${taskId}?edit=true`;
 }
 
 /** URL de retorno tras Eliminar exitosamente. */
@@ -34,17 +34,17 @@ export const TASKS_LIST_PATH = "/tasks";
  * `open(taskId)` lo cambia a `visible = true` con el taskId.
  */
 export function initialDeleteConfirmationState(): DeleteConfirmationState {
-  return { visible: false, taskId: null };
+ return { visible: false, taskId: null };
 }
 
 export function openDeleteConfirmation(
-  taskId: string,
+ taskId: string,
 ): DeleteConfirmationState {
-  return { visible: true, taskId };
+ return { visible: true, taskId };
 }
 
 export function closeDeleteConfirmation(): DeleteConfirmationState {
-  return { visible: false, taskId: null };
+ return { visible: false, taskId: null };
 }
 
 /**
@@ -53,9 +53,9 @@ export function closeDeleteConfirmation(): DeleteConfirmationState {
  * presente.
  */
 export function isEditModeFromSearchParams(
-  searchParams: URLSearchParams,
+ searchParams: URLSearchParams,
 ): boolean {
-  return searchParams.get("edit") === "true";
+ return searchParams.get("edit") === "true";
 }
 
 /**
@@ -63,11 +63,11 @@ export function isEditModeFromSearchParams(
  * El handler de la page llama esto antes de invocar el RPC.
  */
 export function buildRemoveParams(
-  taskId: string,
-  userId: string,
+ taskId: string,
+ userId: string,
 ): DeleteTaskParams {
-  if (!taskId || !userId) {
-    throw new Error("taskId y userId son requeridos");
-  }
-  return { taskId, userId };
+ if (!taskId || !userId) {
+  throw new Error("taskId y userId son requeridos");
+ }
+ return { taskId, userId };
 }

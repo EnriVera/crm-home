@@ -12,10 +12,22 @@ describe("ListClientsForSelector", () => {
   });
 
   test("filtra por userId y aplica substring case-insensitive sobre name", async () => {
-    await repo.rows.set("c1", makeClient({ id: "c1", userId: "u1", name: "Acme Corp" }));
-    await repo.rows.set("c2", makeClient({ id: "c2", userId: "u1", name: "Globex" }));
-    await repo.rows.set("c3", makeClient({ id: "c3", userId: "u1", name: "ACME Subsidiary" }));
-    await repo.rows.set("c4", makeClient({ id: "c4", userId: "u2", name: "Acme Other" }));
+    await repo.rows.set(
+      "c1",
+      makeClient({ id: "c1", userId: "u1", name: "Acme Corp" }),
+    );
+    await repo.rows.set(
+      "c2",
+      makeClient({ id: "c2", userId: "u1", name: "Globex" }),
+    );
+    await repo.rows.set(
+      "c3",
+      makeClient({ id: "c3", userId: "u1", name: "ACME Subsidiary" }),
+    );
+    await repo.rows.set(
+      "c4",
+      makeClient({ id: "c4", userId: "u2", name: "Acme Other" }),
+    );
 
     const result = await sut.execute({ userId: "u1", query: "acme" });
     expect(result.map((r) => r.id).sort()).toEqual(["c1", "c3"]);
@@ -29,7 +41,11 @@ describe("ListClientsForSelector", () => {
       );
     }
 
-    const result = await sut.execute({ userId: "u1", query: "Client", limit: 100 });
+    const result = await sut.execute({
+      userId: "u1",
+      query: "Client",
+      limit: 100,
+    });
     expect(result.length).toBe(50);
   });
 
@@ -41,7 +57,11 @@ describe("ListClientsForSelector", () => {
       );
     }
 
-    const result = await sut.execute({ userId: "u1", query: "Match", limit: 5 });
+    const result = await sut.execute({
+      userId: "u1",
+      query: "Match",
+      limit: 5,
+    });
     expect(result.length).toBe(5);
   });
 });

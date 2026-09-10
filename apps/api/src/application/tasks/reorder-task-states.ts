@@ -31,7 +31,10 @@ export class ReorderTaskStates {
     const allIds = new Set(all.map((s) => s.id));
     const inputIds = new Set(input.stateOrders.map((s) => s.id));
 
-    if (allIds.size !== inputIds.size || ![...allIds].every((id) => inputIds.has(id))) {
+    if (
+      allIds.size !== inputIds.size ||
+      ![...allIds].every((id) => inputIds.has(id))
+    ) {
       throw new Unauthorized(
         "Reorder must cover all active states of the user (no partial reorder)",
       );

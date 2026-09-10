@@ -1,4 +1,7 @@
-import { KANBAN_DEFAULT_STEP, KANBAN_GAP_REBALANCE_THRESHOLD } from "./constants";
+import {
+ KANBAN_DEFAULT_STEP,
+ KANBAN_GAP_REBALANCE_THRESHOLD,
+} from "./constants";
 
 /**
  * Helpers puros del algoritmo kanban. Sin imports de kysely/h3/nitro, sin
@@ -17,8 +20,11 @@ import { KANBAN_DEFAULT_STEP, KANBAN_GAP_REBALANCE_THRESHOLD } from "./constants
  * Si `prevOrder` o `nextOrder` son `undefined` (insert al inicio o al fin),
  * el caller debe usar `prependOrder` o `appendOrder` respectivamente.
  */
-export function computeInsertOrder(prevOrder: number, nextOrder: number): number {
-  return (prevOrder + nextOrder) / 2;
+export function computeInsertOrder(
+ prevOrder: number,
+ nextOrder: number,
+): number {
+ return (prevOrder + nextOrder) / 2;
 }
 
 /**
@@ -26,7 +32,7 @@ export function computeInsertOrder(prevOrder: number, nextOrder: number): number
  * Si sí, el caso de uso debe disparar `rebalanceColumn` antes de persistir.
  */
 export function shouldRebalance(gap: number): boolean {
-  return Math.abs(gap) < KANBAN_GAP_REBALANCE_THRESHOLD;
+ return Math.abs(gap) < KANBAN_GAP_REBALANCE_THRESHOLD;
 }
 
 /**
@@ -37,12 +43,12 @@ export function shouldRebalance(gap: number): boolean {
  * `taskRepository.persistOrders(rows, trx?)` dentro de la misma unidad de trabajo.
  */
 export function rebalanceColumn<R extends { id: string; order: number }>(
-  rows: R[],
+ rows: R[],
 ): Array<R & { order: number }> {
-  return rows.map((row, index) => ({
-    ...row,
-    order: KANBAN_DEFAULT_STEP * (index + 1),
-  }));
+ return rows.map((row, index) => ({
+  ...row,
+  order: KANBAN_DEFAULT_STEP * (index + 1),
+ }));
 }
 
 /**
@@ -50,9 +56,9 @@ export function rebalanceColumn<R extends { id: string; order: number }>(
  * Si la columna está vacía, devuelve el primer múltiplo (1024).
  */
 export function appendOrder<R extends { order: number }>(rows: R[]): number {
-  if (rows.length === 0) return KANBAN_DEFAULT_STEP;
-  const max = rows.reduce((acc, r) => Math.max(acc, r.order), 0);
-  return max + KANBAN_DEFAULT_STEP;
+ if (rows.length === 0) return KANBAN_DEFAULT_STEP;
+ const max = rows.reduce((acc, r) => Math.max(acc, r.order), 0);
+ return max + KANBAN_DEFAULT_STEP;
 }
 
 /**
@@ -63,7 +69,10 @@ export function appendOrder<R extends { order: number }>(rows: R[]): number {
  * Si la columna está vacía, devuelve el primer múltiplo (1024).
  */
 export function prependOrder<R extends { order: number }>(rows: R[]): number {
-  if (rows.length === 0) return KANBAN_DEFAULT_STEP;
-  const min = rows.reduce((acc, r) => Math.min(acc, r.order), Number.POSITIVE_INFINITY);
-  return min / 2;
+ if (rows.length === 0) return KANBAN_DEFAULT_STEP;
+ const min = rows.reduce(
+  (acc, r) => Math.min(acc, r.order),
+  Number.POSITIVE_INFINITY,
+ );
+ return min / 2;
 }

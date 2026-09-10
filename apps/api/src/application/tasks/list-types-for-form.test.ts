@@ -3,7 +3,9 @@ import { InMemoryTypeLookupRepository } from "./test-helpers";
 import type { TypeCategoriesClientRow } from "../../domain/tasks/types";
 import { ListTypesForForm } from "./list-types-for-form";
 
-function makeRow(overrides: Partial<TypeCategoriesClientRow>): TypeCategoriesClientRow {
+function makeRow(
+  overrides: Partial<TypeCategoriesClientRow>,
+): TypeCategoriesClientRow {
   return {
     id: "row-1",
     userId: "u1",
@@ -44,8 +46,14 @@ describe("ListTypesForForm", () => {
   });
 
   test("excluye filas de otros usuarios", async () => {
-    await repo.rows.set("g1", makeRow({ id: "g1", userId: "u1", clientId: null }));
-    await repo.rows.set("g2", makeRow({ id: "g2", userId: "u2", clientId: null }));
+    await repo.rows.set(
+      "g1",
+      makeRow({ id: "g1", userId: "u1", clientId: null }),
+    );
+    await repo.rows.set(
+      "g2",
+      makeRow({ id: "g2", userId: "u2", clientId: null }),
+    );
 
     const result = await sut.execute({ userId: "u1" });
     expect(result.map((r) => r.id)).toEqual(["g1"]);

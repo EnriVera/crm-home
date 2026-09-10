@@ -2,12 +2,12 @@ import type { CategoryLookupRepository } from "../../domain/ports/category-looku
 import type { CategoryRow } from "../../domain/tasks/types";
 
 export interface ListCategoriesByTypeInput {
-  userId: string;
-  typeId: string;
+ userId: string;
+ typeId: string;
 }
 
 export interface ListCategoriesByTypeDependencies {
-  categoryLookupRepository: CategoryLookupRepository;
+ categoryLookupRepository: CategoryLookupRepository;
 }
 
 /**
@@ -15,12 +15,12 @@ export interface ListCategoriesByTypeDependencies {
  * Devuelve las categorías del usuario que pertenecen al `typeId` dado.
  */
 export class ListCategoriesByType {
-  constructor(private readonly deps: ListCategoriesByTypeDependencies) {}
+ constructor(private readonly deps: ListCategoriesByTypeDependencies) {}
 
-  async execute(input: ListCategoriesByTypeInput): Promise<CategoryRow[]> {
-    return this.deps.categoryLookupRepository.listByType({
-      userId: input.userId,
-      typeId: input.typeId,
-    });
-  }
+ async execute(input: ListCategoriesByTypeInput): Promise<CategoryRow[]> {
+  return this.deps.categoryLookupRepository.listByType({
+   userId: input.userId,
+   typeId: input.typeId,
+  });
+ }
 }

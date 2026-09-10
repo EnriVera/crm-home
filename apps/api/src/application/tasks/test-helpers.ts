@@ -21,7 +21,11 @@ import type { TaskStateRepository } from "../../domain/ports/task-state-reposito
 import type { ClientLookupRepository } from "../../domain/ports/client-lookup-repository";
 import type { TypeLookupRepository } from "../../domain/ports/type-lookup-repository";
 import type { CategoryLookupRepository } from "../../domain/ports/category-lookup-repository";
-import type { Attributes, SpanHandle, Telemetry } from "../../domain/ports/telemetry";
+import type {
+  Attributes,
+  SpanHandle,
+  Telemetry,
+} from "../../domain/ports/telemetry";
 import type { TransactionManager } from "../../domain/ports/transaction-manager";
 import type { Transaction } from "../../domain/ports/transaction";
 import type {
@@ -51,13 +55,19 @@ export class InMemoryTaskRepository implements TaskRepository {
     _trx?: Transaction,
   ): Promise<TaskRow[]> {
     return Array.from(this.rows.values())
-      .filter((r) => r.userId === userId && r.stateId === stateId && !r.deletedAt)
+      .filter(
+        (r) => r.userId === userId && r.stateId === stateId && !r.deletedAt,
+      )
       .sort((a, b) => a.kanbanOrder - b.kanbanOrder);
   }
   async insert(task: TaskRow, _trx?: Transaction): Promise<void> {
     this.rows.set(task.id, task);
   }
-  async update(id: string, patch: Partial<TaskRow>, _trx?: Transaction): Promise<void> {
+  async update(
+    id: string,
+    patch: Partial<TaskRow>,
+    _trx?: Transaction,
+  ): Promise<void> {
     const current = this.rows.get(id);
     if (!current) throw new Error(`task ${id} not found`);
     this.rows.set(id, { ...current, ...patch });
@@ -66,12 +76,15 @@ export class InMemoryTaskRepository implements TaskRepository {
     const current = this.rows.get(id);
     if (current) this.rows.set(id, { ...current, deletedAt: new Date() });
   }
-  async moveTask(params: {
-    taskId: string;
-    targetStateId: string;
-    prevTaskId?: string;
-    nextTaskId?: string;
-  }, _trx?: Transaction): Promise<void> {
+  async moveTask(
+    params: {
+      taskId: string;
+      targetStateId: string;
+      prevTaskId?: string;
+      nextTaskId?: string;
+    },
+    _trx?: Transaction,
+  ): Promise<void> {
     const current = this.rows.get(params.taskId);
     if (!current) return;
     this.rows.set(params.taskId, { ...current, stateId: params.targetStateId });
@@ -79,7 +92,8 @@ export class InMemoryTaskRepository implements TaskRepository {
   async rebalanceColumn(rows: TaskRow[], _trx?: Transaction): Promise<void> {
     for (const row of rows) {
       const current = this.rows.get(row.id);
-      if (current) this.rows.set(row.id, { ...current, kanbanOrder: row.kanbanOrder });
+      if (current)
+        this.rows.set(row.id, { ...current, kanbanOrder: row.kanbanOrder });
     }
   }
   async persistOrders(
@@ -96,10 +110,16 @@ export class InMemoryTaskRepository implements TaskRepository {
 export class InMemoryTaskStateRepository implements TaskStateRepository {
   rows = new Map<string, TaskStateRow>();
 
-  async findById(id: string, _trx?: Transaction): Promise<TaskStateRow | undefined> {
+  async findById(
+    id: string,
+    _trx?: Transaction,
+  ): Promise<TaskStateRow | undefined> {
     return this.rows.get(id);
   }
-  async findByUser(userId: string, _trx?: Transaction): Promise<TaskStateRow[]> {
+  async findByUser(
+    userId: string,
+    _trx?: Transaction,
+  ): Promise<TaskStateRow[]> {
     return Array.from(this.rows.values())
       .filter((r) => r.userId === userId && !r.deletedAt)
       .sort((a, b) => a.order - b.order);
@@ -168,7 +188,9 @@ export class InMemoryTypeLookupRepository implements TypeLookupRepository {
   }
 }
 
-export class InMemoryCategoryLookupRepository implements CategoryLookupRepository {
+export class InMemoryCategoryLookupRepository
+  implements CategoryLookupRepository
+{
   rows = new Map<string, CategoryRow>();
 
   async listByType(params: {
@@ -176,7 +198,10 @@ export class InMemoryCategoryLookupRepository implements CategoryLookupRepositor
     typeId: string;
   }): Promise<CategoryRow[]> {
     return Array.from(this.rows.values()).filter(
-      (r) => r.userId === params.userId && r.typeId === params.typeId && !r.deletedAt,
+      (r) =>
+        r.userId === params.userId &&
+        r.typeId === params.typeId &&
+        !r.deletedAt,
     );
   }
 }
@@ -254,7 +279,9 @@ export function makeTask(overrides: Partial<TaskRow> = {}): TaskRow {
   };
 }
 
-export function makeTaskState(overrides: Partial<TaskStateRow> = {}): TaskStateRow {
+export function makeTaskState(
+  overrides: Partial<TaskStateRow> = {},
+): TaskStateRow {
   return {
     id: "state-1",
     userId: "u1",

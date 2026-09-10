@@ -34,7 +34,10 @@ describe("ListCategoriesByType", () => {
   });
 
   test("filtra por userId y excluye soft-deleted", async () => {
-    await repo.rows.set("c1", makeCategory({ id: "c1", userId: "u1", typeId: "type-1" }));
+    await repo.rows.set(
+      "c1",
+      makeCategory({ id: "c1", userId: "u1", typeId: "type-1" }),
+    );
     await repo.rows.set(
       "c2",
       makeCategory({ id: "c2", userId: "u2", typeId: "type-1" }),

@@ -68,17 +68,27 @@ function buildDeps(): { deps: TasksRouteDependencies; mocks: MockUseCases } {
     listTasks: listTasksMock as unknown as ListTasks,
     getTask: getTaskMock as unknown as GetTask,
     createTask: createTaskMock as unknown as CreateTask,
-    updateTask: updateTaskMock as unknown as TasksRouteDependencies["updateTask"],
+    updateTask:
+      updateTaskMock as unknown as TasksRouteDependencies["updateTask"],
     moveTask: moveTaskMock as unknown as MoveTask,
-    deleteTask: deleteTaskMock as unknown as TasksRouteDependencies["deleteTask"],
-    listTaskStates: listTaskStatesMock as unknown as TasksRouteDependencies["listTaskStates"],
-    createTaskState: createTaskStateMock as unknown as TasksRouteDependencies["createTaskState"],
-    updateTaskState: updateTaskStateMock as unknown as TasksRouteDependencies["updateTaskState"],
-    deleteTaskState: deleteTaskStateMock as unknown as TasksRouteDependencies["deleteTaskState"],
-    reorderTaskStates: reorderTaskStatesMock as unknown as TasksRouteDependencies["reorderTaskStates"],
-    listClientsForSelector: listClientsMock as unknown as TasksRouteDependencies["listClientsForSelector"],
-    listTypesForForm: listTypesMock as unknown as TasksRouteDependencies["listTypesForForm"],
-    listCategoriesByType: listCategoriesMock as unknown as TasksRouteDependencies["listCategoriesByType"],
+    deleteTask:
+      deleteTaskMock as unknown as TasksRouteDependencies["deleteTask"],
+    listTaskStates:
+      listTaskStatesMock as unknown as TasksRouteDependencies["listTaskStates"],
+    createTaskState:
+      createTaskStateMock as unknown as TasksRouteDependencies["createTaskState"],
+    updateTaskState:
+      updateTaskStateMock as unknown as TasksRouteDependencies["updateTaskState"],
+    deleteTaskState:
+      deleteTaskStateMock as unknown as TasksRouteDependencies["deleteTaskState"],
+    reorderTaskStates:
+      reorderTaskStatesMock as unknown as TasksRouteDependencies["reorderTaskStates"],
+    listClientsForSelector:
+      listClientsMock as unknown as TasksRouteDependencies["listClientsForSelector"],
+    listTypesForForm:
+      listTypesMock as unknown as TasksRouteDependencies["listTypesForForm"],
+    listCategoriesByType:
+      listCategoriesMock as unknown as TasksRouteDependencies["listCategoriesByType"],
   };
 
   const mocks: MockUseCases = {
@@ -91,7 +101,10 @@ function buildDeps(): { deps: TasksRouteDependencies; mocks: MockUseCases } {
   return { deps, mocks };
 }
 
-function makeEvent(body: unknown, headers: Record<string, string> = {}): H3Event {
+function makeEvent(
+  body: unknown,
+  headers: Record<string, string> = {},
+): H3Event {
   // h3 v2 lee el body vía Fetch API (event.req.text()), no del legacy node.req.body.
   const request = new Request("http://localhost/rpc/tasks/test", {
     method: "POST",
@@ -165,8 +178,13 @@ describe("createMoveTaskHandler — wrapping + error mapping", () => {
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body).toEqual({ ok: true });
-    expect((mocks.moveTask.execute as unknown as { calls: unknown[][] }).calls.length).toBe(1);
-    const [input] = (mocks.moveTask.execute as unknown as { calls: unknown[][] }).calls[0]!;
+    expect(
+      (mocks.moveTask.execute as unknown as { calls: unknown[][] }).calls
+        .length,
+    ).toBe(1);
+    const [input] = (
+      mocks.moveTask.execute as unknown as { calls: unknown[][] }
+    ).calls[0]!;
     expect(input).toEqual({
       userId: "u1",
       taskId: T1,

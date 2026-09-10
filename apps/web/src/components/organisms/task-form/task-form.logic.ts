@@ -10,7 +10,10 @@
  * `useTaskFormState()` que devuelve un reducer puro.
  */
 
-import { resetCategoryIfIncompatible, type TaskFormInput } from "../../../lib/tasks/tasks-form";
+import {
+  resetCategoryIfIncompatible,
+  type TaskFormInput,
+} from "../../../lib/tasks/tasks-form";
 import {
   taskTitleRequired,
   taskDescriptionLength,
@@ -67,7 +70,9 @@ export function applyTaskFormAction(
 }
 
 /** Estado inicial del form. */
-export function initialTaskFormState(input: Partial<TaskFormInput> = {}): TaskFormState {
+export function initialTaskFormState(
+  input: Partial<TaskFormInput> = {},
+): TaskFormState {
   return {
     title: "",
     description: null,
@@ -88,8 +93,8 @@ export function isCategoryDisabled(state: TaskFormState): boolean {
 }
 
 /** Mensaje de validación agregado para el form (retorna la primera key i18n con error, o null). */
-export function firstValidationError(
-  state: TaskFormState,
-): string | null {
-  return taskTitleRequired(state.title) ?? taskDescriptionLength(state.description);
+export function firstValidationError(state: TaskFormState): string | null {
+  return (
+    taskTitleRequired(state.title) ?? taskDescriptionLength(state.description)
+  );
 }

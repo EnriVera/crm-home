@@ -31,6 +31,8 @@ export class KyselyTypeLookupRepository implements TypeLookupRepository {
     }
 
     const rows = await query.execute();
-    return rows.map((row) => mapTypeCategoriesClientRow(row as TypeCategoriesClientDbRow));
+    return rows.map((row) =>
+      mapTypeCategoriesClientRow(row as TypeCategoriesClientDbRow),
+    );
   }
 }

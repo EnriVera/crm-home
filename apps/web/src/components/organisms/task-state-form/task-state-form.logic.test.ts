@@ -77,21 +77,30 @@ describe("validateTaskStateForm", () => {
   });
 
   test("devuelve la primera key de error (order)", () => {
-    const state = initialTaskStateFormState({ tast_name: "OK", tast_order: -1 });
+    const state = initialTaskStateFormState({
+      tast_name: "OK",
+      tast_order: -1,
+    });
     expect(validateTaskStateForm(state)).toBe("tasks.statuses.orderInvalid");
   });
 });
 
 describe("buildStateSubmitParams", () => {
   test("modo create retorna params sin stateId", () => {
-    const state = initialTaskStateFormState({ tast_name: "Nuevo", tast_order: 1 });
+    const state = initialTaskStateFormState({
+      tast_name: "Nuevo",
+      tast_order: 1,
+    });
     const params = buildStateSubmitParams("create", state, null);
     expect(params.stateId).toBeNull();
     expect(params.input).toEqual({ tast_name: "Nuevo", tast_order: 1 });
   });
 
   test("modo update retorna params con stateId", () => {
-    const state = initialTaskStateFormState({ tast_name: "Editado", tast_order: 3 });
+    const state = initialTaskStateFormState({
+      tast_name: "Editado",
+      tast_order: 3,
+    });
     const params = buildStateSubmitParams("update", state, "s-1");
     expect(params.stateId).toBe("s-1");
     expect(params.input).toEqual({ tast_name: "Editado", tast_order: 3 });

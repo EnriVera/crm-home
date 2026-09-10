@@ -11,30 +11,30 @@
  */
 
 export function buildBaseViewStorageKey(
-  id: string | undefined,
-  moduleId: string,
+ id: string | undefined,
+ moduleId: string,
 ): string {
-  const suffix = id ?? "default";
-  return `base-view:${moduleId}:${suffix}`;
+ const suffix = id ?? "default";
+ return `base-view:${moduleId}:${suffix}`;
 }
 
 export function serializeFilters<T extends Record<string, unknown>>(
-  filters: T,
+ filters: T,
 ): string {
-  return JSON.stringify(filters);
+ return JSON.stringify(filters);
 }
 
 export function parsePersistedFilters<T extends Record<string, unknown>>(
-  raw: string | null | undefined,
+ raw: string | null | undefined,
 ): T {
-  if (!raw) return {} as T;
-  try {
-    const parsed = JSON.parse(raw);
-    if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
-      return parsed as T;
-    }
-    return {} as T;
-  } catch {
-    return {} as T;
+ if (!raw) return {} as T;
+ try {
+  const parsed = JSON.parse(raw);
+  if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+   return parsed as T;
   }
+  return {} as T;
+ } catch {
+  return {} as T;
+ }
 }

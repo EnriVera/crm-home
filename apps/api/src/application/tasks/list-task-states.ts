@@ -2,11 +2,11 @@ import type { TaskStateRepository } from "../../domain/ports/task-state-reposito
 import type { TaskStateRow } from "../../domain/tasks/types";
 
 export interface ListTaskStatesInput {
-  userId: string;
+ userId: string;
 }
 
 export interface ListTaskStatesDependencies {
-  taskStateRepository: TaskStateRepository;
+ taskStateRepository: TaskStateRepository;
 }
 
 /**
@@ -14,9 +14,9 @@ export interface ListTaskStatesDependencies {
  * `order` ascendente (el adapter se encarga del orden; aquí no re-ordenamos).
  */
 export class ListTaskStates {
-  constructor(private readonly deps: ListTaskStatesDependencies) {}
+ constructor(private readonly deps: ListTaskStatesDependencies) {}
 
-  async execute(input: ListTaskStatesInput): Promise<TaskStateRow[]> {
-    return this.deps.taskStateRepository.findByUser(input.userId);
-  }
+ async execute(input: ListTaskStatesInput): Promise<TaskStateRow[]> {
+  return this.deps.taskStateRepository.findByUser(input.userId);
+ }
 }

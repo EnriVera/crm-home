@@ -84,9 +84,7 @@ function readUserId(event: H3Event): string {
   return userId;
 }
 
-async function runOrMapError<T>(
-  fn: () => Promise<T>,
-): Promise<Response> {
+async function runOrMapError<T>(fn: () => Promise<T>): Promise<Response> {
   try {
     const result = await fn();
     // Si el handler ya construyó un Response (p. ej. validation 400), pasarlo
@@ -368,7 +366,9 @@ export function createListTypesForFormHandler(deps: TasksRouteDependencies) {
     });
 }
 
-export function createListCategoriesByTypeHandler(deps: TasksRouteDependencies) {
+export function createListCategoriesByTypeHandler(
+  deps: TasksRouteDependencies,
+) {
   return async (event: H3Event): Promise<Response> =>
     runOrMapError(async () => {
       const userId = readUserId(event);

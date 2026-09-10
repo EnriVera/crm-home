@@ -36,9 +36,7 @@ describe("buildBaseViewStorageKey", () => {
 
 describe("serializeFilters", () => {
   test("serializa filtros a JSON string", () => {
-    expect(serializeFilters({ search: "fact" })).toBe(
-      '{"search":"fact"}',
-    );
+    expect(serializeFilters({ search: "fact" })).toBe('{"search":"fact"}');
   });
 
   test("objeto vacío serializa como {}", () => {

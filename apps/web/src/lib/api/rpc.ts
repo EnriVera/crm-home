@@ -30,8 +30,7 @@ import type { authContract, tasksContract } from "@crm/types";
  * `vbscript:`) y strings vacíos. Cualquier URL que matchea es segura de
  * pasar a `RPCLink`.
  */
-const ALLOWED_BASE_URL_PATTERN =
-  /^(\/[^\s]*|https?:\/\/[^\s]+)$/i;
+const ALLOWED_BASE_URL_PATTERN = /^(\/[^\s]*|https?:\/\/[^\s]+)$/i;
 
 export type AuthRpcClient = ContractRouterClient<typeof authContract>;
 export type TasksRpcClient = ContractRouterClient<typeof tasksContract>;

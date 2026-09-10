@@ -124,7 +124,8 @@ export function createRpcHandler(
     if (path === "/rpc/tasks/states/reorder") return reorderTaskStates(event);
     if (path === "/rpc/tasks/clients/search") return clientsSearch(event);
     if (path === "/rpc/tasks/types-for-form") return typesForForm(event);
-    if (path === "/rpc/tasks/categories-by-type") return categoriesByType(event);
+    if (path === "/rpc/tasks/categories-by-type")
+      return categoriesByType(event);
 
     return new Response("Not Found", { status: 404 });
   };

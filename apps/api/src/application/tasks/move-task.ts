@@ -2,10 +2,7 @@ import type { TaskRepository } from "../../domain/ports/task-repository";
 import type { TaskStateRepository } from "../../domain/ports/task-state-repository";
 import type { Telemetry } from "../../domain/ports/telemetry";
 import type { TransactionManager } from "../../domain/ports/transaction-manager";
-import {
-  InvalidKanbanOrder,
-  TaskNotFound,
-} from "./errors";
+import { InvalidKanbanOrder, TaskNotFound } from "./errors";
 import {
   appendOrder,
   computeInsertOrder,
@@ -88,7 +85,9 @@ export class MoveTask {
           const prev = filtered.find((row) => row.id === input.prevTaskId);
           const next = filtered.find((row) => row.id === input.nextTaskId);
           if (!prev || !next) {
-            throw new InvalidKanbanOrder("Neighbor task not found in target column");
+            throw new InvalidKanbanOrder(
+              "Neighbor task not found in target column",
+            );
           }
           newOrder = computeInsertOrder(prev.kanbanOrder, next.kanbanOrder);
           if (shouldRebalance(next.kanbanOrder - prev.kanbanOrder)) {

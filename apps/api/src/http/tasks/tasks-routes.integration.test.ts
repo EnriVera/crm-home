@@ -1,5 +1,8 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
-import { cleanupAuthTables, cleanupTasksTables } from "../../infrastructure/kysely/test-cleanup";
+import {
+  cleanupAuthTables,
+  cleanupTasksTables,
+} from "../../infrastructure/kysely/test-cleanup";
 import { createAppFetch } from "../composition-root";
 
 /**
@@ -34,7 +37,9 @@ describe.skipIf(!databaseUrl)("tasks HTTP endpoints (integration)", () => {
 
   afterAll(async () => {
     if (!databaseUrl) return;
-    const { createDatabase } = await import("../../infrastructure/kysely/database");
+    const { createDatabase } = await import(
+      "../../infrastructure/kysely/database"
+    );
     const db = createDatabase(databaseUrl);
     await cleanupTasksTables(db);
     await cleanupAuthTables(db);

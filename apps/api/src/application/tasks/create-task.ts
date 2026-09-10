@@ -51,7 +51,10 @@ export class CreateTask {
       (acc, row) => Math.max(acc, row.kanbanOrder),
       0,
     );
-    const order = column.length === 0 ? KANBAN_DEFAULT_STEP : maxOrder + KANBAN_DEFAULT_STEP;
+    const order =
+      column.length === 0
+        ? KANBAN_DEFAULT_STEP
+        : maxOrder + KANBAN_DEFAULT_STEP;
 
     const now = this.deps.clock.now();
     const row: TaskRow = {
