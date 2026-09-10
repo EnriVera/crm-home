@@ -10,8 +10,27 @@ import {
   createVerifyOtpHandler,
   type AuthRouteDependencies,
 } from "./auth/auth-routes";
+import {
+  createListCategoriesByTypeHandler,
+  createListClientsSearchHandler as createClientsSearchHandler,
+  createCreateTaskHandler,
+  createCreateTaskStateHandler,
+  createGetTaskHandler,
+  createListTaskStatesHandler,
+  createListTasksHandler,
+  createMoveTaskHandler,
+  createRemoveTaskHandler,
+  createRemoveTaskStateHandler,
+  createReorderTaskStatesHandler,
+  createListTypesForFormHandler as createTypesForFormHandler,
+  createUpdateTaskHandler,
+  createUpdateTaskStateHandler,
+  type TasksRouteDependencies,
+} from "./tasks/tasks-routes";
 
-export interface RouterDependencies extends AuthRouteDependencies {
+export interface RouterDependencies
+  extends AuthRouteDependencies,
+    TasksRouteDependencies {
   getHealth: GetHealth;
 }
 
@@ -42,6 +61,22 @@ export function createRpcHandler(
   const verifyOtp = createVerifyOtpHandler(deps);
   const session = createSessionHandler(deps);
   const logout = createLogoutHandler(deps);
+
+  // Tasks handlers
+  const listTasks = createListTasksHandler(deps);
+  const getTask = createGetTaskHandler(deps);
+  const createTask = createCreateTaskHandler(deps);
+  const updateTask = createUpdateTaskHandler(deps);
+  const moveTask = createMoveTaskHandler(deps);
+  const removeTask = createRemoveTaskHandler(deps);
+  const listTaskStates = createListTaskStatesHandler(deps);
+  const createTaskState = createCreateTaskStateHandler(deps);
+  const updateTaskState = createUpdateTaskStateHandler(deps);
+  const removeTaskState = createRemoveTaskStateHandler(deps);
+  const reorderTaskStates = createReorderTaskStatesHandler(deps);
+  const clientsSearch = createClientsSearchHandler(deps);
+  const typesForForm = createTypesForFormHandler(deps);
+  const categoriesByType = createListCategoriesByTypeHandler(deps);
 
   return async (event: H3Event) => {
     let path: string;
@@ -74,6 +109,22 @@ export function createRpcHandler(
       const result = await logout(event);
       return Response.json(result);
     }
+
+    // Tasks — patrón preservado: if (path === "/rpc/...") sin RPCHandler wrapper.
+    if (path === "/rpc/tasks/list") return listTasks(event);
+    if (path === "/rpc/tasks/get") return getTask(event);
+    if (path === "/rpc/tasks/create") return createTask(event);
+    if (path === "/rpc/tasks/update") return updateTask(event);
+    if (path === "/rpc/tasks/move") return moveTask(event);
+    if (path === "/rpc/tasks/remove") return removeTask(event);
+    if (path === "/rpc/tasks/states/list") return listTaskStates(event);
+    if (path === "/rpc/tasks/states/create") return createTaskState(event);
+    if (path === "/rpc/tasks/states/update") return updateTaskState(event);
+    if (path === "/rpc/tasks/states/remove") return removeTaskState(event);
+    if (path === "/rpc/tasks/states/reorder") return reorderTaskStates(event);
+    if (path === "/rpc/tasks/clients/search") return clientsSearch(event);
+    if (path === "/rpc/tasks/types-for-form") return typesForForm(event);
+    if (path === "/rpc/tasks/categories-by-type") return categoriesByType(event);
 
     return new Response("Not Found", { status: 404 });
   };

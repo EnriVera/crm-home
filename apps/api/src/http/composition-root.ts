@@ -4,6 +4,20 @@ import { GetSession } from "../application/auth/get-session";
 import { Logout } from "../application/auth/logout";
 import { RequestOtp } from "../application/auth/request-otp";
 import { VerifyOtp } from "../application/auth/verify-otp";
+import { CreateTask } from "../application/tasks/create-task";
+import { CreateTaskState } from "../application/tasks/create-task-state";
+import { DeleteTask } from "../application/tasks/delete-task";
+import { DeleteTaskState } from "../application/tasks/delete-task-state";
+import { GetTask } from "../application/tasks/get-task";
+import { ListCategoriesByType } from "../application/tasks/list-categories-by-type";
+import { ListClientsForSelector } from "../application/tasks/list-clients-for-selector";
+import { ListTaskStates } from "../application/tasks/list-task-states";
+import { ListTasks } from "../application/tasks/list-tasks";
+import { ListTypesForForm } from "../application/tasks/list-types-for-form";
+import { MoveTask } from "../application/tasks/move-task";
+import { ReorderTaskStates } from "../application/tasks/reorder-task-states";
+import { UpdateTask } from "../application/tasks/update-task";
+import { UpdateTaskState } from "../application/tasks/update-task-state";
 import type { OtpGenerator } from "../domain/ports/otp-generator";
 import type { Telemetry } from "../domain/ports/telemetry";
 import { StaticHealthRepository } from "../infrastructure/health/static-health-repository";
@@ -12,10 +26,15 @@ import {
   type TelemetryEnv,
 } from "../infrastructure/otel/create-telemetry";
 import { createDatabase } from "../infrastructure/kysely/database";
+import { KyselyCategoryLookupRepository } from "../infrastructure/kysely/category-lookup-repository";
+import { KyselyClientLookupRepository } from "../infrastructure/kysely/client-lookup-repository";
 import { KyselyEmailSendingRepository } from "../infrastructure/kysely/email-sending-repository";
 import { KyselyLoginRepository } from "../infrastructure/kysely/login-repository";
 import { KyselySessionRepository } from "../infrastructure/kysely/session-repository";
+import { KyselyTaskRepository } from "../infrastructure/kysely/task-repository";
+import { KyselyTaskStateRepository } from "../infrastructure/kysely/task-state-repository";
 import { KyselyTransactionManager } from "../infrastructure/kysely/transaction-manager";
+import { KyselyTypeLookupRepository } from "../infrastructure/kysely/type-lookup-repository";
 import { KyselyUserRepository } from "../infrastructure/kysely/user-repository";
 import { KyselyUserSeedService } from "../infrastructure/kysely/user-seed-service";
 import { createOtpGenerator } from "../infrastructure/crypto/otp-generator";
@@ -78,6 +97,15 @@ export function createCompositionRoot(
     const emailSendingRepository = new KyselyEmailSendingRepository(db);
     const userSeedService = new KyselyUserSeedService({ db, idGenerator });
 
+    // Tasks module repos (PR-C).
+    // KyselyAttachmentRepository NO se instancia acá: stub de Fase 2.
+    // El gate `__attachment-not-in-composition.test.ts` rompe si lo cableamos.
+    const taskRepository = new KyselyTaskRepository(db);
+    const taskStateRepository = new KyselyTaskStateRepository(db);
+    const clientLookupRepository = new KyselyClientLookupRepository(db);
+    const typeLookupRepository = new KyselyTypeLookupRepository(db);
+    const categoryLookupRepository = new KyselyCategoryLookupRepository(db);
+
     const emailTemplateRenderer = new OctaneEmailTemplateRenderer();
 
     const requestOtp = new RequestOtp({
@@ -107,12 +135,65 @@ export function createCompositionRoot(
     });
     const logout = new Logout({ clock, sessionRepository, tokenHasher });
 
+    // Tasks use cases (PR-C)
+    const listTasks = new ListTasks({ taskRepository });
+    const getTask = new GetTask({ taskRepository });
+    const createTask = new CreateTask({
+      taskRepository,
+      taskStateRepository,
+      idGenerator,
+      clock,
+    });
+    const updateTask = new UpdateTask({ taskRepository });
+    const moveTask = new MoveTask({
+      taskRepository,
+      taskStateRepository,
+      transactionManager,
+      telemetry,
+    });
+    const deleteTask = new DeleteTask({ taskRepository });
+    const listTaskStates = new ListTaskStates({ taskStateRepository });
+    const createTaskState = new CreateTaskState({
+      taskStateRepository,
+      idGenerator,
+      clock,
+    });
+    const updateTaskState = new UpdateTaskState({ taskStateRepository });
+    const deleteTaskState = new DeleteTaskState({ taskStateRepository });
+    const reorderTaskStates = new ReorderTaskStates({
+      taskStateRepository,
+      transactionManager,
+    });
+    const listClientsForSelector = new ListClientsForSelector({
+      clientLookupRepository,
+    });
+    const listTypesForForm = new ListTypesForForm({
+      typeLookupRepository,
+    });
+    const listCategoriesByType = new ListCategoriesByType({
+      categoryLookupRepository,
+    });
+
     const rpcHandler = createRpcHandler({
       getHealth,
       requestOtp,
       verifyOtp,
       getSession,
       logout,
+      listTasks,
+      getTask,
+      createTask,
+      updateTask,
+      moveTask,
+      deleteTask,
+      listTaskStates,
+      createTaskState,
+      updateTaskState,
+      deleteTaskState,
+      reorderTaskStates,
+      listClientsForSelector,
+      listTypesForForm,
+      listCategoriesByType,
     });
     app.all("/rpc/**", (event) => rpcHandler(event));
   } else {
