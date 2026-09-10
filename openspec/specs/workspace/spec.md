@@ -112,15 +112,20 @@ PUEDEN venir únicamente de `@crm/types`.
 
 ### Requirement: Verificación y pinning de versiones (bloqueante)
 
-Antes de commitear cualquier `package.json` del scaffold, TODAS las dependencias
-clave DEBEN tener versión exacta pineada (sin rangos `^`/`~`) tras verificar su
-existencia y peer deps en el registry npm. En particular, el scope/nombre y las
-peer deps de React de `octanejs`/`tsrx` DEBEN verificarse antes del commit de
-`apps/web`. Si `octanejs`/`tsrx` no existe en npm o no resuelve con las peer deps
-requeridas, la implementación DEBE detenerse y escalar al usuario antes de
-sustituir el stack (la elección de framework es decisión del PRD, no del change).
-El scaffold NO DEBE introducir dependencias que requieran compilación nativa
-(node-gyp).
+Antes de commitear cualquier `package.json`, TODAS las dependencias clave DEBEN
+tener versión exacta pineada (sin rangos `^`/`~`) tras verificar su existencia y
+peer deps en el registry npm. En particular, el scope/nombre y las peer deps de
+React de `octanejs`/`tsrx` DEBEN verificarse antes del commit de `apps/web`. Si
+`octanejs`/`tsrx` no existe en npm o no resuelve con las peer deps requeridas,
+la implementación DEBE detenerse y escalar al usuario antes de sustituir el
+stack (la elección de framework es decisión del PRD, no del change). El scaffold
+NO DEBE introducir dependencias que requieran compilación nativa (node-gyp). Las
+dependencias nuevas de cada change también DEBEN pasar la misma verificación
+bloqueante antes de commitear los `package.json` que las declaran: existencia
+en npm, versiones exactas pineadas, compatibilidad de peer deps con el resto
+del stack y ausencia de compilación nativa. Si la verificación falla, la
+implementación DEBE detenerse y escalar al usuario; la sustitución del stack
+(p. ej. fallback a ReactCompat) NUNCA DEBE decidirse por cuenta propia.
 
 #### Scenario: Versiones verificadas y pineadas
 
@@ -128,11 +133,23 @@ El scaffold NO DEBE introducir dependencias que requieran compilación nativa
 - WHEN se prepara el commit del scaffold
 - THEN cada dependencia existe en npm, sus peer deps son compatibles y su versión aparece exacta (sin rangos) en los `package.json`
 
+#### Scenario: Dependencias de email verificadas antes del commit
+
+- GIVEN un change que introduce `@octanejs/email`, `@octanejs/email-cli` y/o un cliente SMTP (p. ej. nodemailer)
+- WHEN se prepara el commit de los `package.json` que las declaran
+- THEN `npm view` confirmó la existencia y versiones pineadas, sus peer deps son compatibles con `octane@0.2.3` y con las versiones de React del workspace, y cada versión aparece exacta (sin rangos) en los `package.json`
+
 #### Scenario: Escalación si octanejs no resuelve
 
 - GIVEN que `octanejs`/`tsrx` no existe en npm bajo el nombre/scope esperado o sus peer deps son incompatibles
 - WHEN ocurre esta situación durante la implementación
 - THEN el trabajo sobre `apps/web` se detiene, se documenta el hallazgo y se escala al usuario sin sustituir el framework por decisión propia
+
+#### Scenario: Escalación si una dependencia nueva del change no resuelve
+
+- GIVEN que una dependencia nueva introducida por un change (p. ej. `@octanejs/email`, `@octanejs/email-cli`, cliente SMTP) no existe en npm o sus peer deps son incompatibles con el resto del stack
+- WHEN ocurre esta situación durante la implementación
+- THEN el trabajo se detiene antes de commitear los `package.json` afectados, se documenta el hallazgo y se escala al usuario sin sustituir el stack por decisión propia
 
 ### Requirement: Smoke tests verdes en workspace raíz
 
