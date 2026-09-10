@@ -102,6 +102,61 @@ export interface CategoriesTable {
   cate_deleted_at: Date | null;
 }
 
+export interface ClientTable {
+  clie_id: string;
+  clie_user_id: string;
+  clie_name: string;
+  clie_email: string | null;
+  clie_areaphone: string | null;
+  clie_phone: string | null;
+  clie_created_at: Generated<Date>;
+  clie_updated_at: Generated<Date>;
+  clie_deleted_at: Date | null;
+}
+
+export interface TypeCategoriesClientTable {
+  tccl_id: string;
+  tccl_user_id: string;
+  tccl_type_id: string;
+  tccl_cate_id: string;
+  tccl_clie_id: string | null;
+  tccl_created_at: Generated<Date>;
+  tccl_updated_at: Generated<Date>;
+  tccl_deleted_at: Date | null;
+}
+
+export interface AttachmentTable {
+  atta_id: string;
+  atta_user_id: string;
+  atta_s3id: string;
+  atta_title: string;
+  atta_format: string;
+  atta_created_at: Generated<Date>;
+  atta_updated_at: Generated<Date>;
+  atta_deleted_at: Date | null;
+}
+
+export interface TaskAttachmentsTable {
+  taat_task_id: string;
+  taat_atta_id: string;
+  taat_created_at: Generated<Date>;
+}
+
+export interface TaskTable {
+  task_id: string;
+  task_user_id: string;
+  task_title: string;
+  task_description: string | null;
+  task_clie_id: string | null;
+  task_type_id: string;
+  task_cate_id: string | null;
+  task_tast_id: string;
+  task_kanban_order: number;
+  task_created_at: Generated<Date>;
+  task_updated_at: Generated<Date>;
+  task_deleted_at: Date | null;
+}
+
 export interface DatabaseSchema {
   sino: SinoTable;
   apps: AppsTable;
@@ -114,6 +169,11 @@ export interface DatabaseSchema {
   accounts: AccountsTable;
   types: TypesTable;
   categories: CategoriesTable;
+  client: ClientTable;
+  type_categories_client: TypeCategoriesClientTable;
+  attachments: AttachmentTable;
+  task_attachments: TaskAttachmentsTable;
+  task: TaskTable;
 }
 
 export type Database = Kysely<DatabaseSchema>;

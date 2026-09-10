@@ -155,6 +155,7 @@ listos; el commit se materializa en **WU8 / PR-D** (no aquí), según el plan.
 | --- | --- | --- | --- | --- | --- |
 | WU0 | checklist de spike (arriba) | registry + peers OK | pin + `--frozen-lockfile` EXIT 0 | gate cerrado PASS; no se commitea `apps/web/package.json` aquí (queda para WU8) | `bun install --frozen-lockfile` → EXIT 0 (43 packages, sin warnings) |
 | WU1 | test rojo: `Cannot find module './tasks'` | 60/60 pass; router shape con prefijos `/tasks/*` | router shape + edge cases (Unicode, `min(1)`, defaults, lookups re-exportados) | `uuidSchema` extraído a `_shared.ts`; re-exports desde `packages/types/src/index.ts`; typecheck OK | `bun test packages/types/` → 78/78 pass (60 nuevos + 18 previos `auth`) |
+| WU2 | test rojo: `Cannot find module './002_tasks'` | 5 tablas + 3 índices + 8 FKs verificados vía `information_schema`; typecheck OK | idempotencia (2× `up`), `down` post-`up` deja `task_state` intacto, `down` con datos sembrados respeta orden inverso de FKs | orden de `DROP` revisado; `cleanupTasksTables` añadido a `test-cleanup.ts` sin tocar `cleanupAuthTables` | `bun test apps/api/` → 78 pass + 22 skip (integration sin `TEST_DATABASE_URL`), 0 fail; `tsc -p tsconfig.json` exit 0 |
 
 ## WU1 — Notas
 
@@ -164,6 +165,21 @@ listos; el commit se materializa en **WU8 / PR-D** (no aquí), según el plan.
 - `uuidSchema` extraído a `_shared.ts` para reuso entre `tasks.ts`, `lookups.ts` y futuros contratos.
 - WU1 es prerequisito de PR-A (migration consume `taskSchema`/`taskStateSchema` en tests), PR-D (RPC client tipa `tasksContract`) y PR-E (form organism).
 - Commit: `3c38206 feat(types): add tasks + lookups contracts with zod schemas and orpc router` (711 inserciones).
+
+## WU2 — Notas
+
+- **594 líneas** distribuidas: `002_tasks.ts` 115, `002_tasks.integration.test.ts` 267, `database.ts` +47 (extendido de 144→191), `test-cleanup.ts` +10 (extendido de 11→21).
+- **5 tablas nuevas** con prefijos de 4 letras: `client` (`clie_*`), `type_categories_client` (`tccl_*`), `attachments` (`atta_*`), `task_attachments` (`taat_*`), `task` (`task_*`). `task_state` NO se recrea (pertenece a `001_initial.ts`).
+- **Idempotencia garantizada**: 100% de sentencias usan `CREATE TABLE IF NOT EXISTS` / `CREATE INDEX IF NOT EXISTS`. Test de idempotencia ejecuta `up(db)` dos veces seguidas sin error.
+- **`task_attachments` PK compuesta** `(taat_task_id, taat_atta_id)` con `taat_created_at` como metadato (no parte de la PK).
+- **`type_categories_client.uq_tccl_combo`**: `UNIQUE NULLS NOT DISTINCT (tccl_user_id, tccl_type_id, tccl_cate_id, tccl_clie_id)` para soportar la fila GLOBAL (`tccl_clie_id IS NULL`).
+- **`task.task_kanban_order DOUBLE PRECISION`**: ordenamiento kanban con gaps decimales (ver `KANBAN_DEFAULT_STEP` en WU3).
+- **3 índices**: `idx_client_user` (parcial `WHERE clie_deleted_at IS NULL`), `idx_task_user` (parcial), `idx_task_kanban` (compuesto `(task_user_id, task_tast_id, task_kanban_order)` para queries kanban).
+- **8 FKs verificadas** vía `information_schema.table_constraints` + `key_column_usage` + `constraint_column_usage`: `task→user/task_state/types/categories/client`, `type_categories_client→user`, `task_attachments→task/attachments`.
+- **`down` preserva `task_state`**: test dedicado siembra `task_state` con datos y verifica que el `down` de 002 NO lo toca (pertenece a 001).
+- **`cleanupTasksTables` ordering**: `task_attachments` → `attachments` → `task` → `type_categories_client` → `client` (hijo→padre, inverso a `up`).
+- **`bun run db:migrate`**: NO ejecutado — `DATABASE_URL` no está configurado en el entorno. La verificación end-to-end real queda pendiente hasta que el usuario provea `TEST_DATABASE_URL`. Mientras tanto, la cobertura TDD es a nivel de contrato de código (`up`/`down` tipados correctamente, schema esperado verificado por introspección SQL al ejecutarse en CI).
+- **Estado de commit**: WU2 está **uncommitted** (working tree). El commit se materializa en **PR-A**, según el plan.
 
 ## Estado de las WUs restantes
 
