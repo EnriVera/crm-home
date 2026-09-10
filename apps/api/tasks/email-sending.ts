@@ -1,7 +1,11 @@
 import { defineTask } from "nitro/runtime";
 import { createDatabase } from "../src/infrastructure/kysely/database";
 import { KyselyEmailSendingRepository } from "../src/infrastructure/kysely/email-sending-repository";
-import { createConsoleEmailSender } from "../src/infrastructure/email/console-email-sender";
+import {
+  createEmailSender,
+  type EmailSenderEnv,
+} from "../src/infrastructure/email/create-email-sender";
+import { drainEmailSending } from "../src/infrastructure/email/drain-email-sending";
 
 export default defineTask({
   meta: {
@@ -17,31 +21,28 @@ export default defineTask({
 
     const db = createDatabase(databaseUrl);
     const repository = new KyselyEmailSendingRepository(db);
-    const sender = createConsoleEmailSender();
 
-    const pending = await repository.findPending(100);
-    let sent = 0;
-    let failed = 0;
+    const env: EmailSenderEnv = {
+      SMTP_URL: process.env.SMTP_URL,
+      SMTP_HOST: process.env.SMTP_HOST,
+      SMTP_PORT: process.env.SMTP_PORT,
+      SMTP_USER: process.env.SMTP_USER,
+      SMTP_PASS: process.env.SMTP_PASS,
+      SMTP_SECURE: process.env.SMTP_SECURE,
+    };
+    const sender = createEmailSender(env);
 
-    for (const message of pending) {
-      try {
-        await sender.send({
-          from: message.from,
-          to: message.to,
-          subject: message.subject,
-          body: message.body,
-        });
-        await repository.markSent(message.id);
-        sent += 1;
-      } catch (error) {
-        console.error("[email-sending] failed to send", message.id, error);
-        await repository.markFailed(message.id);
-        failed += 1;
-      }
-    }
+    const result = await drainEmailSending({
+      repository,
+      sender,
+      limit: 100,
+    });
 
     await db.destroy();
 
-    return { result: `processed ${pending.length} messages (${sent} sent, ${failed} failed)` };
+    return {
+      result: `processed ${result.processed} (${result.sent} sent, ${result.failed} failed, ${result.pending} pending)`,
+      senderKind: sender.kind,
+    };
   },
 });
