@@ -1,0 +1,21 @@
+{
+  "name": "@crm/email",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsrx-tsc -p tsconfig.json",
+    "typecheck": "tsrx-tsc --noEmit -p tsconfig.json",
+    "test": "bun test",
+    "export": "octane-email export -d src/templates --outDir out"
+  },
+  "dependencies": {
+    "@octanejs/email": "0.0.3"
+  },
+  "devDependencies": {
+    "@crm/tsconfig": "workspace:*",
+    "@octanejs/email-cli": "0.0.3"
+  }
+}
