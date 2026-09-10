@@ -33,7 +33,7 @@ export function LoginForm() @{
       id="email"
       label={t("auth.login.emailLabel")}
       type="email"
-      autocomplete="email"
+      autoComplete="email"
       required
       value={email}
       placeholder={t("auth.login.emailPlaceholder")}

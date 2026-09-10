@@ -7,7 +7,7 @@ export interface FormFieldProps {
   type?: "text" | "email";
   value?: string;
   placeholder?: string;
-  autocomplete?: string;
+  autoComplete?: string;
   required?: boolean;
   disabled?: boolean;
   /** Mensaje de error inline (i18n); activa aria-invalid + aria-describedby. */
@@ -34,7 +34,7 @@ export function FormField(props: FormFieldProps) @{
       type={props.type}
       value={props.value}
       placeholder={props.placeholder}
-      autocomplete={props.autocomplete}
+      autoComplete={props.autoComplete}
       required={props.required}
       disabled={props.disabled}
       invalid={props.error !== undefined}

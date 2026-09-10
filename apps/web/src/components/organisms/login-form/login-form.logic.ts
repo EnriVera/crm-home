@@ -19,14 +19,29 @@ export function createLoginSubmitHandler(deps: LoginFormLogicDependencies) {
     deps.setIsLoading(true);
     deps.setError(null);
 
-    try {
-      await deps.requestOtp(email.trim().toLowerCase());
-      deps.navigate(
-        `/login-verification?email=${encodeURIComponent(email.trim())}`,
-      );
-    } catch {
-      deps.setError(deps.translate("auth.login.errorRequestOtp"));
-    } finally {
+        try {
+          await deps.requestOtp(email.trim().toLowerCase());
+          deps.navigate(
+            `/login-verification?email=${encodeURIComponent(email.trim())}`,
+          );
+        } catch (error) {
+          // ORPC throws `ORPCError` con `code` discriminado. Mapeamos los códigos
+          // más útiles para el usuario y caemos al mensaje genérico si llega
+          // algo no esperado (network error, abort, etc.).
+          const code = (error as { code?: unknown })?.code;
+          let key: string;
+          switch (code) {
+            case "RATE_LIMITED":
+              key = "auth.login.errorRateLimited";
+              break;
+            case "INTERNAL_SERVER_ERROR":
+              key = "auth.login.errorServiceUnavailable";
+              break;
+            default:
+              key = "auth.login.errorRequestOtp";
+          }
+          deps.setError(deps.translate(key));
+        } finally {
       deps.setIsLoading(false);
     }
   };

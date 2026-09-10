@@ -4,7 +4,7 @@ export interface TextInputProps {
   type?: "text" | "email";
   value?: string;
   placeholder?: string;
-  autocomplete?: string;
+  autoComplete?: string;
   required?: boolean;
   disabled?: boolean;
   invalid?: boolean;
@@ -24,7 +24,7 @@ export function TextInput(props: TextInputProps) @{
     type={props.type ?? "text"}
     value={props.value}
     placeholder={props.placeholder}
-    autocomplete={props.autocomplete}
+    autoComplete={props.autoComplete}
     required={props.required}
     disabled={props.disabled}
     aria-invalid={props.invalid ? true : undefined}
