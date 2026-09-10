@@ -2,17 +2,27 @@ import { describe, expect, mock, test } from "bun:test";
 import { createRpcOtpVerifier } from "./rpc-verifier";
 import type { RpcClient } from "../api/rpc";
 
+/**
+ * Mock minimalista del namespace `auth` del RpcClient multi-contract.
+ * Sólo necesita el método `verifyOtp` callable (la única superficie que
+ * `createRpcOtpVerifier` toca). `.mutate()` viene del wrapper de TanStack
+ * Query que NO está instalado en MVP — el verifier usa el client directo.
+ */
 function createMockRpc(
   verdict: "valid" | "invalid" | "expired",
-): Pick<RpcClient, "verifyOtp"> {
-  const verifyOtp = mock(() => Promise.resolve({ verdict }));
-  return { verifyOtp } as Pick<RpcClient, "verifyOtp">;
+): Pick<RpcClient["auth"], "verifyOtp"> {
+  const verifyOtp = mock(() =>
+    Promise.resolve({ verdict }),
+  ) as unknown as RpcClient["auth"]["verifyOtp"];
+  return { verifyOtp };
 }
 
 describe("createRpcOtpVerifier", () => {
   test("devuelve valid sin transformación", async () => {
     const verifier = createRpcOtpVerifier("ana@example.com", {
-      rpc: createMockRpc("valid") as RpcClient,
+      rpc: {
+        auth: createMockRpc("valid"),
+      } as unknown as RpcClient,
     });
 
     const result = await verifier.verify("041283");
@@ -22,7 +32,9 @@ describe("createRpcOtpVerifier", () => {
 
   test("devuelve invalid sin transformación", async () => {
     const verifier = createRpcOtpVerifier("ana@example.com", {
-      rpc: createMockRpc("invalid") as RpcClient,
+      rpc: {
+        auth: createMockRpc("invalid"),
+      } as unknown as RpcClient,
     });
 
     const result = await verifier.verify("000000");
@@ -32,7 +44,9 @@ describe("createRpcOtpVerifier", () => {
 
   test("devuelve expired sin transformación", async () => {
     const verifier = createRpcOtpVerifier("ana@example.com", {
-      rpc: createMockRpc("expired") as RpcClient,
+      rpc: {
+        auth: createMockRpc("expired"),
+      } as unknown as RpcClient,
     });
 
     const result = await verifier.verify("000000");
@@ -40,12 +54,16 @@ describe("createRpcOtpVerifier", () => {
     expect(result).toBe("expired");
   });
 
-  test("el email cerrado en la closure se envía en el payload", async () => {
+  test("el email cerrado en la closure se envía en el payload de rpc.auth.verifyOtp", async () => {
     const email = "ana@example.com";
-    const verifyOtp = mock(() => Promise.resolve({ verdict: "valid" as const }));
+    const verifyOtp = mock(() =>
+      Promise.resolve({ verdict: "valid" as const }),
+    ) as unknown as RpcClient["auth"]["verifyOtp"];
+
     const verifier = createRpcOtpVerifier(email, {
-      // SAFETY: partial mock for unit test
-      rpc: { verifyOtp } as unknown as RpcClient,
+      rpc: {
+        auth: { verifyOtp },
+      } as unknown as RpcClient,
     });
 
     await verifier.verify("041283");

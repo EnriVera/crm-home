@@ -23,7 +23,7 @@ const rpc = createRpcClient(baseURL);
 
 async function getSession() {
   try {
-    return await rpc.session();
+    return await rpc.auth.session();
   } catch {
     return null;
   }

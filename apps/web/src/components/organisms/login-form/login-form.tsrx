@@ -20,7 +20,7 @@ export function LoginForm() @{
 
   const rpc = createRpcClient(import.meta.env.VITE_API_URL ?? "/rpc");
   const handleSubmit = createLoginSubmitHandler({
-    requestOtp: (email: string) => rpc.requestOtp({ email }),
+    requestOtp: (email: string) => rpc.auth.requestOtp({ email }),
     navigate: (url: string) => location.assign(url),
     setError,
     setIsLoading,
