@@ -3,6 +3,8 @@ export interface EmailMessage {
   to: string;
   subject: string;
   body: string;
+  html?: string;
+  text?: string;
 }
 
 export interface EmailSender {

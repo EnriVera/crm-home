@@ -5,6 +5,10 @@ import type {
   EmailSending,
   EmailSendingRepository,
 } from "../../domain/ports/email-sending-repository";
+import type {
+  EmailTemplateRenderer,
+  RenderedEmail,
+} from "../../domain/ports/email-template-renderer";
 import type { IdGenerator } from "../../domain/ports/id-generator";
 import type { Login, LoginRepository } from "../../domain/ports/login-repository";
 import type { OtpGenerator } from "../../domain/ports/otp-generator";
@@ -29,6 +33,18 @@ class FakeOtpGenerator implements OtpGenerator {
   constructor(private readonly code: string = "041283") {}
   generate(): string {
     return this.code;
+  }
+}
+
+class FakeEmailTemplateRenderer implements EmailTemplateRenderer {
+  constructor(private readonly rendered: RenderedEmail) {}
+
+  async renderOtp(input: { code: string }): Promise<RenderedEmail> {
+    return {
+      subject: `${this.rendered.subject} ${input.code}`,
+      html: `<html><body>${this.rendered.html} ${input.code}</body></html>`,
+      text: `${this.rendered.text} ${input.code}`,
+    };
   }
 }
 
@@ -74,6 +90,7 @@ function createUseCase(overrides: {
   clock?: Clock;
   idGenerator?: IdGenerator;
   otpGenerator?: OtpGenerator;
+  emailTemplateRenderer?: EmailTemplateRenderer;
   loginRepository?: InMemoryLoginRepository;
   emailSendingRepository?: InMemoryEmailSendingRepository;
 } = {}) {
@@ -90,6 +107,13 @@ function createUseCase(overrides: {
       clock: overrides.clock ?? new FixedClock(now),
       idGenerator: overrides.idGenerator ?? new FakeIdGenerator(),
       otpGenerator: overrides.otpGenerator ?? new FakeOtpGenerator(),
+      emailTemplateRenderer:
+        overrides.emailTemplateRenderer ??
+        new FakeEmailTemplateRenderer({
+          subject: "Tu código de acceso",
+          html: "<p>Código:</p>",
+          text: "Código:",
+        }),
       loginRepository,
       emailSendingRepository,
     }),
@@ -184,5 +208,31 @@ describe("RequestOtp", () => {
     expect(loginRepository.logins[0]!.expiresAt.getTime()).toBe(
       now.getTime() + 10 * 60 * 1000,
     );
+  });
+
+  test("asunto y cuerpo del email provienen del renderer", async () => {
+    const { useCase, emailSendingRepository } = createUseCase({
+      emailTemplateRenderer: new FakeEmailTemplateRenderer({
+        subject: "Código de ingreso",
+        html: "<p>Usá este código:</p>",
+        text: "Usá este código:",
+      }),
+    });
+
+    await useCase.execute({ email: "ana@example.com" });
+
+    const message = emailSendingRepository.messages[0]!;
+    expect(message.subject).toBe("Código de ingreso 041283");
+    expect(message.body).toBe("<html><body><p>Usá este código:</p> 041283</body></html>");
+  });
+
+  test("el HTML renderizado con markup se persiste en body", async () => {
+    const { useCase, emailSendingRepository } = createUseCase();
+
+    await useCase.execute({ email: "ana@example.com" });
+
+    const message = emailSendingRepository.messages[0]!;
+    expect(message.body).toContain("<html>");
+    expect(message.body).toContain("041283");
   });
 });

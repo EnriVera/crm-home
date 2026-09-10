@@ -2,6 +2,7 @@ import type { Clock } from "../../domain/ports/clock";
 import type {
   EmailSendingRepository,
 } from "../../domain/ports/email-sending-repository";
+import type { EmailTemplateRenderer } from "../../domain/ports/email-template-renderer";
 import type { IdGenerator } from "../../domain/ports/id-generator";
 import type { LoginRepository } from "../../domain/ports/login-repository";
 import type { OtpGenerator } from "../../domain/ports/otp-generator";
@@ -26,6 +27,7 @@ export interface RequestOtpDependencies {
   otpGenerator: OtpGenerator;
   loginRepository: LoginRepository;
   emailSendingRepository: EmailSendingRepository;
+  emailTemplateRenderer: EmailTemplateRenderer;
 }
 
 export class RequestOtp {
@@ -55,12 +57,14 @@ export class RequestOtp {
       createdAt: now,
     });
 
+    const rendered = await this.deps.emailTemplateRenderer.renderOtp({ code });
+
     await this.deps.emailSendingRepository.create({
       id: this.deps.idGenerator.generate(),
       from: "auth@crmhome.app",
       to: email,
-      subject: "Tu código de acceso",
-      body: `Tu código es ${code}`,
+      subject: rendered.subject,
+      body: rendered.html,
       loginId: id,
       status: "pending",
       createdAt: now,

@@ -23,6 +23,7 @@ import { createSecureComparator } from "../infrastructure/crypto/secure-comparat
 import { createTokenHasher } from "../infrastructure/crypto/token-hasher";
 import { createIdGenerator } from "../infrastructure/crypto/id-generator";
 import { createSystemClock } from "../infrastructure/time/system-clock";
+import { OctaneEmailTemplateRenderer } from "../infrastructure/email/octane-email-template-renderer";
 import { createHealthRoute } from "./routes";
 import { createRpcHandler } from "./router";
 
@@ -36,6 +37,12 @@ export interface AppEnv extends TelemetryEnv {
   DATABASE_URL?: string;
   TEST_DATABASE_URL?: string;
   SESSION_COOKIE_SECURE?: string;
+  SMTP_URL?: string;
+  SMTP_HOST?: string;
+  SMTP_PORT?: string;
+  SMTP_USER?: string;
+  SMTP_PASS?: string;
+  SMTP_SECURE?: string;
 }
 
 export interface CompositionRootOverrides {
@@ -71,12 +78,15 @@ export function createCompositionRoot(
     const emailSendingRepository = new KyselyEmailSendingRepository(db);
     const userSeedService = new KyselyUserSeedService({ db, idGenerator });
 
+    const emailTemplateRenderer = new OctaneEmailTemplateRenderer();
+
     const requestOtp = new RequestOtp({
       clock,
       idGenerator,
       otpGenerator,
       loginRepository,
       emailSendingRepository,
+      emailTemplateRenderer,
     });
     const verifyOtp = new VerifyOtp({
       clock,
