@@ -103,10 +103,15 @@
     },
     "statuses": {
       "label": "Estados",
+      "nameLabel": "Nombre del estado",
+      "orderLabel": "Orden",
       "add": "Agregar estado",
       "edit": "Editar estado",
       "delete": "Eliminar estado",
-      "deleteConfirm": "¿Eliminar este estado? Las tareas en esta columna quedarán sin estado."
+      "deleteConfirm": "¿Eliminar este estado? Las tareas en esta columna quedarán sin estado.",
+      "nameRequired": "El nombre del estado es obligatorio.",
+      "nameTooLong": "El nombre no puede tener más de 50 caracteres.",
+      "orderInvalid": "El orden debe ser un entero no negativo."
     },
     "errors": {
       "notFound": "No encontramos esa tarea.",
