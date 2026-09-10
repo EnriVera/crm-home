@@ -1,6 +1,6 @@
-import { PlaceholderPage } from "../components/pages/placeholder-page.tsrx";
+import { TasksPage } from "../components/pages/tasks-page";
 
-/** Entry de `/tasks` (ruta del shell, D5): placeholder sin lógica de módulos. */
+/** Entry de `/tasks` (PR-F / WU12): página real del módulo tasks. */
 export function TasksRoute() @{
-  <PlaceholderPage />
+  <TasksPage />
 }
