@@ -4,7 +4,10 @@
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "jsx": "react-jsx",
     "jsxImportSource": "react",
-    "strict": false,
+    "baseUrl": ".",
+    "paths": {
+      "@octanejs/email": ["./src/types/octane-email.d.ts"]
+    },
     "noEmit": true
   },
   "include": ["src/**/*"]

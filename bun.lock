@@ -16,6 +16,7 @@
       "name": "@crm/api",
       "version": "0.0.0",
       "dependencies": {
+        "@crm/email": "workspace:*",
         "@crm/types": "workspace:*",
         "@octanejs/xstate": "0.0.10",
         "@opentelemetry/api": "1.9.1",
@@ -78,6 +79,7 @@
       "devDependencies": {
         "@crm/tsconfig": "workspace:*",
         "@octanejs/email-cli": "0.0.3",
+        "vite": "8.2.2",
       },
     },
     "packages/tsconfig": {

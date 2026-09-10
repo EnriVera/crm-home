@@ -12,6 +12,7 @@
     "typecheck": "tsc -p tsconfig.json"
   },
   "dependencies": {
+    "@crm/email": "workspace:*",
     "@crm/types": "workspace:*",
     "@octanejs/xstate": "0.0.10",
     "@opentelemetry/api": "1.9.1",
