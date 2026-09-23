@@ -72,7 +72,21 @@ function asBridgeHandler<R>(
 interface ProcedureEntry {
   method: "POST" | "GET";
   path: string; // Ej. "/auth/requestOtp"
-  run: (event: H3Event, input: unknown) => Promise<unknown>;
+  /**
+   * El tercer argumento `userIdFromSession` lo inyecta el router después
+   * de resolver la sesión desde el cookie `crm_session` (ver dispatch
+   * handler). Los handlers que lo esperan como header `X-User-Id`
+   * (e.g. `tasks-routes.ts`) lo leen vía `getHeader(event, "x-user-id")`,
+   * así que wrapPost envuelve el `event.req` con ese header ANTES de
+   * invocar el handler. Si es `null`, los wrappers no inyectan nada
+   * (útil para endpoints públicos como `requestOtp` que aún no tienen
+   * sesión).
+   */
+  run: (
+    event: H3Event,
+    input: unknown,
+    userIdFromSession?: string | null,
+  ) => Promise<unknown>;
 }
 
 export function createRpcHandler(
@@ -104,25 +118,48 @@ export function createRpcHandler(
 
   // ─── Tabla de dispatch (METHOD + PATH → procedure) ─────────────────────
   // Helper: wrap del handler H3Event en un procedure-shape ORPC.
-  const wrapPost = (h3: H3Handler, path: string): ProcedureEntry["run"] => {
-    return async (event: H3Event, input: unknown) => {
-      // SAFETY: el cast `event as H3Event` es porque nitro garantiza H3Event;
-      // el base pasado al bridge es el H3Event real (no un wrapper).
+  // Si `userIdFromSession` está provisto, clona el `event.req` agregando
+  // `x-user-id` como header — `tasks-routes.ts` lee el userId de ese header
+  // (`getHeader(event, "x-user-id")`) y rechaza con `Missing X-User-Id
+  // header` si no está. El lookup de sesión lo hace el dispatch handler
+  // una vez por request, antes de delegar al wrapper.
+  const wrapPost = (
+    h3: H3Handler,
+    path: string,
+  ): ProcedureEntry["run"] => {
+    return async (
+      event: H3Event,
+      input: unknown,
+      userIdFromSession?: string | null,
+    ) => {
       const hybrid = buildH3EventFromBase(event, {
         method: "POST",
         path: `/rpc${path}`,
         body: input,
       });
-      return invokeH3HandlerAndParse(h3, hybrid);
+      const finalHybrid = userIdFromSession
+        ? withRequestHeader(hybrid, "x-user-id", userIdFromSession)
+        : hybrid;
+      return invokeH3HandlerAndParse(h3, finalHybrid);
     };
   };
-  const wrapGet = (h3: H3Handler, path: string): ProcedureEntry["run"] => {
-    return async (event: H3Event, _input: unknown) => {
+  const wrapGet = (
+    h3: H3Handler,
+    path: string,
+  ): ProcedureEntry["run"] => {
+    return async (
+      event: H3Event,
+      _input: unknown,
+      userIdFromSession?: string | null,
+    ) => {
       const hybrid = buildH3EventFromBase(event, {
         method: "GET",
         path: `/rpc${path}`,
       });
-      return invokeH3HandlerAndParse(h3, hybrid);
+      const finalHybrid = userIdFromSession
+        ? withRequestHeader(hybrid, "x-user-id", userIdFromSession)
+        : hybrid;
+      return invokeH3HandlerAndParse(h3, finalHybrid);
     };
   };
 
@@ -268,6 +305,18 @@ export function createRpcHandler(
       return new Response("Not Found", { status: 404 });
     }
 
+    // Resolver userId desde session cookie una sola vez por request (los
+    // handlers lo leen como header `X-User-Id`). Sin esta línea, todos los
+    // endpoints autenticados retornarían `401 Missing X-User-Id header`
+    // aunque el browser sí envíe cookie válida. Las procedures públicas
+    // (requestOtp, verifyOtp, register, session...) reciben `null` y
+    // siguen funcionando; las autenticadas (tasks.*, logout) reciben el
+    // userId y lo propagan al handler via el header.
+    const userIdFromSession = await resolveUserIdFromSession(
+      event,
+      deps.getSession,
+    );
+
     // Parse body para extraer `input` del wrap. El cliente ORPC v1.15 envía
     // `{json: input}` en el REQUEST y espera `{json: <output>}` en la
     // RESPONSE (mismo envelope del lado cliente vía
@@ -284,10 +333,10 @@ export function createRpcHandler(
       }
     }
 
-    // Ejecutar la procedure
+    // Ejecutar la procedure con el userId resuelto desde session
     let output: unknown;
     try {
-      output = await entry.run(event, input);
+      output = await entry.run(event, input, userIdFromSession);
     } catch (err) {
       // Wrap del error en formato ORPC. BridgeHttpError se traduce a un
       // error HTTP con code discriminado; cualquier otro error cae a 500.
@@ -335,4 +384,62 @@ export function createRpcHandler(
       headers: { "content-type": "application/json" },
     });
   };
+}
+
+// SAFETY: helpers de soporte abajo son internos al módulo (no exportados)
+// porque solo el `createRpcHandler` los usa.
+
+/**
+ * Extrae el token de sesión del cookie `crm_session` del incoming request
+ * y lo valida con el `GetSession` use case. Devuelve `user.id` si la sesión
+ * es válida, `null` si no hay cookie / es inválida / expirada. La idea es
+ * NO romper las procedures públicas (sin sesión) que reciben `null` y
+ * siguen su flow normal; los handlers autenticados (tasks.*, logout)
+ * reciben el userId y lo inyectan como header `X-User-Id`.
+ */
+async function resolveUserIdFromSession(
+  event: H3Event,
+  getSession: RouterDependencies["getSession"],
+): Promise<string | null> {
+  const cookieHeader = event.req?.headers?.get("cookie");
+  if (!cookieHeader) return null;
+  const match = /(?:^|;\s*)crm_session=([^;]+)/.exec(cookieHeader);
+  const token = match?.[1]?.trim();
+  if (!token) return null;
+  try {
+    const result = await getSession.execute({ token });
+    return result?.user.id ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Clona el `event.req` (Fetch Request) agregando un header extra. Los
+ * Fetch Request headers son inmutables, así que tenemos que construir un
+ * Request nuevo preservando method/url/body/headers originales.
+ *
+ * El body Blob se pasa como stream (no se consume en la clonación) para
+ * no romper la lectura posterior del body por `readValidatedBody` en el
+ * handler. El cast `as never` es necesario porque `event.node`/`res` no
+ * son shapes oficialmente opcionales en `H3Event`.
+ */
+function withRequestHeader(
+  event: H3Event,
+  key: string,
+  value: string,
+): H3Event {
+  const req = event.req;
+  const newHeaders = new Headers(req.headers);
+  newHeaders.set(key, value);
+  const clonedReq = new Request(req.url, {
+    method: req.method,
+    headers: newHeaders,
+    body: req.body,
+    // signal/duplex: no se propaga porque nunca se setean en este bridge.
+  });
+  return {
+    ...event,
+    req: clonedReq,
+  } as H3Event;
 }
