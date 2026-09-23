@@ -1,8 +1,8 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { sql, type Kysely } from "kysely";
-import { createDatabase, type Database } from "../database";
-import { cleanupTasksTables } from "../test-cleanup";
-import { down, up } from "./002_tasks";
+import { createDatabase, type Database } from "./database";
+import { cleanupTasksTables } from "./test-cleanup";
+import { down, up } from "./migrations/002_tasks";
 
 const databaseUrl = process.env.TEST_DATABASE_URL;
 
@@ -236,7 +236,9 @@ describe.skipIf(!databaseUrl)("002_tasks migration (integration)", () => {
     await sql`INSERT INTO task_state (tast_id, tast_user_id, tast_name, tast_order)
               VALUES (${tastId}, ${userId}, 'Pendiente', 0)`.execute(unknownDb);
     await sql`INSERT INTO types (type_id, type_user_id, type_name, type_module)
-              VALUES (${typeId}, ${userId}, 'Task', 'tasks')`.execute(unknownDb);
+              VALUES (${typeId}, ${userId}, 'Task', 'tasks')`.execute(
+      unknownDb,
+    );
     await sql`INSERT INTO categories (cate_id, cate_user_id, cate_name, cate_type_id)
               VALUES (${cateId}, ${userId}, 'General', ${typeId})`.execute(
       unknownDb,

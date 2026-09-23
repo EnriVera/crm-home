@@ -14,8 +14,8 @@ import { sql, type Kysely } from "kysely";
  * sin datos productivos.
  */
 export async function up(db: Kysely<unknown>): Promise<void> {
-  // 1. client (nullable FK target de task.task_clie_id)
-  await sql`
+    // 1. client (nullable FK target de task.task_clie_id)
+    await sql`
     CREATE TABLE IF NOT EXISTS client (
       clie_id UUID PRIMARY KEY,
       clie_user_id UUID NOT NULL REFERENCES "user"(user_id),
@@ -29,13 +29,13 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     )
   `.execute(db);
 
-  await sql`
+    await sql`
     CREATE INDEX IF NOT EXISTS idx_client_user
       ON client (clie_user_id) WHERE clie_deleted_at IS NULL
   `.execute(db);
 
-  // 2. type_categories_client (join table; NULL en tccl_clie_id = GLOBAL)
-  await sql`
+    // 2. type_categories_client (join table; NULL en tccl_clie_id = GLOBAL)
+    await sql`
     CREATE TABLE IF NOT EXISTS type_categories_client (
       tccl_id UUID PRIMARY KEY,
       tccl_user_id UUID NOT NULL REFERENCES "user"(user_id),
@@ -50,8 +50,8 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     )
   `.execute(db);
 
-  // 3. attachments (Fase 2 — tablas creadas; sin endpoint en MVP).
-  await sql`
+    // 3. attachments (Fase 2 — tablas creadas; sin endpoint en MVP).
+    await sql`
     CREATE TABLE IF NOT EXISTS attachments (
       atta_id UUID PRIMARY KEY,
       atta_user_id UUID NOT NULL REFERENCES "user"(user_id),
@@ -64,10 +64,10 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     )
   `.execute(db);
 
-  // 4. task (núcleo del change). Va ANTES que task_attachments porque
-  // task_attachments declara FK → task(task_id). Postgres requiere que la
-  // tabla target exista antes de declarar la FK.
-  await sql`
+    // 4. task (núcleo del change). Va ANTES que task_attachments porque
+    // task_attachments declara FK → task(task_id). Postgres requiere que la
+    // tabla target exista antes de declarar la FK.
+    await sql`
     CREATE TABLE IF NOT EXISTS task (
       task_id UUID PRIMARY KEY,
       task_user_id UUID NOT NULL REFERENCES "user"(user_id),
@@ -84,18 +84,18 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     )
   `.execute(db);
 
-  await sql`
+    await sql`
     CREATE INDEX IF NOT EXISTS idx_task_user
       ON task (task_user_id) WHERE task_deleted_at IS NULL
   `.execute(db);
 
-  await sql`
+    await sql`
     CREATE INDEX IF NOT EXISTS idx_task_kanban
       ON task (task_user_id, task_tast_id, task_kanban_order)
   `.execute(db);
 
-  // 5. task_attachments (Fase 2 — join table; PK compuesta).
-  await sql`
+    // 5. task_attachments (Fase 2 — join table; PK compuesta).
+    await sql`
     CREATE TABLE IF NOT EXISTS task_attachments (
       taat_task_id UUID NOT NULL REFERENCES task(task_id),
       taat_atta_id UUID NOT NULL REFERENCES attachments(atta_id),
@@ -106,12 +106,12 @@ export async function up(db: Kysely<unknown>): Promise<void> {
 }
 
 export async function down(db: Kysely<unknown>): Promise<void> {
-  // DESTRUCTIVO — solo stage único, sin datos productivos.
-  // Orden inverso al de creación, respetando FKs.
-  await sql`DROP TABLE IF EXISTS task_attachments`.execute(db);
-  await sql`DROP TABLE IF EXISTS attachments`.execute(db);
-  await sql`DROP TABLE IF EXISTS task`.execute(db);
-  await sql`DROP TABLE IF EXISTS type_categories_client`.execute(db);
-  await sql`DROP TABLE IF EXISTS client`.execute(db);
-  // task_state NO se dropea aquí: existe desde 001_initial.ts.
+    // DESTRUCTIVO — solo stage único, sin datos productivos.
+    // Orden inverso al de creación, respetando FKs.
+    await sql`DROP TABLE IF EXISTS task_attachments`.execute(db);
+    await sql`DROP TABLE IF EXISTS attachments`.execute(db);
+    await sql`DROP TABLE IF EXISTS task`.execute(db);
+    await sql`DROP TABLE IF EXISTS type_categories_client`.execute(db);
+    await sql`DROP TABLE IF EXISTS client`.execute(db);
+    // task_state NO se dropea aquí: existe desde 001_initial.ts.
 }

@@ -15,9 +15,10 @@
     -->
     <script>
       (function () {
-        var pub = /^\/(login|login-verification|terms|privacy|cookies)(\/|$|\?)/.test(
-          location.pathname,
-        );
+        var pub =
+          /^\/(login|login-verification|terms|privacy|cookies)(\/|$|\?)/.test(
+            location.pathname,
+          );
         var stored = null;
         try {
           stored = localStorage.getItem("crm-theme");
