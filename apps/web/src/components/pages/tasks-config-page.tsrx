@@ -1,5 +1,5 @@
 import { t } from "../vendor/i18n/core";
-import { createRpcClient, type RpcClient } from "../lib/api/rpc";
+import { createRpcClient, type RpcClient } from "../../lib/api/rpc";
 
 /**
  * Página `/tasks-config` (PR-F / WU14). Tab "Estados" (único MVP — Tabs
