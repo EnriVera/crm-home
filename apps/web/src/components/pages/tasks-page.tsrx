@@ -1,7 +1,7 @@
 import { useEffect, useState } from "octane";
 import { t } from "../vendor/i18n/core";
-import { createRpcClient, type RpcClient } from "../lib/api/rpc";
-import { BaseView, type ViewKind } from "../base-view";
+import { createRpcClient, type RpcClient } from "../../lib/api/rpc";
+import { BaseView, type ViewKind } from "../base-view/base-view.tsrx";
 import type { TaskFilters } from "../organisms/task-form/task-form.logic";
 
 /**
