@@ -1,13 +1,15 @@
 import { describe, expect, test } from "bun:test";
 import {
   createAuthRedirect,
+  createRedirectIfAuthenticated,
   redirectResponse,
-  type SessionQuery,
 } from "./redirect";
 
-function createContext() {
+function createContext(opts: { cookie?: string } = {}) {
+  const headers = new Headers();
+  if (opts.cookie) headers.set("cookie", opts.cookie);
   return {
-    request: new Request("http://localhost/"),
+    request: new Request("http://localhost/", { headers }),
     params: {},
     url: new URL("http://localhost/"),
     state: new Map<string, unknown>(),
@@ -15,9 +17,8 @@ function createContext() {
 }
 
 describe("createAuthRedirect", () => {
-  test("sin sesión redirige a /login", async () => {
-    const getSession: SessionQuery = () => Promise.resolve(null);
-    const redirect = createAuthRedirect(getSession);
+  test("sin cookie redirige a /login", async () => {
+    const redirect = createAuthRedirect();
 
     const response = await redirect(createContext(), () =>
       Promise.resolve(new Response("no debería renderizar")),
@@ -27,31 +28,24 @@ describe("createAuthRedirect", () => {
     expect(response.headers.get("Location")).toBe("/login");
   });
 
-  test("con sesión redirige a /dashboard", async () => {
-    const getSession: SessionQuery = () =>
-      Promise.resolve({
-        user: {
-          id: "550e8400-e29b-41d4-a716-446655440000",
-          email: "ana@example.com",
-          name: "Ana",
-        },
-      });
-    const redirect = createAuthRedirect(getSession);
+  test("con cookie crm_session redirige a /dashboard", async () => {
+    const redirect = createAuthRedirect();
 
-    const response = await redirect(createContext(), () =>
-      Promise.resolve(new Response("no debería renderizar")),
+    const response = await redirect(
+      createContext({ cookie: "crm_session=abc123; Path=/" }),
+      () => Promise.resolve(new Response("no debería renderizar")),
     );
 
     expect(response.status).toBe(302);
     expect(response.headers.get("Location")).toBe("/dashboard");
   });
 
-  test("error de red redirige a /login", async () => {
-    const getSession: SessionQuery = () => Promise.reject(new Error("network"));
-    const redirect = createAuthRedirect(getSession);
+  test("con cookie sin crm_session redirige a /login", async () => {
+    const redirect = createAuthRedirect();
 
-    const response = await redirect(createContext(), () =>
-      Promise.resolve(new Response("no debería renderizar")),
+    const response = await redirect(
+      createContext({ cookie: "other_cookie=foo" }),
+      () => Promise.resolve(new Response("no debería renderizar")),
     );
 
     expect(response.status).toBe(302);
@@ -59,7 +53,7 @@ describe("createAuthRedirect", () => {
   });
 
   test("el middleware nunca llama a next", async () => {
-    const redirect = createAuthRedirect(() => Promise.resolve(null));
+    const redirect = createAuthRedirect();
     let nextCalled = false;
 
     await redirect(createContext(), () => {
@@ -71,6 +65,26 @@ describe("createAuthRedirect", () => {
   });
 });
 
+describe("createRedirectIfAuthenticated", () => {
+  test("sin cookie deja pasar (next)", async () => {
+    const middleware = createRedirectIfAuthenticated();
+    const next = vi(() => Promise.resolve(new Response("login")));
+    const response = await middleware(createContext(), next.fn);
+    expect(response.status).toBe(200);
+    expect(next.calls).toBe(1);
+  });
+
+  test("con cookie crm_session redirige a /dashboard", async () => {
+    const middleware = createRedirectIfAuthenticated();
+    const response = await middleware(
+      createContext({ cookie: "crm_session=abc123; Path=/" }),
+      () => Promise.resolve(new Response("no debería renderizar")),
+    );
+    expect(response.status).toBe(302);
+    expect(response.headers.get("Location")).toBe("/dashboard");
+  });
+});
+
 describe("redirectResponse", () => {
   test("devuelve 302 con Location", () => {
     const response = redirectResponse("/login");
@@ -78,3 +92,16 @@ describe("redirectResponse", () => {
     expect(response.headers.get("Location")).toBe("/login");
   });
 });
+
+/**
+ * Mini-helper para `createRedirectIfAuthenticated`: cuenta invocaciones de
+ * `next`. Mantenido local al test file para no contaminar otros tests.
+ */
+function vi<T extends (...args: never[]) => unknown>(fn: T) {
+  let calls = 0;
+  const wrapped = (...args: Parameters<T>) => {
+    calls += 1;
+    return fn(...args);
+  };
+  return { fn: wrapped as T, get calls() { return calls; } };
+}

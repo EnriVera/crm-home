@@ -3,9 +3,11 @@ import {
   RenderRoute,
   type RenderRouteEntry,
 } from "@octanejs/vite-plugin";
-import { createAuthRedirect } from "./src/lib/nav/redirect";
+import {
+  createAuthRedirect,
+  createRedirectIfAuthenticated,
+} from "./src/lib/nav/redirect";
 import { createRequireSession } from "./src/lib/nav/session-guard";
-import { createRpcClient } from "./src/lib/api/rpc";
 import { SHELL_ROUTES } from "./src/lib/nav/routes";
 
 /**
@@ -18,19 +20,16 @@ import { SHELL_ROUTES } from "./src/lib/nav/routes";
  * `before` en `shellRoute` sin tocar las 8 declaraciones.
  */
 
-const baseURL = import.meta.env.VITE_API_URL ?? "/rpc";
-const rpc = createRpcClient(baseURL);
-
-async function getSession() {
-  try {
-    return await rpc.auth.session();
-  } catch {
-    return null;
-  }
-}
-
-const authRedirect = createAuthRedirect(getSession);
-const requireSession = createRequireSession(getSession);
+const authRedirect = createAuthRedirect();
+const requireSession = createRequireSession();
+// `authRedirect` y `requireSession` leen directo del header `cookie` del
+// incoming request (presencia de `crm_session=`) en vez de llamar al RPC.
+// La validación estricta del token queda del lado del API, vía
+// `rpc.auth.session()` cliente con `credentials: 'include'`, que sí propaga
+// la cookie del browser. Si la cookie es inválida, el shell responde 401
+// y la UI vuelve al login naturalmente. Misma técnica aplicada en
+// `redirectIfAuthenticated` para cerrar las 3 aristas del loop.
+const redirectIfAuthenticated = createRedirectIfAuthenticated();
 
 /** Ruta del shell autenticado: layout `__app-shell.tsrx`. */
 export const shellRoute = (
@@ -44,9 +43,18 @@ export const shellRoute = (
     before: [requireSession],
   });
 
-/** Ruta pública de auth: layout `__auth.tsrx` (tema del SO, PRD §6.8). */
+/** Ruta pública de auth: layout `__auth.tsrx` (tema del SO, PRD §6.8).
+ * Incluye `redirectIfAuthenticated` para que un usuario YA logueado que
+ * intente acceder a `/login` o `/login-verification` sea redirigido al
+ * dashboard en vez de ver la pantalla de auth (par de `authRedirect` que
+ * hace lo opuesto en `/`). */
 export const authRoute = (path: string, entry: RenderRouteEntry): RenderRoute =>
-  new RenderRoute({ path, entry, layout: "/src/routes/__auth.tsrx" });
+  new RenderRoute({
+    path,
+    entry,
+    layout: "/src/routes/__auth.tsrx",
+    before: [redirectIfAuthenticated],
+  });
 
 /** Entry convencional de una ruta del shell: `<Slug>Route` en `<slug>.tsrx`. */
 const shellEntry = (path: string): RenderRouteEntry => {

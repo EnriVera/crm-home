@@ -1,9 +1,11 @@
 import { describe, expect, test } from "bun:test";
-import { createRequireSession, type SessionQuery } from "./session-guard";
+import { createRequireSession } from "./session-guard";
 
-function createContext() {
+function createContext(opts: { cookie?: string } = {}) {
+  const headers = new Headers();
+  if (opts.cookie) headers.set("cookie", opts.cookie);
   return {
-    request: new Request("http://localhost/dashboard"),
+    request: new Request("http://localhost/dashboard", { headers }),
     params: {},
     url: new URL("http://localhost/dashboard"),
     state: new Map<string, unknown>(),
@@ -11,8 +13,8 @@ function createContext() {
 }
 
 describe("createRequireSession", () => {
-  test("sin sesión redirige a /login", async () => {
-    const guard = createRequireSession(() => Promise.resolve(null));
+  test("sin cookie redirige a /login", async () => {
+    const guard = createRequireSession();
 
     const response = await guard(createContext(), () =>
       Promise.resolve(new Response("shell")),
@@ -22,42 +24,36 @@ describe("createRequireSession", () => {
     expect(response.headers.get("Location")).toBe("/login");
   });
 
-  test("con sesión continúa al render", async () => {
-    const guard = createRequireSession(() =>
-      Promise.resolve({
-        user: {
-          id: "550e8400-e29b-41d4-a716-446655440000",
-          email: "ana@example.com",
-          name: "Ana",
-        },
-      }),
-    );
+  test("con cookie crm_session continúa al render", async () => {
+    const guard = createRequireSession();
 
-    const next = await guard(createContext(), () =>
-      Promise.resolve(new Response("shell")),
+    const next = await guard(
+      createContext({ cookie: "crm_session=abc123; Path=/" }),
+      () => Promise.resolve(new Response("shell")),
     );
 
     expect(next.status).toBe(200);
   });
 
-  test("header Location es exactamente /login", async () => {
-    const guard = createRequireSession(() => Promise.resolve(null));
+  test("con cookie sin crm_session redirige a /login", async () => {
+    const guard = createRequireSession();
 
-    const response = await guard(createContext(), () =>
-      Promise.resolve(new Response("shell")),
-    );
-
-    expect(response.headers.get("Location")).toBe("/login");
-  });
-
-  test("error de red redirige a /login", async () => {
-    const guard = createRequireSession(() => Promise.reject(new Error("network")));
-
-    const response = await guard(createContext(), () =>
-      Promise.resolve(new Response("shell")),
+    const response = await guard(
+      createContext({ cookie: "other_cookie=foo" }),
+      () => Promise.resolve(new Response("shell")),
     );
 
     expect(response.status).toBe(302);
+    expect(response.headers.get("Location")).toBe("/login");
+  });
+
+  test("header Location es exactamente /login", async () => {
+    const guard = createRequireSession();
+
+    const response = await guard(createContext(), () =>
+      Promise.resolve(new Response("shell")),
+    );
+
     expect(response.headers.get("Location")).toBe("/login");
   });
 });
