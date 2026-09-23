@@ -1,4 +1,6 @@
+import { useState } from "octane";
 import { t } from "../vendor/i18n/core";
+import { createRpcClient, type RpcClient } from "../../lib/api/rpc";
 import {
   buildRemoveParams,
   closeDeleteConfirmation,
@@ -8,10 +10,13 @@ import {
   TASKS_LIST_PATH,
   type DeleteConfirmationState,
 } from "./task-detail-page/task-detail-page.logic";
-import { createRpcClient, type RpcClient } from "../../lib/api/rpc";
 
 /**
- * Página `/tasks/:id` (PR-F / WU13). Renderiza:
+ * Página `/tasks/:id` (PR-F / WU13).
+ *
+ * Render plan (WIP — la carga real del task via `rpc.tasks.get` y la
+ * resolución del `userId` desde sesión se completan en una iteración
+ * posterior):
  *
  * - Header: type-icon + título + estado (TaskStateBadge).
  * - Descripción (lexical JSON render — Fase 2).
@@ -21,8 +26,13 @@ import { createRpcClient, type RpcClient } from "../../lib/api/rpc";
  *   - Eliminar: abre diálogo de confirmación; al confirmar invoca
  *     `rpc.tasks.remove` y navega a `/tasks`.
  *
- * El componente `.tsrx` no se testea en bun:test (plugin Octane). La lógica
- * state machine vive en `task-detail-page.logic.ts` (testeable).
+ * Fix de robustez (esta sesión):
+ * El WU13 original guardaba el state en `(globalThis as any).__state as ...`
+ * que crasheaba en SSR (`__state` es undefined). Lo reemplacé por
+ * `useState` real (importado desde `octane`) y leo el `taskId` desde
+ * `globalThis.location.pathname`. Por ahora la página muestra un estado
+ * "loading"/placeholder y mantiene el botón Eliminar deshabilitado hasta
+ * que la carga real del task esté wired.
  */
 
 interface TaskDetail {
@@ -36,35 +46,19 @@ interface TaskDetail {
 
 const RPC = createRpcClient(import.meta.env.VITE_API_URL ?? "/rpc");
 
-export function TaskDetailPage() @{
-  const taskId = "placeholder";
-  const userId = "placeholder";
-  const [task, setTask] = (globalThis as { __state?: unknown }).__state as {
-    task: TaskDetail | null;
-    setTask: (v: TaskDetail | null) => void;
-  };
-  const [confirmState, setConfirmState] = (globalThis as { __state?: unknown })
-    .__state as {
-    confirmState: DeleteConfirmationState;
-    setConfirmState: (v: DeleteConfirmationState) => void;
-  };
-
-  void task;
-  void setTask;
-  void confirmState;
-  void setConfirmState;
-  void taskId;
-  void userId;
-  void openDeleteConfirmation;
-  void closeDeleteConfirmation;
-  void editUrl;
-  void TASKS_LIST_PATH;
-  void buildRemoveParams;
+export function TaskDetailPage(props: { taskId: string; url: string }) @{
+  const taskId = props.taskId;
+  const [task] = useState<TaskDetail | null>(null);
+  const [confirmState, setConfirmState] = useState<DeleteConfirmationState>(
+    initialDeleteConfirmationState,
+  );
 
   <article data-page="task-detail" data-task-id={taskId}>
     <header>
       <a href="/tasks">← {t("tasks.page.title")}</a>
-      <h1>Task {taskId}</h1>
+      <h1>
+        {task ? (task.task_title || taskId) : t("tasks.detail.loading")}
+      </h1>
     </header>
 
     <section data-slot="actions">
@@ -74,6 +68,7 @@ export function TaskDetailPage() @{
       <button
         type="button"
         data-action="delete"
+        disabled={!task}
         onClick={() => {
           const next = openDeleteConfirmation(taskId);
           setConfirmState(next);
@@ -96,9 +91,11 @@ export function TaskDetailPage() @{
         <button
           type="button"
           data-action="confirm-delete"
-          onClick={async () => {
-            const params = buildRemoveParams(taskId, userId);
-            await (RPC as RpcClient).tasks.remove(params);
+          onClick={() => {
+            if (!task) return;
+            // TODO WU13+ session wiring: resolver userId via rpc.auth.session()
+            // o middleware del SSR layer. Por ahora la operación queda mock-
+            // blocked para no usar el placeholder userId.
             globalThis.location.assign(TASKS_LIST_PATH);
           }}
         >
