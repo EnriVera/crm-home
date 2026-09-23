@@ -20,11 +20,11 @@ import { redirectResponse } from "./redirect";
  * validación estricta del token queda del lado del API.
  */
 export function createRequireSession(): Middleware {
-  return async (context, next) => {
-    const cookies = context.request.headers.get("cookie") ?? "";
-    if (cookies.includes("crm_session=")) {
-      return next();
-    }
-    return redirectResponse("/login");
-  };
+   return async (context, next) => {
+      const cookies = context.request.headers.get("cookie") ?? "";
+      if (cookies.includes("crm_session=")) {
+         return next();
+      }
+      return redirectResponse("/login");
+   };
 }

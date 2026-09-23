@@ -1,14 +1,14 @@
 import type { Middleware } from "@octanejs/vite-plugin";
 
 export type SessionQuery = () => Promise<{
-   user: { id: string; email: string; name: string };
+  user: { id: string; email: string; name: string };
 } | null>;
 
 export function redirectResponse(location: string): Response {
-   return new Response(null, {
-      status: 302,
-      headers: { Location: location },
-   });
+  return new Response(null, {
+    status: 302,
+    headers: { Location: location },
+  });
 }
 
 /**
@@ -22,15 +22,15 @@ export function redirectResponse(location: string): Response {
  * ahí sí viaja la cookie). Cookie stale solo causa un redirect extra.
  */
 function hasSessionCookie(headers: Headers): boolean {
-   return (headers.get("cookie") ?? "").includes("crm_session=");
+  return (headers.get("cookie") ?? "").includes("crm_session=");
 }
 
 export function createAuthRedirect(): Middleware {
-   return async (context) => {
-      return redirectResponse(
-         hasSessionCookie(context.request.headers) ? "/dashboard" : "/login",
-      );
-   };
+  return async (context) => {
+    return redirectResponse(
+      hasSessionCookie(context.request.headers) ? "/dashboard" : "/login",
+    );
+  };
 }
 
 /**
@@ -46,11 +46,11 @@ export function createAuthRedirect(): Middleware {
  * retorna null en SSR y el flujo `/login ↔ /dashboard` loopea.
  */
 export function createRedirectIfAuthenticated(): Middleware {
-   return async (context, next) => {
-      const cookies = context.request.headers.get("cookie") ?? "";
-      if (cookies.includes("crm_session=")) {
-         return redirectResponse("/dashboard");
-      }
-      return next();
-   };
+  return async (context, next) => {
+    const cookies = context.request.headers.get("cookie") ?? "";
+    if (cookies.includes("crm_session=")) {
+      return redirectResponse("/dashboard");
+    }
+    return next();
+  };
 }

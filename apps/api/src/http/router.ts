@@ -264,9 +264,7 @@ export function createRpcHandler(
     const entry = dispatch.get(`${method} ${procedurePath}`);
 
     if (!entry) {
-      console.warn(
-        `[rpc] no procedure found for ${method} ${procedurePath}`,
-      );
+      console.warn(`[rpc] no procedure found for ${method} ${procedurePath}`);
       return new Response("Not Found", { status: 404 });
     }
 

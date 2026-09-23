@@ -103,5 +103,10 @@ function vi<T extends (...args: never[]) => unknown>(fn: T) {
     calls += 1;
     return fn(...args);
   };
-  return { fn: wrapped as T, get calls() { return calls; } };
+  return {
+    fn: wrapped as T,
+    get calls() {
+      return calls;
+    },
+  };
 }
