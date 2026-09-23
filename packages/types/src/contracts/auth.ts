@@ -2,7 +2,10 @@ import { oc } from "@orpc/contract";
 import { z } from "zod";
 
 export const emailSchema = z.string().email();
-export const otpCodeSchema = z.string().length(6).regex(/^\d{6}$/);
+export const otpCodeSchema = z
+  .string()
+  .length(6)
+  .regex(/^\d{6}$/);
 
 export const requestOtpInputSchema = z.object({ email: emailSchema });
 export const requestOtpOutputSchema = z.object({ ok: z.literal(true) });
@@ -28,19 +31,19 @@ export const sessionOutputSchema = z.object({
 
 export const logoutOutputSchema = z.object({ ok: z.literal(true) });
 
-export const authContract = oc.prefix("/auth").router({
+export const authContract = oc.router({
   requestOtp: oc
-    .route({ method: "POST", path: "/request-otp" })
+    .route({ method: "POST", path: "/auth/requestOtp" })
     .input(requestOtpInputSchema)
     .output(requestOtpOutputSchema),
   verifyOtp: oc
-    .route({ method: "POST", path: "/verify-otp" })
+    .route({ method: "POST", path: "/auth/verifyOtp" })
     .input(verifyOtpInputSchema)
     .output(verifyOtpOutputSchema),
   logout: oc
-    .route({ method: "POST", path: "/logout" })
+    .route({ method: "POST", path: "/auth/logout" })
     .output(logoutOutputSchema),
   session: oc
-    .route({ method: "GET", path: "/session" })
+    .route({ method: "GET", path: "/auth/session" })
     .output(sessionOutputSchema),
 });

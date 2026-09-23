@@ -129,11 +129,9 @@ describe("logout output schema", () => {
 describe("authContract", () => {
   test("las rutas llevan prefijo /auth", () => {
     expect(authContract.requestOtp["~orpc"].route.path).toBe(
-      "/auth/request-otp",
+      "/auth/requestOtp",
     );
-    expect(authContract.verifyOtp["~orpc"].route.path).toBe(
-      "/auth/verify-otp",
-    );
+    expect(authContract.verifyOtp["~orpc"].route.path).toBe("/auth/verifyOtp");
     expect(authContract.logout["~orpc"].route.path).toBe("/auth/logout");
     expect(authContract.session["~orpc"].route.path).toBe("/auth/session");
   });
