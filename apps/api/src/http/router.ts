@@ -269,10 +269,11 @@ export function createRpcHandler(
     }
 
     // Parse body para extraer `input` del wrap. El cliente ORPC v1.15 envía
-    // `{json: input}` en el REQUEST pero espera `{data: output}` en la
-    // RESPONSE (protocolo asimétrico confirmado vía curl + browser test).
-    // Por eso este dispatcher desempaca `json` en la entrada y envuelve
-    // `data` en la salida.
+    // `{json: input}` en el REQUEST y espera `{json: <output>}` en la
+    // RESPONSE (mismo envelope del lado cliente vía
+    // `StandardRPCSerializer`). Para errores sí wrappeamos con
+    // `{defined: <bool>, code, status, message, data?}` (shape estricto
+    // reconocido por `isORPCErrorJson`).
     let input: unknown;
     if (method === "POST") {
       try {
@@ -324,8 +325,12 @@ export function createRpcHandler(
       );
     }
 
-    // Respuesta exitosa: wrap `{data: output}` para el cliente ORPC.
-    return new Response(JSON.stringify({ data: output }), {
+    // Respuesta exitosa: wrap con `{json: output}` matching el envelope
+    // simétrico del cliente. `output` viene del bridge como el body
+    // JSON ya parseado del handler H3Event (lo armó un `Response.json(...)`
+    // o un `return result` directo, ambos normalizados por
+    // `invokeH3HandlerAndParse`).
+    return new Response(JSON.stringify({ json: output }), {
       status: 200,
       headers: { "content-type": "application/json" },
     });
