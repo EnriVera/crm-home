@@ -43,6 +43,8 @@ import { createTokenHasher } from "../infrastructure/crypto/token-hasher";
 import { createIdGenerator } from "../infrastructure/crypto/id-generator";
 import { createSystemClock } from "../infrastructure/time/system-clock";
 import { OctaneEmailTemplateRenderer } from "../infrastructure/email/octane-email-template-renderer";
+import { createEmailSender } from "../infrastructure/email/create-email-sender";
+import { drainEmailSending } from "../infrastructure/email/drain-email-sending";
 import { createHealthRoute } from "./routes";
 import { createRpcHandler } from "./router";
 
@@ -222,4 +224,71 @@ export function createAppFetch(
 }
 
 // Entry para nitro (nitro.config.ts apunta aquí con route "/**").
-export default fromWebHandler(createAppFetch());
+const fetchHandler = createAppFetch();
+export default fromWebHandler(fetchHandler);
+
+/**
+ * Loop de drenaje de la cola `email_sending`. Corre en dev y prod para
+ * que los emails se envíen sin intervención manual (nitro no levanta
+ * su task scheduler automáticamente en dev, y confiamos solo en
+ * scheduledTasks para prod es frágil). Configurable vía:
+ *  - `EMAIL_DRAIN_LOOP_ENABLED=false` para deshabilitar
+ *  - `EMAIL_DRAIN_INTERVAL_MS` (default 60000 = 1 minuto)
+ *
+ * Solo se activa cuando `DATABASE_URL` está definida (no en tests que
+ * mockean la DB).
+ */
+function startEmailDrainLoop(env: AppEnv): void {
+  // SAFETY: el interval corre por la duración del proceso nitro. La función
+  // tick recrea la DB y el EmailSender cada corrida para reflejar cambios
+  // de env vars en runtime (DATABASE_URL, SMTP_HOST, etc. sin reinicio).
+  const intervalMs = env.EMAIL_DRAIN_INTERVAL_MS
+    ? Number(env.EMAIL_DRAIN_INTERVAL_MS)
+    : 60_000;
+  console.log(
+    `[email-drain] starting loop (interval=${intervalMs}ms, db=${env.DATABASE_URL ? "yes" : "no"}, smtp=${env.SMTP_HOST ?? env.SMTP_URL ?? "console-fallback"})`,
+  );
+
+  const tick = async (): Promise<void> => {
+    const databaseUrl = env.DATABASE_URL ?? "";
+    if (!databaseUrl) return;
+    try {
+      const db = createDatabase(databaseUrl);
+      const repository = new KyselyEmailSendingRepository(db);
+      const sender = createEmailSender({
+        SMTP_URL: env.SMTP_URL,
+        SMTP_HOST: env.SMTP_HOST,
+        SMTP_PORT: env.SMTP_PORT,
+        SMTP_USER: env.SMTP_USER,
+        SMTP_PASS: env.SMTP_PASS,
+        SMTP_SECURE: env.SMTP_SECURE,
+      });
+      const result = await drainEmailSending({
+        repository,
+        sender,
+        limit: 100,
+      });
+      if (result.processed > 0) {
+        console.log(
+          `[email-drain] drained processed=${result.processed} sent=${result.sent} failed=${result.failed} pending=${result.pending} sender=${sender.kind}`,
+        );
+      }
+      await db.destroy();
+    } catch (err) {
+      console.error("[email-drain] tick failed:", err);
+    }
+  };
+
+  // Fire inmediato para no esperar 60s con la cola llena al boot.
+  void tick();
+  setInterval(() => {
+    void tick();
+  }, intervalMs);
+}
+
+if (
+  process.env.DATABASE_URL &&
+  process.env.EMAIL_DRAIN_LOOP_ENABLED !== "false"
+) {
+  startEmailDrainLoop(process.env as AppEnv);
+}
