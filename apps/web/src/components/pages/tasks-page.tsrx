@@ -47,7 +47,7 @@ export function TasksPage() @{
         setTasks([]);
       }
     };
-    void load;
+    void load();
   }, [filters]);
 
   <section data-page="tasks">
