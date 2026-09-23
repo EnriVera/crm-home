@@ -148,10 +148,23 @@ export function createOtpMachineDef(options: OtpMachineOptions) {
             {
               target: "error",
               actions: assign({
-                attemptsRemaining: ({ context }) => context.attemptsRemaining - 1,
+                attemptsRemaining: ({ context }) =>
+                  context.attemptsRemaining - 1,
               }),
             },
           ],
+          // Sin onError, si el verifier throws (ej. ORPCError de red,
+          // sesión expirada, etc.) el state machine queda stuck en
+          // "submitting" para siempre porque el actor muere silenciosamente.
+          // El form entonces nunca recibe la transición a `error` y nunca
+          // navega. onError transita a `error` (con decrement de intentos)
+          // para que el usuario vea feedback y pueda reintentar o volver.
+          onError: {
+            target: "error",
+            actions: assign({
+              attemptsRemaining: ({ context }) => context.attemptsRemaining - 1,
+            }),
+          },
         },
       },
       error: { on: { ...onSetCode } },
@@ -188,7 +201,10 @@ export function createOtpMachine(options: OtpMachineOptions): OtpMachine {
 
     async submit() {
       const snapshot = actor.getSnapshot();
-      if (snapshot.value !== "ready" || snapshot.context.attemptsRemaining <= 0) {
+      if (
+        snapshot.value !== "ready" ||
+        snapshot.context.attemptsRemaining <= 0
+      ) {
         return;
       }
       actor.send({ type: "SUBMIT" });

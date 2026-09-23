@@ -5,10 +5,12 @@ function createEvent(): Event {
   return new Event("submit", { cancelable: true });
 }
 
-function createDeps(overrides: {
-  requestOtp?: () => Promise<void>;
-  isValidEmail?: (email: string) => boolean;
-} = {}) {
+function createDeps(
+  overrides: {
+    requestOtp?: () => Promise<void>;
+    isValidEmail?: (email: string) => boolean;
+  } = {},
+) {
   const requestOtp = overrides.requestOtp ?? mock(() => Promise.resolve());
   return {
     requestOtp,
@@ -60,52 +62,47 @@ describe("createLoginSubmitHandler", () => {
     expect(deps.navigate).not.toHaveBeenCalled();
   });
 
-      test("normaliza el email a minúsculas", async () => {
-        const deps = createDeps();
-        const handler = createLoginSubmitHandler(deps);
-        const event = createEvent();
-    
-        await handler(event, "ANA@EXAMPLE.COM");
-    
-        expect(deps.requestOtp).toHaveBeenCalledWith("ana@example.com");
-      });
-    
-      test("error con code RATE_LIMITED usa errorRateLimited", async () => {
-        const rateLimited = Object.assign(new Error("rate limit"), {
-          code: "RATE_LIMITED",
-        });
-        const deps = createDeps({
-          requestOtp: mock(() => Promise.reject(rateLimited)),
-        });
-        const handler = createLoginSubmitHandler(deps);
-        const event = createEvent();
-    
-        await handler(event, "ana@example.com");
-    
-        expect(deps.setError).toHaveBeenCalledWith(
-          "auth.login.errorRateLimited",
-        );
-        expect(deps.navigate).not.toHaveBeenCalled();
-      });
-    
-      test(
-        "error con code INTERNAL_SERVER_ERROR usa errorServiceUnavailable",
-        async () => {
-          const serverError = Object.assign(new Error("down"), {
-            code: "INTERNAL_SERVER_ERROR",
-          });
-          const deps = createDeps({
-            requestOtp: mock(() => Promise.reject(serverError)),
-          });
-          const handler = createLoginSubmitHandler(deps);
-          const event = createEvent();
-    
-          await handler(event, "ana@example.com");
-    
-          expect(deps.setError).toHaveBeenCalledWith(
-            "auth.login.errorServiceUnavailable",
-          );
-          expect(deps.navigate).not.toHaveBeenCalled();
-        },
-      );
+  test("normaliza el email a minúsculas", async () => {
+    const deps = createDeps();
+    const handler = createLoginSubmitHandler(deps);
+    const event = createEvent();
+
+    await handler(event, "ANA@EXAMPLE.COM");
+
+    expect(deps.requestOtp).toHaveBeenCalledWith("ana@example.com");
+  });
+
+  test("error con code RATE_LIMITED usa errorRateLimited", async () => {
+    const rateLimited = Object.assign(new Error("rate limit"), {
+      code: "RATE_LIMITED",
     });
+    const deps = createDeps({
+      requestOtp: mock(() => Promise.reject(rateLimited)),
+    });
+    const handler = createLoginSubmitHandler(deps);
+    const event = createEvent();
+
+    await handler(event, "ana@example.com");
+
+    expect(deps.setError).toHaveBeenCalledWith("auth.login.errorRateLimited");
+    expect(deps.navigate).not.toHaveBeenCalled();
+  });
+
+  test("error con code INTERNAL_SERVER_ERROR usa errorServiceUnavailable", async () => {
+    const serverError = Object.assign(new Error("down"), {
+      code: "INTERNAL_SERVER_ERROR",
+    });
+    const deps = createDeps({
+      requestOtp: mock(() => Promise.reject(serverError)),
+    });
+    const handler = createLoginSubmitHandler(deps);
+    const event = createEvent();
+
+    await handler(event, "ana@example.com");
+
+    expect(deps.setError).toHaveBeenCalledWith(
+      "auth.login.errorServiceUnavailable",
+    );
+    expect(deps.navigate).not.toHaveBeenCalled();
+  });
+});

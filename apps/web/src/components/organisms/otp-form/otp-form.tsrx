@@ -33,12 +33,24 @@ export function OtpForm(props: OtpFormProps) @{
 
   const [state, setState] = useState<OtpState>(() => machine.getState());
 
-  const handleComplete = (code: string) => {
-    machine.setCode(code);
-    const submission = machine.submit();
-    setState(machine.getState()); // submitting (deshabilita celdas)
-    void submission.then(() => setState(machine.getState())); // error | expired
-  };
+      const handleComplete = (code: string) => {
+        machine.setCode(code);
+        const submission = machine.submit();
+        setState(machine.getState()); // submitting (deshabilita celdas)
+        void submission.then(() => {
+          const next = machine.getState();
+          setState(next); // error | expired | success
+          // Redirige al index cuando el verifier aceptó el código. El middleware
+          // `authRedirect` del index route (`octane.config.ts` línea ~38) lee la
+          // cookie de sesión y hace el 302 al shell autenticado. Usamos
+          // `location.assign` para forzar navegación completa (no SPA), porque
+          // el shell depende del cookie y necesitamos que el browser lo lea
+          // desde el nuevo request, no del state de octane en memoria.
+          if (next.status === "success") {
+            location.assign("/");
+          }
+        });
+      };
 
   const busy = state.status === "submitting";
   const exhausted =
