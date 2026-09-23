@@ -74,26 +74,14 @@ export function buildH3Event(options: BuildH3EventOptions): H3Event {
   // combinations, `new Request(url, { body: "string" })` doesn't expose the
   // body via `.text()` reliably — the Blob wrapper goes through the standard
   // ReadableStream path that h3 v2's `readBody` expects.
-  const request = new Request(url, {
-    method: options.method,
-    headers: new Headers(headerEntries),
-    body:
-      bodyString === null
-        ? null
-        : new Blob([bodyString], { type: "application/json" }),
-  });
-
-  // eslint-disable-next-line no-console
-  console.log(
-    "[bridge] buildH3Event:",
-    options.method,
-    url,
-    "body null:",
-    request.body === null,
-    "bodyString:",
-    bodyString,
-  );
-
+  //
+  // Headers: el mismo `headersObj` (con cookie ya mergeada de `options.cookies`)
+  // se usa TANTO para el Fetch Request (`event.req.headers`) como para
+  // `node.req.headers`. Esto es crítico: `getCookie(event)` en h3 v2 lee de
+  // `event.req.headers.get("cookie")` (no de `node.req.headers`). Si el cookie
+  // vive solo en `node.req.headers`, los handlers que llaman `getCookie(event,
+  // "crm_session")` siempre ven undefined → 401 en cualquier endpoint que
+  // valide sesión (todas las procedures auth + tasks bajo `requireSession`).
   const headersObj = new Headers(headerEntries);
   if (options.cookies) {
     const cookieHeader = Object.entries(options.cookies)
@@ -101,6 +89,15 @@ export function buildH3Event(options: BuildH3EventOptions): H3Event {
       .join("; ");
     if (cookieHeader) headersObj.set("cookie", cookieHeader);
   }
+
+  const request = new Request(url, {
+    method: options.method,
+    headers: headersObj,
+    body:
+      bodyString === null
+        ? null
+        : new Blob([bodyString], { type: "application/json" }),
+  });
 
   // SAFETY: Materialización de un H3Event para invocar handlers H3Event-shaped
   // desde un procedure ORPC. Los campos poblados (`req`, `node.req.headers/url/method`,
@@ -143,13 +140,42 @@ export function buildH3EventFromBase(
   base: H3Event,
   options: BuildH3EventOptions,
 ): H3Event {
-  const standalone = buildH3Event(options);
+  // Extraemos el header `cookie` del base para propagarlo al Fetch Request
+  // standalone via `options.cookies`. Sin esto, `getCookie(event)` retorna
+  // undefined en cualquier procedure autenticada (el browser sí envía cookie
+  // en el request al api, pero el bridge solo lo preserva en `node.req.headers`
+  // y `h3 v2` lee de `event.req.headers`). El caller (router.ts) sigue
+  // proveyendo el body ORPC destrabado en `options.body`.
+  const baseCookieHeader = base.req?.headers?.get("cookie") ?? "";
+  const forwardedCookies = baseCookieHeader
+    ? Object.fromEntries(
+        baseCookieHeader
+          .split(";")
+          .map(
+            (pair): [string, string] => {
+              const eqIdx = pair.indexOf("=");
+              if (eqIdx === -1) return ["", ""];
+              return [
+                pair.slice(0, eqIdx).trim(),
+                pair.slice(eqIdx + 1).trim(),
+              ];
+            },
+          )
+          .filter(([k]: [string, string]) => k.length > 0),
+      )
+    : undefined;
+
+  const standalone = buildH3Event({
+    ...options,
+    ...(forwardedCookies ? { cookies: forwardedCookies } : {}),
+  });
   // SAFETY: Reuso del `node.req` (headers/URL/method) y `node.res` del base.
   // Los handlers que llaman `getHeader(event, "x-user-id")` o
-  // `getCookie(event, "crm_session")` leen del `node.req.headers` del base, que
-  // contiene los headers del request original del cliente. Los handlers que
-  // llaman `setCookie(event, name, value, opts)` escriben al `node.res.setHeader`
-  // del base, que es el que nitro lee para construir la Response final.
+  // `getCookie(event, "crm_session")` leen del `event.req.headers` del hybrid
+  // (h3 v2 contract), que ahora combina el body ORPC destrabado + el cookie
+  // del request original. Los handlers que llaman `setCookie(event, name,
+  // value, opts)` siguen escribiendo al `node.res.setHeader` del base, que es
+  // el que nitro lee para construir la Response final.
   // El cast `as NonNullable<H3Event["node"]>` es necesario porque la rama
   // `?? {}` del fallback infiere `{}` sin `req/res`; sabemos que `base.node`
   // siempre está poblado en h3 v2 (los eventos entregados por nitro garantizan
@@ -159,18 +185,19 @@ export function buildH3EventFromBase(
   // directamente para escribir headers (e.g. `setCookie` hace
   // `event.res.headers.append('set-cookie', ...)`). Sin propagar `base.res`
   // al hybrid, el cookie no llega al cliente. `event.req` se mantiene del
-  // standalone (new Request con body ORPC destrabado) para que
-  // `readValidatedBody` lea el input correcto, y `event.node.req/res` del
-  // base para mantener headers legacy/URL del request original.
+  // standalone (new Request con body ORPC destrabado y cookie del base) para
+  // que `readValidatedBody` lea el input correcto y `getCookie`/`getHeader`
+  // lean del Fetch Request. `event.node.req/res` del base mantiene la
+  // referencia para que `setHeader/setCookie` propaguen al response real.
   const baseRes = (base as { res?: unknown }).res;
   // SAFETY: el cast `as unknown as H3Event` es necesario porque
   // `node.req/res` aceptan shapes parciales que el tipo completo de
   // H3Event no declara como opcionales; el spread `...standalone`
-  // preserva `req` (Fetch Request nuevo con body ORPC destrabado) y
-  // `context`, `res` se propaga del base para que setCookie escriba al
-  // response real de nitro, y `node` se reemplaza con las referencias del
-  // base para que getHeader/getCookie/setHeader/setCookie funcionen en el
-  // hybrid.
+  // preserva `req` (Fetch Request nuevo con body ORPC destrabado y cookie
+  // heredado del base) y `context`, `res` se propaga del base para que
+  // setCookie escriba al response real de nitro, y `node` se reemplaza con
+  // las referencias del base para que getHeader/getCookie/setHeader/setCookie
+  // funcionen en el hybrid.
   return {
     ...standalone,
     res: baseRes,

@@ -71,24 +71,26 @@ describe("buildH3Event", () => {
     expect(event.req.headers.get("x-test")).toBe("1");
   });
 
-  test("cookies se joinan en el header cookie del node.req (no en event.req.headers)", () => {
-    // El bridge coloca el header `cookie` en `node.req.headers` (donde lo
-    // leen helpers legacy de h3 + los handlers que usan `getCookie(event)`)
-    // y lo deja fuera de `event.req.headers` (Fetch Request). Esto es
-    // intencional: el `req` interno no debe arrastrar cookies que el base
-    // event ya tenía en su `node.req`.
+  test("cookies se joinan en el header cookie TANTO en node.req COMO en event.req.headers", () => {
+    // h3 v2 `getCookie(event, name)` lee `event.req.headers.get("cookie")`,
+    // no `node.req.headers`. Por eso el cookie DEBE vivir en el Fetch Request
+    // (event.req) — si solo vive en node.req, `getCookie` retorna undefined
+    // y cualquier procedure autenticada responde 401. Confirmado por bug fix.
     const event = buildH3Event({
       method: "GET",
       path: "/rpc/auth/session",
       cookies: { crm_session: "abc", other: "def" },
     });
 
-    const nodeHeaders = (
-      event.node as unknown as { req: { headers: Headers } }
-    ).req.headers;
-    expect(nodeHeaders.get("cookie")).toBe("crm_session=abc; other=def");
-    // El Fetch Request no lleva la cookie (la base ya tiene la propia).
-    expect(event.req.headers.get("cookie")).toBeNull();
+    const expectedCookie = "crm_session=abc; other=def";
+
+    // event.req.headers (Fetch Request): donde h3 v2 lo lee.
+    expect(event.req.headers.get("cookie")).toBe(expectedCookie);
+
+    // node.req.headers: donde handlers legacy que leen node.req.headers lo buscan.
+    const nodeHeaders = (event.node as unknown as { req: { headers: Headers } })
+      .req.headers;
+    expect(nodeHeaders.get("cookie")).toBe(expectedCookie);
   });
 });
 
@@ -116,13 +118,59 @@ describe("buildH3EventFromBase", () => {
     };
   }
 
+  test("forwarding del header cookie del base al event.req del hybrid", () => {
+    // El bridge extrae el header `cookie` del base H3Event y lo propaga al
+    // Fetch Request standalone. Sin esto, `getCookie(event)` falla incluso
+    // si el browser sí envió la cookie en el request original.
+    function makeBaseWithCookieRequest(cookieHeader: string) {
+      const appended: { key: string; value: string }[] = [];
+      const req = new Request("http://localhost/real", {
+        method: "GET",
+        headers: { cookie: cookieHeader },
+      });
+      return {
+        req,
+        res: {
+          append: (k: string, v: string) => appended.push({ key: k, value: v }),
+        },
+        appended,
+        node: {
+          req: { headers: new Map<string, string>() },
+          res: undefined as unknown,
+        },
+      };
+    }
+
+    const base = makeBaseWithCookieRequest(
+      "crm_session=from-base; trail=ok",
+    );
+
+    const hybrid = buildH3EventFromBase(
+      base as unknown as Parameters<typeof buildH3EventFromBase>[0],
+      {
+        method: "POST",
+        path: "/rpc/auth/session",
+        body: undefined,
+      },
+    );
+
+    // El Fetch Request del hybrid debe incluir el cookie del base.
+    expect(hybrid.req.headers.get("cookie")).toBe(
+      "crm_session=from-base; trail=ok",
+    );
+  });
+
   test("preserva node.req.headers del base (incluyendo cookies legacy)", () => {
-    const base = makeBase() as unknown as Parameters<typeof buildH3EventFromBase>[0];
+    const base = makeBase() as unknown as Parameters<
+      typeof buildH3EventFromBase
+    >[0];
     // El bridge lee SOLO de base.node.req.headers (no de event.req.headers).
     // Replicamos la shape de h3 v2 (Node IncomingHttpHeaders con keys
     // lowercase) en `base.node.req.headers` para que el header accessor
     // matchee.
-    const baseNode = base.node as unknown as { req: { headers: Map<string, string> } };
+    const baseNode = base.node as unknown as {
+      req: { headers: Map<string, string> };
+    };
     baseNode.req.headers = new Map<string, string>([
       ["cookie", "crm_session=real-cookie"],
       ["x-real", "yes"],
