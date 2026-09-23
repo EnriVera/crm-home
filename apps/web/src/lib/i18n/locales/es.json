@@ -84,6 +84,9 @@
       "noClient": "Sin cliente",
       "noCategory": "Sin categoría"
     },
+    "detail": {
+      "loading": "Cargando…"
+    },
     "form": {
       "titleLabel": "Título",
       "titlePlaceholder": "Ej: Llamar al cliente",
