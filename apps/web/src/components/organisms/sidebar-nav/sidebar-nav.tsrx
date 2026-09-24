@@ -45,13 +45,14 @@ export function SidebarNav(props: SidebarNavProps) @{
       {NAV_TREE.map((node) =>
         node.type === "group" ? (
           <NavGroup
+            key={node.labelKey}
             label={t(node.labelKey)}
             icon={node.icon}
             active={isGroupActive(pathname, node.children)}
             collapsed={collapsed}
           >
             {node.children.map((child) => (
-              <li>
+              <li key={child.href}>
                 <NavItem
                   href={child.href}
                   icon={child.icon}
@@ -63,7 +64,7 @@ export function SidebarNav(props: SidebarNavProps) @{
             ))}
           </NavGroup>
         ) : (
-          <li>
+          <li key={node.href}>
             <NavItem
               href={node.href}
               icon={node.icon}

@@ -79,7 +79,7 @@ export function TaskListItem(props: TaskListItemProps) @{
       ) : null}
       {props.updatedAt ? (
         <time
-          dateTime={props.updatedAt}
+          datetime={props.updatedAt}
           class="text-xs text-text-secondary"
         >
           {formatRelativeDate(props.updatedAt)}

@@ -106,6 +106,7 @@ export function BaseView<F extends BaseViewFilters>(props: BaseViewProps<F>) @{
       >
         {availableViews.map((v) => (
           <button
+            key={v}
             type="button"
             data-active={v === view}
             onClick={() => setView(v)}

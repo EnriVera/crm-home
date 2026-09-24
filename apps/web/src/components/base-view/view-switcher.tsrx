@@ -20,6 +20,7 @@ export function ViewSwitcher(props: ViewSwitcherProps) @{
   <nav data-view-switcher>
     {props.availableViews.map((v) => (
       <button
+        key={v}
         type="button"
         data-active={v === props.active}
         onClick={() => props.onChange(v)}
