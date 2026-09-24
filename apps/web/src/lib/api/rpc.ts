@@ -67,7 +67,27 @@ export function createRpcClient(baseURL: string): RpcClient {
 
  const link = new RPCLink({
   url: absoluteURL,
-  fetch: (request, init) => fetch(request, { ...init, credentials: "include" }),
+  // Interceptamos 401 para evitar que el user quede atascado con un
+  // estado vacío + 401s silenciosos en la consola. Cuando el backend
+  // rechaza por auth (cookie expirada, session eliminada de DB, etc.),
+  // redirigimos a /login full-page. El `window.location.assign` se llama
+  // antes de throw para que la navegación arranque ya; el throw rechaza
+  // la promise del caller que silenciosamente la ingería (e.g. `setTasks([])`
+  // en tasks-page.tsx). Verificamos que NO estamos ya en /login para
+  // evitar loops de redirect.
+  fetch: async (request, init) => {
+    const response = await fetch(request, { ...init, credentials: "include" });
+    if (response.status === 401) {
+      if (
+        typeof globalThis !== "undefined" &&
+        globalThis.location &&
+        !globalThis.location.pathname.startsWith("/login")
+      ) {
+        globalThis.location.assign("/login");
+      }
+    }
+    return response;
+  },
  });
 
  // SAFETY: `link.contract(contract)` (v1.15) retorna un typed client que
