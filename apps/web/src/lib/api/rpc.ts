@@ -70,11 +70,12 @@ export function createRpcClient(baseURL: string): RpcClient {
   // Interceptamos 401 para evitar que el user quede atascado con un
   // estado vacío + 401s silenciosos en la consola. Cuando el backend
   // rechaza por auth (cookie expirada, session eliminada de DB, etc.),
-  // redirigimos a /login full-page. El `window.location.assign` se llama
-  // antes de throw para que la navegación arranque ya; el throw rechaza
-  // la promise del caller que silenciosamente la ingería (e.g. `setTasks([])`
-  // en tasks-page.tsx). Verificamos que NO estamos ya en /login para
-  // evitar loops de redirect.
+  // redirigimos a /login?reauth=1 full-page.
+  //
+  // El `?reauth=1` es CRÍTICO: sin él, el `redirectIfAuthenticated`
+  // del router en /login vería la cookie presente y rebotaría a /dashboard
+  // (loop `/tasks → 401 → /login → cookie-redirect → /dashboard`). Con el
+  // flag, /login permite el render y el user puede re-loguearse.
   fetch: async (request, init) => {
     const response = await fetch(request, { ...init, credentials: "include" });
     if (response.status === 401) {
@@ -83,7 +84,7 @@ export function createRpcClient(baseURL: string): RpcClient {
         globalThis.location &&
         !globalThis.location.pathname.startsWith("/login")
       ) {
-        globalThis.location.assign("/login");
+        globalThis.location.assign("/login?reauth=1");
       }
     }
     return response;

@@ -5,6 +5,20 @@ import { defineConfig } from "vite";
 export default defineConfig({
   plugins: [...octane(), tailwindcss()],
   build: { target: "esnext" },
+  // Pre-bundle deps para evitar el ciclo "cold start → Vite optimiza deps →
+  // SSR lento → browser timeout → 'client disconnected'". Cada cambio en
+  // el código de estos archivos gatilla re-optimización; listarlos acá los
+  // pre-bundlea en el primer start.
+  optimizeDeps: {
+    include: [
+      "@orpc/client",
+      "@orpc/client/fetch",
+      "@orpc/contract",
+      "@octanejs/phosphor-icons",
+      "@octanejs/resizable-panels",
+      "i18next",
+    ],
+  },
   server: {
     // Proxy `/rpc/**` a la API (nitro en :3000). El cliente RPC lee
     // `VITE_API_URL ?? "/rpc"` y por default es path absoluto relativo al

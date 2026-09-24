@@ -48,7 +48,17 @@ export function createAuthRedirect(): Middleware {
 export function createRedirectIfAuthenticated(): Middleware {
   return async (context, next) => {
     const cookies = context.request.headers.get("cookie") ?? "";
-    if (cookies.includes("crm_session=")) {
+    // El flag `?reauth=1` fuerza el render de /login aunque haya cookie
+    // presente: lo emite el 401 interceptor del RPC client cuando la
+    // session del server murió (cookie stale) y queremos que el user
+    // re-ingrese sus credenciales en vez de rebotar al dashboard.
+    let isReauth = false;
+    try {
+      isReauth = new URL(context.request.url).searchParams.get("reauth") === "1";
+    } catch {
+      // URL inválida: sin reauth, cae al comportamiento por defecto.
+    }
+    if (cookies.includes("crm_session=") && !isReauth) {
       return redirectResponse("/dashboard");
     }
     return next();
