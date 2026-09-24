@@ -1,9 +1,12 @@
+import { useState } from "octane";
 import { t } from "../../../vendor/i18n/core";
 import {
   buildStateSubmitParams,
   initialTaskStateFormState,
   taskStateNameError,
   taskStateOrderError,
+  validateTaskStateForm,
+  type TaskStateFormInput,
   type TaskStateFormMode,
   type TaskStateFormState,
 } from "./task-state-form.logic";
@@ -21,7 +24,7 @@ import {
 export interface TaskStateFormProps {
   mode: TaskStateFormMode;
   existingStateId?: string;
-  initial?: Partial<import("./task-state-form.logic").TaskStateFormInput>;
+  initial?: Partial<TaskStateFormInput>;
   onSubmit: (
     params: ReturnType<typeof buildStateSubmitParams>,
   ) => void | Promise<void>;
@@ -29,15 +32,43 @@ export interface TaskStateFormProps {
 }
 
 export function TaskStateForm(props: TaskStateFormProps) @{
-  // Stubs — la implementación real conecta useState del wrapper octane.
-  const state: TaskStateFormState = initialTaskStateFormState(props.initial);
+  const [state, setState] = useState<TaskStateFormState>(() =>
+    initialTaskStateFormState(props.initial),
+  );
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  void state;
-  void buildStateSubmitParams;
-  void taskStateNameError;
-  void taskStateOrderError;
+  const nameError = taskStateNameError(state.tast_name);
+  const orderError = taskStateOrderError(state.tast_order);
+  const validationError = validateTaskStateForm(state);
 
-  <form data-component="task-state-form" data-mode={props.mode}>
+  const handleSubmit = async (event: Event): Promise<void> => {
+    event.preventDefault();
+    if (validationError || submitting) return;
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      const params = buildStateSubmitParams(
+        props.mode,
+        state,
+        props.existingStateId ?? null,
+      );
+      await props.onSubmit(params);
+    } catch (err) {
+      setSubmitError(
+        err instanceof Error ? err.message : "Submit failed",
+      );
+      setSubmitting(false);
+    }
+  };
+
+  <form
+    data-component="task-state-form"
+    data-mode={props.mode}
+    onSubmit={(e: Event) => {
+      void handleSubmit(e);
+    }}
+  >
     <label>
       <span>{t("tasks.statuses.nameLabel")}</span>
       <input
@@ -46,26 +77,63 @@ export function TaskStateForm(props: TaskStateFormProps) @{
         maxLength={50}
         required
         minLength={1}
+        value={state.tast_name}
+        disabled={submitting}
+        onInput={(e: Event) => {
+          const target = e.currentTarget as HTMLInputElement;
+          setState((prev) => ({ ...prev, tast_name: target.value }));
+        }}
+        placeholder={t("tasks.statuses.namePlaceholder")}
       />
+      {nameError && (
+        <small data-slot="name-error">{t(nameError)}</small>
+      )}
     </label>
 
     <label>
       <span>{t("tasks.statuses.orderLabel")}</span>
-      <input type="number" name="tast_order" min="0" step="1" required />
+      <input
+        type="number"
+        name="tast_order"
+        min="0"
+        step="1"
+        required
+        value={String(state.tast_order)}
+        disabled={submitting}
+        onInput={(e: Event) => {
+          const target = e.currentTarget as HTMLInputElement;
+          const next = Number(target.value);
+          setState((prev) => ({
+            ...prev,
+            tast_order: Number.isFinite(next) ? next : 0,
+          }));
+        }}
+      />
+      {orderError && (
+        <small data-slot="order-error">{t(orderError)}</small>
+      )}
     </label>
 
-    {/* No color picker — PRD §D6 Fase 2 */}
+    {submitError && (
+      <p data-slot="submit-error" role="alert">
+        {submitError}
+      </p>
+    )}
 
     <div data-slot="actions">
-      <button
-        type="submit"
-        data-action="submit"
-      >
-        {props.mode === "create"
+      <button type="submit" data-action="submit" disabled={Boolean(validationError) || submitting}>
+        {submitting
+          ? t("tasks.form.submitting")
+          : props.mode === "create"
           ? t("tasks.statuses.add")
           : t("tasks.statuses.edit")}
       </button>
-      <button type="button" data-action="cancel" onClick={() => props.onCancel()}>
+      <button
+        type="button"
+        data-action="cancel"
+        disabled={submitting}
+        onClick={() => props.onCancel()}
+      >
         {t("tasks.form.cancel")}
       </button>
     </div>

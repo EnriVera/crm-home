@@ -2,7 +2,7 @@
 
 Fecha: 2026-09-23
 Owner: el Gentleman (autonomous)
-Estado: en curso (Fase A ✅, B ✅; Fases C-E pendientes)
+Estado: en curso (Fase A ✅, B ✅, C ✅; Fases D-E pendientes)
 
 ## Objetivo
 
@@ -44,13 +44,13 @@ Commit: `feat(web): task-form wired for create + edit via rpc`
 
 ### Fase C — Tasks-config: states CRUD + reorder
 
-- C1. Reemplazar el placeholder `tasks-config-page.tsrx` con `useEffect` que llama `RPC.tasks.states.list(...)` y `useState<TaskState[]>`.
-- C2. Render lista de estados (nombre + orden) con botones Editar / Eliminar / Mover arriba / Mover abajo.
-- C3. Botón "Agregar estado" abre `task-state-form` con `mode="create"`. Submit → `RPC.tasks.states.create(...)` → cierra + refresh.
-- C4. Botón Editar por estado: abre form con `mode="update"` y `initial={tast_name, tast_order}` pre-cargados.
-- C5. Botón Eliminar por estado: diálogo de confirmación → `RPC.tasks.states.remove({ tast_id })`.
-- C6. Botones up/down: `RPC.tasks.states.reorder([{tast_id, tast_order: newOrder}, ...])` para todos los estados.
-- C7. Reemplazar el `state = initialTaskStateFormState(...)` placeholder en `task-state-form.tsrx` por `useState` real.
+- [x] C1. Reemplazar el placeholder `tasks-config-page.tsrx` con `useEffect` que llama `RPC.tasks.states.list(...)` y `useState<TaskState[]>`.
+- [x] C2. Render lista de estados (nombre + orden) con botones Editar / Eliminar / Mover arriba / Mover abajo.
+- [x] C3. Botón "Agregar estado" abre `task-state-form` con `mode="create"`. Submit → `RPC.tasks.states.create(...)` → cierra + refresh.
+- [x] C4. Botón Editar por estado: abre form con `mode="update"` y `initial={tast_name, tast_order}` pre-cargados.
+- [x] C5. Botón Eliminar por estado: diálogo de confirmación → `RPC.tasks.states.remove({ tast_id })`.
+- [x] C6. Botones up/down: `RPC.tasks.states.reorder([{tast_id, tast_order: newOrder}, ...])` para todos los estados. **Fix backend extra**: el reorder usa 2-pass (ordenes negativos intermedios) para evitar violar `UNIQUE (tast_user_id, tast_order)` durante el swap. `SET CONSTRAINTS ALL DEFERRED` resultaba en errores intermitentes.
+- [x] C7. Reemplazar el `state = initialTaskStateFormState(...)` placeholder en `task-state-form.tsrx` por `useState` real.
 
 Commit: `feat(web): tasks-config CRUD + reorder for task states`
 

@@ -148,6 +148,9 @@ export class InMemoryTaskStateRepository implements TaskStateRepository {
     const current = this.rows.get(stateId);
     if (current) this.rows.set(stateId, { ...current, order });
   }
+  async deferConstraints(_trx?: Transaction): Promise<void> {
+    // In-memory store: no UNIQUE constraints to defer. Stub for interface.
+  }
 }
 
 export class InMemoryClientLookupRepository implements ClientLookupRepository {

@@ -47,6 +47,20 @@ export class ReorderTaskStates {
     }
 
     return this.deps.transactionManager.run(async (trx) => {
+      // Reorder en 2 pasadas para evitar violar la UNIQUE constraint
+      // (tast_user_id, tast_order) durante el swap:
+      //   Pass 1: llevamos todos los órdenes a valores NEGATIVOS únicos
+      //          (-1000 - index). Ningún estado tiene orden negativo, así
+      //          que la UNIQUE no se viola.
+      //   Pass 2: asignamos los órdenes finales positivos. Como todavía
+      //          ninguno está en el rango [0..n], los UPDATEs no chocan
+      //          con la UNIQUE.
+      // Más simple y portable que `SET CONSTRAINTS ALL DEFERRED` (que
+      // depende de la implementación de constraints deferrables del driver).
+      for (let i = 0; i < input.stateOrders.length; i++) {
+        const { id } = input.stateOrders[i]!;
+        await this.deps.taskStateRepository.persistOrder(id, -1000 - i, trx);
+      }
       for (const { id, order } of input.stateOrders) {
         await this.deps.taskStateRepository.persistOrder(id, order, trx);
       }

@@ -1,6 +1,7 @@
 import type { TaskStateRepository } from "../../domain/ports/task-state-repository";
 import type { Transaction } from "../../domain/ports/transaction";
 import type { TaskStatePatch, TaskStateRow } from "../../domain/tasks/types";
+import { sql } from "kysely";
 import type { Database } from "./database";
 import { mapTaskStateRow, type TaskStateDbRow } from "./_mappers";
 
@@ -86,6 +87,15 @@ export class KyselyTaskStateRepository implements TaskStateRepository {
       .set({ tast_order: order })
       .where("tast_id", "=", stateId)
       .execute();
+  }
+
+  async deferConstraints(trx: Transaction): Promise<void> {
+    const db = this.resolve(trx);
+    // `SET CONSTRAINTS ALL DEFERRED` difiere todas las UNIQUE/CHECK constraints
+    // (incluyendo `UNIQUE (tast_user_id, tast_order)`) hasta el COMMIT de la
+    // transacción. Necesario para que el reorder pueda hacer swaps múltiples
+    // sin violar la constraint entre updates.
+    await sql`SET CONSTRAINTS ALL DEFERRED`.execute(db);
   }
 
   private resolve(trx?: Transaction): Database {

@@ -7,6 +7,12 @@ import type { Transaction } from "./transaction";
 export interface TaskStateRepository {
   findById(id: string, trx?: Transaction): Promise<TaskStateRow | undefined>;
   findByUser(userId: string, trx?: Transaction): Promise<TaskStateRow[]>;
+  /**
+   * Dentro de una transacción, difiere la verificación de UNIQUE constraints
+   * hasta `COMMIT`. Útil para reorders donde dos UPDATEs secuenciales
+   * podrían violar `UNIQUE (user_id, tast_order)` temporalmente durante el swap.
+   */
+  deferConstraints(trx: Transaction): Promise<void>;
   insert(state: TaskStateRow, trx?: Transaction): Promise<void>;
   update(
     id: string,
