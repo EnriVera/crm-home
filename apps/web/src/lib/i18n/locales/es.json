@@ -126,6 +126,7 @@
     "statuses": {
       "label": "Estados",
       "nameLabel": "Nombre del estado",
+      "namePlaceholder": "Ej: En revisión",
       "orderLabel": "Orden",
       "add": "Agregar estado",
       "edit": "Editar estado",
