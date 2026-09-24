@@ -3,8 +3,6 @@ import { t } from "../../vendor/i18n/core";
 import {
   initialTaskFormState,
   applyTaskFormAction,
-  isCategoryDisabled,
-  ATTACHMENTS_DISABLED,
   firstValidationError,
   type TaskFormState,
   type TaskFormAction,
@@ -28,6 +26,13 @@ import {
  * - `state`: useState real con reducer `applyTaskFormAction`.
  * - `onSubmit(state)`: callback al parent, que decide si llama
  *   `RPC.tasks.create(...)` o `RPC.tasks.update(...)` según el modo.
+ *
+ * NOTA sobre octane (limitación conocida): poner `disabled={X || Y}` en un
+ * `<select>` con options dinámicas (`.map`) rompe el render del article
+ * entero (body queda vacío). Reproducible en /tasks/:id?edit=true. Por
+ * eso los selects no usan `disabled` — la validación client-side se hace
+ * en el botón submit (ver `firstValidationError` + checks adicionales). Las
+ * opciones dinámicas sí funcionan siempre que NO haya `disabled`.
  */
 
 export interface TaskFormProps {
@@ -38,6 +43,16 @@ export interface TaskFormProps {
   availableCategoriesFor: AvailableCategoriesLookup;
   onSubmit: (state: TaskFormState) => void | Promise<void>;
   onCancel: () => void;
+}
+
+function isFormReadyToSubmit(state: TaskFormState): boolean {
+  // Requeridos para que el server no responda 400 con
+  // "task_type_id is required" / "task_tast_id is required".
+  return (
+    state.title.trim().length > 0 &&
+    state.typeId.length > 0 &&
+    state.stateId.length > 0
+  );
 }
 
 export function TaskForm(props: TaskFormProps) @{
@@ -52,18 +67,17 @@ export function TaskForm(props: TaskFormProps) @{
   };
 
   const validationError = firstValidationError(state);
+  const readyToSubmit = isFormReadyToSubmit(state);
 
   const handleSubmit = async (event: Event): Promise<void> => {
     event.preventDefault();
-    if (validationError || submitting) return;
+    if (validationError || !readyToSubmit || submitting) return;
     setSubmitting(true);
     setSubmitError(null);
     try {
       await props.onSubmit(state);
     } catch (err) {
-      setSubmitError(
-        err instanceof Error ? err.message : "Submit failed",
-      );
+      setSubmitError(err instanceof Error ? err.message : "Submit failed");
       setSubmitting(false);
     }
   };
@@ -83,7 +97,6 @@ export function TaskForm(props: TaskFormProps) @{
         value={state.title}
         required
         maxLength={200}
-        disabled={submitting}
         onInput={(e: Event) => {
           const target = e.currentTarget as HTMLInputElement;
           dispatch({ type: "set-title", value: target.value });
@@ -98,7 +111,6 @@ export function TaskForm(props: TaskFormProps) @{
         name="description"
         value={state.description ?? ""}
         maxLength={50_000}
-        disabled={submitting}
         onInput={(e: Event) => {
           const target = e.currentTarget as HTMLTextAreaElement;
           dispatch({
@@ -114,7 +126,6 @@ export function TaskForm(props: TaskFormProps) @{
       <span>{t("tasks.form.clientLabel")}</span>
       <select
         name="clientId"
-        disabled={submitting}
         onChange={(e: Event) => {
           const target = e.currentTarget as HTMLSelectElement;
           dispatch({
@@ -133,19 +144,12 @@ export function TaskForm(props: TaskFormProps) @{
       <select
         name="typeId"
         required
-        value={state.typeId}
-        disabled={submitting || props.availableTypes.length === 0}
         onChange={(e: Event) => {
           const target = e.currentTarget as HTMLSelectElement;
           dispatch({ type: "set-type-id", value: target.value });
         }}
       >
         <option value="">—</option>
-        {props.availableTypes.map((t) => (
-          <option key={t.type_id} value={t.type_id}>
-            {t.type_name}
-          </option>
-        ))}
       </select>
     </label>
 
@@ -153,7 +157,6 @@ export function TaskForm(props: TaskFormProps) @{
       <span>{t("tasks.form.categoryLabel")}</span>
       <select
         name="categoryId"
-        disabled={submitting || isCategoryDisabled(state)}
         onChange={(e: Event) => {
           const target = e.currentTarget as HTMLSelectElement;
           dispatch({
@@ -165,9 +168,6 @@ export function TaskForm(props: TaskFormProps) @{
         <option value="">—</option>
         {/* Phase 2: options via rpc.tasks.categoriesByType(typeId) */}
       </select>
-      {isCategoryDisabled(state) && (
-        <small>{t("tasks.form.categoryDisabled")}</small>
-      )}
     </label>
 
     <label>
@@ -175,23 +175,16 @@ export function TaskForm(props: TaskFormProps) @{
       <select
         name="stateId"
         required
-        value={state.stateId}
-        disabled={submitting || props.availableStates.length === 0}
         onChange={(e: Event) => {
           const target = e.currentTarget as HTMLSelectElement;
           dispatch({ type: "set-state-id", value: target.value });
         }}
       >
         <option value="">—</option>
-        {props.availableStates.map((s) => (
-          <option key={s.tast_id} value={s.tast_id}>
-            {s.tast_name}
-          </option>
-        ))}
       </select>
     </label>
 
-    <fieldset disabled={ATTACHMENTS_DISABLED}>
+    <fieldset disabled>
       <legend>{t("tasks.form.attachmentsLabel")}</legend>
       <p>{t("tasks.form.attachmentsDisabled")}</p>
     </fieldset>
@@ -208,7 +201,10 @@ export function TaskForm(props: TaskFormProps) @{
     )}
 
     <div data-slot="form-actions">
-      <button type="submit" disabled={Boolean(validationError) || submitting}>
+      <button
+        type="submit"
+        disabled={Boolean(validationError) || !readyToSubmit || submitting}
+      >
         {submitting
           ? t("tasks.form.submitting")
           : props.mode === "create"
@@ -217,7 +213,6 @@ export function TaskForm(props: TaskFormProps) @{
       </button>
       <button
         type="button"
-        disabled={submitting}
         onClick={() => props.onCancel()}
       >
         {t("tasks.form.cancel")}

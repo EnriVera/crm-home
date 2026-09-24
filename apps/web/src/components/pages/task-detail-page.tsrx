@@ -4,9 +4,7 @@ import { createRpcClient, type RpcClient } from "../../lib/api/rpc";
 import { TaskForm } from "../organisms/task-form/task-form.tsrx";
 import {
   closeDeleteConfirmation,
-  editUrl,
   initialDeleteConfirmationState,
-  isEditModeFromSearchParams,
   openDeleteConfirmation,
   TASKS_LIST_PATH,
   type DeleteConfirmationState,
@@ -83,10 +81,7 @@ export function TaskDetailPage(props: { taskId: string; url: string }) @{
   const [confirmState, setConfirmState] = useState<DeleteConfirmationState>(
     initialDeleteConfirmationState,
   );
-
-  const editMode = isEditModeFromSearchParams(
-    new URL(props.url, "http://internal").searchParams,
-  );
+  const [editing, setEditing] = useState(false);
 
   // Carga: task + lista de estados + lista de tipos.
   useEffect(() => {
@@ -155,12 +150,13 @@ export function TaskDetailPage(props: { taskId: string; url: string }) @{
       task_cate_id: state.categoryId,
       task_clie_id: state.clientId,
     });
-    // Hard reload para refrescar el detail con los datos nuevos y quitar `?edit=true`.
-    globalThis.location.assign(`/tasks/${task.task_id}`);
+    // Reset edit mode + recargar para refrescar el detail con los datos nuevos.
+    setEditing(false);
+    globalThis.location.reload();
   };
 
   const handleCancelEdit = (): void => {
-    globalThis.location.assign(`/tasks/${props.taskId}`);
+    setEditing(false);
   };
 
   const handleMove = async (newStateId: string): Promise<void> => {
@@ -192,7 +188,7 @@ export function TaskDetailPage(props: { taskId: string; url: string }) @{
       </p>
     )}
 
-    {editMode && task && (
+    {editing && task && (
       <aside
         data-component="edit-task-panel"
         role="dialog"
@@ -223,7 +219,7 @@ export function TaskDetailPage(props: { taskId: string; url: string }) @{
       </aside>
     )}
 
-    {task && !editMode && (
+    {task && !editing && (
       <>
         <section data-slot="meta">
           <dl>
@@ -247,9 +243,14 @@ export function TaskDetailPage(props: { taskId: string; url: string }) @{
     )}
 
     <section data-slot="actions">
-      <a href={editUrl(props.taskId)} data-action="edit" aria-disabled={!task}>
+      <button
+        type="button"
+        data-action="edit"
+        disabled={!task || editing}
+        onClick={() => setEditing(true)}
+      >
         {t("tasks.card.edit")}
-      </a>
+      </button>
       {task && taskStates.length > 0 && (
         <label data-slot="move-control">
           <span>{t("tasks.detail.moveLabel")}</span>

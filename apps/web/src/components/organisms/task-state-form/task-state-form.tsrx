@@ -1,5 +1,5 @@
 import { useState } from "octane";
-import { t } from "../../../vendor/i18n/core";
+import { t } from "../../vendor/i18n/core";
 import {
   buildStateSubmitParams,
   initialTaskStateFormState,
@@ -76,7 +76,7 @@ export function TaskStateForm(props: TaskStateFormProps) @{
         name="tast_name"
         maxLength={50}
         required
-        minLength={1}
+        minlength={1}
         value={state.tast_name}
         disabled={submitting}
         onInput={(e: Event) => {
