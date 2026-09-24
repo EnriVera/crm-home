@@ -4,6 +4,7 @@ import { createRpcClient, type RpcClient } from "../../lib/api/rpc";
 import { Button } from "../atoms/button.tsrx";
 import { StatusMessage } from "../atoms/status-message.tsrx";
 import { TaskStateForm } from "../organisms/task-state-form/task-state-form.tsrx";
+import { DataList } from "../molecules/data-list.tsrx";
 import {
   buildStateSubmitParams,
   type TaskStateFormMode,
@@ -225,46 +226,42 @@ export function TasksConfigPage() @{
       </Button>
     </header>
 
-    {error && (
-      <StatusMessage variant="error" class="mb-6">
-        {error}
-      </StatusMessage>
-    )}
-    {loadError && (
-      <StatusMessage variant="error" class="mb-6">
-        {loadError}
-      </StatusMessage>
-    )}
-
-    {loading ? (
-      <div data-component="states-list-skeleton" class="flex flex-col gap-3">
-        <TaskStateRowSkeleton />
-        <TaskStateRowSkeleton />
-        <TaskStateRowSkeleton />
-      </div>
-    ) : states.length === 0 ? (
-      <div
-        data-component="states-list-empty"
-        class="flex flex-col items-center rounded-lg border border-dashed border-border bg-surface px-6 py-12 text-center"
-      >
-        <h2 class="text-base font-semibold text-text-primary">
-          {t("tasks.state.empty")}
-        </h2>
-        <p class="mt-2 max-w-sm text-sm text-text-secondary">
-          Los estados son las columnas del kanban. Empezá creando el primero.
-        </p>
-        <Button
-          variant="primary"
-          onClick={() => {
-            setEditing("create");
-            setEditingState(null);
-          }}
-          class="mt-6"
+    <DataList
+      loading={loading}
+      error={loadError ?? error}
+      isEmpty={states.length === 0}
+      className="flex flex-col gap-3"
+      skeleton={
+        <>
+          <TaskStateRowSkeleton />
+          <TaskStateRowSkeleton />
+          <TaskStateRowSkeleton />
+        </>
+      }
+      emptyState={
+        <div
+          data-component="states-list-empty"
+          class="flex flex-col items-center rounded-lg border border-dashed border-border bg-surface px-6 py-12 text-center"
         >
-          {t("tasks.statuses.add")}
-        </Button>
-      </div>
-    ) : (
+          <h2 class="text-base font-semibold text-text-primary">
+            {t("tasks.state.empty")}
+          </h2>
+          <p class="mt-2 max-w-sm text-sm text-text-secondary">
+            Los estados son las columnas del kanban. Empezá creando el primero.
+          </p>
+          <Button
+            variant="primary"
+            onClick={() => {
+              setEditing("create");
+              setEditingState(null);
+            }}
+            class="mt-6"
+          >
+            {t("tasks.statuses.add")}
+          </Button>
+        </div>
+      }
+    >
       <ul data-component="task-states-list" class="flex flex-col gap-3">
         {states.map((s, i) => (
           <li
@@ -326,7 +323,7 @@ export function TasksConfigPage() @{
           </li>
         ))}
       </ul>
-    )}
+    </DataList>
 
     {/* Drawer de edición/creación de estado (mismo lenguaje que task drawer). */}
     {editing !== null && (

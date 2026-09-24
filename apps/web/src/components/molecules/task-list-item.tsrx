@@ -12,9 +12,15 @@ import { t } from "../vendor/i18n/core";
  * - Focus: outline-focus canónico.
  * - Spacing consistente con el resto del sistema (`px-4 py-3`).
  *
- * "Empty states should teach the interface" (impeccable): si el row no
- * tiene description, mostramos un placeholder muted ("Sin descripción")
- * para que el usuario entienda el campo, no que "no hay nada".
+ * Pending state (optimistic updates): cuando `task_id` empieza con
+ * `pending-`, la fila renderiza con `pointer-events-none` y `aria-busy`
+ * para evitar 404 si el user clickea antes del reconcile con el server.
+ * Un badge "Guardando" reemplaza el state badge y oculta la fecha.
+ *
+ * NOTA sobre TSRX: octane 0.5.0 / TSRX no soporta `if/else` con JSX en
+ * el `@{...}` body (el último statement queda "unused" y rompe SSR).
+ * Toda decisión condicional va inline con ternarios sobre clases o
+ * children — sin bloques de control.
  */
 
 export interface TaskListItemProps {
@@ -48,14 +54,27 @@ export function TaskListItem(props: TaskListItemProps) @{
   const descriptionText =
     props.task_description?.trim() || t("tasks.card.noDescription");
   const descriptionIsPlaceholder = !props.task_description?.trim();
+  const isPending = props.task_id.startsWith("pending-");
 
   <a
-    href={`/tasks/${props.task_id}`}
+    href={isPending ? undefined : `/tasks/${props.task_id}`}
     data-component="task-list-item"
-    class="group flex items-start gap-4 rounded-md border border-border bg-surface px-4 py-3 transition-colors hover:bg-background focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+    data-pending={isPending ? "true" : undefined}
+    aria-busy={isPending ? "true" : undefined}
+    aria-label={isPending ? `${props.task_title} (guardando)` : undefined}
+    tabindex={isPending ? -1 : undefined}
+    class={`group flex items-start gap-4 rounded-md border border-border bg-surface px-4 py-3 transition-colors ${
+      isPending
+        ? "pointer-events-none cursor-default opacity-70"
+        : "hover:bg-background focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+    }`}
   >
     <div class="min-w-0 flex-1">
-      <h3 class="truncate text-sm font-semibold text-text-primary group-hover:text-primary-700 dark:group-hover:text-primary-300">
+      <h3
+        class={`truncate text-sm font-semibold text-text-primary ${
+          isPending ? "" : "group-hover:text-primary-700 dark:group-hover:text-primary-300"
+        }`}
+      >
         {props.task_title}
       </h3>
       <p
@@ -69,15 +88,25 @@ export function TaskListItem(props: TaskListItemProps) @{
       </p>
     </div>
     <div class="flex shrink-0 flex-col items-end gap-1.5">
-      {props.stateName ? (
+      {isPending ? (
         <span
-          data-component="task-list-item-state"
-          class="inline-flex items-center rounded-full border border-border bg-background px-2.5 py-0.5 text-xs font-medium text-text-primary"
+          data-component="task-list-item-pending"
+          class="inline-flex items-center gap-1 rounded-full border border-border bg-background px-2.5 py-0.5 text-xs text-text-secondary"
         >
-          {props.stateName}
+          <span class="h-1.5 w-1.5 animate-pulse rounded-full bg-text-secondary" />
+          Guardando
         </span>
-      ) : null}
-      {props.updatedAt ? (
+      ) : (
+        props.stateName ? (
+          <span
+            data-component="task-list-item-state"
+            class="inline-flex items-center rounded-full border border-border bg-background px-2.5 py-0.5 text-xs font-medium text-text-primary"
+          >
+            {props.stateName}
+          </span>
+        ) : null
+      )}
+      {!isPending && props.updatedAt ? (
         <time
           datetime={props.updatedAt}
           class="text-xs text-text-secondary"

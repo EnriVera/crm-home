@@ -6,6 +6,7 @@ import { Button } from "../atoms/button.tsrx";
 import { StatusMessage } from "../atoms/status-message.tsrx";
 import { Icon } from "../vendor/icons";
 import { TaskListItem } from "../molecules/task-list-item.tsrx";
+import { DataList } from "../molecules/data-list.tsrx";
 import { TaskForm } from "../organisms/task-form/task-form.tsrx";
 import type {
   TaskFormState,
@@ -244,14 +245,42 @@ export function TasksPage() @{
   }, [creatingOpen]);
 
   const handleCreate = async (state: TaskFormState): Promise<void> => {
-    await (RPC as RpcClient).tasks.create({
+    // OPTIMISTIC UPDATE: cerramos el drawer y mostramos la task nueva al
+    // toque, antes de que el RPC complete. Si falla, removemos la task
+    // optimista y mostramos el error. Si succeed, el setRefreshKey trae
+    // la version canónica del server (con el ID real).
+    const tempId = `pending-${crypto.randomUUID()}`;
+    const optimisticTask: TaskRow = {
+      task_id: tempId,
       task_title: state.title,
       task_description: state.description,
-      task_tast_id: state.stateId || undefined,
-      task_type_id: state.typeId || undefined,
-    });
+      task_clie_id: null,
+      task_cate_id: null,
+      task_tast_id: state.stateId || "",
+      task_type_id: state.typeId || null,
+      task_updated_at: new Date().toISOString(),
+      task_created_at: new Date().toISOString(),
+    };
+    setTasks((prev) => [optimisticTask, ...prev]);
     setCreatingOpen(false);
-    setRefreshKey((k) => k + 1);
+    try {
+      await (RPC as RpcClient).tasks.create({
+        task_title: state.title,
+        task_description: state.description,
+        task_tast_id: state.stateId || undefined,
+        task_type_id: state.typeId || undefined,
+      });
+      // Re-fetch desde el server: la task optimista se reemplaza por la
+      // canónica (con ID real) gracias al replace por task_id. Si la
+      // API re-ordena items, también queda el orden correcto.
+      setRefreshKey((k) => k + 1);
+    } catch (err) {
+      // Roll back: remover la optimista + exponer el error inline.
+      setTasks((prev) => prev.filter((t) => t.task_id !== tempId));
+      setLoadError(
+        err instanceof Error ? err.message : "create failed",
+      );
+    }
   };
 
   // Lookup: stateId → state name (closure sobre taskStates).
@@ -290,41 +319,42 @@ export function TasksPage() @{
       </div>
     </header>
 
-    {loadError && (
-      <StatusMessage variant="error" class="mb-6">
-        {loadError}
-      </StatusMessage>
-    )}
-
-    {loading ? (
-      <div data-component="tasks-list-skeleton" class="flex flex-col gap-3">
-        <TaskListItemSkeleton />
-        <TaskListItemSkeleton />
-        <TaskListItemSkeleton />
-      </div>
-    ) : tasks.length === 0 ? (
-      <div
-        data-component="tasks-list-empty"
-        class="flex flex-col items-center rounded-lg border border-dashed border-border bg-surface px-6 py-16 text-center"
-      >
-        <div class="mb-4 text-text-secondary">
-          <Icon name="check-square" size={48} />
-        </div>
-        <h2 class="text-lg font-semibold text-text-primary">
-          {t("tasks.listEmpty.title")}
-        </h2>
-        <p class="mt-2 max-w-sm text-sm text-text-secondary">
-          {t("tasks.listEmpty.description")}
-        </p>
-        <Button
-          variant="primary"
-          onClick={() => setCreatingOpen(true)}
-          class="mt-6"
+    <DataList
+      loading={loading}
+      error={loadError}
+      isEmpty={tasks.length === 0}
+      className="flex flex-col gap-3"
+      skeleton={
+        <>
+          <TaskListItemSkeleton />
+          <TaskListItemSkeleton />
+          <TaskListItemSkeleton />
+        </>
+      }
+      emptyState={
+        <div
+          data-component="tasks-list-empty"
+          class="flex flex-col items-center rounded-lg border border-dashed border-border bg-surface px-6 py-16 text-center"
         >
-          {t("tasks.page.newTask")}
-        </Button>
-      </div>
-    ) : (
+          <div class="mb-4 text-text-secondary">
+            <Icon name="check-square" size={48} />
+          </div>
+          <h2 class="text-lg font-semibold text-text-primary">
+            {t("tasks.listEmpty.title")}
+          </h2>
+          <p class="mt-2 max-w-sm text-sm text-text-secondary">
+            {t("tasks.listEmpty.description")}
+          </p>
+          <Button
+            variant="primary"
+            onClick={() => setCreatingOpen(true)}
+            class="mt-6"
+          >
+            {t("tasks.page.newTask")}
+          </Button>
+        </div>
+      }
+    >
       <BaseView<TaskFilters>
         id="tasks-list"
         moduleId="tasks"
@@ -359,7 +389,7 @@ export function TasksPage() @{
           board: ({ records }) => `${records.length} tasks`,
         }}
       />
-    )}
+    </DataList>
 
     {creatingOpen && (
       <>
