@@ -202,8 +202,19 @@ export function TaskDetailPage(props: { taskId: string; url: string }) @{
       task_cate_id: state.categoryId,
       task_clie_id: state.clientId,
     });
+    // Local optimistic-style update: cerramos el drawer y reflejamos el
+    // nuevo estado en el detail sin reload. El `stateName` derivado y los
+    // timestamps se recomputan automáticamente en el próximo render.
+    setTask({
+      ...task,
+      task_title: state.title,
+      task_description: state.description,
+      task_tast_id: state.stateId || task.task_tast_id,
+      task_type_id: state.typeId || task.task_type_id,
+      task_cate_id: state.categoryId,
+      task_clie_id: state.clientId,
+    });
     setEditing(false);
-    globalThis.location.reload();
   };
 
   const handleCancelEdit = (): void => {
@@ -218,7 +229,9 @@ export function TaskDetailPage(props: { taskId: string; url: string }) @{
         task_id: task.task_id,
         target_state_id: newStateId,
       });
-      globalThis.location.reload();
+      // Local update: el stateName derivado se recalcula con el nuevo
+      // task_tast_id. Sin reload, sin navegar away.
+      setTask({ ...task, task_tast_id: newStateId });
     } catch {
       setMoveError(t("tasks.detail.moveError"));
     }
