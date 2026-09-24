@@ -53,7 +53,12 @@ describe("MoveTask", () => {
     ).rejects.toBeInstanceOf(TaskNotFound);
   });
 
-  test("lanza InvalidKanbanOrder si no se especifica ningún vecino", async () => {
+  test("sin vecinos: default = append al final de la columna destino (Phase E)", async () => {
+    // La task ya está en "state-1" (columna destino), kanbanOrder 1024.
+    // Sin vecinos: el helper `appendOrder(filtered)` ve filtered = [] (la
+    // task actual se excluye) y devuelve KANBAN_DEFAULT_STEP (1024). El move
+    // persiste ese order. Semántica: append, idempotente cuando la task
+    // ya estaba en la columna.
     await taskRepo.insert(makeTask({ id: "t1", kanbanOrder: 1024 }));
     await expect(
       sut.execute({
@@ -61,7 +66,9 @@ describe("MoveTask", () => {
         taskId: "t1",
         targetStateId: "state-1",
       }),
-    ).rejects.toBeInstanceOf(InvalidKanbanOrder);
+    ).resolves.toBeUndefined();
+    const updated = await taskRepo.findById("t1");
+    expect(updated?.kanbanOrder).toBe(1024);
   });
 
   test("lanza InvalidKanbanOrder si el vecino no pertenece a la columna destino", async () => {

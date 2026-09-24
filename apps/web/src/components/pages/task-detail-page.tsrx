@@ -75,6 +75,7 @@ export function TaskDetailPage(props: { taskId: string; url: string }) @{
   const [task, setTask] = useState<TaskDetail | null>(null);
   const [taskStates, setTaskStates] = useState<TaskState[]>([]);
   const [taskTypes, setTaskTypes] = useState<TypeForFormOption[]>([]);
+  const [moveError, setMoveError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
@@ -162,6 +163,21 @@ export function TaskDetailPage(props: { taskId: string; url: string }) @{
     globalThis.location.assign(`/tasks/${props.taskId}`);
   };
 
+  const handleMove = async (newStateId: string): Promise<void> => {
+    if (!task || task.task_tast_id === newStateId) return;
+    setMoveError(null);
+    try {
+      await (RPC as RpcClient).tasks.move({
+        task_id: task.task_id,
+        target_state_id: newStateId,
+      });
+      // Recargamos para refrescar el detail con el nuevo estado + orden.
+      globalThis.location.reload();
+    } catch {
+      setMoveError(t("tasks.detail.moveError"));
+    }
+  };
+
   <article data-page="task-detail" data-task-id={props.taskId}>
     <header>
       <a href="/tasks">← {t("tasks.page.title")}</a>
@@ -234,6 +250,27 @@ export function TaskDetailPage(props: { taskId: string; url: string }) @{
       <a href={editUrl(props.taskId)} data-action="edit" aria-disabled={!task}>
         {t("tasks.card.edit")}
       </a>
+      {task && taskStates.length > 0 && (
+        <label data-slot="move-control">
+          <span>{t("tasks.detail.moveLabel")}</span>
+          <select
+            data-action="move-to-state"
+            value={task.task_tast_id}
+            onChange={(e: Event) => {
+              const target = e.currentTarget as HTMLSelectElement;
+              if (target.value) {
+                void handleMove(target.value);
+              }
+            }}
+          >
+            {taskStates.map((s) => (
+              <option key={s.tast_id} value={s.tast_id}>
+                {s.tast_name}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
       <button
         type="button"
         data-action="delete"
@@ -250,6 +287,11 @@ export function TaskDetailPage(props: { taskId: string; url: string }) @{
     {deleteError && (
       <p data-slot="delete-error" role="alert">
         {deleteError}
+      </p>
+    )}
+    {moveError && (
+      <p data-slot="move-error" role="alert">
+        {moveError}
       </p>
     )}
 

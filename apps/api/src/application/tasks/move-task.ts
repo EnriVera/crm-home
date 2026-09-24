@@ -48,12 +48,12 @@ export class MoveTask {
   constructor(private readonly deps: MoveTaskDependencies) {}
 
   async execute(input: MoveTaskInput): Promise<void> {
-    if (input.prevTaskId === undefined && input.nextTaskId === undefined) {
-      throw new InvalidKanbanOrder(
-        "Move requires at least one neighbor (prev or next)",
-      );
-    }
-
+    // El caller puede no proveer vecinos: en ese caso, default = append al
+    // final de la columna destino. Phase E del tasks-flow (MVP): el
+    // detail page hace `RPC.tasks.move({ task_id, target_state_id })` sin
+    // vecinos y confía en el default server-side. Si el caller provee
+    // `prev` y/o `next`, calculamos posición entre ellos (midpoint) o
+    // pegado al lado especificado (append/prepend).
     return this.deps.transactionManager.run(async (trx) => {
       const span = this.deps.telemetry.startSpan("task.move", {
         "task.task_id": input.taskId,
@@ -93,11 +93,12 @@ export class MoveTask {
           if (shouldRebalance(next.kanbanOrder - prev.kanbanOrder)) {
             mustRebalance = true;
           }
-        } else if (input.prevTaskId === undefined) {
+        } else if (input.nextTaskId !== undefined) {
           newOrder = prependOrder(
             filtered.map((row) => ({ order: row.kanbanOrder })),
           );
         } else {
+          // Sólo `prev` O ninguno → append al final de la columna destino.
           newOrder = appendOrder(
             filtered.map((row) => ({ order: row.kanbanOrder })),
           );

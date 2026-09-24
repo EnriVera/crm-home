@@ -96,7 +96,9 @@
       "deleteConfirmAccept": "Eliminar",
       "deleteConfirmCancel": "Cancelar",
       "deleting": "Eliminando…",
-      "deleteError": "No pudimos eliminar la tarea. Intentá de nuevo."
+      "deleteError": "No pudimos eliminar la tarea. Intentá de nuevo.",
+      "moveLabel": "Mover a",
+      "moveError": "No pudimos mover la tarea. Intentá de nuevo."
     },
     "form": {
       "titleLabel": "Título",

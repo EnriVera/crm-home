@@ -2,7 +2,7 @@
 
 Fecha: 2026-09-23
 Owner: el Gentleman (autonomous)
-Estado: en curso (Fase A ✅, B ✅, C ✅; Fases D-E pendientes)
+Estado: en curso (Fase A ✅, B ✅, C ✅, D ✅, E ✅ — cierre pendiente)
 
 ## Objetivo
 
@@ -56,16 +56,16 @@ Commit: `feat(web): tasks-config CRUD + reorder for task states`
 
 ### Fase D — TaskCard real en list view + click to detail
 
-- D1. Modificar `tasks-page.tsrx` para que el `listStructure.row` devuelva un anchor `<a href={"/tasks/" + task.task_id}>` con título (o el componente `TaskCard` si lo mantengo simple).
-- D2. Validar: click en una tarea → navega a `/tasks/:id` → detail page (fase A) muestra la tarea.
+- [x] D1. Modificar `tasks-page.tsrx` para que el `listStructure.row` devuelva un anchor `<a href={"/tasks/" + task.task_id}>` con título (o el componente `TaskCard` si lo mantengo simple).
+- [x] D2. Validar: click en una tarea → navega a `/tasks/:id` → detail page (fase A) muestra la tarea.
 
 Commit: `feat(web): task list rows are clickable links to detail`
 
 ### Fase E — Move task (control simple)
 
-- E1. En `task-detail-page.tsrx`, agregar control "Mover a..." (select con la lista de task_states del usuario).
-- E2. Al seleccionar un nuevo estado, llamar `RPC.tasks.move({ task_id, target_state_id, prev_task_id, next_task_id })`.
-- E3. Para MVP, dejar `prev_task_id`/`next_task_id` vacíos (kanban order se recalcula server-side al final de la columna).
+- [x] E1. En `task-detail-page.tsrx`, agregar control "Mover a..." (select con la lista de task_states del usuario).
+- [x] E2. Al seleccionar un nuevo estado, llamar `RPC.tasks.move({ task_id, target_state_id, prev_task_id, next_task_id })`.
+- [x] E3. Para MVP, dejar `prev_task_id`/`next_task_id` vacíos (kanban order se recalcula server-side al final de la columna). **Fix backend extra**: el use case `MoveTask.execute` lanzaba `InvalidKanbanOrder` cuando ambos vecinos eran `undefined`. Lo cambié para que sea default = append al final (más útil para el flow MVP).
 
 Commit: `feat(web): move-to control on task detail page`
 
