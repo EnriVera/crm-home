@@ -3,6 +3,7 @@ import { t } from "../vendor/i18n/core";
 import { createRpcClient, type RpcClient } from "../../lib/api/rpc";
 import { BaseView, type ViewKind } from "../base-view/base-view.tsrx";
 import { Button } from "../atoms/button.tsrx";
+import { StatusMessage } from "../atoms/status-message.tsrx";
 import { Icon } from "../vendor/icons";
 import { TaskListItem } from "../molecules/task-list-item.tsrx";
 import { TaskForm } from "../organisms/task-form/task-form.tsrx";
@@ -132,6 +133,30 @@ function CreateTaskEmptyStates() @{
   </div>
 }
 
+/**
+ * Skeleton placeholder mientras se carga la lista (mismas dimensiones que
+ * un TaskListItem real para evitar layout shift). El pulse de opacidad es
+ * deliberadamente sutil — la idea es "acá va algo", no "estoy cargando
+ * furiosamente". Sin esto, en hard reload el user veía flash del empty
+ * state durante ~100-300ms antes de que aparezcan las cards, lo que se
+ * sentía como "tarda en cargar" aunque la red fuera instantánea.
+ */
+function TaskListItemSkeleton() @{
+  <div
+    aria-hidden="true"
+    class="flex items-start gap-4 rounded-md border border-border bg-surface px-4 py-3"
+  >
+    <div class="min-w-0 flex-1 space-y-2">
+      <div class="h-4 w-2/3 animate-pulse rounded bg-background" />
+      <div class="h-3 w-full animate-pulse rounded bg-background" />
+    </div>
+    <div class="flex shrink-0 flex-col items-end gap-2">
+      <div class="h-5 w-16 animate-pulse rounded-full bg-background" />
+      <div class="h-3 w-12 animate-pulse rounded bg-background" />
+    </div>
+  </div>
+}
+
 export function TasksPage() @{
   const [tasks, setTasks] = useState<TaskRow[]>([]);
   const [filters, setFilters] = useState<TaskFilters>({ search: "" });
@@ -139,21 +164,38 @@ export function TasksPage() @{
   const [taskStates, setTaskStates] = useState<TaskStateOption[]>([]);
   const [taskTypes, setTaskTypes] = useState<TypeForFormOption[]>([]);
   const [refreshKey, setRefreshKey] = useState(0);
+  // Estado de carga: empieza en true para evitar el flash de empty state
+  // en hard reload (el SSR no tiene los datos, el primer render con tasks=[]
+  // mostraba "No hay tareas" durante 100-300ms antes de que llegue la data).
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const titleInputRef = useRef<HTMLInputElement | null>(null);
 
   // Carga de la lista de tasks.
   useEffect(() => {
+    let cancelled = false;
     const load = async () => {
+      setLoading(true);
+      setLoadError(null);
       try {
         const result = (await (RPC as RpcClient).tasks.list({
           search: filters.search,
         })) as TaskRow[];
-        setTasks(result);
+        if (!cancelled) {
+          setTasks(result);
+          setLoading(false);
+        }
       } catch {
-        setTasks([]);
+        if (!cancelled) {
+          setLoadError(t("tasks.listLoadError"));
+          setLoading(false);
+        }
       }
     };
     void load();
+    return () => {
+      cancelled = true;
+    };
   }, [filters, refreshKey]);
 
   // Carga de task_states y task_types para los selects del form.
@@ -248,7 +290,19 @@ export function TasksPage() @{
       </div>
     </header>
 
-    {tasks.length === 0 ? (
+    {loadError && (
+      <StatusMessage variant="error" class="mb-6">
+        {loadError}
+      </StatusMessage>
+    )}
+
+    {loading ? (
+      <div data-component="tasks-list-skeleton" class="flex flex-col gap-3">
+        <TaskListItemSkeleton />
+        <TaskListItemSkeleton />
+        <TaskListItemSkeleton />
+      </div>
+    ) : tasks.length === 0 ? (
       <div
         data-component="tasks-list-empty"
         class="flex flex-col items-center rounded-lg border border-dashed border-border bg-surface px-6 py-16 text-center"

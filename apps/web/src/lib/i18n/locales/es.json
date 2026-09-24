@@ -153,6 +153,7 @@
     "listEmpty": {
       "title": "No hay tareas todavía",
       "description": "Creá tu primera tarea para empezar a organizar el trabajo."
-    }
+    },
+    "listLoadError": "No pudimos cargar las tareas. Intentá de nuevo."
   }
 }
