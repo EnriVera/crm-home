@@ -121,6 +121,9 @@
       "submitting": "Guardando…",
       "createPanelTitle": "Nueva tarea",
       "editPanelTitle": "Editar tarea",
+      "noStatesTitle": "No hay estados configurados",
+      "noStatesDescription": "Las tareas se organizan en columnas (Pendiente, En progreso…). Configurá al menos uno para empezar.",
+      "noStatesCta": "Configurar estados",
       "createSuccess": "Tarea creada.",
       "updateSuccess": "Tarea actualizada.",
       "noStatesAvailable": "No hay estados configurados. Creá uno en /tasks-config."
