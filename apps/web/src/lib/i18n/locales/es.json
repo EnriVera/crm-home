@@ -85,7 +85,18 @@
       "noCategory": "Sin categoría"
     },
     "detail": {
-      "loading": "Cargando…"
+      "loading": "Cargando…",
+      "errorTitle": "No pudimos cargar la tarea",
+      "stateLabel": "Estado",
+      "createdAtLabel": "Creada",
+      "updatedAtLabel": "Actualizada",
+      "editModeHint": "Modo edición — el form se monta en Fase B.",
+      "deleteConfirmTitle": "¿Eliminar esta tarea?",
+      "deleteConfirmBody": "Esta acción no se puede deshacer.",
+      "deleteConfirmAccept": "Eliminar",
+      "deleteConfirmCancel": "Cancelar",
+      "deleting": "Eliminando…",
+      "deleteError": "No pudimos eliminar la tarea. Intentá de nuevo."
     },
     "form": {
       "titleLabel": "Título",
