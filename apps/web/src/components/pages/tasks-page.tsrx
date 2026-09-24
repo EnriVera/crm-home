@@ -170,9 +170,7 @@ export function TasksPage() @{
         ) : (
           <TaskForm
             mode="create"
-            initial={{
-              typeId: taskTypes[0]?.type_id ?? "",
-            }}
+            initial={{}}
             availableStates={taskStates}
             availableTypes={taskTypes}
             availableCategoriesFor={emptyCategoriesLookup}

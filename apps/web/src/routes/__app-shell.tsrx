@@ -86,9 +86,9 @@ export function AppShellLayout(props: AppShellLayoutProps) @{
         panelRef={sidebarPanelRef}
         onResize={(size) => setCollapsed(isCollapsedSize(size.asPercentage))}
       >
-        <SidebarCollapseContext.Provider value={collapseValue}>
+        <SidebarCollapseContext value={collapseValue}>
           <SidebarNav url={props.url} />
-        </SidebarCollapseContext.Provider>
+        </SidebarCollapseContext>
       </Panel>
       <Separator class="w-1 shrink-0 bg-border transition-colors hover:bg-text-secondary focus-visible:bg-text-secondary" />
       <Panel id="content">

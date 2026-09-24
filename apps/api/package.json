@@ -20,7 +20,7 @@
     "@opentelemetry/resources": "2.11.0",
     "@opentelemetry/sdk-node": "0.222.0",
     "@opentelemetry/semantic-conventions": "1.43.0",
-    "@orpc/server": "1.15.0",
+    "@orpc/server": "1.15.4",
     "effect": "3.22.1",
     "h3": "2.0.1-rc.31",
     "kysely": "0.29.5",
