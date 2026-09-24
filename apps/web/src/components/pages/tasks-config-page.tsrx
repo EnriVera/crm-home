@@ -37,6 +37,27 @@ interface TaskState {
 
 const RPC = createRpcClient(import.meta.env.VITE_API_URL ?? "/rpc");
 
+/**
+ * Skeleton placeholder para una fila de estado (mismas dimensiones que la
+ * fila real para evitar layout shift). Mismo lenguaje que TaskListItemSkeleton:
+ * pulse sutil, aria-hidden, surface + border.
+ */
+function TaskStateRowSkeleton() @{
+  <div
+    aria-hidden="true"
+    class="flex items-center gap-3 rounded-md border border-border bg-surface px-4 py-3"
+  >
+    <div class="h-7 w-7 shrink-0 animate-pulse rounded-full bg-background" />
+    <div class="h-4 flex-1 animate-pulse rounded bg-background" />
+    <div class="flex items-center gap-1">
+      <div class="h-8 w-8 animate-pulse rounded-md bg-background" />
+      <div class="h-8 w-8 animate-pulse rounded-md bg-background" />
+      <div class="h-8 w-16 animate-pulse rounded-md bg-background" />
+      <div class="h-8 w-16 animate-pulse rounded-md bg-background" />
+    </div>
+  </div>
+}
+
 function CloseIcon() @{
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -61,18 +82,34 @@ export function TasksConfigPage() @{
   const [editingState, setEditingState] = useState<TaskState | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // Estado de carga: arranca en true para evitar flash del empty state en
+  // hard reload (mismo motivo que en tasks-page).
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   // Carga de estados.
   useEffect(() => {
+    let cancelled = false;
     const load = async () => {
+      setLoading(true);
+      setLoadError(null);
       try {
         const result = (await (RPC as RpcClient).tasks.states.list()) as TaskState[];
-        setStates(result);
+        if (!cancelled) {
+          setStates(result);
+          setLoading(false);
+        }
       } catch {
-        setStates([]);
+        if (!cancelled) {
+          setLoadError(t("tasks.configLoadError"));
+          setLoading(false);
+        }
       }
     };
     void load();
+    return () => {
+      cancelled = true;
+    };
   }, [refreshKey]);
 
   // Escape cierra drawer / modal.
@@ -193,8 +230,19 @@ export function TasksConfigPage() @{
         {error}
       </StatusMessage>
     )}
+    {loadError && (
+      <StatusMessage variant="error" class="mb-6">
+        {loadError}
+      </StatusMessage>
+    )}
 
-    {states.length === 0 ? (
+    {loading ? (
+      <div data-component="states-list-skeleton" class="flex flex-col gap-3">
+        <TaskStateRowSkeleton />
+        <TaskStateRowSkeleton />
+        <TaskStateRowSkeleton />
+      </div>
+    ) : states.length === 0 ? (
       <div
         data-component="states-list-empty"
         class="flex flex-col items-center rounded-lg border border-dashed border-border bg-surface px-6 py-12 text-center"

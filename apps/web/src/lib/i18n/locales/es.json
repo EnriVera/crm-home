@@ -154,6 +154,7 @@
       "title": "No hay tareas todavía",
       "description": "Creá tu primera tarea para empezar a organizar el trabajo."
     },
-    "listLoadError": "No pudimos cargar las tareas. Intentá de nuevo."
+    "listLoadError": "No pudimos cargar las tareas. Intentá de nuevo.",
+    "configLoadError": "No pudimos cargar los estados. Intentá de nuevo."
   }
 }
