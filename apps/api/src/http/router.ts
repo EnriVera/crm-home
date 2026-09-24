@@ -283,9 +283,9 @@ export function createRpcHandler(
       deps.getSession,
     );
     const eventWithUserId =
-      userIdFromSession !== null
-        ? withRequestHeader(event, "x-user-id", userIdFromSession)
-        : event;
+      userIdFromSession === null
+        ? event
+        : withRequestHeader(event, "x-user-id", userIdFromSession);
 
     // Legacy endpoints sin contrato (siguen funcionando con la API vieja).
     // Necesitan el x-user-id header en `event.req.headers` porque sus

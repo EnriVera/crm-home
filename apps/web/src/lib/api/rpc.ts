@@ -77,17 +77,17 @@ export function createRpcClient(baseURL: string): RpcClient {
   // (loop `/tasks → 401 → /login → cookie-redirect → /dashboard`). Con el
   // flag, /login permite el render y el user puede re-loguearse.
   fetch: async (request, init) => {
-    const response = await fetch(request, { ...init, credentials: "include" });
-    if (response.status === 401) {
-      if (
-        typeof globalThis !== "undefined" &&
-        globalThis.location &&
-        !globalThis.location.pathname.startsWith("/login")
-      ) {
-        globalThis.location.assign("/login?reauth=1");
-      }
+   const response = await fetch(request, { ...init, credentials: "include" });
+   if (response.status === 401) {
+    if (
+     typeof globalThis !== "undefined" &&
+     globalThis.location &&
+     !globalThis.location.pathname.startsWith("/login")
+    ) {
+     globalThis.location.assign("/login?reauth=1");
     }
-    return response;
+   }
+   return response;
   },
  });
 

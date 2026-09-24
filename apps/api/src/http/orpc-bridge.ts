@@ -151,16 +151,11 @@ export function buildH3EventFromBase(
     ? Object.fromEntries(
         baseCookieHeader
           .split(";")
-          .map(
-            (pair): [string, string] => {
-              const eqIdx = pair.indexOf("=");
-              if (eqIdx === -1) return ["", ""];
-              return [
-                pair.slice(0, eqIdx).trim(),
-                pair.slice(eqIdx + 1).trim(),
-              ];
-            },
-          )
+          .map((pair): [string, string] => {
+            const eqIdx = pair.indexOf("=");
+            if (eqIdx === -1) return ["", ""];
+            return [pair.slice(0, eqIdx).trim(), pair.slice(eqIdx + 1).trim()];
+          })
           .filter(([k]: [string, string]) => k.length > 0),
       )
     : undefined;

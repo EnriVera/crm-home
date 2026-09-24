@@ -141,9 +141,7 @@ describe("buildH3EventFromBase", () => {
       };
     }
 
-    const base = makeBaseWithCookieRequest(
-      "crm_session=from-base; trail=ok",
-    );
+    const base = makeBaseWithCookieRequest("crm_session=from-base; trail=ok");
 
     const hybrid = buildH3EventFromBase(
       base as unknown as Parameters<typeof buildH3EventFromBase>[0],
