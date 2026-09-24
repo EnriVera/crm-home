@@ -3,6 +3,8 @@ import { t } from "../vendor/i18n/core";
 import { createRpcClient, type RpcClient } from "../../lib/api/rpc";
 import { BaseView, type ViewKind } from "../base-view/base-view.tsrx";
 import { Button } from "../atoms/button.tsrx";
+import { Icon } from "../vendor/icons";
+import { TaskListItem } from "../molecules/task-list-item.tsrx";
 import { TaskForm } from "../organisms/task-form/task-form.tsrx";
 import type {
   TaskFormState,
@@ -34,6 +36,9 @@ interface TaskRow {
   task_clie_id: string | null;
   task_cate_id: string | null;
   task_tast_id: string;
+  task_type_id: string | null;
+  task_updated_at: string | null;
+  task_created_at: string | null;
 }
 
 interface TaskStateOption {
@@ -207,54 +212,100 @@ export function TasksPage() @{
     setRefreshKey((k) => k + 1);
   };
 
-  <section data-page="tasks">
-    <header class="flex items-center justify-between gap-4">
-      <h1>{t("tasks.page.title")}</h1>
-      <div class="flex gap-2">
+  // Lookup: stateId → state name (closure sobre taskStates).
+  const stateNameById = new Map(taskStates.map((s) => [s.tast_id, s.tast_name]));
+
+  <section data-page="tasks" class="mx-auto w-full max-w-4xl px-6 py-8 sm:py-10">
+    <header class="mb-8 flex flex-wrap items-end justify-between gap-4">
+      <div class="min-w-0">
+        <h1 class="text-2xl font-bold text-text-primary tracking-tight sm:text-3xl">
+          {t("tasks.page.title")}
+        </h1>
+        {tasks.length > 0 && (
+          <p class="mt-1 text-sm text-text-secondary">
+            {tasks.length === 1
+              ? "1 tarea"
+              : `${tasks.length} tareas`}
+          </p>
+        )}
+      </div>
+      <div class="flex items-center gap-2">
         <a
           href="/tasks-config"
           aria-label={t("tasks.page.configTooltip")}
           title={t("tasks.page.configTooltip")}
           data-component="tasks-config-link"
+          class="inline-flex h-10 w-10 items-center justify-center rounded-md border border-border bg-surface text-text-secondary transition-colors hover:bg-background hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
         >
-          ⚙
+          <Icon name="gear" size={18} />
         </a>
         <Button
           variant="primary"
           onClick={() => setCreatingOpen(true)}
-          data-component="new-task-button"
         >
           {t("tasks.page.newTask")}
         </Button>
       </div>
     </header>
 
-    <BaseView<TaskFilters>
-      id="tasks-list"
-      moduleId="tasks"
-      filters={filters}
-      records={tasks}
-      views={["list", "grid", "kanban"] satisfies ViewKind[]}
-      onFilterChange={setFilters}
-      listStructure={{
-        row: (r) => (
-          <a href={`/tasks/${(r as TaskRow).task_id}`}>
-            {(r as TaskRow).task_title}
-          </a>
-        ),
-      }}
-      gridStructure={{
-        columns: 3,
-        card: (r) => (
-          <a href={`/tasks/${(r as TaskRow).task_id}`}>
-            {(r as TaskRow).task_title}
-          </a>
-        ),
-      }}
-      kanbanStructure={{
-        board: ({ records }) => `${records.length} tasks`,
-      }}
-    />
+    {tasks.length === 0 ? (
+      <div
+        data-component="tasks-list-empty"
+        class="flex flex-col items-center rounded-lg border border-dashed border-border bg-surface px-6 py-16 text-center"
+      >
+        <div class="mb-4 text-text-secondary">
+          <Icon name="check-square" size={48} />
+        </div>
+        <h2 class="text-lg font-semibold text-text-primary">
+          {t("tasks.listEmpty.title")}
+        </h2>
+        <p class="mt-2 max-w-sm text-sm text-text-secondary">
+          {t("tasks.listEmpty.description")}
+        </p>
+        <Button
+          variant="primary"
+          onClick={() => setCreatingOpen(true)}
+          class="mt-6"
+        >
+          {t("tasks.page.newTask")}
+        </Button>
+      </div>
+    ) : (
+      <BaseView<TaskFilters>
+        id="tasks-list"
+        moduleId="tasks"
+        filters={filters}
+        records={tasks}
+        views={["list"] satisfies ViewKind[]}
+        onFilterChange={setFilters}
+        listStructure={{
+          row: (r) => {
+            const task = r as TaskRow;
+            const stateName = stateNameById.get(task.task_tast_id) ?? null;
+            return (
+              <TaskListItem
+                task_id={task.task_id}
+                task_title={task.task_title}
+                task_description={task.task_description}
+                stateName={stateName}
+                updatedAt={task.task_updated_at}
+              />
+            );
+          },
+        }}
+        gridStructure={{
+          columns: 3,
+          card: (r) => (
+            <a href={`/tasks/${(r as TaskRow).task_id}`}>
+              {(r as TaskRow).task_title}
+            </a>
+          ),
+        }}
+        kanbanStructure={{
+          board: ({ records }) => `${records.length} tasks`,
+        }}
+      />
+    )}
 
     {creatingOpen && (
       <>

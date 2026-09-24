@@ -97,18 +97,29 @@ export function BaseView<F extends BaseViewFilters>(props: BaseViewProps<F>) @{
   };
 
   <div data-base-view={props.id ?? "default"}>
-    {/* Switcher interno — el padre no lo controla. */}
-    <nav data-view-switcher>
-      {availableViews.map((v) => (
-        <button
-          type="button"
-          data-active={v === view}
-          onClick={() => setView(v)}
-        >
-          {v}
-        </button>
-      ))}
-    </nav>
+    {/* Switcher interno — el padre no lo controla. Se oculta cuando solo
+        hay una vista disponible (no tiene sentido mostrar un toggle). */}
+    {availableViews.length > 1 && (
+      <nav
+        data-view-switcher
+        class="mb-4 inline-flex items-center gap-1 rounded-md border border-border bg-surface p-1"
+      >
+        {availableViews.map((v) => (
+          <button
+            type="button"
+            data-active={v === view}
+            onClick={() => setView(v)}
+            class={`rounded-sm px-3 py-1 text-sm transition-colors ${
+              v === view
+                ? "bg-background font-medium text-text-primary"
+                : "text-text-secondary hover:text-text-primary"
+            }`}
+          >
+            {v}
+          </button>
+        ))}
+      </nav>
+    )}
 
     {/* Render de la vista seleccionada. */}
     <section data-view={view}>

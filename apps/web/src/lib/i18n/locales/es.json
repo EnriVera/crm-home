@@ -147,6 +147,10 @@
       "saveFailed": "No pudimos guardar la tarea. Revisá los datos e intentá de nuevo.",
       "moveFailed": "No pudimos mover la tarea a esa columna.",
       "invalidKanbanOrder": "El orden de las tareas no es válido. Reintentá."
+    },
+    "listEmpty": {
+      "title": "No hay tareas todavía",
+      "description": "Creá tu primera tarea para empezar a organizar el trabajo."
     }
   }
 }
