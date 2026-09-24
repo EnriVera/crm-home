@@ -126,7 +126,8 @@
       "noStatesCta": "Configurar estados",
       "createSuccess": "Tarea creada.",
       "updateSuccess": "Tarea actualizada.",
-      "noStatesAvailable": "No hay estados configurados. Creá uno en /tasks-config."
+      "noStatesAvailable": "No hay estados configurados. Creá uno en /tasks-config.",
+      "stateLabel": "Estado"
     },
     "statuses": {
       "label": "Estados",
@@ -136,10 +137,11 @@
       "add": "Agregar estado",
       "edit": "Editar estado",
       "delete": "Eliminar estado",
-      "deleteConfirm": "¿Eliminar este estado? Las tareas en esta columna quedarán sin estado.",
+      "deleteConfirm": "¿Eliminar este estado?",
       "nameRequired": "El nombre del estado es obligatorio.",
       "nameTooLong": "El nombre no puede tener más de 50 caracteres.",
-      "orderInvalid": "El orden debe ser un entero no negativo."
+      "orderInvalid": "El orden debe ser un entero no negativo.",
+      "deleteConfirmBody": "Esta acción no se puede deshacer."
     },
     "errors": {
       "notFound": "No encontramos esa tarea.",

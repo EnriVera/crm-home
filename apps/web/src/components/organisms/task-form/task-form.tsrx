@@ -1,5 +1,8 @@
 import { useState } from "octane";
 import { t } from "../../vendor/i18n/core";
+import { Button } from "../../atoms/button.tsrx";
+import { TextInput } from "../../atoms/text-input.tsrx";
+import { StatusMessage } from "../../atoms/status-message.tsrx";
 import {
   initialTaskFormState,
   applyTaskFormAction,
@@ -26,6 +29,14 @@ import {
  * - `state`: useState real con reducer `applyTaskFormAction`.
  * - `onSubmit(state)`: callback al parent, que decide si llama
  *   `RPC.tasks.create(...)` o `RPC.tasks.update(...)` según el modo.
+ *
+ * Styling: usa el mismo lenguaje visual del resto del sistema
+ * (impeccable Operate / design.md):
+ * - surface + border 1px + rounded-md en cada campo
+ * - spacing generoso entre campos (space-y-5)
+ * - labels pequeñas (text-xs font-medium text-text-secondary)
+ * - una sola acción primaria por drawer ("Crear tarea" o "Guardar cambios")
+ * - errores inline con `StatusMessage variant="error"` (mismo token AA)
  *
  * NOTA sobre octane (limitación conocida): poner `disabled={X || Y}` en un
  * `<select>` con options dinámicas (`.map`) rompe el render del article
@@ -54,6 +65,9 @@ function isFormReadyToSubmit(state: TaskFormState): boolean {
     state.stateId.length > 0
   );
 }
+
+const FIELD_CLASS =
+  "block w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-text-primary placeholder:text-text-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus";
 
 export function TaskForm(props: TaskFormProps) @{
   const [state, setState] = useState<TaskFormState>(() =>
@@ -88,29 +102,32 @@ export function TaskForm(props: TaskFormProps) @{
     onSubmit={(e: Event) => {
       void handleSubmit(e);
     }}
+    class="flex flex-col gap-5"
   >
-    <label>
-      <span>{t("tasks.form.titleLabel")}</span>
-      <input
-        type="text"
+    <label class="flex flex-col gap-1.5">
+      <span class="text-xs font-medium text-text-secondary">
+        {t("tasks.form.titleLabel")}
+      </span>
+      <TextInput
+        id="task-form-title"
         name="title"
         value={state.title}
         required
-        maxLength={200}
-        onInput={(e: Event) => {
-          const target = e.currentTarget as HTMLInputElement;
-          dispatch({ type: "set-title", value: target.value });
-        }}
         placeholder={t("tasks.form.titlePlaceholder")}
+        invalid={Boolean(validationError)}
+        onInput={(value) => dispatch({ type: "set-title", value })}
       />
     </label>
 
-    <label>
-      <span>{t("tasks.form.descriptionLabel")}</span>
+    <label class="flex flex-col gap-1.5">
+      <span class="text-xs font-medium text-text-secondary">
+        {t("tasks.form.descriptionLabel")}
+      </span>
       <textarea
         name="description"
         value={state.description ?? ""}
         maxLength={50_000}
+        rows={4}
         onInput={(e: Event) => {
           const target = e.currentTarget as HTMLTextAreaElement;
           dispatch({
@@ -119,11 +136,14 @@ export function TaskForm(props: TaskFormProps) @{
           });
         }}
         placeholder={t("tasks.form.descriptionPlaceholder")}
+        class={`${FIELD_CLASS} resize-y`}
       />
     </label>
 
-    <label>
-      <span>{t("tasks.form.clientLabel")}</span>
+    <label class="flex flex-col gap-1.5">
+      <span class="text-xs font-medium text-text-secondary">
+        {t("tasks.form.clientLabel")}
+      </span>
       <select
         name="clientId"
         onChange={(e: Event) => {
@@ -133,14 +153,17 @@ export function TaskForm(props: TaskFormProps) @{
             value: target.value || null,
           });
         }}
+        class={FIELD_CLASS}
       >
         <option value="">{t("tasks.form.clientNone")}</option>
         {/* Phase 2: options via rpc.tasks.clients.search */}
       </select>
     </label>
 
-    <label>
-      <span>{t("tasks.form.typeLabel")}</span>
+    <label class="flex flex-col gap-1.5">
+      <span class="text-xs font-medium text-text-secondary">
+        {t("tasks.form.typeLabel")}
+      </span>
       <select
         name="typeId"
         required
@@ -148,13 +171,16 @@ export function TaskForm(props: TaskFormProps) @{
           const target = e.currentTarget as HTMLSelectElement;
           dispatch({ type: "set-type-id", value: target.value });
         }}
+        class={FIELD_CLASS}
       >
         <option value="">—</option>
       </select>
     </label>
 
-    <label>
-      <span>{t("tasks.form.categoryLabel")}</span>
+    <label class="flex flex-col gap-1.5">
+      <span class="text-xs font-medium text-text-secondary">
+        {t("tasks.form.categoryLabel")}
+      </span>
       <select
         name="categoryId"
         onChange={(e: Event) => {
@@ -164,14 +190,17 @@ export function TaskForm(props: TaskFormProps) @{
             value: target.value || null,
           });
         }}
+        class={FIELD_CLASS}
       >
         <option value="">—</option>
         {/* Phase 2: options via rpc.tasks.categoriesByType(typeId) */}
       </select>
     </label>
 
-    <label>
-      <span>Estado</span>
+    <label class="flex flex-col gap-1.5">
+      <span class="text-xs font-medium text-text-secondary">
+        {t("tasks.form.stateLabel") ?? "Estado"}
+      </span>
       <select
         name="stateId"
         required
@@ -179,29 +208,41 @@ export function TaskForm(props: TaskFormProps) @{
           const target = e.currentTarget as HTMLSelectElement;
           dispatch({ type: "set-state-id", value: target.value });
         }}
+        class={FIELD_CLASS}
       >
         <option value="">—</option>
       </select>
     </label>
 
-    <fieldset disabled>
-      <legend>{t("tasks.form.attachmentsLabel")}</legend>
-      <p>{t("tasks.form.attachmentsDisabled")}</p>
+    <fieldset
+      disabled
+      class="rounded-md border border-dashed border-border bg-surface px-4 py-3"
+    >
+      <legend class="px-1 text-xs font-medium text-text-secondary">
+        {t("tasks.form.attachmentsLabel")}
+      </legend>
+      <p class="m-0 text-sm text-text-secondary">
+        {t("tasks.form.attachmentsDisabled")}
+      </p>
     </fieldset>
 
     {validationError && (
-      <p data-slot="validation-error" role="alert">
-        {validationError}
-      </p>
+      <StatusMessage variant="error" id="task-form-validation">
+        {t(validationError)}
+      </StatusMessage>
     )}
     {submitError && (
-      <p data-slot="submit-error" role="alert">
+      <StatusMessage variant="error" id="task-form-submit">
         {submitError}
-      </p>
+      </StatusMessage>
     )}
 
-    <div data-slot="form-actions">
-      <button
+    <div data-slot="form-actions" class="flex items-center justify-end gap-2 pt-2">
+      <Button variant="ghost" onClick={() => props.onCancel()}>
+        {t("tasks.form.cancel")}
+      </Button>
+      <Button
+        variant="primary"
         type="submit"
         disabled={Boolean(validationError) || !readyToSubmit || submitting}
       >
@@ -210,13 +251,7 @@ export function TaskForm(props: TaskFormProps) @{
           : props.mode === "create"
           ? t("tasks.form.submit")
           : t("tasks.form.submitUpdate")}
-      </button>
-      <button
-        type="button"
-        onClick={() => props.onCancel()}
-      >
-        {t("tasks.form.cancel")}
-      </button>
+      </Button>
     </div>
   </form>
 }

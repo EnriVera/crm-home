@@ -1,6 +1,8 @@
 import { useEffect, useState } from "octane";
 import { t } from "../vendor/i18n/core";
 import { createRpcClient, type RpcClient } from "../../lib/api/rpc";
+import { Button } from "../atoms/button.tsrx";
+import { StatusMessage } from "../atoms/status-message.tsrx";
 import { TaskForm } from "../organisms/task-form/task-form.tsrx";
 import {
   closeDeleteConfirmation,
@@ -11,18 +13,25 @@ import {
 } from "./task-detail-page/task-detail-page.logic";
 
 /**
- * Página `/tasks/:id` (PR-F / WU13 + Fase B del tasks-flow).
+ * Página `/tasks/:id` (PR-F / WU13 + Fase B del tasks-flow + UX polish impeccable).
  *
  * Render plan:
  * - Modo lectura (default): muestra el task cargado (título, descripción,
- *   estado, fechas) con botones Editar / Eliminar.
- * - Modo edición (`?edit=true`): muestra el TaskForm pre-populado con
- *   los datos del task. Submit → `rpc.tasks.update(...)`. Cancel → vuelve
- *   al modo lectura.
+ *   estado, fechas) con botones Editar / Eliminar / Mover.
+ * - Modo edición: el TaskForm se monta como drawer lateral derecho (mismo
+ *   lenguaje visual que el drawer "Nueva tarea" en tasks-page).
  *
- * Carga: `rpc.tasks.get({ task_id })` + `rpc.tasks.states.list()` (para lookup
- * del nombre del estado en el render). El router inyecta `x-user-id` desde
- * la cookie de sesión, así que delete/update lo tienen sin wiring extra.
+ * Carga: `rpc.tasks.get({ task_id })` + `rpc.tasks.states.list()` + typesForForm
+ * (para lookup del nombre del estado y los options de Tipo en el form).
+ *
+ * Estructura visual (Operate / design.md):
+ * - Header con back-link + título jerarquizado.
+ * - Meta (estado, fechas) como definition list en grid 2-col sobre surface card.
+ * - Descripción como card separado, body grande para legibilidad.
+ * - Acciones: ghost buttons para Edit / Delete / Mover. Delete abre modal
+ *   de confirmación con backdrop (mismo patrón que el drawer).
+ * - Una sola acción primaria por pantalla — la edición NO es primaria aquí
+ *   (se delega al drawer).
  *
  * El componente `.tsrx` no se testea en bun:test (plugin Octane). La lógica
  * state machine vive en `task-detail-page.logic.ts` (testeable).
@@ -67,6 +76,24 @@ function formatDate(iso: string): string {
 
 function emptyCategoriesLookup(): string[] {
   return [];
+}
+
+function CloseIcon() @{
+  // 16x16, 1.5 stroke, currentColor. Inline SVG para evitar dependencia extra.
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 20 20"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.5"
+    stroke-linecap="round"
+    aria-hidden="true"
+  >
+    <line x1="4" y1="4" x2="16" y2="16" />
+    <line x1="16" y1="4" x2="4" y2="16" />
+  </svg>
 }
 
 export function TaskDetailPage(props: { taskId: string; url: string }) @{
@@ -115,6 +142,31 @@ export function TaskDetailPage(props: { taskId: string; url: string }) @{
     };
   }, [props.taskId]);
 
+  // Escape cierra el panel de edición / confirmación de delete.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent): void => {
+      if (e.key === "Escape") {
+        if (confirmState.visible) {
+          setConfirmState(closeDeleteConfirmation());
+        } else if (editing) {
+          setEditing(false);
+        }
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [editing, confirmState.visible]);
+
+  // Lock body scroll cuando el drawer está abierto.
+  useEffect(() => {
+    if (!editing && !confirmState.visible) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [editing, confirmState.visible]);
+
   const stateName = taskStates.find((s) => s.tast_id === task?.task_tast_id)
     ?.tast_name;
 
@@ -150,7 +202,6 @@ export function TaskDetailPage(props: { taskId: string; url: string }) @{
       task_cate_id: state.categoryId,
       task_clie_id: state.clientId,
     });
-    // Reset edit mode + recargar para refrescar el detail con los datos nuevos.
     setEditing(false);
     globalThis.location.reload();
   };
@@ -167,160 +218,258 @@ export function TaskDetailPage(props: { taskId: string; url: string }) @{
         task_id: task.task_id,
         target_state_id: newStateId,
       });
-      // Recargamos para refrescar el detail con el nuevo estado + orden.
       globalThis.location.reload();
     } catch {
       setMoveError(t("tasks.detail.moveError"));
     }
   };
 
-  <article data-page="task-detail" data-task-id={props.taskId}>
-    <header>
-      <a href="/tasks">← {t("tasks.page.title")}</a>
-      <h1>
+  <article
+    data-page="task-detail"
+    data-task-id={props.taskId}
+    class="mx-auto w-full max-w-4xl px-6 py-8 sm:py-10"
+  >
+    <header class="mb-8">
+      <a
+        href="/tasks"
+        class="inline-flex items-center gap-1 text-sm text-text-secondary transition-colors hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus rounded"
+      >
+        <span aria-hidden="true">←</span>
+        {t("tasks.page.title")}
+      </a>
+      <h1 class="mt-3 text-2xl font-bold tracking-tight text-text-primary sm:text-3xl">
         {task ? task.task_title || props.taskId : t("tasks.detail.loading")}
       </h1>
     </header>
 
     {error && (
-      <p data-slot="error" role="alert">
+      <StatusMessage variant="error" class="mb-6">
         {error}
-      </p>
-    )}
-
-    {editing && task && (
-      <aside
-        data-component="edit-task-panel"
-        role="dialog"
-        aria-label={t("tasks.form.editPanelTitle")}
-      >
-        <header>
-          <h2>{t("tasks.form.editPanelTitle")}</h2>
-        </header>
-        <TaskForm
-          mode="update"
-          initial={{
-            title: task.task_title,
-            description: task.task_description,
-            clientId: task.task_clie_id,
-            typeId: task.task_type_id ?? "",
-            categoryId: task.task_cate_id,
-            stateId: task.task_tast_id,
-          }}
-          availableStates={taskStates.map((s) => ({
-            tast_id: s.tast_id,
-            tast_name: s.tast_name,
-          }))}
-          availableTypes={taskTypes}
-          availableCategoriesFor={emptyCategoriesLookup}
-          onSubmit={handleUpdate}
-          onCancel={handleCancelEdit}
-        />
-      </aside>
+      </StatusMessage>
     )}
 
     {task && !editing && (
-      <>
-        <section data-slot="meta">
-          <dl>
+      <div class="flex flex-col gap-6">
+        <section
+          data-slot="meta"
+          class="rounded-md border border-border bg-surface p-5"
+        >
+          <h2 class="mb-4 text-xs font-semibold uppercase tracking-wide text-text-secondary">
+            Detalle
+          </h2>
+          <dl class="grid grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-[max-content_1fr]">
             {stateName && (
               <>
-                <dt>{t("tasks.detail.stateLabel")}</dt>
-                <dd>{stateName}</dd>
+                <dt class="text-sm font-medium text-text-secondary">
+                  {t("tasks.detail.stateLabel")}
+                </dt>
+                <dd>
+                  <span class="inline-flex items-center rounded-full border border-border bg-background px-2.5 py-0.5 text-xs font-medium text-text-primary">
+                    {stateName}
+                  </span>
+                </dd>
               </>
             )}
-            <dt>{t("tasks.detail.createdAtLabel")}</dt>
-            <dd>{formatDate(task.task_created_at)}</dd>
-            <dt>{t("tasks.detail.updatedAtLabel")}</dt>
-            <dd>{formatDate(task.task_updated_at)}</dd>
+            <dt class="text-sm font-medium text-text-secondary">
+              {t("tasks.detail.createdAtLabel")}
+            </dt>
+            <dd class="text-sm text-text-primary">{formatDate(task.task_created_at)}</dd>
+            <dt class="text-sm font-medium text-text-secondary">
+              {t("tasks.detail.updatedAtLabel")}
+            </dt>
+            <dd class="text-sm text-text-primary">{formatDate(task.task_updated_at)}</dd>
           </dl>
         </section>
 
-        <section data-slot="description">
-          <p>{task.task_description ?? t("tasks.card.noDescription")}</p>
+        <section
+          data-slot="description"
+          class="rounded-md border border-border bg-surface p-5"
+        >
+          <h2 class="mb-3 text-xs font-semibold uppercase tracking-wide text-text-secondary">
+            {t("tasks.form.descriptionLabel")}
+          </h2>
+          {task.task_description ? (
+            <p class="whitespace-pre-wrap text-sm leading-relaxed text-text-primary">
+              {task.task_description}
+            </p>
+          ) : (
+            <p class="text-sm italic text-text-secondary/70">
+              {t("tasks.card.noDescription")}
+            </p>
+          )}
         </section>
+
+        <section
+          data-slot="actions"
+          class="flex flex-wrap items-center gap-3 rounded-md border border-border bg-surface p-5"
+        >
+          <Button
+            variant="primary"
+            data-action="edit"
+            disabled={!task || editing}
+            onClick={() => setEditing(true)}
+          >
+            {t("tasks.card.edit")}
+          </Button>
+          {task && taskStates.length > 0 && (
+            <label
+              data-slot="move-control"
+              class="ml-auto inline-flex items-center gap-2"
+            >
+              <span class="text-xs font-medium text-text-secondary">
+                {t("tasks.detail.moveLabel")}
+              </span>
+              <select
+                data-action="move-to-state"
+                value={task.task_tast_id}
+                onChange={(e: Event) => {
+                  const target = e.currentTarget as HTMLSelectElement;
+                  if (target.value) {
+                    void handleMove(target.value);
+                  }
+                }}
+                class="rounded-md border border-border bg-background px-3 py-2 text-sm text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+              >
+                {taskStates.map((s) => (
+                  <option key={s.tast_id} value={s.tast_id}>
+                    {s.tast_name}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
+          <Button
+            variant="ghost"
+            data-action="delete"
+            class="!text-error hover:bg-error/10"
+            disabled={!task || deleting}
+            onClick={() => {
+              setDeleteError(null);
+              setConfirmState(openDeleteConfirmation(props.taskId));
+            }}
+          >
+            {deleting ? t("tasks.detail.deleting") : t("tasks.card.delete")}
+          </Button>
+        </section>
+
+        {deleteError && (
+          <StatusMessage variant="error">{deleteError}</StatusMessage>
+        )}
+        {moveError && (
+          <StatusMessage variant="error">{moveError}</StatusMessage>
+        )}
+      </div>
+    )}
+
+    {/* Drawer de edición (mismo lenguaje que el de "Nueva tarea"). */}
+    {editing && task && (
+      <>
+        <div
+          data-component="edit-task-backdrop"
+          class="fixed inset-0 z-30 bg-black/40"
+          onClick={handleCancelEdit}
+          aria-hidden="true"
+        />
+        <aside
+          data-component="edit-task-panel"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="edit-task-panel-title"
+          tabindex="-1"
+          class="fixed top-0 right-0 z-40 flex h-screen w-[min(480px,90vw)] flex-col border-l border-border bg-surface shadow-2xl"
+        >
+          <header class="flex shrink-0 items-center justify-between gap-4 border-b border-border px-6 py-4">
+            <h2
+              id="edit-task-panel-title"
+              class="text-lg font-semibold text-text-primary"
+            >
+              {t("tasks.form.editPanelTitle")}
+            </h2>
+            <button
+              type="button"
+              aria-label={t("tasks.form.cancel")}
+              onClick={handleCancelEdit}
+              data-action="close-edit-task-panel"
+              class="rounded-md p-1 text-text-secondary transition-colors hover:bg-background hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+            >
+              <CloseIcon />
+            </button>
+          </header>
+          <div class="flex-1 overflow-y-auto px-6 py-4">
+            <TaskForm
+              mode="update"
+              initial={{
+                title: task.task_title,
+                description: task.task_description,
+                clientId: task.task_clie_id,
+                typeId: task.task_type_id ?? "",
+                categoryId: task.task_cate_id,
+                stateId: task.task_tast_id,
+              }}
+              availableStates={taskStates.map((s) => ({
+                tast_id: s.tast_id,
+                tast_name: s.tast_name,
+              }))}
+              availableTypes={taskTypes}
+              availableCategoriesFor={emptyCategoriesLookup}
+              onSubmit={handleUpdate}
+              onCancel={handleCancelEdit}
+            />
+          </div>
+        </aside>
       </>
     )}
 
-    <section data-slot="actions">
-      <button
-        type="button"
-        data-action="edit"
-        disabled={!task || editing}
-        onClick={() => setEditing(true)}
-      >
-        {t("tasks.card.edit")}
-      </button>
-      {task && taskStates.length > 0 && (
-        <label data-slot="move-control">
-          <span>{t("tasks.detail.moveLabel")}</span>
-          <select
-            data-action="move-to-state"
-            value={task.task_tast_id}
-            onChange={(e: Event) => {
-              const target = e.currentTarget as HTMLSelectElement;
-              if (target.value) {
-                void handleMove(target.value);
-              }
-            }}
-          >
-            {taskStates.map((s) => (
-              <option key={s.tast_id} value={s.tast_id}>
-                {s.tast_name}
-              </option>
-            ))}
-          </select>
-        </label>
-      )}
-      <button
-        type="button"
-        data-action="delete"
-        disabled={!task || deleting}
-        onClick={() => {
-          setDeleteError(null);
-          setConfirmState(openDeleteConfirmation(props.taskId));
-        }}
-      >
-        {deleting ? t("tasks.detail.deleting") : t("tasks.card.delete")}
-      </button>
-    </section>
-
-    {deleteError && (
-      <p data-slot="delete-error" role="alert">
-        {deleteError}
-      </p>
-    )}
-    {moveError && (
-      <p data-slot="move-error" role="alert">
-        {moveError}
-      </p>
-    )}
-
+    {/* Modal de confirmación de delete (con backdrop, mismo patrón que el drawer). */}
     {confirmState.visible && task && (
-      <dialog open data-component="delete-confirmation">
-        <h2>{t("tasks.detail.deleteConfirmTitle")}</h2>
-        <p>{t("tasks.detail.deleteConfirmBody")}</p>
-        <button
-          type="button"
-          data-action="cancel-delete"
-          disabled={deleting}
+      <>
+        <div
+          data-component="delete-confirmation-backdrop"
+          class="fixed inset-0 z-30 bg-black/40"
           onClick={() => setConfirmState(closeDeleteConfirmation())}
+          aria-hidden="true"
+        />
+        <div
+          data-component="delete-confirmation"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="delete-confirmation-title"
+          class="fixed left-1/2 top-1/2 z-40 w-[min(420px,90vw)] -translate-x-1/2 -translate-y-1/2 rounded-lg border border-border bg-surface p-6 shadow-2xl"
         >
-          {t("tasks.detail.deleteConfirmCancel")}
-        </button>
-        <button
-          type="button"
-          data-action="confirm-delete"
-          disabled={deleting}
-          onClick={() => {
-            void handleDelete();
-          }}
-        >
-          {deleting
-            ? t("tasks.detail.deleting")
-            : t("tasks.detail.deleteConfirmAccept")}
-        </button>
-      </dialog>
+          <h2
+            id="delete-confirmation-title"
+            class="text-lg font-semibold text-text-primary"
+          >
+            {t("tasks.detail.deleteConfirmTitle")}
+          </h2>
+          <p class="mt-2 text-sm text-text-secondary">
+            {t("tasks.detail.deleteConfirmBody")}
+          </p>
+          <div class="mt-6 flex items-center justify-end gap-2">
+            <Button
+              variant="ghost"
+              data-action="cancel-delete"
+              disabled={deleting}
+              onClick={() => setConfirmState(closeDeleteConfirmation())}
+            >
+              {t("tasks.detail.deleteConfirmCancel")}
+            </Button>
+            <Button
+              variant="primary"
+              data-action="confirm-delete"
+              class="!bg-error hover:!bg-error/90"
+              disabled={deleting}
+              onClick={() => {
+                void handleDelete();
+              }}
+            >
+              {deleting
+                ? t("tasks.detail.deleting")
+                : t("tasks.detail.deleteConfirmAccept")}
+            </Button>
+          </div>
+        </div>
+      </>
     )}
   </article>
 }

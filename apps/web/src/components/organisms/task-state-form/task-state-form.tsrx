@@ -1,5 +1,8 @@
 import { useState } from "octane";
 import { t } from "../../vendor/i18n/core";
+import { Button } from "../../atoms/button.tsrx";
+import { TextInput } from "../../atoms/text-input.tsrx";
+import { StatusMessage } from "../../atoms/status-message.tsrx";
 import {
   buildStateSubmitParams,
   initialTaskStateFormState,
@@ -17,6 +20,11 @@ import {
  *   - tast_order (int >= 0, validated)
  *
  * Sin color picker (PRD §D6 — color autogenerado/Fase 2 con @octanejs/colorful).
+ *
+ * Estilo: usa el mismo lenguaje visual del task-form (impeccable Operate):
+ * surface + border 1px + rounded-md, labels pequeñas, gap-5 entre campos,
+ * StatusMessage para errores, una sola acción primaria por drawer.
+ *
  * El componente .tsrx no se testea en bun:test (plugin Octane); la lógica
  * vive en task-state-form.logic.ts (testeable).
  */
@@ -30,6 +38,9 @@ export interface TaskStateFormProps {
   ) => void | Promise<void>;
   onCancel: () => void;
 }
+
+const FIELD_CLASS =
+  "block w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-text-primary placeholder:text-text-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus";
 
 export function TaskStateForm(props: TaskStateFormProps) @{
   const [state, setState] = useState<TaskStateFormState>(() =>
@@ -68,74 +79,77 @@ export function TaskStateForm(props: TaskStateFormProps) @{
     onSubmit={(e: Event) => {
       void handleSubmit(e);
     }}
+    class="flex flex-col gap-5"
   >
-    <label>
-      <span>{t("tasks.statuses.nameLabel")}</span>
-      <input
-        type="text"
+    <label class="flex flex-col gap-1.5">
+      <span class="text-xs font-medium text-text-secondary">
+        {t("tasks.statuses.nameLabel")}
+      </span>
+      <TextInput
+        id="task-state-form-name"
         name="tast_name"
-        maxLength={50}
-        required
-        minlength={1}
         value={state.tast_name}
-        disabled={submitting}
-        onInput={(e: Event) => {
-          const target = e.currentTarget as HTMLInputElement;
-          setState((prev) => ({ ...prev, tast_name: target.value }));
-        }}
         placeholder={t("tasks.statuses.namePlaceholder")}
+        required
+        invalid={Boolean(nameError)}
+        onInput={(value) =>
+          setState((prev) => ({ ...prev, tast_name: value }))
+        }
       />
-      {nameError && (
-        <small data-slot="name-error">{t(nameError)}</small>
-      )}
     </label>
 
-    <label>
-      <span>{t("tasks.statuses.orderLabel")}</span>
+    <label class="flex flex-col gap-1.5">
+      <span class="text-xs font-medium text-text-secondary">
+        {t("tasks.statuses.orderLabel")}
+      </span>
       <input
         type="number"
         name="tast_order"
-        min="0"
-        step="1"
+        min={0}
+        step={1}
         required
-        value={String(state.tast_order)}
-        disabled={submitting}
+        value={state.tast_order}
         onInput={(e: Event) => {
           const target = e.currentTarget as HTMLInputElement;
-          const next = Number(target.value);
+          const next = Number.parseInt(target.value, 10);
           setState((prev) => ({
             ...prev,
-            tast_order: Number.isFinite(next) ? next : 0,
+            tast_order: Number.isNaN(next) ? 0 : next,
           }));
         }}
+        class={`${FIELD_CLASS} ${orderError ? "border-error" : ""}`}
       />
-      {orderError && (
-        <small data-slot="order-error">{t(orderError)}</small>
-      )}
     </label>
 
+    {validationError && (
+      <StatusMessage variant="error" id="task-state-form-validation">
+        {t(validationError)}
+      </StatusMessage>
+    )}
     {submitError && (
-      <p data-slot="submit-error" role="alert">
+      <StatusMessage variant="error" id="task-state-form-submit">
         {submitError}
-      </p>
+      </StatusMessage>
     )}
 
-    <div data-slot="actions">
-      <button type="submit" data-action="submit" disabled={Boolean(validationError) || submitting}>
+    <div
+      data-slot="form-actions"
+      class="flex items-center justify-end gap-2 pt-2"
+    >
+      <Button variant="ghost" onClick={() => props.onCancel()}>
+        {t("tasks.form.cancel")}
+      </Button>
+      <Button
+        variant="primary"
+        type="submit"
+        disabled={Boolean(validationError) || submitting}
+      >
         {submitting
           ? t("tasks.form.submitting")
           : props.mode === "create"
           ? t("tasks.statuses.add")
           : t("tasks.statuses.edit")}
-      </button>
-      <button
-        type="button"
-        data-action="cancel"
-        disabled={submitting}
-        onClick={() => props.onCancel()}
-      >
-        {t("tasks.form.cancel")}
-      </button>
+      </Button>
     </div>
   </form>
 }

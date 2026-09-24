@@ -1,6 +1,8 @@
 import { useEffect, useState } from "octane";
 import { t } from "../vendor/i18n/core";
 import { createRpcClient, type RpcClient } from "../../lib/api/rpc";
+import { Button } from "../atoms/button.tsrx";
+import { StatusMessage } from "../atoms/status-message.tsrx";
 import { TaskStateForm } from "../organisms/task-state-form/task-state-form.tsrx";
 import {
   buildStateSubmitParams,
@@ -8,16 +10,21 @@ import {
 } from "../organisms/task-state-form/task-state-form.logic";
 
 /**
- * Página `/tasks-config` (PR-F / WU14 + Fase C del tasks-flow).
+ * Página `/tasks-config` (PR-F / WU14 + Fase C del tasks-flow + UX polish).
  *
  * Tab único MVP "Estados":
- * - Carga `rpc.tasks.states.list` y los renderiza en una lista.
- * - Por cada estado: nombre + orden + botones Editar / Eliminar / ↑ / ↓.
- * - "Agregar estado" abre el TaskStateForm en mode="create".
- * - "Editar" abre el TaskStateForm en mode="update" con `initial` del estado.
- * - "Eliminar" abre diálogo de confirmación → `rpc.tasks.states.remove`.
- * - ↑ / ↓ ajusta `tast_order` (swappea con el vecino) y llama
- *   `rpc.tasks.states.reorder` con el array completo.
+ * - Carga `rpc.tasks.states.list` y los renderiza como cards.
+ * - Cada card: nombre, badge de orden (#N), botones mover ↑/↓, Editar, Eliminar.
+ * - "Agregar estado" abre el TaskStateForm en mode="create" en un drawer.
+ * - "Editar" abre el drawer en mode="update".
+ * - "Eliminar" abre modal de confirmación → `rpc.tasks.states.remove`.
+ *
+ * Estructura visual (Operate / design.md):
+ * - Header con título jerarquizado + primary CTA "Agregar estado" a la derecha.
+ * - Una sola acción primaria por pantalla (la verde de "Agregar").
+ * - Lista de estados como cards (mismo lenguaje que TaskListItem).
+ * - Drawer lateral derecho para create/edit (mismo patrón que task drawer).
+ * - Modal centrado para delete confirm.
  *
  * Sin item de nav en el sidebar (decisión confirmada del spec WU14).
  */
@@ -29,6 +36,23 @@ interface TaskState {
 }
 
 const RPC = createRpcClient(import.meta.env.VITE_API_URL ?? "/rpc");
+
+function CloseIcon() @{
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 20 20"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.5"
+    stroke-linecap="round"
+    aria-hidden="true"
+  >
+    <line x1="4" y1="4" x2="16" y2="16" />
+    <line x1="16" y1="4" x2="4" y2="16" />
+  </svg>
+}
 
 export function TasksConfigPage() @{
   const [states, setStates] = useState<TaskState[]>([]);
@@ -51,17 +75,41 @@ export function TasksConfigPage() @{
     void load();
   }, [refreshKey]);
 
+  // Escape cierra drawer / modal.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent): void => {
+      if (e.key === "Escape") {
+        if (deletingId !== null) {
+          setDeletingId(null);
+        } else if (editing !== null) {
+          setEditing(null);
+          setEditingState(null);
+        }
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [editing, deletingId]);
+
+  // Lock body scroll cuando drawer o modal están abiertos.
+  useEffect(() => {
+    if (editing === null && deletingId === null) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [editing, deletingId]);
+
   const handleSubmit = async (
     params: ReturnType<typeof buildStateSubmitParams>,
   ): Promise<void> => {
     if (params.stateId === null) {
-      // create
       await (RPC as RpcClient).tasks.states.create({
         tast_name: params.input.tast_name,
         tast_order: params.input.tast_order,
       });
     } else {
-      // update
       await (RPC as RpcClient).tasks.states.update({
         tast_id: params.stateId,
         tast_name: params.input.tast_name,
@@ -100,12 +148,10 @@ export function TasksConfigPage() @{
     const next = [...states];
     [next[idx], next[swapWith]] = [next[swapWith]!, next[idx]!];
     const reordered = next.map((s, i) => ({ tast_id: s.tast_id, tast_order: i }));
-    // Optimistic update.
     setStates(next.map((s, i) => ({ ...s, tast_order: i })));
     try {
       await (RPC as RpcClient).tasks.states.reorder(reordered);
     } catch (err) {
-      // Revert.
       setError(
         err instanceof Error ? err.message : "reorder failed",
       );
@@ -113,32 +159,25 @@ export function TasksConfigPage() @{
     }
   };
 
-  <section data-page="tasks-config">
-    <header>
-      <h1>{t("tasks.statuses.label")}</h1>
-    </header>
-
-    {error && (
-      <p data-slot="error" role="alert">
-        {error}
-      </p>
-    )}
-
-    <nav data-tab-bar role="tablist" aria-label={t("tasks.statuses.label")}>
-      <button
-        type="button"
-        role="tab"
-        aria-selected="true"
-        data-tab="states"
-        data-active="true"
-      >
-        {t("tasks.statuses.label")}
-      </button>
-    </nav>
-
-    <section data-tab-panel="states">
-      <button
-        type="button"
+  <section
+    data-page="tasks-config"
+    class="mx-auto w-full max-w-3xl px-6 py-8 sm:py-10"
+  >
+    <header class="mb-8 flex flex-wrap items-end justify-between gap-4">
+      <div class="min-w-0">
+        <h1 class="text-2xl font-bold tracking-tight text-text-primary sm:text-3xl">
+          {t("tasks.statuses.label")}
+        </h1>
+        <p class="mt-1 text-sm text-text-secondary">
+          {states.length === 0
+            ? "Configurá los estados del kanban."
+            : states.length === 1
+            ? "1 estado configurado"
+            : `${states.length} estados configurados`}
+        </p>
+      </div>
+      <Button
+        variant="primary"
         data-action="new-state"
         onClick={() => {
           setEditing("create");
@@ -146,20 +185,53 @@ export function TasksConfigPage() @{
         }}
       >
         {t("tasks.statuses.add")}
-      </button>
+      </Button>
+    </header>
 
-      {states.length === 0 ? (
-        <p data-slot="empty">{t("tasks.state.empty")}</p>
-      ) : (
-        <ul data-component="task-states-list">
-          {states.map((s, i) => (
-            <li
-              key={s.tast_id}
-              data-state-id={s.tast_id}
-              data-state-order={s.tast_order}
-            >
-              <span>{s.tast_name}</span>
-              <small>{`#${s.tast_order}`}</small>
+    {error && (
+      <StatusMessage variant="error" class="mb-6">
+        {error}
+      </StatusMessage>
+    )}
+
+    {states.length === 0 ? (
+      <div
+        data-component="states-list-empty"
+        class="flex flex-col items-center rounded-lg border border-dashed border-border bg-surface px-6 py-12 text-center"
+      >
+        <h2 class="text-base font-semibold text-text-primary">
+          {t("tasks.state.empty")}
+        </h2>
+        <p class="mt-2 max-w-sm text-sm text-text-secondary">
+          Los estados son las columnas del kanban. Empezá creando el primero.
+        </p>
+        <Button
+          variant="primary"
+          onClick={() => {
+            setEditing("create");
+            setEditingState(null);
+          }}
+          class="mt-6"
+        >
+          {t("tasks.statuses.add")}
+        </Button>
+      </div>
+    ) : (
+      <ul data-component="task-states-list" class="flex flex-col gap-3">
+        {states.map((s, i) => (
+          <li
+            key={s.tast_id}
+            data-state-id={s.tast_id}
+            data-state-order={s.tast_order}
+            class="flex items-center gap-3 rounded-md border border-border bg-surface px-4 py-3"
+          >
+            <span class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border bg-background text-xs font-medium text-text-secondary">
+              #{s.tast_order}
+            </span>
+            <span class="min-w-0 flex-1 truncate text-sm font-semibold text-text-primary">
+              {s.tast_name}
+            </span>
+            <div class="flex items-center gap-1">
               <button
                 type="button"
                 data-action="move-up"
@@ -167,7 +239,8 @@ export function TasksConfigPage() @{
                 onClick={() => {
                   void handleMove(s.tast_id, "up");
                 }}
-                aria-label={`Move ${s.tast_name} up`}
+                aria-label={`Mover ${s.tast_name} arriba`}
+                class="inline-flex h-8 w-8 items-center justify-center rounded-md text-text-secondary transition-colors hover:bg-background hover:text-text-primary disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
               >
                 ↑
               </button>
@@ -178,12 +251,13 @@ export function TasksConfigPage() @{
                 onClick={() => {
                   void handleMove(s.tast_id, "down");
                 }}
-                aria-label={`Move ${s.tast_name} down`}
+                aria-label={`Mover ${s.tast_name} abajo`}
+                class="inline-flex h-8 w-8 items-center justify-center rounded-md text-text-secondary transition-colors hover:bg-background hover:text-text-primary disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
               >
                 ↓
               </button>
-              <button
-                type="button"
+              <Button
+                variant="ghost"
                 data-action="edit"
                 onClick={() => {
                   setEditing("update");
@@ -191,87 +265,134 @@ export function TasksConfigPage() @{
                 }}
               >
                 {t("tasks.statuses.edit")}
-              </button>
-              <button
-                type="button"
+              </Button>
+              <Button
+                variant="ghost"
                 data-action="delete"
+                class="!text-error hover:bg-error/10"
                 onClick={() => setDeletingId(s.tast_id)}
               >
                 {t("tasks.statuses.delete")}
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-    </section>
+              </Button>
+            </div>
+          </li>
+        ))}
+      </ul>
+    )}
 
+    {/* Drawer de edición/creación de estado (mismo lenguaje que task drawer). */}
     {editing !== null && (
-      <aside
-        data-component="state-form-panel"
-        role="dialog"
-        aria-label={t("tasks.statuses.label")}
-      >
-        <header>
-          <h2>
-            {editing === "create"
-              ? t("tasks.statuses.add")
-              : t("tasks.statuses.edit")}
-          </h2>
-          <button
-            type="button"
-            aria-label={t("tasks.form.cancel")}
-            onClick={() => {
-              setEditing(null);
-              setEditingState(null);
-            }}
-          >
-            ×
-          </button>
-        </header>
-        <TaskStateForm
-          mode={editing}
-          {...(editingState
-            ? {
-                existingStateId: editingState.tast_id,
-                initial: {
-                  tast_name: editingState.tast_name,
-                  tast_order: editingState.tast_order,
-                },
-              }
-            : {})}
-          onSubmit={handleSubmit}
-          onCancel={() => {
+      <>
+        <div
+          data-component="state-form-backdrop"
+          class="fixed inset-0 z-30 bg-black/40"
+          onClick={() => {
             setEditing(null);
             setEditingState(null);
           }}
+          aria-hidden="true"
         />
-      </aside>
+        <aside
+          data-component="state-form-panel"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="state-form-panel-title"
+          tabindex="-1"
+          class="fixed top-0 right-0 z-40 flex h-screen w-[min(420px,90vw)] flex-col border-l border-border bg-surface shadow-2xl"
+        >
+          <header class="flex shrink-0 items-center justify-between gap-4 border-b border-border px-6 py-4">
+            <h2
+              id="state-form-panel-title"
+              class="text-lg font-semibold text-text-primary"
+            >
+              {editing === "create"
+                ? t("tasks.statuses.add")
+                : t("tasks.statuses.edit")}
+            </h2>
+            <button
+              type="button"
+              aria-label={t("tasks.form.cancel")}
+              onClick={() => {
+                setEditing(null);
+                setEditingState(null);
+              }}
+              data-action="close-state-form-panel"
+              class="rounded-md p-1 text-text-secondary transition-colors hover:bg-background hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+            >
+              <CloseIcon />
+            </button>
+          </header>
+          <div class="flex-1 overflow-y-auto px-6 py-4">
+            <TaskStateForm
+              mode={editing}
+              {...(editingState
+                ? {
+                    existingStateId: editingState.tast_id,
+                    initial: {
+                      tast_name: editingState.tast_name,
+                      tast_order: editingState.tast_order,
+                    },
+                  }
+                : {})}
+              onSubmit={handleSubmit}
+              onCancel={() => {
+                setEditing(null);
+                setEditingState(null);
+              }}
+            />
+          </div>
+        </aside>
+      </>
     )}
 
+    {/* Modal de confirmación de delete. */}
     {deletingId !== null && (
-      <dialog
-        open
-        data-component="delete-state-confirmation"
-        role="dialog"
-      >
-        <p>{t("tasks.statuses.deleteConfirm")}</p>
-        <button
-          type="button"
-          data-action="cancel-delete-state"
+      <>
+        <div
+          data-component="delete-state-backdrop"
+          class="fixed inset-0 z-30 bg-black/40"
           onClick={() => setDeletingId(null)}
+          aria-hidden="true"
+        />
+        <div
+          data-component="delete-state-confirmation"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="delete-state-title"
+          class="fixed left-1/2 top-1/2 z-40 w-[min(420px,90vw)] -translate-x-1/2 -translate-y-1/2 rounded-lg border border-border bg-surface p-6 shadow-2xl"
         >
-          {t("tasks.form.cancel")}
-        </button>
-        <button
-          type="button"
-          data-action="confirm-delete-state"
-          onClick={() => {
-            void handleDelete();
-          }}
-        >
-          {t("tasks.statuses.delete")}
-        </button>
-      </dialog>
+          <h2
+            id="delete-state-title"
+            class="text-lg font-semibold text-text-primary"
+          >
+            {t("tasks.statuses.deleteConfirm") ??
+              "¿Eliminar este estado?"}
+          </h2>
+          <p class="mt-2 text-sm text-text-secondary">
+            {t("tasks.statuses.deleteConfirmBody") ??
+              "Esta acción no se puede deshacer."}
+          </p>
+          <div class="mt-6 flex items-center justify-end gap-2">
+            <Button
+              variant="ghost"
+              data-action="cancel-delete-state"
+              onClick={() => setDeletingId(null)}
+            >
+              {t("tasks.form.cancel")}
+            </Button>
+            <Button
+              variant="primary"
+              data-action="confirm-delete-state"
+              class="!bg-error hover:!bg-error/90"
+              onClick={() => {
+                void handleDelete();
+              }}
+            >
+              {t("tasks.statuses.delete")}
+            </Button>
+          </div>
+        </div>
+      </>
     )}
   </section>
 }
