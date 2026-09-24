@@ -123,10 +123,7 @@ export function createRpcHandler(
   // (`getHeader(event, "x-user-id")`) y rechaza con `Missing X-User-Id
   // header` si no está. El lookup de sesión lo hace el dispatch handler
   // una vez por request, antes de delegar al wrapper.
-  const wrapPost = (
-    h3: H3Handler,
-    path: string,
-  ): ProcedureEntry["run"] => {
+  const wrapPost = (h3: H3Handler, path: string): ProcedureEntry["run"] => {
     return async (
       event: H3Event,
       input: unknown,
@@ -143,10 +140,7 @@ export function createRpcHandler(
       return invokeH3HandlerAndParse(h3, finalHybrid);
     };
   };
-  const wrapGet = (
-    h3: H3Handler,
-    path: string,
-  ): ProcedureEntry["run"] => {
+  const wrapGet = (h3: H3Handler, path: string): ProcedureEntry["run"] => {
     return async (
       event: H3Event,
       _input: unknown,
@@ -280,12 +274,35 @@ export function createRpcHandler(
       return new Response("Bad Request", { status: 400 });
     }
 
-    // Legacy endpoints sin contrato (siguen funcionando con la API vieja)
-    if (path === "/rpc/tasks/types-for-form") {
-      return typesForFormH3(event);
+    // Resolver userId desde session cookie una sola vez por request (los
+    // handlers lo leen como header `X-User-Id`). Se aplica tanto al
+    // dispatcher ORPC como a los legacy endpoints (que no pasan por
+    // wrapPost/wrapGet y por eso no recibían el header antes).
+    const userIdFromSession = await resolveUserIdFromSession(
+      event,
+      deps.getSession,
+    );
+    const eventWithUserId =
+      userIdFromSession !== null
+        ? withRequestHeader(event, "x-user-id", userIdFromSession)
+        : event;
+
+    // Legacy endpoints sin contrato (siguen funcionando con la API vieja).
+    // Necesitan el x-user-id header en `event.req.headers` porque sus
+    // handlers usan `getHeader(event, "x-user-id")` (vía `readUserId`).
+    // Aceptamos kebab y camelCase porque el cliente ORPC preserva el
+    // property name del procedure como segment del path (no kebab-translate).
+    if (
+      path === "/rpc/tasks/types-for-form" ||
+      path === "/rpc/tasks/typesForForm"
+    ) {
+      return typesForFormH3(eventWithUserId);
     }
-    if (path === "/rpc/tasks/categories-by-type") {
-      return categoriesByTypeH3(event);
+    if (
+      path === "/rpc/tasks/categories-by-type" ||
+      path === "/rpc/tasks/categoriesByType"
+    ) {
+      return categoriesByTypeH3(eventWithUserId);
     }
 
     // Health: ruta simple sin wrap ORPC (mantenemos el comportamiento h3 nativo)
@@ -305,18 +322,6 @@ export function createRpcHandler(
       return new Response("Not Found", { status: 404 });
     }
 
-    // Resolver userId desde session cookie una sola vez por request (los
-    // handlers lo leen como header `X-User-Id`). Sin esta línea, todos los
-    // endpoints autenticados retornarían `401 Missing X-User-Id header`
-    // aunque el browser sí envíe cookie válida. Las procedures públicas
-    // (requestOtp, verifyOtp, register, session...) reciben `null` y
-    // siguen funcionando; las autenticadas (tasks.*, logout) reciben el
-    // userId y lo propagan al handler via el header.
-    const userIdFromSession = await resolveUserIdFromSession(
-      event,
-      deps.getSession,
-    );
-
     // Parse body para extraer `input` del wrap. El cliente ORPC v1.15 envía
     // `{json: input}` en el REQUEST y espera `{json: <output>}` en la
     // RESPONSE (mismo envelope del lado cliente vía
@@ -326,7 +331,7 @@ export function createRpcHandler(
     let input: unknown;
     if (method === "POST") {
       try {
-        const rawBody = await event.req.json();
+        const rawBody = await eventWithUserId.req.json();
         input = (rawBody as { json?: unknown; data?: unknown })?.json;
       } catch (parseError) {
         console.error("[rpc] body parse failed:", parseError);
@@ -336,7 +341,7 @@ export function createRpcHandler(
     // Ejecutar la procedure con el userId resuelto desde session
     let output: unknown;
     try {
-      output = await entry.run(event, input, userIdFromSession);
+      output = await entry.run(eventWithUserId, input, userIdFromSession);
     } catch (err) {
       // Wrap del error en formato ORPC. BridgeHttpError se traduce a un
       // error HTTP con code discriminado; cualquier otro error cae a 500.

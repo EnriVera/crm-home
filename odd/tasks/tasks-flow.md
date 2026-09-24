@@ -2,7 +2,7 @@
 
 Fecha: 2026-09-23
 Owner: el Gentleman (autonomous)
-Estado: en curso (Fase A ✅; Fase B pendiente)
+Estado: en curso (Fase A ✅, B ✅; Fases C-E pendientes)
 
 ## Objetivo
 
@@ -33,12 +33,12 @@ Commit: `feat(web): task-detail-page loads real data via rpc.tasks.get`
 
 ### Fase B — TaskForm real (create + edit)
 
-- B1. Reemplazar el `__state` placeholder en `task-form.tsrx` por `useState` real + reducer `applyTaskFormAction`.
-- B2. Wire `onSubmit` para construir params con el helper `taskFormToCreateInput` (nuevo en `lib/tasks/tasks-form.ts`).
-- B3. Mount en `/tasks`: botón "Nueva tarea" abre el form en panel lateral (sidebar). Submit → `RPC.tasks.create(...)` → cierra panel + refresh lista.
-- B4. Mount en `/tasks/:id?edit=true`: panel lateral con form pre-populado del task. Submit → `RPC.tasks.update(...)` → cierra panel + actualiza detalle.
-- B5. Validación: `taskTitleRequired`, `taskDescriptionLength` (existing en `lib/validation/task`).
-- B6. Cancelar: cierra el panel sin persistir.
+- [x] B1. Reemplazar el `__state` placeholder en `task-form.tsrx` por `useState` real + reducer `applyTaskFormAction`.
+- [x] B2. Wire `onSubmit` para construir params con el helper `taskFormToCreateInput` (nuevo en `lib/tasks/tasks-form.ts`).
+- [x] B3. Mount en `/tasks`: botón "Nueva tarea" abre el form en panel lateral (sidebar). Submit → `RPC.tasks.create(...)` → cierra panel + refresh lista.
+- [x] B4. Mount en `/tasks/:id?edit=true`: panel lateral con form pre-populado del task. Submit → `RPC.tasks.update(...)` → cierra panel + actualiza detalle.
+- [x] B5. Validación: `taskTitleRequired`, `taskDescriptionLength` (existing en `lib/validation/task`).
+- [x] B6. Cancelar: cierra el panel sin persistir.
 
 Commit: `feat(web): task-form wired for create + edit via rpc`
 

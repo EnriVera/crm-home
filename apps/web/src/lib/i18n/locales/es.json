@@ -115,7 +115,13 @@
       "attachmentsDisabled": "Los adjuntos llegan en una próxima entrega.",
       "submit": "Crear tarea",
       "submitUpdate": "Guardar cambios",
-      "cancel": "Cancelar"
+      "cancel": "Cancelar",
+      "submitting": "Guardando…",
+      "createPanelTitle": "Nueva tarea",
+      "editPanelTitle": "Editar tarea",
+      "createSuccess": "Tarea creada.",
+      "updateSuccess": "Tarea actualizada.",
+      "noStatesAvailable": "No hay estados configurados. Creá uno en /tasks-config."
     },
     "statuses": {
       "label": "Estados",

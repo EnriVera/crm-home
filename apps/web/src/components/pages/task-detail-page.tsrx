@@ -1,6 +1,7 @@
 import { useEffect, useState } from "octane";
 import { t } from "../vendor/i18n/core";
 import { createRpcClient, type RpcClient } from "../../lib/api/rpc";
+import { TaskForm } from "../organisms/task-form/task-form.tsrx";
 import {
   closeDeleteConfirmation,
   editUrl,
@@ -12,16 +13,18 @@ import {
 } from "./task-detail-page/task-detail-page.logic";
 
 /**
- * Página `/tasks/:id` (PR-F / WU13).
+ * Página `/tasks/:id` (PR-F / WU13 + Fase B del tasks-flow).
  *
  * Render plan:
- * - Header: back link + título + estado (TaskStateBadge lookup por ID).
- * - Descripción (plain text por ahora — rich text llega en Fase 2).
- * - Meta: estado, fechas de creación/actualización.
- * - Botones:
- *   - Editar: navega a `?edit=true` (monta TaskForm en la misma página, Fase B).
- *   - Eliminar: abre diálogo de confirmación; al confirmar invoca
- *     `rpc.tasks.remove({ task_id })` y navega a `/tasks`.
+ * - Modo lectura (default): muestra el task cargado (título, descripción,
+ *   estado, fechas) con botones Editar / Eliminar.
+ * - Modo edición (`?edit=true`): muestra el TaskForm pre-populado con
+ *   los datos del task. Submit → `rpc.tasks.update(...)`. Cancel → vuelve
+ *   al modo lectura.
+ *
+ * Carga: `rpc.tasks.get({ task_id })` + `rpc.tasks.states.list()` (para lookup
+ * del nombre del estado en el render). El router inyecta `x-user-id` desde
+ * la cookie de sesión, así que delete/update lo tienen sin wiring extra.
  *
  * El componente `.tsrx` no se testea en bun:test (plugin Octane). La lógica
  * state machine vive en `task-detail-page.logic.ts` (testeable).
@@ -34,7 +37,7 @@ interface TaskDetail {
   task_clie_id: string | null;
   task_cate_id: string | null;
   task_tast_id: string;
-  task_type_id: string;
+  task_type_id: string | null;
   task_kanban_order: number;
   task_created_at: string;
   task_updated_at: string;
@@ -46,10 +49,14 @@ interface TaskState {
   tast_order: number;
 }
 
+interface TypeForFormOption {
+  type_id: string;
+  type_name: string;
+}
+
 const RPC = createRpcClient(import.meta.env.VITE_API_URL ?? "/rpc");
 
 function formatDate(iso: string): string {
-  // Render defensivo: si el parser falla, mostramos el string crudo.
   try {
     return new Date(iso).toLocaleString("es", {
       dateStyle: "short",
@@ -60,9 +67,14 @@ function formatDate(iso: string): string {
   }
 }
 
+function emptyCategoriesLookup(): string[] {
+  return [];
+}
+
 export function TaskDetailPage(props: { taskId: string; url: string }) @{
   const [task, setTask] = useState<TaskDetail | null>(null);
   const [taskStates, setTaskStates] = useState<TaskState[]>([]);
+  const [taskTypes, setTaskTypes] = useState<TypeForFormOption[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
@@ -75,20 +87,22 @@ export function TaskDetailPage(props: { taskId: string; url: string }) @{
     new URL(props.url, "http://internal").searchParams,
   );
 
-  // Carga: task + lista de estados (para resolver el nombre del estado en el render).
+  // Carga: task + lista de estados + lista de tipos.
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
         setLoading(true);
         setError(null);
-        const [taskData, statesData] = await Promise.all([
+        const [taskData, statesData, typesData] = await Promise.all([
           (RPC as RpcClient).tasks.get({ task_id: props.taskId }),
           (RPC as RpcClient).tasks.states.list(),
+          (RPC as RpcClient).tasks.typesForForm(),
         ]);
         if (!cancelled) {
           setTask(taskData as TaskDetail);
           setTaskStates(statesData as TaskState[]);
+          setTaskTypes(typesData as TypeForFormOption[]);
         }
       } catch {
         if (!cancelled) {
@@ -114,13 +128,38 @@ export function TaskDetailPage(props: { taskId: string; url: string }) @{
       setDeleting(true);
       setDeleteError(null);
       await (RPC as RpcClient).tasks.remove({ task_id: task.task_id });
-      // Hard navigation para que el shell re-renderice sin el task eliminado.
       globalThis.location.assign(TASKS_LIST_PATH);
     } catch {
       setDeleteError(t("tasks.detail.deleteError"));
       setDeleting(false);
       setConfirmState(closeDeleteConfirmation());
     }
+  };
+
+  const handleUpdate = async (state: {
+    title: string;
+    description: string | null;
+    clientId: string | null;
+    typeId: string;
+    categoryId: string | null;
+    stateId: string;
+  }): Promise<void> => {
+    if (!task) return;
+    await (RPC as RpcClient).tasks.update({
+      task_id: task.task_id,
+      task_title: state.title,
+      task_description: state.description,
+      task_tast_id: state.stateId || undefined,
+      task_type_id: state.typeId || null,
+      task_cate_id: state.categoryId,
+      task_clie_id: state.clientId,
+    });
+    // Hard reload para refrescar el detail con los datos nuevos y quitar `?edit=true`.
+    globalThis.location.assign(`/tasks/${task.task_id}`);
+  };
+
+  const handleCancelEdit = (): void => {
+    globalThis.location.assign(`/tasks/${props.taskId}`);
   };
 
   <article data-page="task-detail" data-task-id={props.taskId}>
@@ -131,17 +170,44 @@ export function TaskDetailPage(props: { taskId: string; url: string }) @{
       </h1>
     </header>
 
-    {editMode && task && (
-      <p data-slot="edit-mode-hint">{t("tasks.detail.editModeHint")}</p>
-    )}
-
     {error && (
       <p data-slot="error" role="alert">
         {error}
       </p>
     )}
 
-    {task && (
+    {editMode && task && (
+      <aside
+        data-component="edit-task-panel"
+        role="dialog"
+        aria-label={t("tasks.form.editPanelTitle")}
+      >
+        <header>
+          <h2>{t("tasks.form.editPanelTitle")}</h2>
+        </header>
+        <TaskForm
+          mode="update"
+          initial={{
+            title: task.task_title,
+            description: task.task_description,
+            clientId: task.task_clie_id,
+            typeId: task.task_type_id ?? "",
+            categoryId: task.task_cate_id,
+            stateId: task.task_tast_id,
+          }}
+          availableStates={taskStates.map((s) => ({
+            tast_id: s.tast_id,
+            tast_name: s.tast_name,
+          }))}
+          availableTypes={taskTypes}
+          availableCategoriesFor={emptyCategoriesLookup}
+          onSubmit={handleUpdate}
+          onCancel={handleCancelEdit}
+        />
+      </aside>
+    )}
+
+    {task && !editMode && (
       <>
         <section data-slot="meta">
           <dl>
@@ -165,11 +231,7 @@ export function TaskDetailPage(props: { taskId: string; url: string }) @{
     )}
 
     <section data-slot="actions">
-      <a
-        href={editUrl(props.taskId)}
-        data-action="edit"
-        aria-disabled={!task}
-      >
+      <a href={editUrl(props.taskId)} data-action="edit" aria-disabled={!task}>
         {t("tasks.card.edit")}
       </a>
       <button
