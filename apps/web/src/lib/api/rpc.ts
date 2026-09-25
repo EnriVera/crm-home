@@ -1,7 +1,7 @@
 import { createORPCClient } from "@orpc/client";
 import { RPCLink } from "@orpc/client/fetch";
 import type { ContractRouterClient } from "@orpc/contract";
-import type { authContract, tasksContract } from "@crm/types";
+import type { authContract, tasksContract, clientsContract } from "@crm/types";
 
 /**
  * Cliente RPC multi-contract para el frontend web.
@@ -35,10 +35,12 @@ const ALLOWED_BASE_URL_PATTERN = /^(\/[^\s]*|https?:\/\/[^\s]+)$/i;
 
 export type AuthRpcClient = ContractRouterClient<typeof authContract>;
 export type TasksRpcClient = ContractRouterClient<typeof tasksContract>;
+export type ClientsRpcClient = ContractRouterClient<typeof clientsContract>;
 
 export interface RpcClient {
  auth: AuthRpcClient;
  tasks: TasksRpcClient;
+ clients: ClientsRpcClient;
 }
 
 export function createRpcClient(baseURL: string): RpcClient {
@@ -108,5 +110,6 @@ export function createRpcClient(baseURL: string): RpcClient {
  return {
   auth: createORPCClient(link, { path: ["auth"] }),
   tasks: createORPCClient(link, { path: ["tasks"] }),
+  clients: createORPCClient(link, { path: ["clients"] }),
  };
 }

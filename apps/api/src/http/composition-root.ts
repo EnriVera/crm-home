@@ -11,6 +11,8 @@ import { DeleteTaskState } from "../application/tasks/delete-task-state";
 import { GetTask } from "../application/tasks/get-task";
 import { ListCategoriesByType } from "../application/tasks/list-categories-by-type";
 import { ListClientsForSelector } from "../application/tasks/list-clients-for-selector";
+import { ListClients } from "../application/clients/list-clients";
+import { createListClientsHandler } from "./clients/clients-routes";
 import { ListTaskStates } from "../application/tasks/list-task-states";
 import { ListTasks } from "../application/tasks/list-tasks";
 import { ListTypesForForm } from "../application/tasks/list-types-for-form";
@@ -166,6 +168,8 @@ export function createCompositionRoot(
       taskStateRepository,
       transactionManager,
     });
+    const listClients = new ListClients({ clientLookupRepository });
+    const listClientsHandler = createListClientsHandler({ listClients });
     const listClientsForSelector = new ListClientsForSelector({
       clientLookupRepository,
     });
@@ -177,6 +181,8 @@ export function createCompositionRoot(
     });
 
     const rpcHandler = createRpcHandler({
+      listClients,
+      listClientsHandler,
       getHealth,
       requestOtp,
       verifyOtp,

@@ -29,11 +29,14 @@ import {
   BridgeHttpError,
   invokeH3HandlerAndParse,
 } from "./orpc-bridge";
+import { createListClientsHandler, type ClientsRouteDependencies } from "./clients/clients-routes";
 
 export interface RouterDependencies
   extends AuthRouteDependencies,
-    TasksRouteDependencies {
+    TasksRouteDependencies,
+    ClientsRouteDependencies {
   getHealth: GetHealth;
+  listClientsHandler: ReturnType<typeof createListClientsHandler>;
 }
 
 /**
@@ -112,6 +115,7 @@ export function createRpcHandler(
     createReorderTaskStatesHandler(deps),
   );
   const clientsSearchH3 = asBridgeHandler(createListClientsSearchHandler(deps));
+  const listClientsH3 = asBridgeHandler(createListClientsHandler(deps));
 
   const typesForFormH3 = createListTypesForFormHandler(deps);
   const categoriesByTypeH3 = createListCategoriesByTypeHandler(deps);
@@ -248,6 +252,13 @@ export function createRpcHandler(
       method: "POST",
       path: "/tasks/clients/search",
       run: wrapPost(clientsSearchH3, "/tasks/clients/search"),
+    },
+    {
+      method: "POST",
+      path: "/clients/list",
+      // Usamos wrapPost para que el body se inyecte como query string
+      // (los handlers leen via `getQuery(event)` consistentemente con tasks).
+      run: wrapPost(listClientsH3, "/clients/list"),
     },
   ];
 

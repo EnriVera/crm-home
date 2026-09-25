@@ -156,5 +156,26 @@
     },
     "listLoadError": "No pudimos cargar las tareas. Intentá de nuevo.",
     "configLoadError": "No pudimos cargar los estados. Intentá de nuevo."
+  },
+  "clients": {
+    "page": {
+      "title": "Clientes",
+      "add": "Nuevo cliente"
+    },
+    "search": {
+      "placeholder": "Buscar clientes...",
+      "label": "Buscar"
+    },
+    "fields": {
+      "email": "Email",
+      "phone": "Teléfono"
+    },
+    "listEmpty": {
+      "noClients": "No hay clientes todavía",
+      "noClientsBody": "Cuando agregues clientes van a aparecer acá.",
+      "noResults": "Sin resultados",
+      "noResultsBody": "Probá con otro término de búsqueda."
+    },
+    "loadError": "No pudimos cargar los clientes. Intentá de nuevo."
   }
 }

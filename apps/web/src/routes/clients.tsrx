@@ -1,6 +1,6 @@
-import { PlaceholderPage } from "../components/pages/placeholder-page.tsrx";
+import { ClientsPage } from "../components/pages/clients-page.tsrx";
 
-/** Entry de `/clients` (ruta del shell, D5): placeholder sin lógica de módulos. */
+/** Entry de `/clients` (MVP read-only — list endpoint). */
 export function ClientsRoute() @{
-  <PlaceholderPage />
+  <ClientsPage />
 }
