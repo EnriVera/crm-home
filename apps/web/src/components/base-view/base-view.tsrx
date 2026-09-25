@@ -1,4 +1,5 @@
 import { useEffect, useState } from "octane";
+import { t } from "../vendor/i18n/core";
 import {
   buildBaseViewStorageKey,
   parsePersistedFilters,
@@ -116,14 +117,20 @@ export function BaseView<F extends BaseViewFilters>(props: BaseViewProps<F>) @{
                 : "text-text-secondary hover:text-text-primary"
             }`}
           >
-            {v}
+            {t(`tasks.views.${v}`)}
           </button>
         ))}
       </nav>
     )}
 
-    {/* Render de la vista seleccionada. */}
-    <section data-view={view}>
+    {/* Render de la vista seleccionada. Cada vista decide su layout
+        via clases Tailwind en este section — la lógica de cada item
+        vive en `listStructure.row` / `gridStructure.card` /
+        `kanbanStructure.board` que el padre provee. */}
+    <section
+      data-view={view}
+      class={`${view === "grid" ? "grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3" : ""}`}
+    >
       {view === "list" &&
         props.records.map((record, i) => (
           <div key={i}>{props.listStructure.row(record)}</div>

@@ -6,6 +6,7 @@ import { Button } from "../atoms/button.tsrx";
 import { StatusMessage } from "../atoms/status-message.tsrx";
 import { Icon } from "../vendor/icons";
 import { TaskListItem } from "../molecules/task-list-item.tsrx";
+import { TaskKanbanBoard } from "../organisms/task-kanban-board/task-kanban-board.tsrx";
 import { DataList } from "../molecules/data-list.tsrx";
 import { TaskForm } from "../organisms/task-form/task-form.tsrx";
 import type {
@@ -360,7 +361,7 @@ export function TasksPage() @{
         moduleId="tasks"
         filters={filters}
         records={tasks}
-        views={["list"] satisfies ViewKind[]}
+        views={["list", "grid", "kanban"] satisfies ViewKind[]}
         onFilterChange={setFilters}
         listStructure={{
           row: (r) => {
@@ -379,14 +380,31 @@ export function TasksPage() @{
         }}
         gridStructure={{
           columns: 3,
-          card: (r) => (
-            <a href={`/tasks/${(r as TaskRow).task_id}`}>
-              {(r as TaskRow).task_title}
-            </a>
-          ),
+          card: (r) => {
+            const task = r as TaskRow;
+            const stateName = stateNameById.get(task.task_tast_id) ?? null;
+            return (
+              <TaskListItem
+                task_id={task.task_id}
+                task_title={task.task_title}
+                task_description={task.task_description}
+                stateName={stateName}
+                updatedAt={task.task_updated_at}
+              />
+            );
+          },
         }}
         kanbanStructure={{
-          board: ({ records }) => `${records.length} tasks`,
+          board: ({ records }) => (
+            <TaskKanbanBoard
+              tasks={records as Parameters<typeof TaskKanbanBoard>[0]["tasks"]}
+              states={taskStates.map((s) => ({
+                stateId: s.tast_id,
+                stateName: s.tast_name,
+                stateOrder: 0,
+              }))}
+            />
+          ),
         }}
       />
     </DataList>
