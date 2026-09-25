@@ -5,7 +5,7 @@ import {
   useDraggable,
   useDroppable,
   type DragDropEvent,
-} from "../../../vendor/dnd-kit";
+} from "../../vendor/dnd-kit";
 import { t } from "../../vendor/i18n/core";
 
 /**

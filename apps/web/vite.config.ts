@@ -15,7 +15,6 @@ export default defineConfig({
       "@orpc/client/fetch",
       "@orpc/contract",
       "@octanejs/phosphor-icons",
-      "@octanejs/resizable-panels",
       "i18next",
     ],
   },
