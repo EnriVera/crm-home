@@ -395,7 +395,7 @@ export function TasksPage() @{
           },
         }}
         kanbanStructure={{
-          board: ({ records }) => (
+          board: ({ records, onMove }) => (
             <TaskKanbanBoard
               tasks={records as Parameters<typeof TaskKanbanBoard>[0]["tasks"]}
               states={taskStates.map((s) => ({
@@ -403,6 +403,29 @@ export function TasksPage() @{
                 stateName: s.tast_name,
                 stateOrder: 0,
               }))}
+              onMove={async (params) => {
+                // OPTIMISTIC MOVE: movemos localmente y disparamos el RPC
+                // en background. Si falla, revertimos vía refreshKey.
+                const previousTasks = tasks;
+                setTasks((prev) =>
+                  prev.map((t) =>
+                    t.task_id === params.taskId
+                      ? { ...t, task_tast_id: params.targetStateId }
+                      : t,
+                  ),
+                );
+                try {
+                  await (RPC as RpcClient).tasks.move({
+                    task_id: params.taskId,
+                    target_state_id: params.targetStateId,
+                  });
+                  setRefreshKey((k) => k + 1);
+                } catch {
+                  setTasks(previousTasks);
+                  setLoadError(t("tasks.detail.moveError"));
+                }
+                void onMove;
+              }}
             />
           ),
         }}

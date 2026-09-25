@@ -2,7 +2,9 @@ import { useEffect, useState } from "octane";
 import { t } from "../vendor/i18n/core";
 import {
   buildBaseViewStorageKey,
+  buildViewStorageKey,
   parsePersistedFilters,
+  parsePersistedView,
   serializeFilters,
 } from "./base-view.helpers";
 
@@ -49,9 +51,19 @@ export interface BaseViewProps<F extends BaseViewFilters> {
     columns?: number;
     card: (record: unknown) => unknown;
   };
-  /** Estructura kanban: cómo renderizar el board (delega al organism task-kanban-board). */
+  /** Estructura kanban: cómo renderizar el board (delega al organism task-kanban-board).
+   * El callback `onMove` lo emite el organism cuando el usuario arrastra una
+   * task a otra columna — el padre lo implementa (típicamente RPC + optimistic). */
   kanbanStructure: {
-    board: (input: { records: unknown[]; onMove: unknown }) => unknown;
+    board: (input: {
+      records: unknown[];
+      onMove: (params: {
+        taskId: string;
+        targetStateId: string;
+        prevTaskId?: string;
+        nextTaskId?: string;
+      }) => void | Promise<void>;
+    }) => unknown;
   };
 }
 
@@ -60,7 +72,24 @@ export function BaseView<F extends BaseViewFilters>(props: BaseViewProps<F>) @{
   const moduleId = props.moduleId ?? "default";
 
   // Estado interno del switcher (no controlado por el padre).
-  const [view, setView] = useState<ViewKind>(availableViews[0]!);
+  // Hidrata desde localStorage si hay un view válido persistido de una
+  // sesión anterior (key separada de los filters para poder resetear
+  // uno sin perder el otro). Si no hay nada persistido o el valor es
+  // inválido (e.g. la vista ya no existe en `availableViews`), usa la
+  // primera vista disponible.
+  const [view, setView] = useState<ViewKind>(() => {
+    if (typeof localStorage === "undefined") return availableViews[0]!;
+    const raw = localStorage.getItem(buildViewStorageKey(props.id, moduleId));
+    const persisted = parsePersistedView(raw);
+    if (persisted && availableViews.includes(persisted)) return persisted;
+    return availableViews[0]!;
+  });
+
+  // Persiste el view cuando cambia.
+  useEffect(() => {
+    if (typeof localStorage === "undefined") return;
+    localStorage.setItem(buildViewStorageKey(props.id, moduleId), view);
+  }, [view, props.id, moduleId]);
 
   // Estado interno de filtros. Hidrata desde localStorage en mount.
   const [filters, setFilters] = useState<F>(() => {
