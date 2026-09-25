@@ -55,7 +55,10 @@ const VALID_VIEW_KINDS = ["list", "grid", "kanban"] as const;
 export type ViewKind = (typeof VALID_VIEW_KINDS)[number];
 
 export function isValidViewKind(value: unknown): value is ViewKind {
- return typeof value === "string" && (VALID_VIEW_KINDS as readonly string[]).includes(value);
+ return (
+  typeof value === "string" &&
+  (VALID_VIEW_KINDS as readonly string[]).includes(value)
+ );
 }
 
 /**
@@ -63,7 +66,9 @@ export function isValidViewKind(value: unknown): value is ViewKind {
  * retorna `null` — el caller debe usar el default (primera vista de
  * `availableViews`).
  */
-export function parsePersistedView(raw: string | null | undefined): ViewKind | null {
+export function parsePersistedView(
+ raw: string | null | undefined,
+): ViewKind | null {
  if (!raw) return null;
  return isValidViewKind(raw) ? raw : null;
 }

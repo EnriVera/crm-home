@@ -76,7 +76,7 @@ export interface TasksRouteDependencies {
   listCategoriesByType: ListCategoriesByType;
 }
 
-function readUserId(event: H3Event): string {
+export function readUserId(event: H3Event): string {
   const userId = getHeader(event, "x-user-id");
   if (!userId) {
     throw new Unauthorized("Missing X-User-Id header");

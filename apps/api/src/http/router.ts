@@ -29,7 +29,10 @@ import {
   BridgeHttpError,
   invokeH3HandlerAndParse,
 } from "./orpc-bridge";
-import { createListClientsHandler, type ClientsRouteDependencies } from "./clients/clients-routes";
+import {
+  createListClientsHandler,
+  type ClientsRouteDependencies,
+} from "./clients/clients-routes";
 
 export interface RouterDependencies
   extends AuthRouteDependencies,
