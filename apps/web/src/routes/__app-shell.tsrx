@@ -1,4 +1,5 @@
 import { useRef, useState, type OctaneNode } from "octane";
+import { Router } from "@octanejs/wouter";
 import { SkipLink } from "../components/atoms/skip-link.tsrx";
 import { SidebarNav } from "../components/organisms/sidebar-nav/sidebar-nav.tsrx";
 import { I18nProvider, useT } from "../components/vendor/i18n";
@@ -10,6 +11,7 @@ import {
   type PanelHandle,
 } from "../components/vendor/resizable";
 import "../lib/i18n/config";
+import { RouteSync } from "../lib/nav/route-sync";
 import {
   SidebarCollapseContext,
   type SidebarCollapseValue,
@@ -67,15 +69,23 @@ export function AppShellLayout(props: AppShellLayoutProps) @{
     },
   };
 
+  // wouter `Router` se inicializa con el `pathname` del SSR para que
+  // `useLocation` no haga hydration-mismatch: server lee `props.url`
+  // (estable en SSR + hidratación — D3), client toma `globalThis.location.pathname`
+  // en el primer render post-hidratación (vía `useSyncExternalStore`).
+  const pathname = pathnameOf(props.url);
+
   <I18nProvider>
-    <SkipLink label={t("shell.skipToContent")} />
-    <Group
-      orientation="horizontal"
-      class="min-h-dvh bg-background"
-      defaultLayout={defaultLayout}
-      onLayoutChange={onLayoutChange}
-      onLayoutChanged={onLayoutChanged}
-    >
+    <Router ssrPath={pathname}>
+      <RouteSync ssrPath={pathname} />
+      <SkipLink label={t("shell.skipToContent")} />
+      <Group
+        orientation="horizontal"
+        class="min-h-dvh bg-background"
+        defaultLayout={defaultLayout}
+        onLayoutChange={onLayoutChange}
+        onLayoutChanged={onLayoutChanged}
+      >
       <Panel
         id="sidebar"
         collapsible
@@ -97,5 +107,20 @@ export function AppShellLayout(props: AppShellLayoutProps) @{
         </main>
       </Panel>
     </Group>
+    </Router>
   </I18nProvider>
+}
+
+/**
+ * Saca el pathname de un string tipo `RenderRouteProps.url` (`pathname?search#hash`).
+ * Si el string viene vacío (defensa contra SSR raro), devuelve `/`.
+ */
+function pathnameOf(url: string): string {
+  const queryIndex = url.indexOf("?");
+  const hashIndex = url.indexOf("#");
+  let end = url.length;
+  if (queryIndex !== -1) end = Math.min(end, queryIndex);
+  if (hashIndex !== -1) end = Math.min(end, hashIndex);
+  const path = url.slice(0, end);
+  return path.length > 0 ? path : "/";
 }

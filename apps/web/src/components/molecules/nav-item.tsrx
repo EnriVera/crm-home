@@ -1,3 +1,4 @@
+import { Link } from "@octanejs/wouter";
 import { Icon, type IconName } from "../vendor/icons";
 
 export interface NavItemProps {
@@ -11,7 +12,17 @@ export interface NavItemProps {
 }
 
 /**
- * Molecule item de navegación (D8): `<a>` nativo (MPA) + ícono + label.
+ * Molecule item de navegación (D8): wouter `<Link>` + ícono + label.
+ *
+ * wouter intercepta el click, hace `preventDefault` y empuja la nueva URL
+ * vía History API. `<RouteSync>` (en `lib/nav/route-sync.tsrx`) escucha los
+ * cambios de `useLocation`, hace fetch del HTML server-rendered de la nueva
+ * ruta y reemplaza `<main id="content">` en lugar del clásico full-reload de
+ * octane fullstack. El `<Link>` sigue siendo un `<a href>` real para
+ * accesibilidad (lectores de pantalla, click derecho → "abrir en pestaña
+ * nueva", modifier-click → nueva ventana), así que las acciones nativas del
+ * browser siguen funcionando sin handlers custom.
+ *
  * Contraste D6.5: activo `primary-700` (claro) / `primary-400` (oscuro);
  * inactivo `text-text-secondary`.
  */
@@ -20,7 +31,7 @@ export function NavItem(props: NavItemProps) @{
     ? "bg-surface font-medium text-primary-700 dark:text-primary-400"
     : "text-text-secondary hover:bg-surface hover:text-text-primary";
 
-  <a
+  <Link
     href={props.href}
     aria-current={props.active ? "page" : undefined}
     aria-label={props.collapsed ? props.label : undefined}
@@ -29,5 +40,5 @@ export function NavItem(props: NavItemProps) @{
   >
     <Icon name={props.icon} size={20} />
     {props.collapsed ? null : <span>{props.label}</span>}
-  </a>
+  </Link>
 }
