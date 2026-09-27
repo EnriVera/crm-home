@@ -1,6 +1,6 @@
-import { PlaceholderPage } from "../components/pages/placeholder-page.tsrx";
+import { IncomesPage } from "../components/pages/incomes-page.tsrx";
 
-/** Entry de `/incomes` (ruta del shell, D5): placeholder sin lógica de módulos. */
+/** Entry de `/incomes` (placeholder route, reemplazada por `<IncomesPage />`). */
 export function IncomesRoute() @{
-  <PlaceholderPage />
+  <IncomesPage />
 }
