@@ -44,7 +44,8 @@
       "errorInvalidEmail": "Ese email no parece válido. Revísalo e intenta de nuevo.",
       "errorRateLimited": "Ya pediste varios códigos en pocos minutos. Espera unos minutos y probá de nuevo.",
       "errorServiceUnavailable": "El servicio no está disponible en este momento. Intentá de nuevo en unos minutos.",
-      "errorRequestOtp": "No pudimos enviar el código. Revisa tu conexión o espera unos minutos si ya pediste uno."
+      "errorRequestOtp": "No pudimos enviar el código. Revisa tu conexión o espera unos minutos si ya pediste uno.",
+      "sessionExpired": "Tu sesión expiró. Ingresá de nuevo para continuar."
     },
     "otp": {
       "title": "Revisa tu email",
