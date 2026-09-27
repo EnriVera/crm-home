@@ -249,5 +249,53 @@
       "cancel": "Cancelar",
       "submitting": "Guardando..."
     }
+  },
+  "expenses": {
+    "page": {
+      "title": "Gastos",
+      "add": "Nuevo gasto"
+    },
+    "search": {
+      "placeholder": "Buscar por descripción o categoría...",
+      "label": "Buscar"
+    },
+    "fields": {
+      "account": "Cuenta (UUID)",
+      "currency": "Moneda (UUID)",
+      "amount": "Monto",
+      "date": "Fecha",
+      "dateFrom": "Desde",
+      "dateTo": "Hasta",
+      "description": "Descripción",
+      "category": "Categoría",
+      "receiptUrl": "Link al comprobante"
+    },
+    "listEmpty": {
+      "noExpenses": "No hay gastos todavía",
+      "noExpensesBody": "Cuando registres gastos van a aparecer acá.",
+      "noResults": "Sin resultados",
+      "noResultsBody": "Probá con otro término de búsqueda o rango de fechas."
+    },
+    "loadError": "No pudimos cargar los gastos. Intentá de nuevo.",
+    "create": {
+      "title": "Nuevo gasto",
+      "submit": "Crear gasto"
+    },
+    "edit": {
+      "title": "Editar gasto",
+      "submit": "Guardar cambios"
+    },
+    "detail": {
+      "title": "Detalle del gasto",
+      "created": "Creado",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "confirmDelete": "¿Eliminar este gasto? Esta acción no se puede deshacer.",
+      "deleted": "Gasto eliminado"
+    },
+    "form": {
+      "cancel": "Cancelar",
+      "submitting": "Guardando..."
+    }
   }
 }
