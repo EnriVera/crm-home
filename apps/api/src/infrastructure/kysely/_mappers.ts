@@ -15,6 +15,7 @@ import type {
   AttachmentRow,
   CategoryRow,
   ClientRow,
+  ExpenseRow,
   IncomeRow,
   TaskRow,
   TaskStateRow,
@@ -134,6 +135,40 @@ export function mapIncomeRow(row: IncomeDbRow): IncomeRow {
     createdAt: row.inco_created_at,
     updatedAt: row.inco_updated_at,
     deletedAt: row.inco_deleted_at,
+  };
+}
+
+// ─── ExpenseRow ────────────────────────────────────────────────────────────
+
+export interface ExpenseDbRow {
+  expe_id: string;
+  expe_user_id: string;
+  expe_acco_id: string;
+  expe_amount: string;
+  expe_currency_id: string;
+  expe_description: string | null;
+  expe_category: string | null;
+  expe_date: string;
+  expe_receipt_url: string | null;
+  expe_created_at: Date;
+  expe_updated_at: Date;
+  expe_deleted_at: Date | null;
+}
+
+export function mapExpenseRow(row: ExpenseDbRow): ExpenseRow {
+  return {
+    id: row.expe_id,
+    userId: row.expe_user_id,
+    accountId: row.expe_acco_id,
+    amount: row.expe_amount,
+    currencyId: row.expe_currency_id,
+    description: row.expe_description,
+    category: row.expe_category,
+    date: row.expe_date,
+    receiptUrl: row.expe_receipt_url,
+    createdAt: row.expe_created_at,
+    updatedAt: row.expe_updated_at,
+    deletedAt: row.expe_deleted_at,
   };
 }
 

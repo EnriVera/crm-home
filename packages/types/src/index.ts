@@ -4,3 +4,4 @@ export * from "./contracts/tasks";
 export * from "./contracts/lookups";
 export * from "./contracts/clients";
 export * from "./contracts/incomes";
+export * from "./contracts/expenses";

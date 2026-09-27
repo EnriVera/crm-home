@@ -58,6 +58,21 @@ export interface IncomeRow {
   deletedAt: Date | null;
 }
 
+export interface ExpenseRow {
+  id: string;
+  userId: string;
+  accountId: string;
+  amount: string;
+  currencyId: string;
+  description: string | null;
+  category: string | null;
+  date: string;
+  receiptUrl: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date | null;
+}
+
 export interface TypeRow {
   id: string;
   userId: string;

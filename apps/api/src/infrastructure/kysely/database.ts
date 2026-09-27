@@ -128,6 +128,21 @@ export interface IncomeTable {
   inco_deleted_at: Date | null;
 }
 
+export interface ExpenseTable {
+  expe_id: string;
+  expe_user_id: string;
+  expe_acco_id: string;
+  expe_amount: string;
+  expe_currency_id: string;
+  expe_description: string | null;
+  expe_category: string | null;
+  expe_date: string;
+  expe_receipt_url: string | null;
+  expe_created_at: Generated<Date>;
+  expe_updated_at: Generated<Date>;
+  expe_deleted_at: Date | null;
+}
+
 export interface TypeCategoriesClientTable {
   tccl_id: string;
   tccl_user_id: string;
@@ -185,6 +200,7 @@ export interface DatabaseSchema {
   categories: CategoriesTable;
   client: ClientTable;
   income: IncomeTable;
+  expense: ExpenseTable;
   type_categories_client: TypeCategoriesClientTable;
   attachments: AttachmentTable;
   task_attachments: TaskAttachmentsTable;
