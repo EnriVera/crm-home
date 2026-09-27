@@ -5,3 +5,5 @@ export * from "./contracts/lookups";
 export * from "./contracts/clients";
 export * from "./contracts/incomes";
 export * from "./contracts/expenses";
+export * from "./contracts/transfers";
+export * from "./contracts/schedules";
