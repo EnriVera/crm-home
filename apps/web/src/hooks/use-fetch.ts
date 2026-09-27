@@ -39,49 +39,49 @@ import { useCallback, useEffect, useState } from "octane";
  */
 
 export interface UseFetchResult<T> {
-  loading: boolean;
-  error: string | null;
-  data: T | null;
-  refetch: () => void;
+ loading: boolean;
+ error: string | null;
+ data: T | null;
+ refetch: () => void;
 }
 
 export function useFetch<T>(
-  fetcher: () => Promise<T>,
-  deps: ReadonlyArray<unknown>,
+ fetcher: () => Promise<T>,
+ deps: ReadonlyArray<unknown>,
 ): UseFetchResult<T> {
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [data, setData] = useState<T | null>(null);
-  const [refreshKey, setRefreshKey] = useState(0);
+ const [loading, setLoading] = useState(true);
+ const [error, setError] = useState<string | null>(null);
+ const [data, setData] = useState<T | null>(null);
+ const [refreshKey, setRefreshKey] = useState(0);
 
-  useEffect(() => {
-    let cancelled = false;
-    const load = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const result = await fetcher();
-        if (!cancelled) {
-          setData(result);
-        }
-      } catch (err) {
-        if (!cancelled) {
-          setError(err instanceof Error ? err.message : String(err));
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    };
-    void load();
-    return () => {
-      cancelled = true;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [...deps, refreshKey]);
+ useEffect(() => {
+  let cancelled = false;
+  const load = async () => {
+   setLoading(true);
+   setError(null);
+   try {
+    const result = await fetcher();
+    if (!cancelled) {
+     setData(result);
+    }
+   } catch (err) {
+    if (!cancelled) {
+     setError(err instanceof Error ? err.message : String(err));
+    }
+   } finally {
+    if (!cancelled) setLoading(false);
+   }
+  };
+  void load();
+  return () => {
+   cancelled = true;
+  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+ }, [...deps, refreshKey]);
 
-  const refetch = useCallback(() => {
-    setRefreshKey((k) => k + 1);
-  }, []);
+ const refetch = useCallback(() => {
+  setRefreshKey((k) => k + 1);
+ }, []);
 
-  return { loading, error, data, refetch };
+ return { loading, error, data, refetch };
 }

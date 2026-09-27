@@ -28,9 +28,9 @@ import type { Root } from "octane";
 let contentRoot: Root | null = null;
 
 export function setContentRoot(root: Root | null): void {
-  contentRoot = root;
+ contentRoot = root;
 }
 
 export function getContentRoot(): Root | null {
-  return contentRoot;
+ return contentRoot;
 }
