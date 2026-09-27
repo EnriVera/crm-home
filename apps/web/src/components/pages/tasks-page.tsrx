@@ -266,6 +266,7 @@ export function TasksPage() @{
           title={t("tasks.page.configTooltip")}
           data-component="tasks-config-link"
           class="inline-flex h-10 w-10 items-center justify-center rounded-md border border-border bg-surface text-text-secondary transition-colors hover:bg-background hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+          suppressHydrationWarning
         >
           <Icon name="gear" size={18} />
         </a>
