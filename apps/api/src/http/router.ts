@@ -61,6 +61,14 @@ import {
   updateTransferHandler,
   type TransfersRouteDependencies,
 } from "./transfers/transfers-routes";
+import {
+  createGetScheduleHandler,
+  createListSchedulesHandler,
+  createScheduleHandler,
+  removeScheduleHandler,
+  updateScheduleHandler,
+  type SchedulesRouteDependencies,
+} from "./schedules/schedules-routes";
 
 export interface RouterDependencies
   extends AuthRouteDependencies,
@@ -68,7 +76,8 @@ export interface RouterDependencies
     ClientsRouteDependencies,
     IncomesRouteDependencies,
     ExpensesRouteDependencies,
-    TransfersRouteDependencies {
+    TransfersRouteDependencies,
+    SchedulesRouteDependencies {
   getHealth: GetHealth;
   listClientsHandler: ReturnType<typeof createListClientsHandler>;
 }
@@ -172,6 +181,12 @@ export function createRpcHandler(
   const createTransferH3 = asBridgeHandler(createTransferHandler(deps));
   const updateTransferH3 = asBridgeHandler(updateTransferHandler(deps));
   const removeTransferH3 = asBridgeHandler(removeTransferHandler(deps));
+
+  const listSchedulesH3 = asBridgeHandler(createListSchedulesHandler(deps));
+  const getScheduleH3 = asBridgeHandler(createGetScheduleHandler(deps));
+  const createScheduleH3 = asBridgeHandler(createScheduleHandler(deps));
+  const updateScheduleH3 = asBridgeHandler(updateScheduleHandler(deps));
+  const removeScheduleH3 = asBridgeHandler(removeScheduleHandler(deps));
 
   const typesForFormH3 = createListTypesForFormHandler(deps);
   const categoriesByTypeH3 = createListCategoriesByTypeHandler(deps);
@@ -410,6 +425,31 @@ export function createRpcHandler(
       method: "POST",
       path: "/transfers/remove",
       run: wrapPost(removeTransferH3, "/transfers/remove"),
+    },
+    {
+      method: "POST",
+      path: "/schedules/list",
+      run: wrapPost(listSchedulesH3, "/schedules/list"),
+    },
+    {
+      method: "POST",
+      path: "/schedules/get",
+      run: wrapPost(getScheduleH3, "/schedules/get"),
+    },
+    {
+      method: "POST",
+      path: "/schedules/create",
+      run: wrapPost(createScheduleH3, "/schedules/create"),
+    },
+    {
+      method: "POST",
+      path: "/schedules/update",
+      run: wrapPost(updateScheduleH3, "/schedules/update"),
+    },
+    {
+      method: "POST",
+      path: "/schedules/remove",
+      run: wrapPost(removeScheduleH3, "/schedules/remove"),
     },
   ];
 
