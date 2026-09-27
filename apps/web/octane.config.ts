@@ -89,6 +89,12 @@ export default defineConfig({
         "TasksConfigRoute",
         "/src/routes/tasks-config.tsrx",
       ]),
+      // /clients/:id — client detail page (edit + delete inline).
+      // Hereda `before: [requireSession]` vía shellRoute.
+      shellRoute("/clients/:id", [
+        "ClientDetailRoute",
+        "/src/routes/clients/$id.tsrx",
+      ]),
     ],
   },
 });
