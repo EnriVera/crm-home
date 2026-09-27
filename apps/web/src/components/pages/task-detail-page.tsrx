@@ -267,7 +267,11 @@ export function TaskDetailPage(props: { taskId: string; url: string }) @{
         {t("tasks.page.title")}
       </a>
       <h1 class="mt-3 text-2xl font-bold tracking-tight text-text-primary sm:text-3xl">
-        {task ? task.task_title || props.taskId : t("tasks.detail.loading")}
+        {notFound
+          ? t("tasks.detail.notFoundTitle")
+          : task
+          ? task.task_title || props.taskId
+          : t("tasks.detail.loading")}
       </h1>
     </header>
 
