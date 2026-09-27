@@ -4,8 +4,10 @@ import { createRpcClient, type RpcClient } from "../../lib/api/rpc";
 import { Button } from "../atoms/button.tsrx";
 import { Icon } from "../vendor/icons";
 import { DataList } from "../molecules/data-list.tsrx";
+import { EmptyState } from "../molecules/empty-state.tsrx";
 import { ClientListItem } from "../molecules/client-list-item.tsrx";
 import { ClientForm } from "../organisms/client-form/client-form.tsrx";
+import { useFetch } from "../../hooks/use-fetch";
 import type { Client } from "@crm/types";
 
 /**
@@ -33,59 +35,40 @@ interface ClientRow {
 const RPC = createRpcClient(import.meta.env.VITE_API_URL ?? "/rpc");
 
 export function ClientsPage() @{
-  const [clients, setClients] = useState<ClientRow[]>([]);
   const [search, setSearch] = useState("");
-  const [refreshKey, setRefreshKey] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState<string | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
 
-  // Carga de clientes.
-  useEffect(() => {
-    let cancelled = false;
-    const load = async () => {
-      setLoading(true);
-      setLoadError(null);
-      try {
-        const result = (await (RPC as RpcClient).clients.list({
-          search,
-          limit: 50,
-        })) as Client[];
-        if (!cancelled) {
-          setClients(
-            result.map((c) => ({
-              client_id: c.client_id,
-              client_name: c.client_name,
-              client_email: c.client_email,
-              client_phone: c.client_phone,
-            })),
-          );
-        }
-      } catch {
-        if (!cancelled) {
-          setLoadError(t("clients.loadError"));
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    };
-    void load();
-    return () => {
-      cancelled = true;
-    };
-  }, [search, refreshKey]);
+  // Carga de clientes vía useFetch (centraliza cancelled+finally).
+  const clientsFetch = useFetch<ClientRow[]>(
+    async () => {
+      const result = ((await (RPC as RpcClient).clients.list({
+        search,
+        limit: 50,
+      })) as Client[]).map((c) => ({
+        client_id: c.client_id,
+        client_name: c.client_name,
+        client_email: c.client_email,
+        client_phone: c.client_phone,
+      }));
+      return result;
+    },
+    [search],
+  );
+  const clients = clientsFetch.data ?? [];
+  const loading = clientsFetch.loading;
+  const loadError = clientsFetch.error;
 
   const handleCreate = async (payload: {
     client_name: string;
     client_email: string | null;
     client_phone: string | null;
   }) => {
-    await (RPC as RpcClient).clients.create(payload);
     setCreateOpen(false);
-    setRefreshKey((k) => k + 1);
+    await (RPC as RpcClient).clients.create(payload);
+    clientsFetch.refetch();
   };
 
   const handleDelete = async (clientId: string) => {
@@ -94,7 +77,7 @@ export function ClientsPage() @{
     try {
       await (RPC as RpcClient).clients.remove({ client_id: clientId });
       setDeletingId(null);
-      setRefreshKey((k) => k + 1);
+      clientsFetch.refetch();
     } catch {
       setDeletingId(null);
       setDeleteError(t("clients.loadError"));
@@ -170,33 +153,29 @@ export function ClientsPage() @{
         </>
       }
       emptyState={
-        <div
-          data-component="clients-list-empty"
-          class="flex flex-col items-center rounded-lg border border-dashed border-border bg-surface px-6 py-16 text-center"
-        >
-          <div class="mb-4 text-text-secondary">
-            <Icon name="users" size={48} />
-          </div>
-          <h2 class="text-lg font-semibold text-text-primary">
-            {search
+        <EmptyState
+          icon={<Icon name="users" size={48} />}
+          title={
+            search
               ? t("clients.listEmpty.noResults")
-              : t("clients.listEmpty.noClients")}
-          </h2>
-          <p class="mt-2 max-w-sm text-sm text-text-secondary">
-            {search
+              : t("clients.listEmpty.noClients")
+          }
+          description={
+            search
               ? t("clients.listEmpty.noResultsBody")
-              : t("clients.listEmpty.noClientsBody")}
-          </p>
-          {search === "" && (
-            <Button
-              variant="primary"
-              class="mt-6"
-              onClick={() => setCreateOpen(true)}
-            >
-              {t("clients.page.add")}
-            </Button>
-          )}
-        </div>
+              : t("clients.listEmpty.noClientsBody")
+          }
+          action={
+            search === "" ? (
+              <Button
+                variant="primary"
+                onClick={() => setCreateOpen(true)}
+              >
+                {t("clients.page.add")}
+              </Button>
+            ) : undefined
+          }
+        />
       }
     >
       <ul class="flex flex-col gap-3">
