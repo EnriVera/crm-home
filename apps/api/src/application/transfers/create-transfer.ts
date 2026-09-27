@@ -1,6 +1,4 @@
-import type {
-  TransferRepository,
-} from "../../domain/ports/transfer-repository";
+import type { TransferRepository } from "../../domain/ports/transfer-repository";
 import type { TransferRow } from "../../domain/tasks/types";
 import { InvalidTransferInput } from "./errors";
 
