@@ -4,8 +4,10 @@ import { createRpcClient, type RpcClient } from "../../lib/api/rpc";
 import { Button } from "../atoms/button.tsrx";
 import { Icon } from "../vendor/icons";
 import { DataList } from "../molecules/data-list.tsrx";
+import { EmptyState } from "../molecules/empty-state.tsrx";
 import { IncomeListItem } from "../molecules/income-list-item.tsrx";
 import { IncomeForm } from "../organisms/income-form/income-form.tsrx";
+import { useFetch } from "../../hooks/use-fetch";
 import type { Income } from "@crm/types";
 
 /**
@@ -25,50 +27,27 @@ import type { Income } from "@crm/types";
 const RPC = createRpcClient(import.meta.env.VITE_API_URL ?? "/rpc");
 
 export function IncomesPage() @{
-  const [incomes, setIncomes] = useState<Income[]>([]);
   const [search, setSearch] = useState("");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
-  const [refreshKey, setRefreshKey] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState<string | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
-  useEffect(() => {
-    let cancelled = false;
-    const load = async () => {
-      setLoading(true);
-      setLoadError(null);
-      try {
-        const result = (await (RPC as RpcClient).incomes.list({
-          search,
-          date_from: dateFrom.length === 0 ? null : dateFrom,
-          date_to: dateTo.length === 0 ? null : dateTo,
-          limit: 100,
-        })) as Income[];
-        if (!cancelled) {
-          setIncomes(result);
-        }
-      } catch {
-        if (!cancelled) {
-          setLoadError(t("incomes.loadError"));
-        }
-      } finally {
-        // `finally` SIEMPRE corre (success, error, o early return por cancelled).
-        // Si el componente se unmounteó antes de la respuesta, React ignora
-        // el setState silenciosamente — sin warning. Esto evita que la
-        // animación de loading quede atascada para siempre en errores
-        // que llegan después del navigate.
-        if (!cancelled) setLoading(false);
-      }
-    };
-    void load();
-    return () => {
-      cancelled = true;
-    };
-  }, [search, dateFrom, dateTo, refreshKey]);
+  // Carga vía useFetch (centraliza cancelled+finally).
+  const incomesFetch = useFetch<Income[]>(
+    () =>
+      (RPC as RpcClient).incomes.list({
+        search,
+        date_from: dateFrom.length === 0 ? null : dateFrom,
+        date_to: dateTo.length === 0 ? null : dateTo,
+        limit: 100,
+      }) as Promise<Income[]>,
+    [search, dateFrom, dateTo],
+  );
+  const incomes = incomesFetch.data ?? [];
+  const loading = incomesFetch.loading;
+  const loadError = incomesFetch.error;
 
   const handleCreate = async (payload: {
     inco_account_id: string;
@@ -78,9 +57,9 @@ export function IncomesPage() @{
     inco_category: string | null;
     inco_date: string;
   }) => {
-    await (RPC as RpcClient).incomes.create(payload);
     setCreateOpen(false);
-    setRefreshKey((k) => k + 1);
+    await (RPC as RpcClient).incomes.create(payload);
+    incomesFetch.refetch();
   };
 
   const handleDelete = async (incomeId: string) => {
@@ -89,7 +68,7 @@ export function IncomesPage() @{
     try {
       await (RPC as RpcClient).incomes.remove({ inco_id: incomeId });
       setDeletingId(null);
-      setRefreshKey((k) => k + 1);
+      incomesFetch.refetch();
     } catch {
       setDeletingId(null);
       setDeleteError(t("incomes.loadError"));
@@ -170,33 +149,29 @@ export function IncomesPage() @{
         </>
       }
       emptyState={
-        <div
-          data-component="incomes-list-empty"
-          class="flex flex-col items-center rounded-lg border border-dashed border-border bg-surface px-6 py-16 text-center"
-        >
-          <div class="mb-4 text-text-secondary">
-            <Icon name="wallet" size={48} />
-          </div>
-          <h2 class="text-lg font-semibold text-text-primary">
-            {search || dateFrom || dateTo
+        <EmptyState
+          icon={<Icon name="wallet" size={48} />}
+          title={
+            search || dateFrom || dateTo
               ? t("incomes.listEmpty.noResults")
-              : t("incomes.listEmpty.noIncomes")}
-          </h2>
-          <p class="mt-2 max-w-sm text-sm text-text-secondary">
-            {search || dateFrom || dateTo
+              : t("incomes.listEmpty.noIncomes")
+          }
+          description={
+            search || dateFrom || dateTo
               ? t("incomes.listEmpty.noResultsBody")
-              : t("incomes.listEmpty.noIncomesBody")}
-          </p>
-          {!(search || dateFrom || dateTo) && (
-            <Button
-              variant="primary"
-              class="mt-6"
-              onClick={() => setCreateOpen(true)}
-            >
-              {t("incomes.page.add")}
-            </Button>
-          )}
-        </div>
+              : t("incomes.listEmpty.noIncomesBody")
+          }
+          action={
+            !(search || dateFrom || dateTo) ? (
+              <Button
+                variant="primary"
+                onClick={() => setCreateOpen(true)}
+              >
+                {t("incomes.page.add")}
+              </Button>
+            ) : undefined
+          }
+        />
       }
     >
       <ul class="flex flex-col gap-3">
