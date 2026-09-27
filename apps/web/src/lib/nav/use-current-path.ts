@@ -13,7 +13,7 @@ import { getCurrentPath, subscribe } from "./client-router.ts";
  * never change appearance with the URL do not need it.
  */
 export function useCurrentPath(): string {
-  const [path, setPath] = useState<string>(getCurrentPath());
-  useEffect(() => subscribe(() => setPath(getCurrentPath())), []);
-  return path;
+ const [path, setPath] = useState<string>(getCurrentPath());
+ useEffect(() => subscribe(() => setPath(getCurrentPath())), []);
+ return path;
 }

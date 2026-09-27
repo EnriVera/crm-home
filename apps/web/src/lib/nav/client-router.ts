@@ -30,38 +30,35 @@ let installed = false;
 let currentPath = readInitialPath();
 
 function readInitialPath(): string {
-  if (globalThis.location === undefined) return "/";
-  return globalThis.location.pathname || "/";
+ if (globalThis.location === undefined) return "/";
+ return globalThis.location.pathname || "/";
 }
 
 export function getCurrentPath(): string {
-  return currentPath;
+ return currentPath;
 }
 
 export function subscribe(listener: () => void): () => void {
-  listeners.add(listener);
-  return () => {
-    listeners.delete(listener);
-  };
+ listeners.add(listener);
+ return () => {
+  listeners.delete(listener);
+ };
 }
 
 function notify(): void {
-  for (const listener of listeners) listener();
+ for (const listener of listeners) listener();
 }
 
-export function navigate(
-  href: string,
-  opts: { replace?: boolean } = {},
-): void {
-  if (globalThis.history === undefined) return;
-  const url = new URL(href, globalThis.location.href);
-  if (opts.replace === true) {
-    globalThis.history.replaceState({}, "", url);
-  } else {
-    globalThis.history.pushState({}, "", url);
-  }
-  currentPath = url.pathname;
-  notify();
+export function navigate(href: string, opts: { replace?: boolean } = {}): void {
+ if (globalThis.history === undefined) return;
+ const url = new URL(href, globalThis.location.href);
+ if (opts.replace === true) {
+  globalThis.history.replaceState({}, "", url);
+ } else {
+  globalThis.history.pushState({}, "", url);
+ }
+ currentPath = url.pathname;
+ notify();
 }
 
 /**
@@ -70,59 +67,60 @@ export function navigate(
  * DOM listeners.
  */
 export function installClientRouter(): void {
-  if (installed === true) return;
-  if (document === undefined) return;
-  installed = true;
+ if (installed === true) return;
+ if (document === undefined) return;
+ installed = true;
 
-  document.addEventListener("click", handleDocumentClick);
-  globalThis.addEventListener("popstate", handlePopState);
+ document.addEventListener("click", handleDocumentClick);
+ globalThis.addEventListener("popstate", handlePopState);
 }
 
 function handleDocumentClick(event: MouseEvent): void {
-  if (event.defaultPrevented === true) return;
-  if (event.button !== 0) return;
-  if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+ if (event.defaultPrevented === true) return;
+ if (event.button !== 0) return;
+ if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
 
-  const target = event.target;
-  if (!(target instanceof Element)) return;
+ const target = event.target;
+ if (!(target instanceof Element)) return;
 
-  const anchor = target.closest("a");
-  if (!(anchor instanceof HTMLAnchorElement)) return;
-  if (shouldIntercept(anchor) === false) return;
+ const anchor = target.closest("a");
+ if (!(anchor instanceof HTMLAnchorElement)) return;
+ if (shouldIntercept(anchor) === false) return;
 
-  event.preventDefault();
-  navigate(anchor.href);
+ event.preventDefault();
+ navigate(anchor.href);
 }
 
 function handlePopState(): void {
-  currentPath = readInitialPath();
-  notify();
+ currentPath = readInitialPath();
+ notify();
 }
 
 function shouldIntercept(anchor: HTMLAnchorElement): boolean {
-  if (anchor.hasAttribute("download") === true) return false;
-  const target = anchor.getAttribute("target");
-  if (target !== null && target !== "" && target !== "_self") return false;
-  const rel = anchor.getAttribute("rel");
-  if (rel !== null && rel.split(/\s+/).includes("external") === true) return false;
+ if (anchor.hasAttribute("download") === true) return false;
+ const target = anchor.getAttribute("target");
+ if (target !== null && target !== "" && target !== "_self") return false;
+ const rel = anchor.getAttribute("rel");
+ if (rel !== null && rel.split(/\s+/).includes("external") === true)
+  return false;
 
-  // Same-origin only.
-  let anchorUrl: URL;
-  try {
-    anchorUrl = new URL(anchor.href, globalThis.location.href);
-  } catch {
-    return false;
-  }
-  if (anchorUrl.origin !== globalThis.location.origin) return false;
+ // Same-origin only.
+ let anchorUrl: URL;
+ try {
+  anchorUrl = new URL(anchor.href, globalThis.location.href);
+ } catch {
+  return false;
+ }
+ if (anchorUrl.origin !== globalThis.location.origin) return false;
 
-  // Hash-only links on the same page → let the browser handle smooth scroll.
-  if (
-    anchorUrl.pathname === globalThis.location.pathname &&
-    anchorUrl.hash !== "" &&
-    anchorUrl.search === globalThis.location.search
-  ) {
-    return false;
-  }
+ // Hash-only links on the same page → let the browser handle smooth scroll.
+ if (
+  anchorUrl.pathname === globalThis.location.pathname &&
+  anchorUrl.hash !== "" &&
+  anchorUrl.search === globalThis.location.search
+ ) {
+  return false;
+ }
 
-  return true;
+ return true;
 }
