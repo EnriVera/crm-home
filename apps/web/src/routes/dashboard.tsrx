@@ -1,6 +1,6 @@
-import { PlaceholderPage } from "../components/pages/placeholder-page.tsrx";
+import { DashboardPage } from "../components/pages/dashboard-page.tsrx";
 
-/** Entry de `/dashboard` (ruta del shell, D5): placeholder sin lógica de módulos. */
+/** Entry de `/dashboard` — resumen financiero del user. */
 export function DashboardRoute() @{
-  <PlaceholderPage />
+  <DashboardPage />
 }

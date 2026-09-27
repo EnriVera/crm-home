@@ -1,6 +1,6 @@
-import { PlaceholderPage } from "../components/pages/placeholder-page.tsrx";
+import { ConfigPage } from "../components/pages/config-page.tsrx";
 
-/** Entry de `/config` (ruta del shell, D5): placeholder sin lógica de módulos. */
+/** Entry de `/config` — settings del user. */
 export function ConfigRoute() @{
-  <PlaceholderPage />
+  <ConfigPage />
 }

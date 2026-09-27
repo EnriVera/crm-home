@@ -339,5 +339,26 @@
     "detail": {
       "delete": "Eliminar"
     }
+  },
+  "config": {
+    "title": "Configuración",
+    "subtitle": "Tu perfil, apariencia y preferencias.",
+    "loading": "Cargando...",
+    "emptySession": "No hay sesión activa.",
+    "profile": {
+      "title": "Perfil",
+      "name": "Nombre",
+      "email": "Email"
+    },
+    "appearance": {
+      "title": "Apariencia"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Resumen del mes en curso.",
+    "incomesThisMonth": "Ingresos del mes",
+    "expensesThisMonth": "Gastos del mes",
+    "transfersThisMonth": "Transferencias del mes"
   }
 }
