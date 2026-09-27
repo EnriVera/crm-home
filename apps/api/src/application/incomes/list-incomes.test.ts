@@ -18,10 +18,15 @@ class InMemoryIncomeRepository implements Pick<IncomeRepository, "list"> {
   }): Promise<IncomeRow[]> {
     return this.rows
       .filter((r) => r.userId === params.userId && r.deletedAt === null)
-      .filter((r) =>
-        params.search.length === 0 ||
-        (r.description ?? "").toLowerCase().includes(params.search.toLowerCase()) ||
-        (r.category ?? "").toLowerCase().includes(params.search.toLowerCase()),
+      .filter(
+        (r) =>
+          params.search.length === 0 ||
+          (r.description ?? "")
+            .toLowerCase()
+            .includes(params.search.toLowerCase()) ||
+          (r.category ?? "")
+            .toLowerCase()
+            .includes(params.search.toLowerCase()),
       )
       .filter((r) => params.dateFrom === null || r.date >= params.dateFrom)
       .filter((r) => params.dateTo === null || r.date <= params.dateTo)
@@ -106,7 +111,9 @@ describe("ListIncomes", () => {
         deletedAt: new Date(),
       },
     );
-    sut = new ListIncomes({ incomeRepository: repo as unknown as IncomeRepository });
+    sut = new ListIncomes({
+      incomeRepository: repo as unknown as IncomeRepository,
+    });
   });
 
   test("returns only incomes of the user", async () => {

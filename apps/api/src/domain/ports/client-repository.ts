@@ -48,8 +48,5 @@ export interface ClientRepository {
    * Soft-delete: setea `client_deleted_at = NOW()`. Idempotente: si el
    * client ya estaba borrado, retorna la fila sin error.
    */
-  softDelete(params: {
-    userId: string;
-    clientId: string;
-  }): Promise<ClientRow>;
+  softDelete(params: { userId: string; clientId: string }): Promise<ClientRow>;
 }

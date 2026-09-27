@@ -46,10 +46,7 @@ export interface IncomeRepository {
   }): Promise<IncomeRow>;
 
   /** Soft-delete: setea `inco_deleted_at = NOW()`. Idempotente. */
-  softDelete(params: {
-    userId: string;
-    incomeId: string;
-  }): Promise<IncomeRow>;
+  softDelete(params: { userId: string; incomeId: string }): Promise<IncomeRow>;
 }
 
 /**

@@ -1,6 +1,4 @@
-import type {
-  ExpenseRepository,
-} from "../../domain/ports/expense-repository";
+import type { ExpenseRepository } from "../../domain/ports/expense-repository";
 import type { ExpenseRow } from "../../domain/tasks/types";
 import { ExpenseNotFound, InvalidExpenseInput } from "./errors";
 
@@ -32,13 +30,25 @@ export class UpdateExpense {
       }
       input = { ...input, amount: numAmount.toFixed(4) };
     }
-    if (input.description !== undefined && input.description !== null && input.description.length > 500) {
+    if (
+      input.description !== undefined &&
+      input.description !== null &&
+      input.description.length > 500
+    ) {
       throw new InvalidExpenseInput("description exceeds 500 chars");
     }
-    if (input.category !== undefined && input.category !== null && input.category.length > 100) {
+    if (
+      input.category !== undefined &&
+      input.category !== null &&
+      input.category.length > 100
+    ) {
       throw new InvalidExpenseInput("category exceeds 100 chars");
     }
-    if (input.receiptUrl !== undefined && input.receiptUrl !== null && input.receiptUrl.length > 2000) {
+    if (
+      input.receiptUrl !== undefined &&
+      input.receiptUrl !== null &&
+      input.receiptUrl.length > 2000
+    ) {
       throw new InvalidExpenseInput("receipt_url exceeds 2000 chars");
     }
 

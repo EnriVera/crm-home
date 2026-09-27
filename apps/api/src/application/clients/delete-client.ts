@@ -3,12 +3,12 @@ import type { ClientRow } from "../../domain/tasks/types";
 import { ClientNotFound } from "./errors";
 
 export interface DeleteClientInput {
-  userId: string;
-  clientId: string;
+ userId: string;
+ clientId: string;
 }
 
 export interface DeleteClientDependencies {
-  clientRepository: ClientRepository;
+ clientRepository: ClientRepository;
 }
 
 /**
@@ -23,19 +23,19 @@ export interface DeleteClientDependencies {
  * retry de un job), debería checkear primero con `findById`.
  */
 export class DeleteClient {
-  constructor(private readonly deps: DeleteClientDependencies) {}
+ constructor(private readonly deps: DeleteClientDependencies) {}
 
-  async execute(input: DeleteClientInput): Promise<ClientRow> {
-    try {
-      return await this.deps.clientRepository.softDelete(input);
-    } catch (err) {
-      if (
-        err instanceof Error &&
-        (err.message.includes("no result") || err.message.includes("not found"))
-      ) {
-        throw new ClientNotFound();
-      }
-      throw err;
-    }
+ async execute(input: DeleteClientInput): Promise<ClientRow> {
+  try {
+   return await this.deps.clientRepository.softDelete(input);
+  } catch (err) {
+   if (
+    err instanceof Error &&
+    (err.message.includes("no result") || err.message.includes("not found"))
+   ) {
+    throw new ClientNotFound();
+   }
+   throw err;
   }
+ }
 }

@@ -37,10 +37,18 @@ export class UpdateClient {
       }
       input = { ...input, name: trimmed };
     }
-    if (input.email !== undefined && input.email !== null && input.email.length > 254) {
+    if (
+      input.email !== undefined &&
+      input.email !== null &&
+      input.email.length > 254
+    ) {
       throw new InvalidClientInput("client email too long");
     }
-    if (input.phone !== undefined && input.phone !== null && input.phone.length > 40) {
+    if (
+      input.phone !== undefined &&
+      input.phone !== null &&
+      input.phone.length > 40
+    ) {
       throw new InvalidClientInput("client phone too long");
     }
 

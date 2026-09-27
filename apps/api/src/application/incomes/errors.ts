@@ -4,23 +4,23 @@
  * `code` y un mensaje genérico.
  */
 export abstract class IncomeDomainError extends Error {
-  abstract readonly code: string;
+ abstract readonly code: string;
 }
 
 export class IncomeNotFound extends IncomeDomainError {
-  readonly code = "INCOME_NOT_FOUND";
+ readonly code = "INCOME_NOT_FOUND";
 
-  constructor(message = "Income not found") {
-    super(message);
-    this.name = "IncomeNotFound";
-  }
+ constructor(message = "Income not found") {
+  super(message);
+  this.name = "IncomeNotFound";
+ }
 }
 
 export class InvalidIncomeInput extends IncomeDomainError {
-  readonly code = "INVALID_INCOME_INPUT";
+ readonly code = "INVALID_INCOME_INPUT";
 
-  constructor(message = "Invalid income input") {
-    super(message);
-    this.name = "InvalidIncomeInput";
-  }
+ constructor(message = "Invalid income input") {
+  super(message);
+  this.name = "InvalidIncomeInput";
+ }
 }

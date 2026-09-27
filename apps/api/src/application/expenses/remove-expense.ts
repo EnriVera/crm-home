@@ -1,6 +1,4 @@
-import type {
-  ExpenseRepository,
-} from "../../domain/ports/expense-repository";
+import type { ExpenseRepository } from "../../domain/ports/expense-repository";
 import type { ExpenseRow } from "../../domain/tasks/types";
 import { ExpenseNotFound } from "./errors";
 

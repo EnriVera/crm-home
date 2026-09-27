@@ -7,23 +7,23 @@
  * superficies distintas. Los codes son específicos del dominio.
  */
 export abstract class ClientDomainError extends Error {
-  abstract readonly code: string;
+ abstract readonly code: string;
 }
 
 export class ClientNotFound extends ClientDomainError {
-  readonly code = "CLIENT_NOT_FOUND";
+ readonly code = "CLIENT_NOT_FOUND";
 
-  constructor(message = "Client not found") {
-    super(message);
-    this.name = "ClientNotFound";
-  }
+ constructor(message = "Client not found") {
+  super(message);
+  this.name = "ClientNotFound";
+ }
 }
 
 export class InvalidClientInput extends ClientDomainError {
-  readonly code = "INVALID_CLIENT_INPUT";
+ readonly code = "INVALID_CLIENT_INPUT";
 
-  constructor(message = "Invalid client input") {
-    super(message);
-    this.name = "InvalidClientInput";
-  }
+ constructor(message = "Invalid client input") {
+  super(message);
+  this.name = "InvalidClientInput";
+ }
 }

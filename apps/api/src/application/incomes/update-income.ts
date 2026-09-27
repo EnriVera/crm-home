@@ -42,10 +42,18 @@ export class UpdateIncome {
       }
       input = { ...input, amount: numAmount.toFixed(4) };
     }
-    if (input.description !== undefined && input.description !== null && input.description.length > 500) {
+    if (
+      input.description !== undefined &&
+      input.description !== null &&
+      input.description.length > 500
+    ) {
       throw new InvalidIncomeInput("description exceeds 500 chars");
     }
-    if (input.category !== undefined && input.category !== null && input.category.length > 100) {
+    if (
+      input.category !== undefined &&
+      input.category !== null &&
+      input.category.length > 100
+    ) {
       throw new InvalidIncomeInput("category exceeds 100 chars");
     }
 

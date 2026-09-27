@@ -5,7 +5,10 @@ import { ListClients } from "../../application/clients/list-clients";
 import { CreateClient } from "../../application/clients/create-client";
 import { UpdateClient } from "../../application/clients/update-client";
 import { DeleteClient } from "../../application/clients/delete-client";
-import { ClientNotFound, InvalidClientInput } from "../../application/clients/errors";
+import {
+  ClientNotFound,
+  InvalidClientInput,
+} from "../../application/clients/errors";
 import { mapTaskErrorToStatus } from "../tasks/error-mapping";
 import { readUserId } from "../tasks/tasks-routes";
 
@@ -103,7 +106,11 @@ export function createGetClientHandler(deps: ClientsRouteDependencies) {
       const found = result.find((row) => row.id === body.client_id);
       if (!found) {
         return Response.json(
-          { defined: true, code: "CLIENT_NOT_FOUND", message: "Client not found" },
+          {
+            defined: true,
+            code: "CLIENT_NOT_FOUND",
+            message: "Client not found",
+          },
           { status: 404 },
         );
       }
@@ -119,7 +126,10 @@ export function createClientHandler(deps: ClientsRouteDependencies) {
   return async (event: H3Event): Promise<Response> => {
     try {
       const userId = readUserId(event);
-      const body = await readValidatedBody(event, createClientInputSchema.parse);
+      const body = await readValidatedBody(
+        event,
+        createClientInputSchema.parse,
+      );
       const row = await deps.createClient.execute({
         userId,
         name: body.client_name,
@@ -144,7 +154,10 @@ export function updateClientHandler(deps: ClientsRouteDependencies) {
   return async (event: H3Event): Promise<Response> => {
     try {
       const userId = readUserId(event);
-      const body = await readValidatedBody(event, updateClientInputSchema.parse);
+      const body = await readValidatedBody(
+        event,
+        updateClientInputSchema.parse,
+      );
       const row = await deps.updateClient.execute({
         userId,
         clientId: body.client_id,
@@ -176,7 +189,10 @@ export function deleteClientHandler(deps: ClientsRouteDependencies) {
   return async (event: H3Event): Promise<Response> => {
     try {
       const userId = readUserId(event);
-      const body = await readValidatedBody(event, removeClientInputSchema.parse);
+      const body = await readValidatedBody(
+        event,
+        removeClientInputSchema.parse,
+      );
       await deps.deleteClient.execute({
         userId,
         clientId: body.client_id,

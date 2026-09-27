@@ -46,7 +46,9 @@ describe("CreateClient", () => {
 
   beforeEach(() => {
     repo = new InMemoryClientRepository();
-    sut = new CreateClient({ clientRepository: repo as unknown as ClientRepository });
+    sut = new CreateClient({
+      clientRepository: repo as unknown as ClientRepository,
+    });
   });
 
   test("creates a client with trimmed name, null email, null phone", async () => {

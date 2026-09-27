@@ -1,15 +1,18 @@
-import type { IncomeRepository, IncomeRow } from "../../domain/ports/income-repository";
+import type {
+ IncomeRepository,
+ IncomeRow,
+} from "../../domain/ports/income-repository";
 
 export interface ListIncomesInput {
-  userId: string;
-  search: string;
-  dateFrom: string | null;
-  dateTo: string | null;
-  limit: number;
+ userId: string;
+ search: string;
+ dateFrom: string | null;
+ dateTo: string | null;
+ limit: number;
 }
 
 export interface ListIncomesDependencies {
-  incomeRepository: IncomeRepository;
+ incomeRepository: IncomeRepository;
 }
 
 /**
@@ -23,16 +26,16 @@ export interface ListIncomesDependencies {
  * YYYY-MM-DD, limit 1-100). El use case solo normaliza el limit.
  */
 export class ListIncomes {
-  constructor(private readonly deps: ListIncomesDependencies) {}
+ constructor(private readonly deps: ListIncomesDependencies) {}
 
-  async execute(input: ListIncomesInput): Promise<IncomeRow[]> {
-    const limit = Math.min(Math.max(input.limit, 1), 100);
-    return this.deps.incomeRepository.list({
-      userId: input.userId,
-      search: input.search.trim(),
-      dateFrom: input.dateFrom,
-      dateTo: input.dateTo,
-      limit,
-    });
-  }
+ async execute(input: ListIncomesInput): Promise<IncomeRow[]> {
+  const limit = Math.min(Math.max(input.limit, 1), 100);
+  return this.deps.incomeRepository.list({
+   userId: input.userId,
+   search: input.search.trim(),
+   dateFrom: input.dateFrom,
+   dateTo: input.dateTo,
+   limit,
+  });
+ }
 }
