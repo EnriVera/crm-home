@@ -1,9 +1,11 @@
-import { useEffect, useState } from "octane";
+import { useState } from "octane";
 import { t } from "../vendor/i18n/core";
 import { createRpcClient, type RpcClient } from "../../lib/api/rpc";
 import { Icon } from "../vendor/icons";
 import { DataList } from "../molecules/data-list.tsrx";
+import { EmptyState } from "../molecules/empty-state.tsrx";
 import { ScheduleListItem } from "../molecules/schedule-list-item.tsrx";
+import { useFetch } from "../../hooks/use-fetch";
 import type { Schedule } from "@crm/types";
 
 /**
@@ -17,44 +19,24 @@ import type { Schedule } from "@crm/types";
 const RPC = createRpcClient(import.meta.env.VITE_API_URL ?? "/rpc");
 
 export function SchedulesPage() @{
-  const [schedules, setSchedules] = useState<Schedule[]>([]);
-  const [refreshKey, setRefreshKey] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  useEffect(() => {
-    let cancelled = false;
-    const load = async () => {
-      setLoading(true);
-      setLoadError(null);
-      try {
-        const result = (await (RPC as RpcClient).schedules.list({
-          limit: 50,
-        })) as Schedule[];
-        if (!cancelled) {
-          setSchedules(result);
-        }
-      } catch {
-        if (!cancelled) {
-          setLoadError(t("schedules.loadError"));
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    };
-    void load();
-    return () => {
-      cancelled = true;
-    };
-  }, [refreshKey]);
+  // Carga vía useFetch (centraliza cancelled+finally).
+  const schedulesFetch = useFetch<Schedule[]>(
+    () =>
+      (RPC as RpcClient).schedules.list({ limit: 50 }) as Promise<Schedule[]>,
+    [],
+  );
+  const schedules = schedulesFetch.data ?? [];
+  const loading = schedulesFetch.loading;
+  const loadError = schedulesFetch.error;
 
   const handleDelete = async (scheduleId: string) => {
     setDeletingId(scheduleId);
     try {
       await (RPC as RpcClient).schedules.remove({ sche_id: scheduleId });
       setDeletingId(null);
-      setRefreshKey((k) => k + 1);
+      schedulesFetch.refetch();
     } catch {
       setDeletingId(null);
       setLoadError(t("schedules.loadError"));
@@ -71,12 +53,6 @@ export function SchedulesPage() @{
       </p>
     </header>
 
-    {loadError !== null && (
-      <div role="alert" class="mb-4 rounded-md border border-error bg-surface px-4 py-2 text-sm text-error">
-        {loadError}
-      </div>
-    )}
-
     <DataList
       loading={loading}
       error={loadError}
@@ -91,20 +67,11 @@ export function SchedulesPage() @{
         </>
       }
       emptyState={
-        <div
-          data-component="schedules-list-empty"
-          class="flex flex-col items-center rounded-lg border border-dashed border-border bg-surface px-6 py-16 text-center"
-        >
-          <div class="mb-4 text-text-secondary">
-            <Icon name="calendar" size={48} />
-          </div>
-          <h2 class="text-lg font-semibold text-text-primary">
-            {t("schedules.listEmpty.noSchedules")}
-          </h2>
-          <p class="mt-2 max-w-sm text-sm text-text-secondary">
-            {t("schedules.listEmpty.noSchedulesBody")}
-          </p>
-        </div>
+        <EmptyState
+          icon={<Icon name="calendar" size={48} />}
+          title={t("schedules.listEmpty.noSchedules")}
+          description={t("schedules.listEmpty.noSchedulesBody")}
+        />
       }
     >
       <ul class="flex flex-col gap-3">
