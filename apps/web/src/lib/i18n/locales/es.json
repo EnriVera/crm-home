@@ -91,6 +91,9 @@
     "detail": {
       "loading": "Cargando…",
       "errorTitle": "No pudimos cargar la tarea",
+      "notFoundTitle": "No encontramos esta tarea",
+      "notFoundBody": "Es posible que haya sido eliminada o que el enlace sea incorrecto.",
+      "notFoundBack": "Volver a la lista",
       "stateLabel": "Estado",
       "createdAtLabel": "Creada",
       "updatedAtLabel": "Actualizada",
@@ -196,7 +199,10 @@
       "edit": "Editar",
       "delete": "Eliminar",
       "confirmDelete": "¿Eliminar este cliente? Esta acción no se puede deshacer.",
-      "deleted": "Cliente eliminado"
+      "deleted": "Cliente eliminado",
+      "notFoundTitle": "No encontramos este cliente",
+      "notFoundBody": "Es posible que haya sido eliminado o que el enlace sea incorrecto.",
+      "notFoundBack": "Volver a la lista"
     },
     "form": {
       "cancel": "Cancelar",

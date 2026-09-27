@@ -3,6 +3,7 @@ import { t } from "../vendor/i18n/core";
 import { createRpcClient, type RpcClient } from "../../lib/api/rpc";
 import { Button } from "../atoms/button.tsrx";
 import { StatusMessage } from "../atoms/status-message.tsrx";
+import { EmptyState } from "../molecules/empty-state.tsrx";
 import { TaskForm } from "../organisms/task-form/task-form.tsrx";
 import {
   closeDeleteConfirmation,
@@ -103,6 +104,7 @@ export function TaskDetailPage(props: { taskId: string; url: string }) @{
   const [moveError, setMoveError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [notFound, setNotFound] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [confirmState, setConfirmState] = useState<DeleteConfirmationState>(
@@ -117,6 +119,7 @@ export function TaskDetailPage(props: { taskId: string; url: string }) @{
       try {
         setLoading(true);
         setError(null);
+        setNotFound(false);
         const [taskData, statesData, typesData] = await Promise.all([
           (RPC as RpcClient).tasks.get({ task_id: props.taskId }),
           (RPC as RpcClient).tasks.states.list(),
@@ -127,9 +130,22 @@ export function TaskDetailPage(props: { taskId: string; url: string }) @{
           setTaskStates(statesData as TaskState[]);
           setTaskTypes(typesData as TypeForFormOption[]);
         }
-      } catch {
+      } catch (err) {
         if (!cancelled) {
-          setError(t("tasks.detail.errorTitle"));
+          // ORPCError expone `.code` y `.status` (ver @orpc/client).
+          // 404 / TASK_NOT_FOUND significa que la task no existe (o pertenece
+          // a otro user); lo distinguimos del resto para mostrar el empty
+          // state con CTA "volver a la lista" en lugar de un error genérico.
+          const code = (err as { code?: unknown }).code;
+          const status = (err as { status?: unknown }).status;
+          if (
+            code === "TASK_NOT_FOUND" ||
+            (typeof status === "number" && status === 404)
+          ) {
+            setNotFound(true);
+          } else {
+            setError(t("tasks.detail.errorTitle"));
+          }
         }
       } finally {
         if (!cancelled) {
@@ -255,7 +271,21 @@ export function TaskDetailPage(props: { taskId: string; url: string }) @{
       </h1>
     </header>
 
-    {error && (
+    {notFound && !loading ? (
+      <EmptyState
+        kind="notFound"
+        title={t("tasks.detail.notFoundTitle")}
+        description={t("tasks.detail.notFoundBody")}
+        action={
+          <Button
+            variant="primary"
+            onClick={() => globalThis.location.assign("/tasks")}
+          >
+            {t("tasks.detail.notFoundBack")}
+          </Button>
+        }
+      />
+    ) : error && (
       <StatusMessage variant="error" class="mb-6">
         {error}
       </StatusMessage>
