@@ -1,9 +1,9 @@
-import { useEffect, useState } from "octane";
 import { t } from "../vendor/i18n/core";
 import { createRpcClient, type RpcClient } from "../../lib/api/rpc";
 import { Button } from "../atoms/button.tsrx";
 import { Icon } from "../vendor/icons";
 import { ThemeToggle } from "../molecules/theme-toggle.tsrx";
+import { useFetch } from "../../hooks/use-fetch";
 
 /**
  * Página `/config` — Settings del user.
@@ -22,31 +22,18 @@ interface UserInfo {
 }
 
 export function ConfigPage() @{
-  const [user, setUser] = useState<UserInfo | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    const load = async () => {
-      try {
-        const result = (await (RPC as RpcClient).auth.session()) as { user: UserInfo } | null;
-        if (!cancelled) {
-          setUser(result?.user ?? null);
-          setLoading(false);
-        }
-      } catch {
-        if (!cancelled) {
-          setError("No pudimos cargar tu sesión. Probá recargar la página.");
-          setLoading(false);
-        }
-      }
-    };
-    void load();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  // Carga vía useFetch (arregla el bug latente: este useEffect no tenía
+  // finally — loading quedaba en true si la RPC se colgaba).
+  const sessionFetch = useFetch<{ user: UserInfo } | null>(
+    () =>
+      (RPC as RpcClient).auth.session() as Promise<
+        { user: UserInfo } | null
+      >,
+    [],
+  );
+  const loading = sessionFetch.loading;
+  const error = sessionFetch.error;
+  const user = sessionFetch.data?.user ?? null;
 
   <section data-page="config" class="mx-auto w-full max-w-2xl px-6 py-8 sm:py-10">
     <header class="mb-8">
