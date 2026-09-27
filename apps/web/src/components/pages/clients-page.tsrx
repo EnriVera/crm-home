@@ -201,40 +201,36 @@ export function ClientsPage() @{
     >
       <ul class="flex flex-col gap-3">
         {clients.map((client) => (
-          <li key={client.client_id}>
-            <div
-              data-component="client-row"
-              class="flex items-start gap-3 rounded-md border border-border bg-surface px-4 py-3 transition-colors hover:bg-background"
-            >
-              <a
-                href={`/clients/${client.client_id}`}
-                class="min-w-0 flex-1"
-                aria-label={t("clients.detail.title")}
-              >
-                <ClientListItem
-                  client_id={client.client_id}
-                  client_name={client.client_name}
-                  client_email={client.client_email}
-                  client_phone={client.client_phone}
-                />
-              </a>
-              <Button
-                variant="ghost"
-                type="button"
-                disabled={deletingId === client.client_id}
-                onClick={(event: Event) => {
-                  event.preventDefault();
-                  void handleDelete(client.client_id);
-                }}
-                aria-label={t("clients.detail.delete")}
-                title={t("clients.detail.delete")}
-                class="shrink-0 px-3 py-1 text-sm text-error hover:bg-error/10"
-              >
-                {deletingId === client.client_id
-                  ? t("clients.form.submitting")
-                  : t("clients.detail.delete")}
-              </Button>
+          <li
+            key={client.client_id}
+            data-component="client-row"
+            class="flex items-stretch gap-3 rounded-md border border-border bg-surface transition-colors hover:bg-background"
+          >
+            <div class="min-w-0 flex-1">
+              <ClientListItem
+                client_id={client.client_id}
+                client_name={client.client_name}
+                client_email={client.client_email}
+                client_phone={client.client_phone}
+              />
             </div>
+            <Button
+              variant="ghost"
+              type="button"
+              disabled={deletingId === client.client_id}
+              onClick={(event: Event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                void handleDelete(client.client_id);
+              }}
+              aria-label={t("clients.detail.delete")}
+              title={t("clients.detail.delete")}
+              class="m-2 shrink-0 px-3 py-1 text-sm text-error hover:bg-error/10"
+            >
+              {deletingId === client.client_id
+                ? t("clients.form.submitting")
+                : t("clients.detail.delete")}
+            </Button>
           </li>
         ))}
       </ul>

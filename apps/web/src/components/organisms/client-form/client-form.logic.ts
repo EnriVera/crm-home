@@ -48,9 +48,15 @@ export function applyClientFormAction(
     case "set_name":
       return { ...state, name: action.value };
     case "set_email":
-      return { ...state, email: action.value.trim().length === 0 ? null : action.value.trim() };
+      return {
+        ...state,
+        email: action.value.trim().length === 0 ? null : action.value.trim(),
+      };
     case "set_phone":
-      return { ...state, phone: action.value.trim().length === 0 ? null : action.value.trim() };
+      return {
+        ...state,
+        phone: action.value.trim().length === 0 ? null : action.value.trim(),
+      };
     case "clear_email":
       return { ...state, email: null };
     case "clear_phone":

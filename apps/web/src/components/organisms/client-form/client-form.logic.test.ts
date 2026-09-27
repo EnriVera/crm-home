@@ -48,7 +48,10 @@ describe("client-form.logic", () => {
         value: "  info@acme.test  ",
       });
       expect(a.email).toBe("info@acme.test");
-      const b = applyClientFormAction(state, { type: "set_email", value: "   " });
+      const b = applyClientFormAction(state, {
+        type: "set_email",
+        value: "   ",
+      });
       expect(b.email).toBeNull();
     });
 
@@ -132,9 +135,7 @@ describe("client-form.logic", () => {
   describe("isClientFormReadyToSubmit", () => {
     test("true for valid state", () => {
       expect(
-        isClientFormReadyToSubmit(
-          initialClientFormState({ name: "Acme" }),
-        ),
+        isClientFormReadyToSubmit(initialClientFormState({ name: "Acme" })),
       ).toBe(true);
     });
 
@@ -151,9 +152,9 @@ describe("client-form.logic", () => {
     });
 
     test("returns first error when invalid", () => {
-      expect(
-        firstClientFormError(initialClientFormState())?.code,
-      ).toBe("CLIENT_NAME_REQUIRED");
+      expect(firstClientFormError(initialClientFormState())?.code).toBe(
+        "CLIENT_NAME_REQUIRED",
+      );
     });
   });
 
