@@ -28,7 +28,8 @@
     "nodemailer": "6.10.1",
     "pg": "8.23.0",
     "uuidv7": "^1.2.1",
-    "xstate": "5.32.6"
+    "xstate": "5.32.6",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@crm/tsconfig": "workspace:*",
