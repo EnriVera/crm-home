@@ -37,11 +37,20 @@ import {
   updateClientHandler,
   type ClientsRouteDependencies,
 } from "./clients/clients-routes";
+import {
+  createGetIncomeHandler,
+  createIncomeHandler,
+  createListIncomesHandler,
+  removeIncomeHandler,
+  updateIncomeHandler,
+  type IncomesRouteDependencies,
+} from "./incomes/incomes-routes";
 
 export interface RouterDependencies
   extends AuthRouteDependencies,
     TasksRouteDependencies,
-    ClientsRouteDependencies {
+    ClientsRouteDependencies,
+    IncomesRouteDependencies {
   getHealth: GetHealth;
   listClientsHandler: ReturnType<typeof createListClientsHandler>;
 }
@@ -127,6 +136,12 @@ export function createRpcHandler(
   const createClientH3 = asBridgeHandler(createClientHandler(deps));
   const updateClientH3 = asBridgeHandler(updateClientHandler(deps));
   const deleteClientH3 = asBridgeHandler(deleteClientHandler(deps));
+
+  const listIncomesH3 = asBridgeHandler(createListIncomesHandler(deps));
+  const getIncomeH3 = asBridgeHandler(createGetIncomeHandler(deps));
+  const createIncomeH3 = asBridgeHandler(createIncomeHandler(deps));
+  const updateIncomeH3 = asBridgeHandler(updateIncomeHandler(deps));
+  const removeIncomeH3 = asBridgeHandler(removeIncomeHandler(deps));
 
   const typesForFormH3 = createListTypesForFormHandler(deps);
   const categoriesByTypeH3 = createListCategoriesByTypeHandler(deps);
@@ -290,6 +305,31 @@ export function createRpcHandler(
       method: "POST",
       path: "/clients/remove",
       run: wrapPost(deleteClientH3, "/clients/remove"),
+    },
+    {
+      method: "POST",
+      path: "/incomes/list",
+      run: wrapPost(listIncomesH3, "/incomes/list"),
+    },
+    {
+      method: "POST",
+      path: "/incomes/get",
+      run: wrapPost(getIncomeH3, "/incomes/get"),
+    },
+    {
+      method: "POST",
+      path: "/incomes/create",
+      run: wrapPost(createIncomeH3, "/incomes/create"),
+    },
+    {
+      method: "POST",
+      path: "/incomes/update",
+      run: wrapPost(updateIncomeH3, "/incomes/update"),
+    },
+    {
+      method: "POST",
+      path: "/incomes/remove",
+      run: wrapPost(removeIncomeH3, "/incomes/remove"),
     },
   ];
 

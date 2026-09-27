@@ -15,6 +15,10 @@ import { ListClients } from "../application/clients/list-clients";
 import { CreateClient } from "../application/clients/create-client";
 import { UpdateClient } from "../application/clients/update-client";
 import { DeleteClient } from "../application/clients/delete-client";
+import { ListIncomes } from "../application/incomes/list-incomes";
+import { CreateIncome } from "../application/incomes/create-income";
+import { UpdateIncome } from "../application/incomes/update-income";
+import { RemoveIncome } from "../application/incomes/remove-income";
 import { createListClientsHandler } from "./clients/clients-routes";
 import { ListTaskStates } from "../application/tasks/list-task-states";
 import { ListTasks } from "../application/tasks/list-tasks";
@@ -34,6 +38,7 @@ import { createDatabase } from "../infrastructure/kysely/database";
 import { KyselyCategoryLookupRepository } from "../infrastructure/kysely/category-lookup-repository";
 import { KyselyClientLookupRepository } from "../infrastructure/kysely/client-lookup-repository";
 import { KyselyClientRepository } from "../infrastructure/kysely/client-repository";
+import { KyselyIncomeRepository } from "../infrastructure/kysely/income-repository";
 import { KyselyEmailSendingRepository } from "../infrastructure/kysely/email-sending-repository";
 import { KyselyLoginRepository } from "../infrastructure/kysely/login-repository";
 import { KyselySessionRepository } from "../infrastructure/kysely/session-repository";
@@ -112,6 +117,7 @@ export function createCompositionRoot(
     const taskStateRepository = new KyselyTaskStateRepository(db);
     const clientLookupRepository = new KyselyClientLookupRepository(db);
     const clientRepository = new KyselyClientRepository(db);
+    const incomeRepository = new KyselyIncomeRepository(db);
     const typeLookupRepository = new KyselyTypeLookupRepository(db);
     const categoryLookupRepository = new KyselyCategoryLookupRepository(db);
 
@@ -183,6 +189,10 @@ export function createCompositionRoot(
       updateClient,
       deleteClient,
     });
+    const listIncomes = new ListIncomes({ incomeRepository });
+    const createIncomeUseCase = new CreateIncome({ incomeRepository });
+    const updateIncomeUseCase = new UpdateIncome({ incomeRepository });
+    const removeIncomeUseCase = new RemoveIncome({ incomeRepository });
     const listClientsForSelector = new ListClientsForSelector({
       clientLookupRepository,
     });
@@ -198,6 +208,10 @@ export function createCompositionRoot(
       createClient,
       updateClient,
       deleteClient,
+      listIncomes,
+      createIncome: createIncomeUseCase,
+      updateIncome: updateIncomeUseCase,
+      removeIncome: removeIncomeUseCase,
       listClientsHandler,
       getHealth,
       requestOtp,
