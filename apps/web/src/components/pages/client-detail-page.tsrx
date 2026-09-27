@@ -2,7 +2,9 @@ import { useEffect, useState } from "octane";
 import { t } from "../vendor/i18n/core";
 import { createRpcClient, type RpcClient } from "../../lib/api/rpc";
 import { Button } from "../atoms/button.tsrx";
+import { EmptyState } from "../molecules/empty-state.tsrx";
 import { ClientForm } from "../organisms/client-form/client-form.tsrx";
+import { useFetch } from "../../hooks/use-fetch";
 import type { Client } from "@crm/types";
 
 /**
@@ -28,39 +30,39 @@ export interface ClientDetailPageProps {
 
 export function ClientDetailPage(props: ClientDetailPageProps) @{
   const [client, setClient] = useState<Client | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState<string | null>(null);
+  const [notFound, setNotFound] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [deleteArmed, setDeleteArmed] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
-  // Load client by id
-  useEffect(() => {
-    let cancelled = false;
-    const load = async () => {
-      setLoading(true);
-      setLoadError(null);
+  // Load client by id via useFetch (arregla el bug latente: este useEffect
+  // no tenía finally — loading quedaba en true si la RPC se colgaba).
+  const clientFetch = useFetch<Client>(
+    async () => {
       try {
-        const result = (await (RPC as RpcClient).clients.get({
+        const result = ((await (RPC as RpcClient).clients.get({
           client_id: props.clientId,
-        })) as Client;
-        if (!cancelled) {
-          setClient(result);
-          setLoading(false);
+        })) as Client);
+        setClient(result);
+        setNotFound(false);
+        return result;
+      } catch (err) {
+        const code = (err as { code?: unknown }).code;
+        const status = (err as { status?: unknown }).status;
+        if (
+          code === "CLIENT_NOT_FOUND" ||
+          (typeof status === "number" && status === 404)
+        ) {
+          setNotFound(true);
         }
-      } catch {
-        if (!cancelled) {
-          setLoadError(t("clients.loadError"));
-          setLoading(false);
-        }
+        throw err;
       }
-    };
-    void load();
-    return () => {
-      cancelled = true;
-    };
-  }, [props.clientId]);
+    },
+    [props.clientId],
+  );
+  const loading = clientFetch.loading;
+  const loadError = clientFetch.error;
 
   const handleEdit = async (payload: {
     client_name: string;
@@ -115,14 +117,28 @@ export function ClientDetailPage(props: ClientDetailPageProps) @{
       </div>
     )}
 
-    {loadError !== null && (
+    {notFound && !loading ? (
+      <EmptyState
+        kind="notFound"
+        title={t("clients.detail.notFoundTitle")}
+        description={t("clients.detail.notFoundBody")}
+        action={
+          <Button
+            variant="primary"
+            onClick={() => globalThis.location.assign("/clients")}
+          >
+            {t("clients.detail.notFoundBack")}
+          </Button>
+        }
+      />
+    ) : loadError !== null ? (
       <div
         role="alert"
         class="rounded-md border border-error bg-surface px-4 py-3 text-sm text-error"
       >
         {loadError}
       </div>
-    )}
+    ) : null}
 
     {client !== null && (
       <>
