@@ -143,6 +143,19 @@ export interface ExpenseTable {
   expe_deleted_at: Date | null;
 }
 
+export interface TransferTable {
+  tran_id: string;
+  tran_user_id: string;
+  tran_from_acco_id: string;
+  tran_to_acco_id: string;
+  tran_amount: string;
+  tran_currency_id: string;
+  tran_description: string | null;
+  tran_date: string;
+  tran_created_at: Generated<Date>;
+  tran_deleted_at: Date | null;
+}
+
 export interface TypeCategoriesClientTable {
   tccl_id: string;
   tccl_user_id: string;
@@ -201,6 +214,7 @@ export interface DatabaseSchema {
   client: ClientTable;
   income: IncomeTable;
   expense: ExpenseTable;
+  transfer: TransferTable;
   type_categories_client: TypeCategoriesClientTable;
   attachments: AttachmentTable;
   task_attachments: TaskAttachmentsTable;

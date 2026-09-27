@@ -19,6 +19,7 @@ import type {
   IncomeRow,
   TaskRow,
   TaskStateRow,
+  TransferRow,
   TypeCategoriesClientRow,
 } from "../../domain/tasks/types";
 
@@ -169,6 +170,36 @@ export function mapExpenseRow(row: ExpenseDbRow): ExpenseRow {
     createdAt: row.expe_created_at,
     updatedAt: row.expe_updated_at,
     deletedAt: row.expe_deleted_at,
+  };
+}
+
+// ─── TransferRow ────────────────────────────────────────────────────────────
+
+export interface TransferDbRow {
+  tran_id: string;
+  tran_user_id: string;
+  tran_from_acco_id: string;
+  tran_to_acco_id: string;
+  tran_amount: string;
+  tran_currency_id: string;
+  tran_description: string | null;
+  tran_date: string;
+  tran_created_at: Date;
+  tran_deleted_at: Date | null;
+}
+
+export function mapTransferRow(row: TransferDbRow): TransferRow {
+  return {
+    id: row.tran_id,
+    userId: row.tran_user_id,
+    fromAccountId: row.tran_from_acco_id,
+    toAccountId: row.tran_to_acco_id,
+    amount: row.tran_amount,
+    currencyId: row.tran_currency_id,
+    description: row.tran_description,
+    date: row.tran_date,
+    createdAt: row.tran_created_at,
+    deletedAt: row.tran_deleted_at,
   };
 }
 
