@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "octane";
-import { hydrateRoot, type Root } from "octane";
+import { createRoot, type Root } from "octane";
 import {
   getCurrentPath,
   installClientRouter,
@@ -18,26 +18,31 @@ import { getContentRoot, setContentRoot } from "./root-singleton.ts";
  *  1. On mount: `installClientRouter()` wires up the global click interceptor
  *     and `popstate` listener (idempotent — see `client-router.ts`).
  *  2. On every URL change after the initial mount: fetches the new SSR HTML,
- *     swaps `<main id="content">` with the new content, updates the
- *     `<script id="__octane_data">` payload, dynamically imports the new
- *     route module from `__octane_data.entry`, and re-hydrates the new page
- *     component via `octane.hydrateRoot()` (first SPA nav) or
- *     `root.render(NewPage)` (subsequent navs).
+ *     updates the `<script id="__octane_data">` payload, dynamically imports
+ *     the new route module from `__octane_data.entry`, and re-renders the new
+ *     page component via `octane.createRoot(currentMain).render(pageBody)`
+ *     (first SPA nav) or `root.render(pageBody)` (subsequent navs).
  *
- * Why `hydrateRoot`/`root.render` and not just `innerHTML =`:
+ * Why `createRoot` / `root.render` and not `innerHTML =`:
  * - Plain `innerHTML` swap leaves the new DOM un-hydrated. The page
  *   component never mounts, its `useEffect` never runs, and the
  *   `useState(true)` loading flag stays stuck forever — exactly the
  *   "skeleton que no se va" bug the user reported.
- * - `hydrateRoot` adopts the SSR HTML and mounts the component; subsequent
- *   navigations use `root.render(NewPage)` which tears down the old page
- *   and mounts the new one. Both routes go through the same code path so
- *   the loading/empty/error states behave identically to a hard reload.
+ * - `hydrateRoot(currentMain, pageBody)` looked attractive (octane adopts the
+ *   SSR HTML and mounts the component), but it triggers a structural
+ *   mismatch on every SPA nav: the live <main> contains the shell's
+ *   children slot rendered as `<!--[-->...<!--]-->` (control-flow block),
+ *   while `pageBody` returns just the inner <section>. Octane warns "client
+ *   expected <section> but server rendered a control-flow block" and
+ *   rebuilds the subtree every time.
+ * - `createRoot(currentMain)` skips HTML adoption entirely; the first
+ *   `root.render(pageBody)` writes a fresh subtree. Subsequent
+ *   navigations use `root.render(pageBody)` directly, which tears down
+ *   the old page and mounts the new one. The surrounding shell stays
+ *   mounted via the entry-point's Root on `#root`.
  *
- * Tradeoff: the entry point's initial `Root` (on `#root`) briefly owns
- * `<main>` before the first SPA nav. The reference becomes orphaned after
- * the swap but this is harmless in practice — see `root-singleton.ts` for
- * the rationale.
+ * See `.pi/skills/octane/SKILL.md` "Routing in octane fullstack" for the
+ * shape of the proper SPA navigation pattern.
  *
  * Accessibility: scroll to top + move focus to the page `<h1>` on every
  * navigation (screen readers announce the new view).
@@ -102,9 +107,17 @@ async function syncRoute(path: string): Promise<void> {
       return;
     }
 
-    // Swap the SSR HTML into the live <main>. hydrateRoot (next step) will
-    // adopt these nodes.
-    currentMain.innerHTML = newMain.innerHTML;
+    // Note: we intentionally do NOT swap `currentMain.innerHTML` here. The
+    // SSR HTML inside <main> includes the shell's children slot rendered as
+    // a control-flow block (`<!--[--> <!--]-->`). The page component returned
+    // by `pageBody` is just the inner <section>, so hydrating it over the
+    // swapped HTML produces a structural mismatch (octane warns "client
+    // expected <section> but server rendered a control-flow block"). On the
+    // initial load vite-plugin hydrates the full shell + page tree into
+    // `#root`, so the live <main> already has valid hydrated DOM; subsequent
+    // SPA navs swap the page via `root.render(pageBody)`, which clears the
+    // container and writes the new component's output. See apps/web/.pi/skills/octane/SKILL.md
+    // "Routing in octane fullstack".
 
     // Dynamic import of the route module. Octane vite serves `.tsrx` files
     // through `?import`; ordinary `.ts`/`.js` URLs are unchanged.
@@ -156,9 +169,14 @@ async function syncRoute(path: string): Promise<void> {
       // new one in place. The same <main> stays mounted in the shell.
       existingRoot.render(pageBody);
     } else {
-      // First SPA nav after hydration: hydrateRoot adopts the swapped SSR
-      // HTML and mounts the new page component on top of it.
-      const root = hydrateRoot(currentMain, pageBody);
+      // First SPA nav after hydration: `createRoot` (NOT `hydrateRoot`) +
+      // `root.render` because the live <main> already owns hydrated DOM from
+      // the initial shell hydration. `hydrateRoot` would try to reconcile
+      // pageBody against the shell's children-slot wrapper and trigger a
+      // structural mismatch. `createRoot` + `root.render` cleanly replaces
+      // the page subtree while leaving the surrounding shell untouched.
+      const root = createRoot(currentMain);
+      root.render(pageBody);
       setContentRoot(root);
     }
 
