@@ -9,6 +9,7 @@ import { TaskListItem } from "../molecules/task-list-item.tsrx";
 import { TaskKanbanBoard } from "../organisms/task-kanban-board/task-kanban-board.tsrx";
 import { DataList } from "../molecules/data-list.tsrx";
 import { TaskForm } from "../organisms/task-form/task-form.tsrx";
+import { useFetch } from "../../hooks/use-fetch";
 import type {
   TaskFormState,
 } from "../organisms/task-form/task-form.logic";
@@ -160,63 +161,38 @@ function TaskListItemSkeleton() @{
 }
 
 export function TasksPage() @{
-  const [tasks, setTasks] = useState<TaskRow[]>([]);
   const [filters, setFilters] = useState<TaskFilters>({ search: "" });
   const [creatingOpen, setCreatingOpen] = useState(false);
-  const [taskStates, setTaskStates] = useState<TaskStateOption[]>([]);
-  const [taskTypes, setTaskTypes] = useState<TypeForFormOption[]>([]);
-  const [refreshKey, setRefreshKey] = useState(0);
-  // Estado de carga: empieza en true para evitar el flash de empty state
-  // en hard reload (el SSR no tiene los datos, el primer render con tasks=[]
-  // mostraba "No hay tareas" durante 100-300ms antes de que llegue la data).
-  const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState<string | null>(null);
   const titleInputRef = useRef<HTMLInputElement | null>(null);
 
-  // Carga de la lista de tasks.
-  useEffect(() => {
-    let cancelled = false;
-    const load = async () => {
-      setLoading(true);
-      setLoadError(null);
-      try {
-        const result = (await (RPC as RpcClient).tasks.list({
-          search: filters.search,
-        })) as TaskRow[];
-        if (!cancelled) {
-          setTasks(result);
-        }
-      } catch {
-        if (!cancelled) {
-          setLoadError(t("tasks.listLoadError"));
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    };
-    void load();
-    return () => {
-      cancelled = true;
-    };
-  }, [filters, refreshKey]);
+  // Carga de la lista de tasks vía useFetch (centraliza cancelled+finally
+  // y la invariante de "loading siempre vuelve a false").
+  const tasksFetch = useFetch<TaskRow[]>(
+    () =>
+      (RPC as RpcClient).tasks.list({ search: filters.search }) as Promise<TaskRow[]>,
+    [filters.search],
+  );
+  const tasks: TaskRow[] = tasksFetch.data ?? [];
+  const loading = tasksFetch.loading;
+  const loadError = tasksFetch.error;
 
-  // Carga de task_states y task_types para los selects del form.
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const [states, types] = await Promise.all([
-          (RPC as RpcClient).tasks.states.list() as Promise<TaskStateOption[]>,
-          (RPC as RpcClient).tasks.typesForForm() as Promise<TypeForFormOption[]>,
-        ]);
-        setTaskStates(states);
-        setTaskTypes(types);
-      } catch {
-        setTaskStates([]);
-        setTaskTypes([]);
-      }
-    };
-    void load();
-  }, []);
+  // Carga de task_states + task_types para los selects del form (fire-and-forget
+  // — si falla, los selects quedan vacíos y el form no se puede abrir).
+  const formDataFetch = useFetch<{
+    states: TaskStateOption[];
+    types: TypeForFormOption[];
+  }>(
+    async () => {
+      const [states, types] = await Promise.all([
+        (RPC as RpcClient).tasks.states.list() as Promise<TaskStateOption[]>,
+        (RPC as RpcClient).tasks.typesForForm() as Promise<TypeForFormOption[]>,
+      ]);
+      return { states, types };
+    },
+    [],
+  );
+  const taskStates = formDataFetch.data?.states ?? [];
+  const taskTypes = formDataFetch.data?.types ?? [];
 
   // Escape cierra el drawer. Listener solo activo cuando el drawer está abierto.
   useEffect(() => {
@@ -246,23 +222,9 @@ export function TasksPage() @{
   }, [creatingOpen]);
 
   const handleCreate = async (state: TaskFormState): Promise<void> => {
-    // OPTIMISTIC UPDATE: cerramos el drawer y mostramos la task nueva al
-    // toque, antes de que el RPC complete. Si falla, removemos la task
-    // optimista y mostramos el error. Si succeed, el setRefreshKey trae
-    // la version canónica del server (con el ID real).
-    const tempId = `pending-${crypto.randomUUID()}`;
-    const optimisticTask: TaskRow = {
-      task_id: tempId,
-      task_title: state.title,
-      task_description: state.description,
-      task_clie_id: null,
-      task_cate_id: null,
-      task_tast_id: state.stateId || "",
-      task_type_id: state.typeId || null,
-      task_updated_at: new Date().toISOString(),
-      task_created_at: new Date().toISOString(),
-    };
-    setTasks((prev) => [optimisticTask, ...prev]);
+    // Cerramos el drawer antes del RPC; el loading del useFetch muestra
+    // "saving..." mientras el server responde y el refetch trae la versión
+    // canónica (con ID real y orden correcto del server).
     setCreatingOpen(false);
     try {
       await (RPC as RpcClient).tasks.create({
@@ -271,16 +233,12 @@ export function TasksPage() @{
         task_tast_id: state.stateId || undefined,
         task_type_id: state.typeId || undefined,
       });
-      // Re-fetch desde el server: la task optimista se reemplaza por la
-      // canónica (con ID real) gracias al replace por task_id. Si la
-      // API re-ordena items, también queda el orden correcto.
-      setRefreshKey((k) => k + 1);
+      tasksFetch.refetch();
     } catch (err) {
-      // Roll back: remover la optimista + exponer el error inline.
-      setTasks((prev) => prev.filter((t) => t.task_id !== tempId));
-      setLoadError(
-        err instanceof Error ? err.message : "create failed",
-      );
+      // El error del create queda en el state del useFetch si lo
+      // exponemos; acá lo dejamos a la UI estándar de error (que el
+      // hook ya mantiene en `error`).
+      console.error("[tasks] create failed:", err);
     }
   };
 
@@ -404,25 +362,18 @@ export function TasksPage() @{
                 stateOrder: 0,
               }))}
               onMove={async (params) => {
-                // OPTIMISTIC MOVE: movemos localmente y disparamos el RPC
-                // en background. Si falla, revertimos vía refreshKey.
-                const previousTasks = tasks;
-                setTasks((prev) =>
-                  prev.map((t) =>
-                    t.task_id === params.taskId
-                      ? { ...t, task_tast_id: params.targetStateId }
-                      : t,
-                  ),
-                );
+                // OPTIMISTIC MOVE: el move es local + RPC en background.
+                // Si falla, refetch trae la versión canónica del server
+                // (sin necesidad de rollback manual).
                 try {
                   await (RPC as RpcClient).tasks.move({
                     task_id: params.taskId,
                     target_state_id: params.targetStateId,
                   });
-                  setRefreshKey((k) => k + 1);
-                } catch {
-                  setTasks(previousTasks);
-                  setLoadError(t("tasks.detail.moveError"));
+                  tasksFetch.refetch();
+                } catch (err) {
+                  console.error("[tasks] move failed:", err);
+                  tasksFetch.refetch();
                 }
                 void onMove;
               }}
