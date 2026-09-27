@@ -4,8 +4,10 @@ import { createRpcClient, type RpcClient } from "../../lib/api/rpc";
 import { Button } from "../atoms/button.tsrx";
 import { Icon } from "../vendor/icons";
 import { DataList } from "../molecules/data-list.tsrx";
+import { EmptyState } from "../molecules/empty-state.tsrx";
 import { ExpenseListItem } from "../molecules/expense-list-item.tsrx";
 import { ExpenseForm } from "../organisms/expense-form/expense-form.tsrx";
+import { useFetch } from "../../hooks/use-fetch";
 import type { Expense } from "@crm/types";
 
 /**
@@ -20,45 +22,27 @@ import type { Expense } from "@crm/types";
 const RPC = createRpcClient(import.meta.env.VITE_API_URL ?? "/rpc");
 
 export function ExpensesPage() @{
-  const [expenses, setExpenses] = useState<Expense[]>([]);
   const [search, setSearch] = useState("");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
-  const [refreshKey, setRefreshKey] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState<string | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
-  useEffect(() => {
-    let cancelled = false;
-    const load = async () => {
-      setLoading(true);
-      setLoadError(null);
-      try {
-        const result = (await (RPC as RpcClient).expenses.list({
-          search,
-          date_from: dateFrom.length === 0 ? null : dateFrom,
-          date_to: dateTo.length === 0 ? null : dateTo,
-          limit: 100,
-        })) as Expense[];
-        if (!cancelled) {
-          setExpenses(result);
-        }
-      } catch {
-        if (!cancelled) {
-          setLoadError(t("expenses.loadError"));
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    };
-    void load();
-    return () => {
-      cancelled = true;
-    };
-  }, [search, dateFrom, dateTo, refreshKey]);
+  // Carga vía useFetch (centraliza cancelled+finally).
+  const expensesFetch = useFetch<Expense[]>(
+    () =>
+      (RPC as RpcClient).expenses.list({
+        search,
+        date_from: dateFrom.length === 0 ? null : dateFrom,
+        date_to: dateTo.length === 0 ? null : dateTo,
+        limit: 100,
+      }) as Promise<Expense[]>,
+    [search, dateFrom, dateTo],
+  );
+  const expenses = expensesFetch.data ?? [];
+  const loading = expensesFetch.loading;
+  const loadError = expensesFetch.error;
 
   const handleCreate = async (payload: {
     expe_account_id: string;
@@ -69,9 +53,9 @@ export function ExpensesPage() @{
     expe_date: string;
     expe_receipt_url: string | null;
   }) => {
-    await (RPC as RpcClient).expenses.create(payload);
     setCreateOpen(false);
-    setRefreshKey((k) => k + 1);
+    await (RPC as RpcClient).expenses.create(payload);
+    expensesFetch.refetch();
   };
 
   const handleDelete = async (expenseId: string) => {
@@ -80,7 +64,7 @@ export function ExpensesPage() @{
     try {
       await (RPC as RpcClient).expenses.remove({ expe_id: expenseId });
       setDeletingId(null);
-      setRefreshKey((k) => k + 1);
+      expensesFetch.refetch();
     } catch {
       setDeletingId(null);
       setDeleteError(t("expenses.loadError"));
@@ -161,33 +145,29 @@ export function ExpensesPage() @{
         </>
       }
       emptyState={
-        <div
-          data-component="expenses-list-empty"
-          class="flex flex-col items-center rounded-lg border border-dashed border-border bg-surface px-6 py-16 text-center"
-        >
-          <div class="mb-4 text-text-secondary">
-            <Icon name="wallet" size={48} />
-          </div>
-          <h2 class="text-lg font-semibold text-text-primary">
-            {search || dateFrom || dateTo
+        <EmptyState
+          icon={<Icon name="wallet" size={48} />}
+          title={
+            search || dateFrom || dateTo
               ? t("expenses.listEmpty.noResults")
-              : t("expenses.listEmpty.noExpenses")}
-          </h2>
-          <p class="mt-2 max-w-sm text-sm text-text-secondary">
-            {search || dateFrom || dateTo
+              : t("expenses.listEmpty.noExpenses")
+          }
+          description={
+            search || dateFrom || dateTo
               ? t("expenses.listEmpty.noResultsBody")
-              : t("expenses.listEmpty.noExpensesBody")}
-          </p>
-          {!(search || dateFrom || dateTo) && (
-            <Button
-              variant="primary"
-              class="mt-6"
-              onClick={() => setCreateOpen(true)}
-            >
-              {t("expenses.page.add")}
-            </Button>
-          )}
-        </div>
+              : t("expenses.listEmpty.noExpensesBody")
+          }
+          action={
+            !(search || dateFrom || dateTo) ? (
+              <Button
+                variant="primary"
+                onClick={() => setCreateOpen(true)}
+              >
+                {t("expenses.page.add")}
+              </Button>
+            ) : undefined
+          }
+        />
       }
     >
       <ul class="flex flex-col gap-3">
