@@ -1,4 +1,4 @@
-import { useRef, useState, type OctaneNode } from "octane";
+import { useEffect, useRef, useState, type OctaneNode } from "octane";
 import { SkipLink } from "../components/atoms/skip-link.tsrx";
 import { SidebarNav } from "../components/organisms/sidebar-nav/sidebar-nav.tsrx";
 import { I18nProvider, useT } from "../components/vendor/i18n";
@@ -20,6 +20,7 @@ import {
   SIDEBAR_LAYOUT,
   SIDEBAR_LAYOUT_ID,
 } from "../lib/nav/sidebar-layout";
+import { createRpcClient } from "../lib/api/rpc";
 
 interface AppShellLayoutProps {
   children: OctaneNode;
@@ -58,6 +59,25 @@ export function AppShellLayout(props: AppShellLayoutProps) @{
 
   const sidebarPanelRef = useRef<PanelHandle | null>(null);
   const [collapsed, setCollapsed] = useState(false);
+
+  // Session probe (validación temprana de cookie stale).
+  // El `session-guard` del router SSR verifica PRESENCIA de cookie (no
+  // validez — Node fetch no propaga cookies del browser), entonces un user
+  // con cookie expirada/revocada pasa al shell y aterriza en /dashboard.
+  // Sin este probe, las páginas que NO disparan RPC al mount (ej.
+  // placeholder /dashboard) dejan al user atascado: la UI renderiza
+  // vacía y nunca se entera de que la sesión murió. Disparamos
+  // `rpc.auth.session()` al mount del shell; si devuelve 401, el
+  // interceptor del RPCLink redirige a `/login?reauth=1` (que ya muestra
+  // el banner "Tu sesión expiró").
+  useEffect(() => {
+    const rpc = createRpcClient(import.meta.env.VITE_API_URL ?? "/rpc");
+    void rpc.auth.session().catch(() => {
+      // El 401 ya redirige vía el interceptor del link. Cualquier otro error
+      // (network, 500) lo tragamos: la UI sigue funcional y el próximo
+      // click que dispare un RPC va a revelar el problema.
+    });
+  }, []);
 
   const collapseValue: SidebarCollapseValue = {
     collapsed,
