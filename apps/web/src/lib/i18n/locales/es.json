@@ -297,5 +297,47 @@
       "cancel": "Cancelar",
       "submitting": "Guardando..."
     }
+  },
+  "transfers": {
+    "page": {
+      "title": "Transferencias"
+    },
+    "search": {
+      "placeholder": "Buscar por descripción...",
+      "label": "Buscar"
+    },
+    "fields": {
+      "fromAccount": "Cuenta origen (UUID)",
+      "toAccount": "Cuenta destino (UUID)",
+      "amount": "Monto",
+      "date": "Fecha",
+      "dateFrom": "Desde",
+      "dateTo": "Hasta",
+      "description": "Descripción"
+    },
+    "listEmpty": {
+      "noTransfers": "No hay transferencias todavía",
+      "noTransfersBody": "Cuando registres transferencias entre cuentas van a aparecer acá.",
+      "noResults": "Sin resultados",
+      "noResultsBody": "Probá con otro término de búsqueda o rango de fechas."
+    },
+    "loadError": "No pudimos cargar las transferencias. Intentá de nuevo.",
+    "detail": {
+      "delete": "Eliminar"
+    }
+  },
+  "schedules": {
+    "page": {
+      "title": "Reglas recurrentes",
+      "subtitle": "Transacciones que se repiten automáticamente según una frecuencia."
+    },
+    "listEmpty": {
+      "noSchedules": "No hay reglas recurrentes",
+      "noSchedulesBody": "Cuando crees reglas recurrentes van a aparecer acá."
+    },
+    "loadError": "No pudimos cargar las reglas recurrentes. Intentá de nuevo.",
+    "detail": {
+      "delete": "Eliminar"
+    }
   }
 }

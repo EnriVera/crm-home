@@ -1,6 +1,6 @@
-import { PlaceholderPage } from "../components/pages/placeholder-page.tsrx";
+import { SchedulesPage } from "../components/pages/schedules-page.tsrx";
 
-/** Entry de `/schedules` (ruta del shell, D5): placeholder sin lógica de módulos. */
+/** Entry de `/schedules` (reemplaza el placeholder). */
 export function SchedulesRoute() @{
-  <PlaceholderPage />
+  <SchedulesPage />
 }
