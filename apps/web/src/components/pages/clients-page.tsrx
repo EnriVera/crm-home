@@ -1,23 +1,26 @@
 import { useEffect, useRef, useState } from "octane";
 import { t } from "../vendor/i18n/core";
 import { createRpcClient, type RpcClient } from "../../lib/api/rpc";
-import { BaseView, type ViewKind } from "../base-view/base-view.tsrx";
 import { Button } from "../atoms/button.tsrx";
 import { Icon } from "../vendor/icons";
 import { DataList } from "../molecules/data-list.tsrx";
 import { ClientListItem } from "../molecules/client-list-item.tsrx";
+import { ClientForm } from "../organisms/client-form/client-form.tsrx";
 import type { Client } from "@crm/types";
 
 /**
- * Página `/clients` (MVP read-only).
+ * Página `/clients` (MVP extendido con create / delete).
  *
  * Render plan:
- * - Header con title + count + gear (config) placeholder
- * - Search input (filters tasks.client.list by name prefix)
- * - DataList con BaseView (list/grid/kanban — grid/kanban stubs por ahora)
+ * - Header con title + count + "+ Nuevo cliente" button (abre drawer
+ *   con `ClientForm mode="create"`).
+ * - Search input (filters clients.list por prefijo de nombre).
+ * - DataList con `<ClientListItem>` — cada item es un `<a>` que navega
+ *   a `/clients/:id` vía el interceptor SPA (`lib/nav/client-router.ts`).
  *
- * El shell del cliente + DataList es el mismo patrón que `tasks-page`,
- * asegurando consistencia visual entre módulos.
+ * Nota: la `edit` action vive en `ClientDetailPage`, no acá — la lista
+ * es para browse + delete rápido + create. Los detalles van a su
+ * página dedicada.
  */
 
 interface ClientRow {
@@ -35,6 +38,9 @@ export function ClientsPage() @{
   const [refreshKey, setRefreshKey] = useState(0);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [createOpen, setCreateOpen] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
 
   // Carga de clientes.
@@ -72,6 +78,29 @@ export function ClientsPage() @{
     };
   }, [search, refreshKey]);
 
+  const handleCreate = async (payload: {
+    client_name: string;
+    client_email: string | null;
+    client_phone: string | null;
+  }) => {
+    await (RPC as RpcClient).clients.create(payload);
+    setCreateOpen(false);
+    setRefreshKey((k) => k + 1);
+  };
+
+  const handleDelete = async (clientId: string) => {
+    setDeletingId(clientId);
+    setDeleteError(null);
+    try {
+      await (RPC as RpcClient).clients.remove({ client_id: clientId });
+      setDeletingId(null);
+      setRefreshKey((k) => k + 1);
+    } catch {
+      setDeletingId(null);
+      setDeleteError(t("clients.loadError"));
+    }
+  };
+
   void searchInputRef;
 
   <section
@@ -91,6 +120,12 @@ export function ClientsPage() @{
           </p>
         )}
       </div>
+      <Button
+        variant="primary"
+        onClick={() => setCreateOpen(true)}
+      >
+        {t("clients.page.add")}
+      </Button>
     </header>
 
     <div class="mb-6">
@@ -107,6 +142,15 @@ export function ClientsPage() @{
         class="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-text-primary placeholder:text-text-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
       />
     </div>
+
+    {deleteError !== null && (
+      <div
+        role="alert"
+        class="mb-4 rounded-md border border-error bg-surface px-4 py-2 text-sm text-error"
+      >
+        {deleteError}
+      </div>
+    )}
 
     <DataList
       loading={loading}
@@ -143,21 +187,65 @@ export function ClientsPage() @{
               ? t("clients.listEmpty.noResultsBody")
               : t("clients.listEmpty.noClientsBody")}
           </p>
+          {search === "" && (
+            <Button
+              variant="primary"
+              class="mt-6"
+              onClick={() => setCreateOpen(true)}
+            >
+              {t("clients.page.add")}
+            </Button>
+          )}
         </div>
       }
     >
       <ul class="flex flex-col gap-3">
         {clients.map((client) => (
           <li key={client.client_id}>
-            <ClientListItem
-              client_id={client.client_id}
-              client_name={client.client_name}
-              client_email={client.client_email}
-              client_phone={client.client_phone}
-            />
+            <div
+              data-component="client-row"
+              class="flex items-start gap-3 rounded-md border border-border bg-surface px-4 py-3 transition-colors hover:bg-background"
+            >
+              <a
+                href={`/clients/${client.client_id}`}
+                class="min-w-0 flex-1"
+                aria-label={t("clients.detail.title")}
+              >
+                <ClientListItem
+                  client_id={client.client_id}
+                  client_name={client.client_name}
+                  client_email={client.client_email}
+                  client_phone={client.client_phone}
+                />
+              </a>
+              <Button
+                variant="ghost"
+                type="button"
+                disabled={deletingId === client.client_id}
+                onClick={(event: Event) => {
+                  event.preventDefault();
+                  void handleDelete(client.client_id);
+                }}
+                aria-label={t("clients.detail.delete")}
+                title={t("clients.detail.delete")}
+                class="shrink-0 px-3 py-1 text-sm text-error hover:bg-error/10"
+              >
+                {deletingId === client.client_id
+                  ? t("clients.form.submitting")
+                  : t("clients.detail.delete")}
+              </Button>
+            </div>
           </li>
         ))}
       </ul>
     </DataList>
+
+    {createOpen ? (
+      <ClientForm
+        mode="create"
+        onSubmit={handleCreate}
+        onClose={() => setCreateOpen(false)}
+      />
+    ) : null}
   </section>
 }

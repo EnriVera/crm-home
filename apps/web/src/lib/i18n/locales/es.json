@@ -167,6 +167,7 @@
       "label": "Buscar"
     },
     "fields": {
+      "name": "Nombre",
       "email": "Email",
       "phone": "Teléfono"
     },
@@ -176,6 +177,26 @@
       "noResults": "Sin resultados",
       "noResultsBody": "Probá con otro término de búsqueda."
     },
-    "loadError": "No pudimos cargar los clientes. Intentá de nuevo."
+    "loadError": "No pudimos cargar los clientes. Intentá de nuevo.",
+    "create": {
+      "title": "Nuevo cliente",
+      "submit": "Crear cliente"
+    },
+    "edit": {
+      "title": "Editar cliente",
+      "submit": "Guardar cambios"
+    },
+    "detail": {
+      "title": "Detalle del cliente",
+      "created": "Creado",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "confirmDelete": "¿Eliminar este cliente? Esta acción no se puede deshacer.",
+      "deleted": "Cliente eliminado"
+    },
+    "form": {
+      "cancel": "Cancelar",
+      "submitting": "Guardando..."
+    }
   }
 }
