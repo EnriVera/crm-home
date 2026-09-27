@@ -1,11 +1,14 @@
 import { describe, expect, test } from "bun:test";
+import type { Middleware } from "@octanejs/vite-plugin";
 import {
   createAuthRedirect,
   createRedirectIfAuthenticated,
   redirectResponse,
 } from "./redirect";
 
-function createContext(opts: { cookie?: string; url?: string } = {}) {
+function createContext(
+  opts: { cookie?: string; url?: string } = {},
+): Parameters<Middleware>[0] {
   const headers = new Headers();
   if (opts.cookie) headers.set("cookie", opts.cookie);
   const url = opts.url ?? "http://localhost/";
@@ -14,7 +17,7 @@ function createContext(opts: { cookie?: string; url?: string } = {}) {
     params: {},
     url: new URL(url),
     state: new Map<string, unknown>(),
-  };
+  } as unknown as Parameters<Middleware>[0];
 }
 
 describe("createAuthRedirect", () => {
