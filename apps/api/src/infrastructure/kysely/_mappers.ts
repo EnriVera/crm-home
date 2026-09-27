@@ -15,6 +15,7 @@ import type {
   AttachmentRow,
   CategoryRow,
   ClientRow,
+  IncomeRow,
   TaskRow,
   TaskStateRow,
   TypeCategoriesClientRow,
@@ -101,6 +102,38 @@ export function mapClientRow(row: ClientDbRow): ClientRow {
     createdAt: row.clie_created_at,
     updatedAt: row.clie_updated_at,
     deletedAt: row.clie_deleted_at,
+  };
+}
+
+// ─── IncomeRow ──────────────────────────────────────────────────────────────
+
+export interface IncomeDbRow {
+  inco_id: string;
+  inco_user_id: string;
+  inco_acco_id: string;
+  inco_amount: string; // pg NUMERIC → string
+  inco_currency_id: string;
+  inco_description: string | null;
+  inco_category: string | null;
+  inco_date: string; // pg DATE → "YYYY-MM-DD"
+  inco_created_at: Date;
+  inco_updated_at: Date;
+  inco_deleted_at: Date | null;
+}
+
+export function mapIncomeRow(row: IncomeDbRow): IncomeRow {
+  return {
+    id: row.inco_id,
+    userId: row.inco_user_id,
+    accountId: row.inco_acco_id,
+    amount: row.inco_amount,
+    currencyId: row.inco_currency_id,
+    description: row.inco_description,
+    category: row.inco_category,
+    date: row.inco_date,
+    createdAt: row.inco_created_at,
+    updatedAt: row.inco_updated_at,
+    deletedAt: row.inco_deleted_at,
   };
 }
 

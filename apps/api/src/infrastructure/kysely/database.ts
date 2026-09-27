@@ -114,6 +114,20 @@ export interface ClientTable {
   clie_deleted_at: Date | null;
 }
 
+export interface IncomeTable {
+  inco_id: string;
+  inco_user_id: string;
+  inco_acco_id: string;
+  inco_amount: string; // NUMERIC(19,4) llega como string de pg driver
+  inco_currency_id: string;
+  inco_description: string | null;
+  inco_category: string | null;
+  inco_date: string; // DATE → string (formato YYYY-MM-DD)
+  inco_created_at: Generated<Date>;
+  inco_updated_at: Generated<Date>;
+  inco_deleted_at: Date | null;
+}
+
 export interface TypeCategoriesClientTable {
   tccl_id: string;
   tccl_user_id: string;
@@ -170,6 +184,7 @@ export interface DatabaseSchema {
   types: TypesTable;
   categories: CategoriesTable;
   client: ClientTable;
+  income: IncomeTable;
   type_categories_client: TypeCategoriesClientTable;
   attachments: AttachmentTable;
   task_attachments: TaskAttachmentsTable;

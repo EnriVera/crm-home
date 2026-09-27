@@ -43,6 +43,21 @@ export interface ClientRow {
   deletedAt: Date | null;
 }
 
+export interface IncomeRow {
+  id: string;
+  userId: string;
+  accountId: string;
+  amount: string; // NUMERIC(19,4) → string decimal-safe (no perder precisión con floats)
+  currencyId: string;
+  description: string | null;
+  category: string | null;
+  /** YYYY-MM-DD (string de Postgres DATE). */
+  date: string;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date | null;
+}
+
 export interface TypeRow {
   id: string;
   userId: string;
