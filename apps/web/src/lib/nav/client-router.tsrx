@@ -1,46 +1,49 @@
 import { useEffect, useRef } from "octane";
-import { useLocation } from "@octanejs/wouter";
+import {
+  getCurrentPath,
+  installClientRouter,
+  subscribe,
+} from "./client-router.ts";
 
 /**
- * SPA-style route synchronization for the fullstack Octane shell.
+ * Client-side router mount point for the octane fullstack shell.
  *
  * Octane in fullstack mode (octane.config.ts + file-based routes) renders each
  * URL as a separate SSR page and does NOT intercept `<a href>` clicks for SPA
- * navigation — every link is a full reload by design. To get SPA-like
- * navigation on top of the SSR routing, we pair `@octanejs/wouter`'s `Link`
- * (which intercepts the click, prevents default, and pushes the new URL via the
- * History API) with this component, which listens to URL changes via
- * `useLocation` and synchronizes the DOM in-place:
+ * navigation. This component is the bridge that gives the shell SPA-like
+ * behavior on top of the SSR routing:
  *
- *  1. Fetch the new URL as HTML (the same path the SSR route returns).
- *  2. Parse it for the page container (`<main id="content">`) and the
- *     `<script id="__octane_data">` payload.
- *  3. Replace `<main>` innerHTML and update the hydration data payload.
- *  4. Dynamically re-import the route entry so the page's compiled module
- *     re-evaluates; octane's `delegateEvents` (document-level event
- *     delegation) plus the SSR'd `data-on-click` / `data-on-input` attributes
- *     on the new markup re-bind interactions without a full hydrateRoot pass.
- *  5. Scroll to top + move focus to the page heading for accessibility.
+ *  1. On mount: `installClientRouter()` wires up the global click interceptor
+ *     and `popstate` listener (idempotent — see `client-router.ts`).
+ *  2. On every URL change after the initial mount: fetches the new HTML, swaps
+ *     the `<main id="content">` innerHTML, updates the `<script
+ *     id="__octane_data">` payload, and dynamically re-imports the route
+ *     entry so octane's `delegateEvents` rebinds handlers on the new SSR'd
+ *     markup.
+ *  3. Restores scroll position to top + moves focus to the page `<h1>` for
+ *     accessibility (screen readers announce the new view).
  *
- * State that lived in the previous page's component instance (useState,
- * useReducer) is lost — this is the same tradeoff Next/Remix take when they
- * re-render a segment. Server-fetched state is rehydrated because the route
- * module re-runs its RPC calls on mount.
+ * Tradeoff: state local to the previous page's component instance
+ * (`useState`, `useReducer`) is lost on navigation — same as Next/Remix when
+ * they re-render a segment. Server-fetched state is rehydrated because the
+ * route module re-runs its RPC calls on mount. For state that needs to
+ * survive navigation, use `octane/signals` (`signal$ / query$`) — out of
+ * scope here.
  *
- * The component returns no DOM; it lives inside `<Router>` so `useLocation`
- * re-runs its effect whenever `Link` (or popstate) updates the URL.
+ * The component renders no DOM. Mount it exactly once inside the shell.
  */
-export function RouteSync(props: { ssrPath: string }) @{
-  const [location] = useLocation({ ssrPath: props.ssrPath });
-  const initialPath = useRef<string>(location);
+export function ClientRouter() @{
+  const initialPath = useRef<string>(getCurrentPath());
 
   useEffect(() => {
-    // Skip the initial mount: the shell already has the right SSR markup,
-    // re-fetching here would just flicker for nothing.
-    if (location === initialPath.current) return;
-    initialPath.current = location;
-    void syncRoute(location);
-  }, [location]);
+    installClientRouter();
+    return subscribe(() => {
+      const path = getCurrentPath();
+      if (path === initialPath.current) return;
+      initialPath.current = path;
+      void syncRoute(path);
+    });
+  }, []);
 
   return null;
 }
@@ -75,11 +78,10 @@ async function syncRoute(path: string): Promise<void> {
       currentData.textContent = newData.textContent;
     }
 
-    // Re-evaluate the route entry so any module-level work (compiled
-    // `delegateEvents` registrations for the new route, `injectStyle` for
-    // sibling-scoped styles, side-effect imports) runs against the new DOM.
-    // The `?import` suffix matches the format octane's hydrate virtual uses
-    // for `routeModules`.
+    // Re-evaluate the route entry so module-level work (compiled
+    // `delegateEvents` registrations, `injectStyle` for sibling-scoped styles,
+    // side-effect imports) runs against the new DOM. The `?import` suffix
+    // matches the format octane's hydrate virtual uses for `routeModules`.
     const dataText = currentData?.textContent;
     if (typeof dataText === "string" && dataText.length > 0) {
       try {

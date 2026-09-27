@@ -1,9 +1,13 @@
-import { useContext } from "octane";
+import { useContext, useEffect, useState } from "octane";
 import {
   isGroupActive,
   isItemActive,
   pathnameOf,
 } from "../../../lib/nav/active";
+import {
+  getCurrentPath,
+  subscribe,
+} from "../../../lib/nav/client-router.ts";
 import { SidebarCollapseContext } from "../../../lib/nav/sidebar-collapse";
 import { NAV_TREE } from "../../../lib/nav/tree";
 import { NavGroup } from "../../molecules/nav-group.tsrx";
@@ -32,7 +36,12 @@ export interface SidebarNavProps {
  */
 export function SidebarNav(props: SidebarNavProps) @{
   const t = useT();
-  const pathname = pathnameOf(props.url);
+  // First render: derive from the SSR-stable `props.url` (hydration-safe).
+  // After mount: subscribe to client-side URL changes so `aria-current` /
+  // active styling track SPA navigation performed by the global click
+  // interceptor in `lib/nav/client-router.ts`.
+  const [pathname, setPathname] = useState<string>(() => pathnameOf(props.url));
+  useEffect(() => subscribe(() => setPathname(getCurrentPath())), []);
   const { collapsed, toggle } = useContext(SidebarCollapseContext);
 
   const collapseLabel = collapsed ? t("shell.expand") : t("shell.collapse");

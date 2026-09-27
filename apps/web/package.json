@@ -20,7 +20,6 @@
     "@octanejs/sonner": "0.1.51",
     "@octanejs/usehooks-ts": "0.0.37",
     "@octanejs/vite-plugin": "0.1.60",
-    "@octanejs/wouter": "^0.0.12",
     "@octanejs/xstate": "0.0.13",
     "@octanejs/zag": "0.0.22",
     "@orpc/client": "1.15.4",
