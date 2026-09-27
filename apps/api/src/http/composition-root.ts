@@ -19,6 +19,10 @@ import { ListIncomes } from "../application/incomes/list-incomes";
 import { CreateIncome } from "../application/incomes/create-income";
 import { UpdateIncome } from "../application/incomes/update-income";
 import { RemoveIncome } from "../application/incomes/remove-income";
+import { ListExpenses } from "../application/expenses/list-expenses";
+import { CreateExpense } from "../application/expenses/create-expense";
+import { UpdateExpense } from "../application/expenses/update-expense";
+import { RemoveExpense } from "../application/expenses/remove-expense";
 import { createListClientsHandler } from "./clients/clients-routes";
 import { ListTaskStates } from "../application/tasks/list-task-states";
 import { ListTasks } from "../application/tasks/list-tasks";
@@ -39,6 +43,7 @@ import { KyselyCategoryLookupRepository } from "../infrastructure/kysely/categor
 import { KyselyClientLookupRepository } from "../infrastructure/kysely/client-lookup-repository";
 import { KyselyClientRepository } from "../infrastructure/kysely/client-repository";
 import { KyselyIncomeRepository } from "../infrastructure/kysely/income-repository";
+import { KyselyExpenseRepository } from "../infrastructure/kysely/expense-repository";
 import { KyselyEmailSendingRepository } from "../infrastructure/kysely/email-sending-repository";
 import { KyselyLoginRepository } from "../infrastructure/kysely/login-repository";
 import { KyselySessionRepository } from "../infrastructure/kysely/session-repository";
@@ -193,6 +198,11 @@ export function createCompositionRoot(
     const createIncomeUseCase = new CreateIncome({ incomeRepository });
     const updateIncomeUseCase = new UpdateIncome({ incomeRepository });
     const removeIncomeUseCase = new RemoveIncome({ incomeRepository });
+    const expenseRepository = new KyselyExpenseRepository(db);
+    const listExpenses = new ListExpenses({ expenseRepository });
+    const createExpenseUseCase = new CreateExpense({ expenseRepository });
+    const updateExpenseUseCase = new UpdateExpense({ expenseRepository });
+    const removeExpenseUseCase = new RemoveExpense({ expenseRepository });
     const listClientsForSelector = new ListClientsForSelector({
       clientLookupRepository,
     });
@@ -212,6 +222,10 @@ export function createCompositionRoot(
       createIncome: createIncomeUseCase,
       updateIncome: updateIncomeUseCase,
       removeIncome: removeIncomeUseCase,
+      listExpenses,
+      createExpense: createExpenseUseCase,
+      updateExpense: updateExpenseUseCase,
+      removeExpense: removeExpenseUseCase,
       listClientsHandler,
       getHealth,
       requestOtp,
