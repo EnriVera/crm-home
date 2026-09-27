@@ -1,6 +1,6 @@
-import { PlaceholderPage } from "../components/pages/placeholder-page.tsrx";
+import { TransfersPage } from "../components/pages/transfers-page.tsrx";
 
-/** Entry de `/transfers` (ruta del shell, D5): placeholder sin lógica de módulos. */
+/** Entry de `/transfers` (reemplaza el placeholder). */
 export function TransfersRoute() @{
-  <PlaceholderPage />
+  <TransfersPage />
 }

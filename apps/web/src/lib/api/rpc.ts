@@ -2,11 +2,12 @@ import { createORPCClient } from "@orpc/client";
 import { RPCLink } from "@orpc/client/fetch";
 import type { ContractRouterClient } from "@orpc/contract";
 import type {
-  authContract,
-  clientsContract,
-  expensesContract,
-  incomesContract,
-  tasksContract,
+ authContract,
+ clientsContract,
+ expensesContract,
+ incomesContract,
+ tasksContract,
+ transfersContract,
 } from "@crm/types";
 
 /**
@@ -44,6 +45,7 @@ export type TasksRpcClient = ContractRouterClient<typeof tasksContract>;
 export type ClientsRpcClient = ContractRouterClient<typeof clientsContract>;
 export type IncomeRpcClient = ContractRouterClient<typeof incomesContract>;
 export type ExpenseRpcClient = ContractRouterClient<typeof expensesContract>;
+export type TransferRpcClient = ContractRouterClient<typeof transfersContract>;
 
 export interface RpcClient {
  auth: AuthRpcClient;
@@ -51,6 +53,7 @@ export interface RpcClient {
  clients: ClientsRpcClient;
  incomes: IncomeRpcClient;
  expenses: ExpenseRpcClient;
+ transfers: TransferRpcClient;
 }
 
 export function createRpcClient(baseURL: string): RpcClient {
@@ -123,5 +126,6 @@ export function createRpcClient(baseURL: string): RpcClient {
   clients: createORPCClient(link, { path: ["clients"] }),
   incomes: createORPCClient(link, { path: ["incomes"] }),
   expenses: createORPCClient(link, { path: ["expenses"] }),
+  transfers: createORPCClient(link, { path: ["transfers"] }),
  };
 }
