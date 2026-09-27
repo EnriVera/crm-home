@@ -36,21 +36,35 @@ describe("expense-form.logic", () => {
 
     test("rejects empty accountId", () => {
       const errors = validateExpenseForm(
-        initialExpenseFormState({ amount: "100", currencyId: UUID, date: "2026-01-01" }),
+        initialExpenseFormState({
+          amount: "100",
+          currencyId: UUID,
+          date: "2026-01-01",
+        }),
       );
       expect(errors[0]?.code).toBe("EXPENSE_ACCOUNT_REQUIRED");
     });
 
     test("rejects invalid amount", () => {
       const errors = validateExpenseForm(
-        initialExpenseFormState({ accountId: UUID, currencyId: UUID, amount: "abc", date: "2026-01-01" }),
+        initialExpenseFormState({
+          accountId: UUID,
+          currencyId: UUID,
+          amount: "abc",
+          date: "2026-01-01",
+        }),
       );
       expect(errors[0]?.code).toBe("EXPENSE_AMOUNT_INVALID");
     });
 
     test("rejects non-positive amount", () => {
       const errors = validateExpenseForm(
-        initialExpenseFormState({ accountId: UUID, currencyId: UUID, amount: "0", date: "2026-01-01" }),
+        initialExpenseFormState({
+          accountId: UUID,
+          currencyId: UUID,
+          amount: "0",
+          date: "2026-01-01",
+        }),
       );
       expect(errors[0]?.code).toBe("EXPENSE_AMOUNT_NON_POSITIVE");
     });
@@ -83,7 +97,12 @@ describe("expense-form.logic", () => {
   describe("expenseFormToApiPayload", () => {
     test("normalizes amount to 4 decimals", () => {
       const payload = expenseFormToApiPayload(
-        initialExpenseFormState({ accountId: UUID, currencyId: UUID, amount: "100", date: "2026-01-01" }),
+        initialExpenseFormState({
+          accountId: UUID,
+          currencyId: UUID,
+          amount: "100",
+          date: "2026-01-01",
+        }),
       );
       expect(payload.expe_amount).toBe("100.0000");
     });
@@ -106,7 +125,12 @@ describe("expense-form.logic", () => {
     test("true for valid state", () => {
       expect(
         isExpenseFormReadyToSubmit(
-          initialExpenseFormState({ accountId: UUID, currencyId: UUID, amount: "100", date: "2026-01-01" }),
+          initialExpenseFormState({
+            accountId: UUID,
+            currencyId: UUID,
+            amount: "100",
+            date: "2026-01-01",
+          }),
         ),
       ).toBe(true);
     });
@@ -118,7 +142,9 @@ describe("expense-form.logic", () => {
 
   describe("firstExpenseFormError", () => {
     test("returns first error when invalid", () => {
-      expect(firstExpenseFormError(initialExpenseFormState())?.code).toBe("EXPENSE_ACCOUNT_REQUIRED");
+      expect(firstExpenseFormError(initialExpenseFormState())?.code).toBe(
+        "EXPENSE_ACCOUNT_REQUIRED",
+      );
     });
   });
 
@@ -132,7 +158,9 @@ describe("expense-form.logic", () => {
     });
 
     test("clear_receipt_url sets to null", () => {
-      const state = initialExpenseFormState({ receiptUrl: "https://example.com/r.pdf" });
+      const state = initialExpenseFormState({
+        receiptUrl: "https://example.com/r.pdf",
+      });
       const next = applyExpenseFormAction(state, { type: "clear_receipt_url" });
       expect(next.receiptUrl).toBeNull();
     });

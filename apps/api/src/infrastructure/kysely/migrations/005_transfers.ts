@@ -16,7 +16,7 @@ import { sql, type Kysely } from "kysely";
  * Idempotente. `down` destructivo.
  */
 export async function up(db: Kysely<unknown>): Promise<void> {
-  await sql`
+     await sql`
     CREATE TABLE IF NOT EXISTS transfer (
       tran_id UUID PRIMARY KEY,
       tran_user_id UUID NOT NULL REFERENCES "user"(user_id),
@@ -32,19 +32,19 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     )
   `.execute(db);
 
-  await sql`
+     await sql`
     CREATE INDEX IF NOT EXISTS idx_transfer_user
       ON transfer (tran_user_id) WHERE tran_deleted_at IS NULL
   `.execute(db);
 
-  await sql`
+     await sql`
     CREATE INDEX IF NOT EXISTS idx_transfer_date
       ON transfer (tran_user_id, tran_date DESC) WHERE tran_deleted_at IS NULL
   `.execute(db);
 }
 
 export async function down(db: Kysely<unknown>): Promise<void> {
-  await sql`DROP INDEX IF EXISTS idx_transfer_date`.execute(db);
-  await sql`DROP INDEX IF EXISTS idx_transfer_user`.execute(db);
-  await sql`DROP TABLE IF EXISTS transfer`.execute(db);
+     await sql`DROP INDEX IF EXISTS idx_transfer_date`.execute(db);
+     await sql`DROP INDEX IF EXISTS idx_transfer_user`.execute(db);
+     await sql`DROP TABLE IF EXISTS transfer`.execute(db);
 }

@@ -5,17 +5,17 @@ import { uuidSchema } from "./_shared";
 /* ---------- Schemas atómicos ---------- */
 
 export const clientNameSchema = z
-  .string()
-  .min(1, { message: "clientName is required" })
-  .max(100, { message: "clientName exceeds 100 chars" });
+ .string()
+ .min(1, { message: "clientName is required" })
+ .max(100, { message: "clientName exceeds 100 chars" });
 
 export const clientEmailSchema = z
-  .union([z.string().email(), z.null()])
-  .default(null);
+ .union([z.string().email(), z.null()])
+ .default(null);
 
 export const clientPhoneSchema = z
-  .union([z.string().max(40), z.null()])
-  .default(null);
+ .union([z.string().max(40), z.null()])
+ .default(null);
 
 export const clientSearchSchema = z.string().max(100).default("");
 
@@ -24,12 +24,12 @@ export const clientLimitSchema = z.number().int().min(1).max(100).default(50);
 /* ---------- Schema entidad (read-side) ---------- */
 
 export const clientSchema = z.object({
-  client_id: uuidSchema,
-  client_name: z.string(),
-  client_email: z.union([z.string(), z.null()]),
-  client_phone: z.union([z.string(), z.null()]),
-  client_created_at: z.coerce.date(),
-  client_updated_at: z.coerce.date(),
+ client_id: uuidSchema,
+ client_name: z.string(),
+ client_email: z.union([z.string(), z.null()]),
+ client_phone: z.union([z.string(), z.null()]),
+ client_created_at: z.coerce.date(),
+ client_updated_at: z.coerce.date(),
 });
 
 /* ---------- Schemas de input (write-side) ---------- */
@@ -42,9 +42,9 @@ export const clientSchema = z.object({
  * `email` y `phone` son opcionales — `null` se persiste literal.
  */
 export const createClientInputSchema = z.object({
-  client_name: clientNameSchema,
-  client_email: clientEmailSchema,
-  client_phone: clientPhoneSchema,
+ client_name: clientNameSchema,
+ client_email: clientEmailSchema,
+ client_phone: clientPhoneSchema,
 });
 
 /**
@@ -54,17 +54,17 @@ export const createClientInputSchema = z.object({
  * campo.
  */
 export const updateClientInputSchema = z.object({
-  client_id: uuidSchema,
-  client_name: clientNameSchema.optional(),
-  client_email: clientEmailSchema.optional(),
-  client_phone: clientPhoneSchema.optional(),
+ client_id: uuidSchema,
+ client_name: clientNameSchema.optional(),
+ client_email: clientEmailSchema.optional(),
+ client_phone: clientPhoneSchema.optional(),
 });
 
 /**
  * Input para `remove`. Soft-delete (set client_deleted_at = NOW()).
  */
 export const removeClientInputSchema = z.object({
-  client_id: uuidSchema,
+ client_id: uuidSchema,
 });
 
 const okOutputSchema = z.object({ ok: z.literal(true) });
@@ -89,33 +89,25 @@ const okOutputSchema = z.object({ ok: z.literal(true) });
  * (camelCase).
  */
 export const clientsContract = oc
-  .errors({
-    UNAUTHORIZED: { message: "Authentication required" },
-    NOT_FOUND: { message: "Client not found" },
-    VALIDATION: { message: "Invalid input" },
-  })
-  .router({
-    list: oc
-      .input(
-        z.object({
-          search: clientSearchSchema,
-          limit: clientLimitSchema,
-        }),
-      )
-      .output(z.array(clientSchema)),
-    get: oc
-      .input(z.object({ client_id: uuidSchema }))
-      .output(clientSchema),
-    create: oc
-      .input(createClientInputSchema)
-      .output(clientSchema),
-    update: oc
-      .input(updateClientInputSchema)
-      .output(clientSchema),
-    remove: oc
-      .input(removeClientInputSchema)
-      .output(okOutputSchema),
-  });
+ .errors({
+  UNAUTHORIZED: { message: "Authentication required" },
+  NOT_FOUND: { message: "Client not found" },
+  VALIDATION: { message: "Invalid input" },
+ })
+ .router({
+  list: oc
+   .input(
+    z.object({
+     search: clientSearchSchema,
+     limit: clientLimitSchema,
+    }),
+   )
+   .output(z.array(clientSchema)),
+  get: oc.input(z.object({ client_id: uuidSchema })).output(clientSchema),
+  create: oc.input(createClientInputSchema).output(clientSchema),
+  update: oc.input(updateClientInputSchema).output(clientSchema),
+  remove: oc.input(removeClientInputSchema).output(okOutputSchema),
+ });
 
 export type Client = z.infer<typeof clientSchema>;
 export type CreateClientInput = z.infer<typeof createClientInputSchema>;

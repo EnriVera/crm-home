@@ -156,6 +156,22 @@ export interface TransferTable {
   tran_deleted_at: Date | null;
 }
 
+export interface ScheduleTable {
+  sche_id: string;
+  sche_user_id: string;
+  sche_name: string;
+  sche_acco_id: string;
+  sche_amount: string;
+  sche_currency_id: string;
+  sche_frequency: string;
+  sche_next_run_date: string;
+  sche_is_active: boolean;
+  sche_description: string | null;
+  sche_created_at: Generated<Date>;
+  sche_updated_at: Generated<Date>;
+  sche_deleted_at: Date | null;
+}
+
 export interface TypeCategoriesClientTable {
   tccl_id: string;
   tccl_user_id: string;
@@ -215,6 +231,7 @@ export interface DatabaseSchema {
   income: IncomeTable;
   expense: ExpenseTable;
   transfer: TransferTable;
+  schedule: ScheduleTable;
   type_categories_client: TypeCategoriesClientTable;
   attachments: AttachmentTable;
   task_attachments: TaskAttachmentsTable;

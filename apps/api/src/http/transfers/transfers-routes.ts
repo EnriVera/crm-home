@@ -21,7 +21,9 @@ export interface TransfersRouteDependencies {
 
 const amountSchema = z
   .string()
-  .regex(/^\d+(\.\d{1,4})?$/, { message: "amount must be decimal with up to 4 fraction digits" })
+  .regex(/^\d+(\.\d{1,4})?$/, {
+    message: "amount must be decimal with up to 4 fraction digits",
+  })
   .refine((v) => Number(v) > 0, { message: "amount must be > 0" });
 
 const dateSchema = z
@@ -88,7 +90,10 @@ export function createListTransfersHandler(deps: TransfersRouteDependencies) {
   return async (event: H3Event): Promise<Response> => {
     try {
       const userId = readUserId(event);
-      const body = await readValidatedBody(event, listTransfersInputSchema.parse);
+      const body = await readValidatedBody(
+        event,
+        listTransfersInputSchema.parse,
+      );
       const rows = await deps.listTransfers.execute({
         userId,
         search: body.search,
@@ -119,7 +124,11 @@ export function createGetTransferHandler(deps: TransfersRouteDependencies) {
       const found = result.find((row) => row.id === body.tran_id);
       if (!found) {
         return Response.json(
-          { defined: true, code: "TRANSFER_NOT_FOUND", message: "Transfer not found" },
+          {
+            defined: true,
+            code: "TRANSFER_NOT_FOUND",
+            message: "Transfer not found",
+          },
           { status: 404 },
         );
       }
@@ -135,7 +144,10 @@ export function createTransferHandler(deps: TransfersRouteDependencies) {
   return async (event: H3Event): Promise<Response> => {
     try {
       const userId = readUserId(event);
-      const body = await readValidatedBody(event, createTransferInputSchema.parse);
+      const body = await readValidatedBody(
+        event,
+        createTransferInputSchema.parse,
+      );
       const row = await deps.createTransfer.execute({
         userId,
         fromAccountId: body.tran_from_account_id,
@@ -149,7 +161,11 @@ export function createTransferHandler(deps: TransfersRouteDependencies) {
     } catch (err) {
       if (err instanceof InvalidTransferInput) {
         return Response.json(
-          { defined: true, code: "INVALID_TRANSFER_INPUT", message: err.message },
+          {
+            defined: true,
+            code: "INVALID_TRANSFER_INPUT",
+            message: err.message,
+          },
           { status: 400 },
         );
       }
@@ -163,7 +179,10 @@ export function updateTransferHandler(deps: TransfersRouteDependencies) {
   return async (event: H3Event): Promise<Response> => {
     try {
       const userId = readUserId(event);
-      const body = await readValidatedBody(event, updateTransferInputSchema.parse);
+      const body = await readValidatedBody(
+        event,
+        updateTransferInputSchema.parse,
+      );
       const row = await deps.updateTransfer.execute({
         userId,
         transferId: body.tran_id,
@@ -178,7 +197,11 @@ export function updateTransferHandler(deps: TransfersRouteDependencies) {
     } catch (err) {
       if (err instanceof InvalidTransferInput) {
         return Response.json(
-          { defined: true, code: "INVALID_TRANSFER_INPUT", message: err.message },
+          {
+            defined: true,
+            code: "INVALID_TRANSFER_INPUT",
+            message: err.message,
+          },
           { status: 400 },
         );
       }
@@ -198,7 +221,10 @@ export function removeTransferHandler(deps: TransfersRouteDependencies) {
   return async (event: H3Event): Promise<Response> => {
     try {
       const userId = readUserId(event);
-      const body = await readValidatedBody(event, removeTransferInputSchema.parse);
+      const body = await readValidatedBody(
+        event,
+        removeTransferInputSchema.parse,
+      );
       await deps.removeTransfer.execute({
         userId,
         transferId: body.tran_id,

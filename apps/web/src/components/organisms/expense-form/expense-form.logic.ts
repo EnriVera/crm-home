@@ -56,7 +56,8 @@ export function applyExpenseFormAction(
     case "set_description":
       return {
         ...state,
-        description: action.value.trim().length === 0 ? null : action.value.trim(),
+        description:
+          action.value.trim().length === 0 ? null : action.value.trim(),
       };
     case "clear_description":
       return { ...state, description: null };
@@ -70,7 +71,8 @@ export function applyExpenseFormAction(
     case "set_receipt_url":
       return {
         ...state,
-        receiptUrl: action.value.trim().length === 0 ? null : action.value.trim(),
+        receiptUrl:
+          action.value.trim().length === 0 ? null : action.value.trim(),
       };
     case "clear_receipt_url":
       return { ...state, receiptUrl: null };
@@ -79,7 +81,8 @@ export function applyExpenseFormAction(
   }
 }
 
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const AMOUNT_RE = /^\d+(\.\d{1,4})?$/;
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const URL_RE = /^https?:\/\/.+/;
@@ -100,7 +103,9 @@ export interface ExpenseValidationError {
   message: string;
 }
 
-export function validateExpenseForm(state: ExpenseFormState): ExpenseValidationError[] {
+export function validateExpenseForm(
+  state: ExpenseFormState,
+): ExpenseValidationError[] {
   const errors: ExpenseValidationError[] = [];
   if (state.accountId.length === 0 || !UUID_RE.test(state.accountId)) {
     errors.push({
@@ -160,7 +165,9 @@ export function validateExpenseForm(state: ExpenseFormState): ExpenseValidationE
   return errors;
 }
 
-export function firstExpenseFormError(state: ExpenseFormState): ExpenseValidationError | null {
+export function firstExpenseFormError(
+  state: ExpenseFormState,
+): ExpenseValidationError | null {
   return validateExpenseForm(state)[0] ?? null;
 }
 

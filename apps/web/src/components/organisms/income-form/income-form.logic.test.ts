@@ -48,7 +48,10 @@ describe("income-form.logic", () => {
         value: "  test  ",
       });
       expect(a.description).toBe("test");
-      const b = applyIncomeFormAction(state, { type: "set_description", value: "   " });
+      const b = applyIncomeFormAction(state, {
+        type: "set_description",
+        value: "   ",
+      });
       expect(b.description).toBeNull();
     });
   });
@@ -68,42 +71,76 @@ describe("income-form.logic", () => {
 
     test("rejects empty accountId", () => {
       const errors = validateIncomeForm(
-        initialIncomeFormState({ amount: "100", currencyId: UUID, date: "2026-01-01" }),
+        initialIncomeFormState({
+          amount: "100",
+          currencyId: UUID,
+          date: "2026-01-01",
+        }),
       );
       expect(errors[0]?.code).toBe("INCOME_ACCOUNT_REQUIRED");
     });
 
     test("rejects empty currencyId", () => {
       const errors = validateIncomeForm(
-        initialIncomeFormState({ accountId: UUID, amount: "100", date: "2026-01-01" }),
+        initialIncomeFormState({
+          accountId: UUID,
+          amount: "100",
+          date: "2026-01-01",
+        }),
       );
       expect(errors[0]?.code).toBe("INCOME_CURRENCY_REQUIRED");
     });
 
     test("rejects amount with letters", () => {
       const errors = validateIncomeForm(
-        initialIncomeFormState({ accountId: UUID, currencyId: UUID, amount: "abc", date: "2026-01-01" }),
+        initialIncomeFormState({
+          accountId: UUID,
+          currencyId: UUID,
+          amount: "abc",
+          date: "2026-01-01",
+        }),
       );
       expect(errors[0]?.code).toBe("INCOME_AMOUNT_INVALID");
     });
 
     test("rejects amount <= 0", () => {
       const errors = validateIncomeForm(
-        initialIncomeFormState({ accountId: UUID, currencyId: UUID, amount: "0", date: "2026-01-01" }),
+        initialIncomeFormState({
+          accountId: UUID,
+          currencyId: UUID,
+          amount: "0",
+          date: "2026-01-01",
+        }),
       );
       expect(errors[0]?.code).toBe("INCOME_AMOUNT_NON_POSITIVE");
     });
 
     test("rejects negative amount", () => {
       const errors = validateIncomeForm(
-        initialIncomeFormState({ accountId: UUID, currencyId: UUID, amount: "-5", date: "2026-01-01" }),
+        initialIncomeFormState({
+          accountId: UUID,
+          currencyId: UUID,
+          amount: "-5",
+          date: "2026-01-01",
+        }),
       );
-      expect(errors.some((e) => e.code === "INCOME_AMOUNT_NON_POSITIVE" || e.code === "INCOME_AMOUNT_INVALID")).toBe(true);
+      expect(
+        errors.some(
+          (e) =>
+            e.code === "INCOME_AMOUNT_NON_POSITIVE" ||
+            e.code === "INCOME_AMOUNT_INVALID",
+        ),
+      ).toBe(true);
     });
 
     test("rejects bad date", () => {
       const errors = validateIncomeForm(
-        initialIncomeFormState({ accountId: UUID, currencyId: UUID, amount: "100", date: "not-a-date" }),
+        initialIncomeFormState({
+          accountId: UUID,
+          currencyId: UUID,
+          amount: "100",
+          date: "not-a-date",
+        }),
       );
       expect(errors[0]?.code).toBe("INCOME_DATE_INVALID");
     });
@@ -139,7 +176,12 @@ describe("income-form.logic", () => {
     test("true for valid state", () => {
       expect(
         isIncomeFormReadyToSubmit(
-          initialIncomeFormState({ accountId: UUID, currencyId: UUID, amount: "100", date: "2026-01-01" }),
+          initialIncomeFormState({
+            accountId: UUID,
+            currencyId: UUID,
+            amount: "100",
+            date: "2026-01-01",
+          }),
         ),
       ).toBe(true);
     });
@@ -153,27 +195,44 @@ describe("income-form.logic", () => {
     test("returns null when valid", () => {
       expect(
         firstIncomeFormError(
-          initialIncomeFormState({ accountId: UUID, currencyId: UUID, amount: "100", date: "2026-01-01" }),
+          initialIncomeFormState({
+            accountId: UUID,
+            currencyId: UUID,
+            amount: "100",
+            date: "2026-01-01",
+          }),
         ),
       ).toBeNull();
     });
 
     test("returns first error when invalid", () => {
-      expect(firstIncomeFormError(initialIncomeFormState())?.code).toBe("INCOME_ACCOUNT_REQUIRED");
+      expect(firstIncomeFormError(initialIncomeFormState())?.code).toBe(
+        "INCOME_ACCOUNT_REQUIRED",
+      );
     });
   });
 
   describe("incomeFormToApiPayload", () => {
     test("normalizes amount to 4 decimals", () => {
       const payload = incomeFormToApiPayload(
-        initialIncomeFormState({ accountId: UUID, currencyId: UUID, amount: "100", date: "2026-01-01" }),
+        initialIncomeFormState({
+          accountId: UUID,
+          currencyId: UUID,
+          amount: "100",
+          date: "2026-01-01",
+        }),
       );
       expect(payload.inco_amount).toBe("100.0000");
     });
 
     test("preserves null fields", () => {
       const payload = incomeFormToApiPayload(
-        initialIncomeFormState({ accountId: UUID, currencyId: UUID, amount: "100", date: "2026-01-01" }),
+        initialIncomeFormState({
+          accountId: UUID,
+          currencyId: UUID,
+          amount: "100",
+          date: "2026-01-01",
+        }),
       );
       expect(payload.inco_description).toBeNull();
       expect(payload.inco_category).toBeNull();

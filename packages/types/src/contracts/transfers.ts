@@ -4,7 +4,9 @@ import { uuidSchema } from "./_shared";
 
 export const transferAmountSchema = z
   .string()
-  .regex(/^\d+(\.\d{1,4})?$/, { message: "amount must be a decimal string with up to 4 fraction digits" })
+  .regex(/^\d+(\.\d{1,4})?$/, {
+    message: "amount must be a decimal string with up to 4 fraction digits",
+  })
   .refine((v) => Number(v) > 0, { message: "amount must be > 0" });
 
 export const transferDateSchema = z
@@ -73,7 +75,9 @@ export const transfersContract = oc
     get: oc.input(z.object({ tran_id: uuidSchema })).output(transferSchema),
     create: oc.input(createTransferInputSchema).output(transferSchema),
     update: oc.input(updateTransferInputSchema).output(transferSchema),
-    remove: oc.input(removeTransferInputSchema).output(z.object({ ok: z.literal(true) })),
+    remove: oc
+      .input(removeTransferInputSchema)
+      .output(z.object({ ok: z.literal(true) })),
   });
 
 export type Transfer = z.infer<typeof transferSchema>;

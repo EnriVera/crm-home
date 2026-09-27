@@ -86,6 +86,24 @@ export interface TransferRow {
  deletedAt: Date | null;
 }
 
+export type ScheduleFrequency = "daily" | "weekly" | "monthly" | "yearly";
+
+export interface ScheduleRow {
+ id: string;
+ userId: string;
+ name: string;
+ accountId: string;
+ amount: string;
+ currencyId: string;
+ frequency: ScheduleFrequency;
+ nextRunDate: string;
+ isActive: boolean;
+ description: string | null;
+ createdAt: Date;
+ updatedAt: Date;
+ deletedAt: Date | null;
+}
+
 export interface TypeRow {
  id: string;
  userId: string;

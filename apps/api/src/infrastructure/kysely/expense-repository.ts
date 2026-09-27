@@ -1,7 +1,5 @@
 import { sql } from "kysely";
-import type {
-  ExpenseRepository,
-} from "../../domain/ports/expense-repository";
+import type { ExpenseRepository } from "../../domain/ports/expense-repository";
 import type { Database } from "./database";
 import { mapExpenseRow, type ExpenseDbRow } from "./_mappers";
 
@@ -53,10 +51,7 @@ export class KyselyExpenseRepository implements ExpenseRepository {
     return rows.map((row) => mapExpenseRow(row as ExpenseDbRow));
   }
 
-  async findById(params: {
-    userId: string;
-    expenseId: string;
-  }) {
+  async findById(params: { userId: string; expenseId: string }) {
     const row = await this.db
       .selectFrom("expense")
       .selectAll()
@@ -117,13 +112,18 @@ export class KyselyExpenseRepository implements ExpenseRepository {
       expe_receipt_url: string | null;
       expe_updated_at: Date;
     }> = {};
-    if (params.accountId !== undefined) setValues.expe_acco_id = params.accountId;
+    if (params.accountId !== undefined)
+      setValues.expe_acco_id = params.accountId;
     if (params.amount !== undefined) setValues.expe_amount = params.amount;
-    if (params.currencyId !== undefined) setValues.expe_currency_id = params.currencyId;
-    if (params.description !== undefined) setValues.expe_description = params.description;
-    if (params.category !== undefined) setValues.expe_category = params.category;
+    if (params.currencyId !== undefined)
+      setValues.expe_currency_id = params.currencyId;
+    if (params.description !== undefined)
+      setValues.expe_description = params.description;
+    if (params.category !== undefined)
+      setValues.expe_category = params.category;
     if (params.date !== undefined) setValues.expe_date = params.date;
-    if (params.receiptUrl !== undefined) setValues.expe_receipt_url = params.receiptUrl;
+    if (params.receiptUrl !== undefined)
+      setValues.expe_receipt_url = params.receiptUrl;
     setValues.expe_updated_at = new Date();
 
     const row = await this.db
@@ -137,10 +137,7 @@ export class KyselyExpenseRepository implements ExpenseRepository {
     return mapExpenseRow(row as ExpenseDbRow);
   }
 
-  async softDelete(params: {
-    userId: string;
-    expenseId: string;
-  }) {
+  async softDelete(params: { userId: string; expenseId: string }) {
     const row = await this.db
       .updateTable("expense")
       .set({ expe_deleted_at: new Date() })

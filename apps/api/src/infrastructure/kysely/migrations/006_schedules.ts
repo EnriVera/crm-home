@@ -19,7 +19,7 @@ import { sql, type Kysely } from "kysely";
  * - description: opcional.
  */
 export async function up(db: Kysely<unknown>): Promise<void> {
-  await sql`
+     await sql`
     CREATE TABLE IF NOT EXISTS schedule (
       sche_id UUID PRIMARY KEY,
       sche_user_id UUID NOT NULL REFERENCES "user"(user_id),
@@ -37,13 +37,13 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     )
   `.execute(db);
 
-  await sql`
+     await sql`
     CREATE INDEX IF NOT EXISTS idx_schedule_user
       ON schedule (sche_user_id) WHERE sche_deleted_at IS NULL
   `.execute(db);
 }
 
 export async function down(db: Kysely<unknown>): Promise<void> {
-  await sql`DROP INDEX IF EXISTS idx_schedule_user`.execute(db);
-  await sql`DROP TABLE IF EXISTS schedule`.execute(db);
+     await sql`DROP INDEX IF EXISTS idx_schedule_user`.execute(db);
+     await sql`DROP TABLE IF EXISTS schedule`.execute(db);
 }

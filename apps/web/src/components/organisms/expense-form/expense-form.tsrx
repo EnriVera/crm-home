@@ -1,4 +1,4 @@
-import { useState } from "octane";
+import { useState, type OctaneNode } from "octane";
 import { t } from "../../vendor/i18n/core";
 import { Button } from "../../atoms/button.tsrx";
 import { TextInput } from "../../atoms/text-input.tsrx";

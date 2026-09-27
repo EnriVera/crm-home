@@ -25,7 +25,9 @@ export interface ExpensesRouteDependencies {
 
 const amountSchema = z
   .string()
-  .regex(/^\d+(\.\d{1,4})?$/, { message: "amount must be decimal with up to 4 fraction digits" })
+  .regex(/^\d+(\.\d{1,4})?$/, {
+    message: "amount must be decimal with up to 4 fraction digits",
+  })
   .refine((v) => Number(v) > 0, { message: "amount must be > 0" });
 
 const dateSchema = z
@@ -50,12 +52,7 @@ const createExpenseInputSchema = z.object({
   expe_description: z.string().max(500).nullable().default(null),
   expe_category: z.string().max(100).nullable().default(null),
   expe_date: dateSchema,
-  expe_receipt_url: z
-    .string()
-    .url()
-    .max(2000)
-    .nullable()
-    .default(null),
+  expe_receipt_url: z.string().url().max(2000).nullable().default(null),
 });
 
 const updateExpenseInputSchema = z.object({
@@ -66,12 +63,7 @@ const updateExpenseInputSchema = z.object({
   expe_description: z.string().max(500).nullable().optional(),
   expe_category: z.string().max(100).nullable().optional(),
   expe_date: dateSchema.optional(),
-  expe_receipt_url: z
-    .string()
-    .url()
-    .max(2000)
-    .nullable()
-    .optional(),
+  expe_receipt_url: z.string().url().max(2000).nullable().optional(),
 });
 
 const removeExpenseInputSchema = z.object({
@@ -108,7 +100,10 @@ export function createListExpensesHandler(deps: ExpensesRouteDependencies) {
   return async (event: H3Event): Promise<Response> => {
     try {
       const userId = readUserId(event);
-      const body = await readValidatedBody(event, listExpensesInputSchema.parse);
+      const body = await readValidatedBody(
+        event,
+        listExpensesInputSchema.parse,
+      );
       const rows = await deps.listExpenses.execute({
         userId,
         search: body.search,
@@ -139,7 +134,11 @@ export function createGetExpenseHandler(deps: ExpensesRouteDependencies) {
       const found = result.find((row) => row.id === body.expe_id);
       if (!found) {
         return Response.json(
-          { defined: true, code: "EXPENSE_NOT_FOUND", message: "Expense not found" },
+          {
+            defined: true,
+            code: "EXPENSE_NOT_FOUND",
+            message: "Expense not found",
+          },
           { status: 404 },
         );
       }
@@ -155,7 +154,10 @@ export function createExpenseHandler(deps: ExpensesRouteDependencies) {
   return async (event: H3Event): Promise<Response> => {
     try {
       const userId = readUserId(event);
-      const body = await readValidatedBody(event, createExpenseInputSchema.parse);
+      const body = await readValidatedBody(
+        event,
+        createExpenseInputSchema.parse,
+      );
       const row = await deps.createExpense.execute({
         userId,
         accountId: body.expe_account_id,
@@ -170,7 +172,11 @@ export function createExpenseHandler(deps: ExpensesRouteDependencies) {
     } catch (err) {
       if (err instanceof InvalidExpenseInput) {
         return Response.json(
-          { defined: true, code: "INVALID_EXPENSE_INPUT", message: err.message },
+          {
+            defined: true,
+            code: "INVALID_EXPENSE_INPUT",
+            message: err.message,
+          },
           { status: 400 },
         );
       }
@@ -184,7 +190,10 @@ export function updateExpenseHandler(deps: ExpensesRouteDependencies) {
   return async (event: H3Event): Promise<Response> => {
     try {
       const userId = readUserId(event);
-      const body = await readValidatedBody(event, updateExpenseInputSchema.parse);
+      const body = await readValidatedBody(
+        event,
+        updateExpenseInputSchema.parse,
+      );
       const row = await deps.updateExpense.execute({
         userId,
         expenseId: body.expe_id,
@@ -200,7 +209,11 @@ export function updateExpenseHandler(deps: ExpensesRouteDependencies) {
     } catch (err) {
       if (err instanceof InvalidExpenseInput) {
         return Response.json(
-          { defined: true, code: "INVALID_EXPENSE_INPUT", message: err.message },
+          {
+            defined: true,
+            code: "INVALID_EXPENSE_INPUT",
+            message: err.message,
+          },
           { status: 400 },
         );
       }
@@ -220,7 +233,10 @@ export function removeExpenseHandler(deps: ExpensesRouteDependencies) {
   return async (event: H3Event): Promise<Response> => {
     try {
       const userId = readUserId(event);
-      const body = await readValidatedBody(event, removeExpenseInputSchema.parse);
+      const body = await readValidatedBody(
+        event,
+        removeExpenseInputSchema.parse,
+      );
       await deps.removeExpense.execute({
         userId,
         expenseId: body.expe_id,

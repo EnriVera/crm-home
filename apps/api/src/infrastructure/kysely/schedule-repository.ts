@@ -1,7 +1,5 @@
 import { sql } from "kysely";
-import type {
-  ScheduleRepository,
-} from "../../domain/ports/schedule-repository";
+import type { ScheduleRepository } from "../../domain/ports/schedule-repository";
 import type { ScheduleRow } from "../../domain/tasks/types";
 import type { Database } from "./database";
 import { mapScheduleRow, type ScheduleDbRow } from "./_mappers";
@@ -91,13 +89,19 @@ export class KyselyScheduleRepository implements ScheduleRepository {
       sche_updated_at: Date;
     }> = {};
     if (params.name !== undefined) setValues.sche_name = params.name;
-    if (params.accountId !== undefined) setValues.sche_acco_id = params.accountId;
+    if (params.accountId !== undefined)
+      setValues.sche_acco_id = params.accountId;
     if (params.amount !== undefined) setValues.sche_amount = params.amount;
-    if (params.currencyId !== undefined) setValues.sche_currency_id = params.currencyId;
-    if (params.frequency !== undefined) setValues.sche_frequency = params.frequency;
-    if (params.nextRunDate !== undefined) setValues.sche_next_run_date = params.nextRunDate;
-    if (params.isActive !== undefined) setValues.sche_is_active = params.isActive;
-    if (params.description !== undefined) setValues.sche_description = params.description;
+    if (params.currencyId !== undefined)
+      setValues.sche_currency_id = params.currencyId;
+    if (params.frequency !== undefined)
+      setValues.sche_frequency = params.frequency;
+    if (params.nextRunDate !== undefined)
+      setValues.sche_next_run_date = params.nextRunDate;
+    if (params.isActive !== undefined)
+      setValues.sche_is_active = params.isActive;
+    if (params.description !== undefined)
+      setValues.sche_description = params.description;
     setValues.sche_updated_at = new Date();
 
     const row = await this.db

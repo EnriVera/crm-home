@@ -1,7 +1,5 @@
 import { sql } from "kysely";
-import type {
-  TransferRepository,
-} from "../../domain/ports/transfer-repository";
+import type { TransferRepository } from "../../domain/ports/transfer-repository";
 import type { Database } from "./database";
 import { mapTransferRow, type TransferDbRow } from "./_mappers";
 
@@ -48,10 +46,7 @@ export class KyselyTransferRepository implements TransferRepository {
     return rows.map((row) => mapTransferRow(row as TransferDbRow));
   }
 
-  async findById(params: {
-    userId: string;
-    transferId: string;
-  }) {
+  async findById(params: { userId: string; transferId: string }) {
     const row = await this.db
       .selectFrom("transfer")
       .selectAll()
@@ -106,11 +101,15 @@ export class KyselyTransferRepository implements TransferRepository {
       tran_description: string | null;
       tran_date: string;
     }> = {};
-    if (params.fromAccountId !== undefined) setValues.tran_from_acco_id = params.fromAccountId;
-    if (params.toAccountId !== undefined) setValues.tran_to_acco_id = params.toAccountId;
+    if (params.fromAccountId !== undefined)
+      setValues.tran_from_acco_id = params.fromAccountId;
+    if (params.toAccountId !== undefined)
+      setValues.tran_to_acco_id = params.toAccountId;
     if (params.amount !== undefined) setValues.tran_amount = params.amount;
-    if (params.currencyId !== undefined) setValues.tran_currency_id = params.currencyId;
-    if (params.description !== undefined) setValues.tran_description = params.description;
+    if (params.currencyId !== undefined)
+      setValues.tran_currency_id = params.currencyId;
+    if (params.description !== undefined)
+      setValues.tran_description = params.description;
     if (params.date !== undefined) setValues.tran_date = params.date;
 
     const row = await this.db
@@ -124,10 +123,7 @@ export class KyselyTransferRepository implements TransferRepository {
     return mapTransferRow(row as TransferDbRow);
   }
 
-  async softDelete(params: {
-    userId: string;
-    transferId: string;
-  }) {
+  async softDelete(params: { userId: string; transferId: string }) {
     const row = await this.db
       .updateTable("transfer")
       .set({ tran_deleted_at: new Date() })

@@ -124,11 +124,15 @@ export class KyselyIncomeRepository implements IncomeRepository {
       inco_date: string;
       inco_updated_at: Date;
     }> = {};
-    if (params.accountId !== undefined) setValues.inco_acco_id = params.accountId;
+    if (params.accountId !== undefined)
+      setValues.inco_acco_id = params.accountId;
     if (params.amount !== undefined) setValues.inco_amount = params.amount;
-    if (params.currencyId !== undefined) setValues.inco_currency_id = params.currencyId;
-    if (params.description !== undefined) setValues.inco_description = params.description;
-    if (params.category !== undefined) setValues.inco_category = params.category;
+    if (params.currencyId !== undefined)
+      setValues.inco_currency_id = params.currencyId;
+    if (params.description !== undefined)
+      setValues.inco_description = params.description;
+    if (params.category !== undefined)
+      setValues.inco_category = params.category;
     if (params.date !== undefined) setValues.inco_date = params.date;
     setValues.inco_updated_at = new Date();
 

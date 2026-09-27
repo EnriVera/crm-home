@@ -2,7 +2,12 @@ import { oc } from "@orpc/contract";
 import { z } from "zod";
 import { uuidSchema } from "./_shared";
 
-export const scheduleFrequencySchema = z.enum(["daily", "weekly", "monthly", "yearly"]);
+export const scheduleFrequencySchema = z.enum([
+  "daily",
+  "weekly",
+  "monthly",
+  "yearly",
+]);
 export const scheduleAmountSchema = z
   .string()
   .regex(/^\d+(\.\d{1,4})?$/, { message: "amount must be decimal" })
@@ -11,7 +16,11 @@ export const scheduleDateSchema = z
   .string()
   .regex(/^\d{4}-\d{2}-\d{2}$/, { message: "date must be YYYY-MM-DD" });
 export const scheduleNameSchema = z.string().min(1).max(100);
-export const scheduleDescriptionSchema = z.string().max(500).nullable().default(null);
+export const scheduleDescriptionSchema = z
+  .string()
+  .max(500)
+  .nullable()
+  .default(null);
 
 export const scheduleSchema = z.object({
   sche_id: uuidSchema,
@@ -69,7 +78,9 @@ export const schedulesContract = oc
     get: oc.input(z.object({ sche_id: uuidSchema })).output(scheduleSchema),
     create: oc.input(createScheduleInputSchema).output(scheduleSchema),
     update: oc.input(updateScheduleInputSchema).output(scheduleSchema),
-    remove: oc.input(removeScheduleInputSchema).output(z.object({ ok: z.literal(true) })),
+    remove: oc
+      .input(removeScheduleInputSchema)
+      .output(z.object({ ok: z.literal(true) })),
   });
 
 export type Schedule = z.infer<typeof scheduleSchema>;

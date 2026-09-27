@@ -17,6 +17,7 @@ import type {
   ClientRow,
   ExpenseRow,
   IncomeRow,
+  ScheduleRow,
   TaskRow,
   TaskStateRow,
   TransferRow,
@@ -200,6 +201,42 @@ export function mapTransferRow(row: TransferDbRow): TransferRow {
     date: row.tran_date,
     createdAt: row.tran_created_at,
     deletedAt: row.tran_deleted_at,
+  };
+}
+
+// ─── ScheduleRow ────────────────────────────────────────────────────────────
+
+export interface ScheduleDbRow {
+  sche_id: string;
+  sche_user_id: string;
+  sche_name: string;
+  sche_acco_id: string;
+  sche_amount: string;
+  sche_currency_id: string;
+  sche_frequency: string;
+  sche_next_run_date: string;
+  sche_is_active: boolean;
+  sche_description: string | null;
+  sche_created_at: Date;
+  sche_updated_at: Date;
+  sche_deleted_at: Date | null;
+}
+
+export function mapScheduleRow(row: ScheduleDbRow): ScheduleRow {
+  return {
+    id: row.sche_id,
+    userId: row.sche_user_id,
+    name: row.sche_name,
+    accountId: row.sche_acco_id,
+    amount: row.sche_amount,
+    currencyId: row.sche_currency_id,
+    frequency: row.sche_frequency as ScheduleRow["frequency"],
+    nextRunDate: row.sche_next_run_date,
+    isActive: row.sche_is_active,
+    description: row.sche_description,
+    createdAt: row.sche_created_at,
+    updatedAt: row.sche_updated_at,
+    deletedAt: row.sche_deleted_at,
   };
 }
 

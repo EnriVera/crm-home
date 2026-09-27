@@ -1,10 +1,7 @@
 import type { ScheduleRow } from "../tasks/types";
 
 export interface ScheduleRepository {
-  list(params: {
-    userId: string;
-    limit: number;
-  }): Promise<ScheduleRow[]>;
+  list(params: { userId: string; limit: number }): Promise<ScheduleRow[]>;
 
   findById(params: {
     userId: string;

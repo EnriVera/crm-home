@@ -32,7 +32,9 @@ export interface IncomesRouteDependencies {
 // amount: NUMERIC(19,4) como string decimal-safe
 const amountSchema = z
   .string()
-  .regex(/^\d+(\.\d{1,4})?$/, { message: "amount must be decimal with up to 4 fraction digits" })
+  .regex(/^\d+(\.\d{1,4})?$/, {
+    message: "amount must be decimal with up to 4 fraction digits",
+  })
   .refine((v) => Number(v) > 0, { message: "amount must be > 0" });
 
 const dateSchema = z
@@ -132,7 +134,11 @@ export function createGetIncomeHandler(deps: IncomesRouteDependencies) {
       const found = result.find((row) => row.id === body.inco_id);
       if (!found) {
         return Response.json(
-          { defined: true, code: "INCOME_NOT_FOUND", message: "Income not found" },
+          {
+            defined: true,
+            code: "INCOME_NOT_FOUND",
+            message: "Income not found",
+          },
           { status: 404 },
         );
       }
@@ -148,7 +154,10 @@ export function createIncomeHandler(deps: IncomesRouteDependencies) {
   return async (event: H3Event): Promise<Response> => {
     try {
       const userId = readUserId(event);
-      const body = await readValidatedBody(event, createIncomeInputSchema.parse);
+      const body = await readValidatedBody(
+        event,
+        createIncomeInputSchema.parse,
+      );
       const row = await deps.createIncome.execute({
         userId,
         accountId: body.inco_account_id,
@@ -176,7 +185,10 @@ export function updateIncomeHandler(deps: IncomesRouteDependencies) {
   return async (event: H3Event): Promise<Response> => {
     try {
       const userId = readUserId(event);
-      const body = await readValidatedBody(event, updateIncomeInputSchema.parse);
+      const body = await readValidatedBody(
+        event,
+        updateIncomeInputSchema.parse,
+      );
       const row = await deps.updateIncome.execute({
         userId,
         incomeId: body.inco_id,
@@ -211,7 +223,10 @@ export function removeIncomeHandler(deps: IncomesRouteDependencies) {
   return async (event: H3Event): Promise<Response> => {
     try {
       const userId = readUserId(event);
-      const body = await readValidatedBody(event, removeIncomeInputSchema.parse);
+      const body = await readValidatedBody(
+        event,
+        removeIncomeInputSchema.parse,
+      );
       await deps.removeIncome.execute({
         userId,
         incomeId: body.inco_id,

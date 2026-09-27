@@ -17,7 +17,7 @@ import { sql, type Kysely } from "kysely";
  * Idempotente. `down` destructivo.
  */
 export async function up(db: Kysely<unknown>): Promise<void> {
-  await sql`
+     await sql`
     CREATE TABLE IF NOT EXISTS expense (
       expe_id UUID PRIMARY KEY,
       expe_user_id UUID NOT NULL REFERENCES "user"(user_id),
@@ -34,25 +34,25 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     )
   `.execute(db);
 
-  await sql`
+     await sql`
     CREATE INDEX IF NOT EXISTS idx_expense_user
       ON expense (expe_user_id) WHERE expe_deleted_at IS NULL
   `.execute(db);
 
-  await sql`
+     await sql`
     CREATE INDEX IF NOT EXISTS idx_expense_date
       ON expense (expe_user_id, expe_date DESC) WHERE expe_deleted_at IS NULL
   `.execute(db);
 
-  await sql`
+     await sql`
     CREATE INDEX IF NOT EXISTS idx_expense_account
       ON expense (expe_acco_id) WHERE expe_deleted_at IS NULL
   `.execute(db);
 }
 
 export async function down(db: Kysely<unknown>): Promise<void> {
-  await sql`DROP INDEX IF EXISTS idx_expense_account`.execute(db);
-  await sql`DROP INDEX IF EXISTS idx_expense_date`.execute(db);
-  await sql`DROP INDEX IF EXISTS idx_expense_user`.execute(db);
-  await sql`DROP TABLE IF EXISTS expense`.execute(db);
+     await sql`DROP INDEX IF EXISTS idx_expense_account`.execute(db);
+     await sql`DROP INDEX IF EXISTS idx_expense_date`.execute(db);
+     await sql`DROP INDEX IF EXISTS idx_expense_user`.execute(db);
+     await sql`DROP TABLE IF EXISTS expense`.execute(db);
 }

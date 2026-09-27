@@ -97,7 +97,10 @@ export function createListSchedulesHandler(deps: SchedulesRouteDependencies) {
   return async (event: H3Event): Promise<Response> => {
     try {
       const userId = readUserId(event);
-      const body = await readValidatedBody(event, listSchedulesInputSchema.parse);
+      const body = await readValidatedBody(
+        event,
+        listSchedulesInputSchema.parse,
+      );
       const rows = await deps.listSchedules.execute({
         userId,
         limit: body.limit,
@@ -122,7 +125,11 @@ export function createGetScheduleHandler(deps: SchedulesRouteDependencies) {
       const found = result.find((row) => row.id === body.sche_id);
       if (!found) {
         return Response.json(
-          { defined: true, code: "SCHEDULE_NOT_FOUND", message: "Schedule not found" },
+          {
+            defined: true,
+            code: "SCHEDULE_NOT_FOUND",
+            message: "Schedule not found",
+          },
           { status: 404 },
         );
       }
@@ -138,7 +145,10 @@ export function createScheduleHandler(deps: SchedulesRouteDependencies) {
   return async (event: H3Event): Promise<Response> => {
     try {
       const userId = readUserId(event);
-      const body = await readValidatedBody(event, createScheduleInputSchema.parse);
+      const body = await readValidatedBody(
+        event,
+        createScheduleInputSchema.parse,
+      );
       const row = await deps.createSchedule.execute({
         userId,
         name: body.sche_name,
@@ -154,7 +164,11 @@ export function createScheduleHandler(deps: SchedulesRouteDependencies) {
     } catch (err) {
       if (err instanceof InvalidScheduleInput) {
         return Response.json(
-          { defined: true, code: "INVALID_SCHEDULE_INPUT", message: err.message },
+          {
+            defined: true,
+            code: "INVALID_SCHEDULE_INPUT",
+            message: err.message,
+          },
           { status: 400 },
         );
       }
@@ -168,7 +182,10 @@ export function updateScheduleHandler(deps: SchedulesRouteDependencies) {
   return async (event: H3Event): Promise<Response> => {
     try {
       const userId = readUserId(event);
-      const body = await readValidatedBody(event, updateScheduleInputSchema.parse);
+      const body = await readValidatedBody(
+        event,
+        updateScheduleInputSchema.parse,
+      );
       const row = await deps.updateSchedule.execute({
         userId,
         scheduleId: body.sche_id,
@@ -185,7 +202,11 @@ export function updateScheduleHandler(deps: SchedulesRouteDependencies) {
     } catch (err) {
       if (err instanceof InvalidScheduleInput) {
         return Response.json(
-          { defined: true, code: "INVALID_SCHEDULE_INPUT", message: err.message },
+          {
+            defined: true,
+            code: "INVALID_SCHEDULE_INPUT",
+            message: err.message,
+          },
           { status: 400 },
         );
       }
@@ -205,7 +226,10 @@ export function removeScheduleHandler(deps: SchedulesRouteDependencies) {
   return async (event: H3Event): Promise<Response> => {
     try {
       const userId = readUserId(event);
-      const body = await readValidatedBody(event, removeScheduleInputSchema.parse);
+      const body = await readValidatedBody(
+        event,
+        removeScheduleInputSchema.parse,
+      );
       await deps.removeSchedule.execute({
         userId,
         scheduleId: body.sche_id,
