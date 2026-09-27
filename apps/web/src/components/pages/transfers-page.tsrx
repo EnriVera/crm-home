@@ -4,7 +4,9 @@ import { createRpcClient, type RpcClient } from "../../lib/api/rpc";
 import { Button } from "../atoms/button.tsrx";
 import { Icon } from "../vendor/icons";
 import { DataList } from "../molecules/data-list.tsrx";
+import { EmptyState } from "../molecules/empty-state.tsrx";
 import { TransferListItem } from "../molecules/transfer-list-item.tsrx";
+import { useFetch } from "../../hooks/use-fetch";
 import type { Transfer } from "@crm/types";
 
 /**
@@ -21,53 +23,35 @@ import type { Transfer } from "@crm/types";
 const RPC = createRpcClient(import.meta.env.VITE_API_URL ?? "/rpc");
 
 export function TransfersPage() @{
-  const [transfers, setTransfers] = useState<Transfer[]>([]);
   const [search, setSearch] = useState("");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
-  const [refreshKey, setRefreshKey] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  useEffect(() => {
-    let cancelled = false;
-    const load = async () => {
-      setLoading(true);
-      setLoadError(null);
-      try {
-        const result = (await (RPC as RpcClient).transfers.list({
-          search,
-          date_from: dateFrom.length === 0 ? null : dateFrom,
-          date_to: dateTo.length === 0 ? null : dateTo,
-          limit: 100,
-        })) as Transfer[];
-        if (!cancelled) {
-          setTransfers(result);
-        }
-      } catch {
-        if (!cancelled) {
-          setLoadError(t("transfers.loadError"));
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    };
-    void load();
-    return () => {
-      cancelled = true;
-    };
-  }, [search, dateFrom, dateTo, refreshKey]);
+  // Carga vía useFetch (centraliza cancelled+finally).
+  const transfersFetch = useFetch<Transfer[]>(
+    () =>
+      (RPC as RpcClient).transfers.list({
+        search,
+        date_from: dateFrom.length === 0 ? null : dateFrom,
+        date_to: dateTo.length === 0 ? null : dateTo,
+        limit: 100,
+      }) as Promise<Transfer[]>,
+    [search, dateFrom, dateTo],
+  );
+  const transfers = transfersFetch.data ?? [];
+  const loading = transfersFetch.loading;
+  const loadError = transfersFetch.error;
 
   const handleDelete = async (transferId: string) => {
     setDeletingId(transferId);
     try {
       await (RPC as RpcClient).transfers.remove({ tran_id: transferId });
       setDeletingId(null);
-      setRefreshKey((k) => k + 1);
+      transfersFetch.refetch();
     } catch {
       setDeletingId(null);
-      setLoadError(t("transfers.loadError"));
+      setDeleteError(t("transfers.loadError"));
     }
   };
 
@@ -133,20 +117,11 @@ export function TransfersPage() @{
         </>
       }
       emptyState={
-        <div
-          data-component="transfers-list-empty"
-          class="flex flex-col items-center rounded-lg border border-dashed border-border bg-surface px-6 py-16 text-center"
-        >
-          <div class="mb-4 text-text-secondary">
-            <Icon name="arrows-left-right" size={48} />
-          </div>
-          <h2 class="text-lg font-semibold text-text-primary">
-            {t("transfers.listEmpty.noTransfers")}
-          </h2>
-          <p class="mt-2 max-w-sm text-sm text-text-secondary">
-            {t("transfers.listEmpty.noTransfersBody")}
-          </p>
-        </div>
+        <EmptyState
+          icon={<Icon name="arrows-left-right" size={48} />}
+          title={t("transfers.listEmpty.noTransfers")}
+          description={t("transfers.listEmpty.noTransfersBody")}
+        />
       }
     >
       <ul class="flex flex-col gap-3">
