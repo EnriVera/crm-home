@@ -1,9 +1,11 @@
 import { useEffect, useRef } from "octane";
+import { hydrateRoot, type Root } from "octane";
 import {
   getCurrentPath,
   installClientRouter,
   subscribe,
 } from "./client-router.ts";
+import { getContentRoot, setContentRoot } from "./root-singleton.ts";
 
 /**
  * Client-side router mount point for the octane fullstack shell.
@@ -15,20 +17,30 @@ import {
  *
  *  1. On mount: `installClientRouter()` wires up the global click interceptor
  *     and `popstate` listener (idempotent — see `client-router.ts`).
- *  2. On every URL change after the initial mount: fetches the new HTML, swaps
- *     the `<main id="content">` innerHTML, updates the `<script
- *     id="__octane_data">` payload, and dynamically re-imports the route
- *     entry so octane's `delegateEvents` rebinds handlers on the new SSR'd
- *     markup.
- *  3. Restores scroll position to top + moves focus to the page `<h1>` for
- *     accessibility (screen readers announce the new view).
+ *  2. On every URL change after the initial mount: fetches the new SSR HTML,
+ *     swaps `<main id="content">` with the new content, updates the
+ *     `<script id="__octane_data">` payload, dynamically imports the new
+ *     route module from `__octane_data.entry`, and re-hydrates the new page
+ *     component via `octane.hydrateRoot()` (first SPA nav) or
+ *     `root.render(NewPage)` (subsequent navs).
  *
- * Tradeoff: state local to the previous page's component instance
- * (`useState`, `useReducer`) is lost on navigation — same as Next/Remix when
- * they re-render a segment. Server-fetched state is rehydrated because the
- * route module re-runs its RPC calls on mount. For state that needs to
- * survive navigation, use `octane/signals` (`signal$ / query$`) — out of
- * scope here.
+ * Why `hydrateRoot`/`root.render` and not just `innerHTML =`:
+ * - Plain `innerHTML` swap leaves the new DOM un-hydrated. The page
+ *   component never mounts, its `useEffect` never runs, and the
+ *   `useState(true)` loading flag stays stuck forever — exactly the
+ *   "skeleton que no se va" bug the user reported.
+ * - `hydrateRoot` adopts the SSR HTML and mounts the component; subsequent
+ *   navigations use `root.render(NewPage)` which tears down the old page
+ *   and mounts the new one. Both routes go through the same code path so
+ *   the loading/empty/error states behave identically to a hard reload.
+ *
+ * Tradeoff: the entry point's initial `Root` (on `#root`) briefly owns
+ * `<main>` before the first SPA nav. The reference becomes orphaned after
+ * the swap but this is harmless in practice — see `root-singleton.ts` for
+ * the rationale.
+ *
+ * Accessibility: scroll to top + move focus to the page `<h1>` on every
+ * navigation (screen readers announce the new view).
  *
  * The component renders no DOM. Mount it exactly once inside the shell.
  */
@@ -70,43 +82,117 @@ async function syncRoute(path: string): Promise<void> {
       return;
     }
 
-    currentMain.innerHTML = newMain.innerHTML;
-
+    // Update the route data so any subsequent code (or a re-fetch) sees the
+    // new entry. Must happen BEFORE the dynamic import so the resolved
+    // module path matches what the SSR says is the entry.
     const newData = doc.querySelector("#__octane_data");
     const currentData = document.querySelector("#__octane_data");
     if (newData !== null && currentData !== null) {
       currentData.textContent = newData.textContent;
     }
+    const routeData: {
+      entry?: string;
+      exportName?: string | null;
+      params?: Record<string, string>;
+      url?: string;
+    } = JSON.parse(currentData?.textContent ?? "{}");
 
-    // Re-evaluate the route entry so module-level work (compiled
-    // `delegateEvents` registrations, `injectStyle` for sibling-scoped styles,
-    // side-effect imports) runs against the new DOM. The `?import` suffix
-    // matches the format octane's hydrate virtual uses for `routeModules`.
-    const dataText = currentData?.textContent;
-    if (typeof dataText === "string" && dataText.length > 0) {
-      try {
-        const payload = JSON.parse(dataText) as { entry?: string };
-        if (typeof payload.entry === "string") {
-          await import(/* @vite-ignore */ `${payload.entry}?import`);
-        }
-      } catch {
-        // Malformed payload: not catastrophic — the SSR markup is already in
-        // place and the page just won't have its compiled side-effects.
-      }
+    if (typeof routeData.entry !== "string") {
+      globalThis.location.assign(path);
+      return;
     }
 
-    // Accessibility: scroll to top + move focus to the page heading so screen
-    // readers announce the new view. The `<h1>` is a stable contract in this
-    // app: every page has one.
+    // Swap the SSR HTML into the live <main>. hydrateRoot (next step) will
+    // adopt these nodes.
+    currentMain.innerHTML = newMain.innerHTML;
+
+    // Dynamic import of the route module. Octane vite serves `.tsrx` files
+    // through `?import`; ordinary `.ts`/`.js` URLs are unchanged.
+    const entryUrl = new URL(routeData.entry, globalThis.location.href);
+    if (
+      entryUrl.pathname.endsWith(".tsrx") &&
+      !entryUrl.searchParams.has("import")
+    ) {
+      const existing = entryUrl.search.slice(1);
+      entryUrl.search = existing.length > 0 ? `?import&${existing}` : "?import";
+    }
+    const PageModule = (await import(
+      /* @vite-ignore */ entryUrl.href
+    )) as Record<string, unknown>;
+    const Page = getComponentExport(
+      PageModule,
+      routeData.exportName ?? undefined,
+    );
+    if (typeof Page !== "function") {
+      console.error(
+        "[client-router] route entry has no component export:",
+        routeData.entry,
+        routeData.exportName,
+      );
+      globalThis.location.assign(path);
+      return;
+    }
+
+    const existingRoot = getContentRoot();
+    const pageProps = {
+      params: routeData.params ?? {},
+      url: path,
+    };
+    // Octane invokes ComponentBody as `(props, scope, extra)`. The .tsrx
+    // `@{ ... }` shorthand compiles to a body that reads `block` from the
+    // scope arg, so passing only props throws "Cannot read properties of
+    // undefined (reading 'block')". Forward all three args verbatim.
+    const pageBody = (
+      props: typeof pageProps,
+      scope: unknown,
+      extra: unknown,
+    ): unknown => (Page as (p: typeof pageProps, s: unknown, e: unknown) => unknown)(
+      props,
+      scope,
+      extra,
+    );
+    if (existingRoot !== null) {
+      // Subsequent SPA nav: octane tears down the old page and mounts the
+      // new one in place. The same <main> stays mounted in the shell.
+      existingRoot.render(pageBody);
+    } else {
+      // First SPA nav after hydration: hydrateRoot adopts the swapped SSR
+      // HTML and mounts the new page component on top of it.
+      const root = hydrateRoot(currentMain, pageBody);
+      setContentRoot(root);
+    }
+
+    // Accessibility: scroll to top + focus the page heading so screen
+    // readers announce the new view.
     globalThis.scrollTo({ top: 0, behavior: "instant" });
     const heading = currentMain.querySelector("h1");
     if (heading instanceof HTMLElement) {
       heading.setAttribute("tabindex", "-1");
       heading.focus({ preventScroll: true });
     }
-  } catch {
-    // Network or parse error: bail to a real navigation so the user is not
-    // stranded on stale content.
+  } catch (error) {
+    console.error(
+      "[client-router] syncRoute failed, falling back to full reload",
+      error,
+    );
     globalThis.location.assign(path);
   }
+}
+
+function getComponentExport(
+  mod: Record<string, unknown>,
+  exportName: string | undefined,
+): unknown {
+  if (exportName !== undefined && typeof mod[exportName] === "function") {
+    return mod[exportName];
+  }
+  if (typeof mod.default === "function") {
+    return mod.default;
+  }
+  for (const [key, value] of Object.entries(mod)) {
+    if (typeof value === "function" && /^[A-Z]/.test(key)) {
+      return value;
+    }
+  }
+  return undefined;
 }
