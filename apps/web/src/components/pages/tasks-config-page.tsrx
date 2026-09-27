@@ -5,6 +5,8 @@ import { Button } from "../atoms/button.tsrx";
 import { StatusMessage } from "../atoms/status-message.tsrx";
 import { TaskStateForm } from "../organisms/task-state-form/task-state-form.tsrx";
 import { DataList } from "../molecules/data-list.tsrx";
+import { EmptyState } from "../molecules/empty-state.tsrx";
+import { useFetch } from "../../hooks/use-fetch";
 import {
   buildStateSubmitParams,
   type TaskStateFormMode,
@@ -77,41 +79,26 @@ function CloseIcon() @{
 }
 
 export function TasksConfigPage() @{
-  const [states, setStates] = useState<TaskState[]>([]);
-  const [refreshKey, setRefreshKey] = useState(0);
   const [editing, setEditing] = useState<TaskStateFormMode | null>(null);
   const [editingState, setEditingState] = useState<TaskState | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  // Estado de carga: arranca en true para evitar flash del empty state en
-  // hard reload (mismo motivo que en tasks-page).
-  const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState<string | null>(null);
 
-  // Carga de estados.
-  useEffect(() => {
-    let cancelled = false;
-    const load = async () => {
-      setLoading(true);
-      setLoadError(null);
-      try {
-        const result = (await (RPC as RpcClient).tasks.states.list()) as TaskState[];
-        if (!cancelled) {
-          setStates(result);
-          setLoading(false);
-        }
-      } catch {
-        if (!cancelled) {
-          setLoadError(t("tasks.configLoadError"));
-          setLoading(false);
-        }
-      }
-    };
-    void load();
-    return () => {
-      cancelled = true;
-    };
-  }, [refreshKey]);
+  // Carga de estados vía useFetch (centraliza cancelled+finally y arregla
+  // el bug latente: este useEffect no tenía finally — si la RPC se colgaba,
+  // loading quedaba en true para siempre).
+  const statesFetch = useFetch<TaskState[]>(
+    () =>
+      (RPC as RpcClient).tasks.states.list() as Promise<TaskState[]>,
+    [],
+  );
+  const states = statesFetch.data ?? [];
+  const loading = statesFetch.loading;
+  const loadError = statesFetch.error;
+
+  function refresh(): void {
+    statesFetch.refetch();
+  }
 
   // Escape cierra drawer / modal.
   useEffect(() => {
@@ -156,7 +143,7 @@ export function TasksConfigPage() @{
     }
     setEditing(null);
     setEditingState(null);
-    setRefreshKey((k) => k + 1);
+    refresh();
   };
 
   const handleDelete = async (): Promise<void> => {
@@ -166,7 +153,7 @@ export function TasksConfigPage() @{
         tast_id: deletingId,
       });
       setDeletingId(null);
-      setRefreshKey((k) => k + 1);
+      refresh();
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "delete failed",
@@ -186,14 +173,14 @@ export function TasksConfigPage() @{
     const next = [...states];
     [next[idx], next[swapWith]] = [next[swapWith]!, next[idx]!];
     const reordered = next.map((s, i) => ({ tast_id: s.tast_id, tast_order: i }));
-    setStates(next.map((s, i) => ({ ...s, tast_order: i })));
     try {
       await (RPC as RpcClient).tasks.states.reorder(reordered);
+      refresh();
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "reorder failed",
       );
-      setRefreshKey((k) => k + 1);
+      refresh();
     }
   };
 
@@ -239,27 +226,23 @@ export function TasksConfigPage() @{
         </>
       }
       emptyState={
-        <div
-          data-component="states-list-empty"
-          class="flex flex-col items-center rounded-lg border border-dashed border-border bg-surface px-6 py-12 text-center"
-        >
-          <h2 class="text-base font-semibold text-text-primary">
-            {t("tasks.state.empty")}
-          </h2>
-          <p class="mt-2 max-w-sm text-sm text-text-secondary">
-            Los estados son las columnas del kanban. Empezá creando el primero.
-          </p>
-          <Button
-            variant="primary"
-            onClick={() => {
-              setEditing("create");
-              setEditingState(null);
-            }}
-            class="mt-6"
-          >
-            {t("tasks.statuses.add")}
-          </Button>
-        </div>
+        <EmptyState
+          kind="empty"
+          padding="py-12"
+          title={t("tasks.state.empty")}
+          description="Los estados son las columnas del kanban. Empezá creando el primero."
+          action={
+            <Button
+              variant="primary"
+              onClick={() => {
+                setEditing("create");
+                setEditingState(null);
+              }}
+            >
+              {t("tasks.statuses.add")}
+            </Button>
+          }
+        />
       }
     >
       <ul data-component="task-states-list" class="flex flex-col gap-3">
