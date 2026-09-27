@@ -12,6 +12,9 @@ import { GetTask } from "../application/tasks/get-task";
 import { ListCategoriesByType } from "../application/tasks/list-categories-by-type";
 import { ListClientsForSelector } from "../application/tasks/list-clients-for-selector";
 import { ListClients } from "../application/clients/list-clients";
+import { CreateClient } from "../application/clients/create-client";
+import { UpdateClient } from "../application/clients/update-client";
+import { DeleteClient } from "../application/clients/delete-client";
 import { createListClientsHandler } from "./clients/clients-routes";
 import { ListTaskStates } from "../application/tasks/list-task-states";
 import { ListTasks } from "../application/tasks/list-tasks";
@@ -30,6 +33,7 @@ import {
 import { createDatabase } from "../infrastructure/kysely/database";
 import { KyselyCategoryLookupRepository } from "../infrastructure/kysely/category-lookup-repository";
 import { KyselyClientLookupRepository } from "../infrastructure/kysely/client-lookup-repository";
+import { KyselyClientRepository } from "../infrastructure/kysely/client-repository";
 import { KyselyEmailSendingRepository } from "../infrastructure/kysely/email-sending-repository";
 import { KyselyLoginRepository } from "../infrastructure/kysely/login-repository";
 import { KyselySessionRepository } from "../infrastructure/kysely/session-repository";
@@ -107,6 +111,7 @@ export function createCompositionRoot(
     const taskRepository = new KyselyTaskRepository(db);
     const taskStateRepository = new KyselyTaskStateRepository(db);
     const clientLookupRepository = new KyselyClientLookupRepository(db);
+    const clientRepository = new KyselyClientRepository(db);
     const typeLookupRepository = new KyselyTypeLookupRepository(db);
     const categoryLookupRepository = new KyselyCategoryLookupRepository(db);
 
@@ -169,7 +174,15 @@ export function createCompositionRoot(
       transactionManager,
     });
     const listClients = new ListClients({ clientLookupRepository });
-    const listClientsHandler = createListClientsHandler({ listClients });
+    const createClient = new CreateClient({ clientRepository });
+    const updateClient = new UpdateClient({ clientRepository });
+    const deleteClient = new DeleteClient({ clientRepository });
+    const listClientsHandler = createListClientsHandler({
+      listClients,
+      createClient,
+      updateClient,
+      deleteClient,
+    });
     const listClientsForSelector = new ListClientsForSelector({
       clientLookupRepository,
     });
@@ -182,6 +195,9 @@ export function createCompositionRoot(
 
     const rpcHandler = createRpcHandler({
       listClients,
+      createClient,
+      updateClient,
+      deleteClient,
       listClientsHandler,
       getHealth,
       requestOtp,

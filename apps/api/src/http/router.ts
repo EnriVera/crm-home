@@ -30,7 +30,11 @@ import {
   invokeH3HandlerAndParse,
 } from "./orpc-bridge";
 import {
+  createClientHandler,
+  createGetClientHandler,
   createListClientsHandler,
+  deleteClientHandler,
+  updateClientHandler,
   type ClientsRouteDependencies,
 } from "./clients/clients-routes";
 
@@ -119,6 +123,10 @@ export function createRpcHandler(
   );
   const clientsSearchH3 = asBridgeHandler(createListClientsSearchHandler(deps));
   const listClientsH3 = asBridgeHandler(createListClientsHandler(deps));
+  const getClientH3 = asBridgeHandler(createGetClientHandler(deps));
+  const createClientH3 = asBridgeHandler(createClientHandler(deps));
+  const updateClientH3 = asBridgeHandler(updateClientHandler(deps));
+  const deleteClientH3 = asBridgeHandler(deleteClientHandler(deps));
 
   const typesForFormH3 = createListTypesForFormHandler(deps);
   const categoriesByTypeH3 = createListCategoriesByTypeHandler(deps);
@@ -262,6 +270,26 @@ export function createRpcHandler(
       // Usamos wrapPost para que el body se inyecte como query string
       // (los handlers leen via `getQuery(event)` consistentemente con tasks).
       run: wrapPost(listClientsH3, "/clients/list"),
+    },
+    {
+      method: "POST",
+      path: "/clients/get",
+      run: wrapPost(getClientH3, "/clients/get"),
+    },
+    {
+      method: "POST",
+      path: "/clients/create",
+      run: wrapPost(createClientH3, "/clients/create"),
+    },
+    {
+      method: "POST",
+      path: "/clients/update",
+      run: wrapPost(updateClientH3, "/clients/update"),
+    },
+    {
+      method: "POST",
+      path: "/clients/remove",
+      run: wrapPost(deleteClientH3, "/clients/remove"),
     },
   ];
 
