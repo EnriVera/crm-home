@@ -1,11 +1,11 @@
-import { sql, type Kysely, type Transaction } from "kysely";
-import type { ClientRepository } from "../../domain/ports/client-repository.ts";
-import type { ClientRow } from "../../domain/tasks/types.ts";
-import type { Database } from "./database.ts";
-import { mapClientRow, type ClientDbRow } from "./_mappers.ts";
+import { sql } from "kysely";
+import type { ClientRepository } from "../../domain/ports/client-repository";
+import type { ClientRow } from "../../domain/tasks/types";
+import type { Database } from "./database";
+import { mapClientRow, type ClientDbRow } from "./_mappers";
 
 /**
- * Adapter kysely de `ClientRepository`. Implementa las 4 operaciones CRUD
+ * Adapter kysely de `ClientRepository`. Implementa las 5 operaciones CRUD
  * de /clients:
  *
  *  - `list`: filtro por user + search ILIKE sobre `clie_name`, cap a
@@ -18,23 +18,14 @@ import { mapClientRow, type ClientDbRow } from "./_mappers.ts";
  *  - `update`: solo actualiza los campos provistos (los `undefined` se
  *    omiten del UPDATE). Si no se pasa ningún campo, es no-op y retorna
  *    la fila sin cambios.
- *  - `softDelete`: setea `clie_deleted_at = NOW()`. Idempotente: si ya
- *    estaba borrado, actualiza la fecha de todos modos (operación
- *    consistente con `update`).
+ *  - `softDelete`: setea `clie_deleted_at = NOW()`. Idempotente.
  *
  * Multi-tenant isolation: TODAS las queries filtran por `clie_user_id`
  * (inyectado por el handler desde el dispatch wrapper). Nunca aceptar
  * un `userId` del input del cliente.
- *
- * Todas las operaciones aceptan opcionalmente una transacción para
- * componer con otras en el mismo `trx`.
  */
 export class KyselyClientRepository implements ClientRepository {
-  constructor(private readonly db: Kysely<Database>) {}
-
-  private dbOrTrx(trx?: Transaction<Database>): Kysely<Database> | Transaction<Database> {
-    return trx ?? this.db;
-  }
+  constructor(private readonly db: Database) {}
 
   async list(params: {
     userId: string;
