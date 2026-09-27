@@ -202,5 +202,52 @@
       "cancel": "Cancelar",
       "submitting": "Guardando..."
     }
+  },
+  "incomes": {
+    "page": {
+      "title": "Ingresos",
+      "add": "Nuevo ingreso"
+    },
+    "search": {
+      "placeholder": "Buscar por descripción o categoría...",
+      "label": "Buscar"
+    },
+    "fields": {
+      "account": "Cuenta (UUID)",
+      "currency": "Moneda (UUID)",
+      "amount": "Monto",
+      "date": "Fecha",
+      "dateFrom": "Desde",
+      "dateTo": "Hasta",
+      "description": "Descripción",
+      "category": "Categoría"
+    },
+    "listEmpty": {
+      "noIncomes": "No hay ingresos todavía",
+      "noIncomesBody": "Cuando registres ingresos van a aparecer acá.",
+      "noResults": "Sin resultados",
+      "noResultsBody": "Probá con otro término de búsqueda o rango de fechas."
+    },
+    "loadError": "No pudimos cargar los ingresos. Intentá de nuevo.",
+    "create": {
+      "title": "Nuevo ingreso",
+      "submit": "Crear ingreso"
+    },
+    "edit": {
+      "title": "Editar ingreso",
+      "submit": "Guardar cambios"
+    },
+    "detail": {
+      "title": "Detalle del ingreso",
+      "created": "Creado",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "confirmDelete": "¿Eliminar este ingreso? Esta acción no se puede deshacer.",
+      "deleted": "Ingreso eliminado"
+    },
+    "form": {
+      "cancel": "Cancelar",
+      "submitting": "Guardando..."
+    }
   }
 }

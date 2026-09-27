@@ -1,6 +1,6 @@
-import { PlaceholderPage } from "../components/pages/placeholder-page.tsrx";
+import { ExpensesPage } from "../components/pages/expenses-page.tsrx";
 
-/** Entry de `/expenses` (ruta del shell, D5): placeholder sin lógica de módulos. */
+/** Entry de `/expenses` (reemplaza el placeholder). */
 export function ExpensesRoute() @{
-  <PlaceholderPage />
+  <ExpensesPage />
 }
