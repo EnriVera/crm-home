@@ -53,13 +53,22 @@ import {
   updateExpenseHandler,
   type ExpensesRouteDependencies,
 } from "./expenses/expenses-routes";
+import {
+  createGetTransferHandler,
+  createListTransfersHandler,
+  createTransferHandler,
+  removeTransferHandler,
+  updateTransferHandler,
+  type TransfersRouteDependencies,
+} from "./transfers/transfers-routes";
 
 export interface RouterDependencies
   extends AuthRouteDependencies,
     TasksRouteDependencies,
     ClientsRouteDependencies,
     IncomesRouteDependencies,
-    ExpensesRouteDependencies {
+    ExpensesRouteDependencies,
+    TransfersRouteDependencies {
   getHealth: GetHealth;
   listClientsHandler: ReturnType<typeof createListClientsHandler>;
 }
@@ -157,6 +166,12 @@ export function createRpcHandler(
   const createExpenseH3 = asBridgeHandler(createExpenseHandler(deps));
   const updateExpenseH3 = asBridgeHandler(updateExpenseHandler(deps));
   const removeExpenseH3 = asBridgeHandler(removeExpenseHandler(deps));
+
+  const listTransfersH3 = asBridgeHandler(createListTransfersHandler(deps));
+  const getTransferH3 = asBridgeHandler(createGetTransferHandler(deps));
+  const createTransferH3 = asBridgeHandler(createTransferHandler(deps));
+  const updateTransferH3 = asBridgeHandler(updateTransferHandler(deps));
+  const removeTransferH3 = asBridgeHandler(removeTransferHandler(deps));
 
   const typesForFormH3 = createListTypesForFormHandler(deps);
   const categoriesByTypeH3 = createListCategoriesByTypeHandler(deps);
@@ -370,6 +385,31 @@ export function createRpcHandler(
       method: "POST",
       path: "/expenses/remove",
       run: wrapPost(removeExpenseH3, "/expenses/remove"),
+    },
+    {
+      method: "POST",
+      path: "/transfers/list",
+      run: wrapPost(listTransfersH3, "/transfers/list"),
+    },
+    {
+      method: "POST",
+      path: "/transfers/get",
+      run: wrapPost(getTransferH3, "/transfers/get"),
+    },
+    {
+      method: "POST",
+      path: "/transfers/create",
+      run: wrapPost(createTransferH3, "/transfers/create"),
+    },
+    {
+      method: "POST",
+      path: "/transfers/update",
+      run: wrapPost(updateTransferH3, "/transfers/update"),
+    },
+    {
+      method: "POST",
+      path: "/transfers/remove",
+      run: wrapPost(removeTransferH3, "/transfers/remove"),
     },
   ];
 
