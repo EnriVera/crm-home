@@ -44,13 +44,13 @@ export function TransfersPage() @{
         })) as Transfer[];
         if (!cancelled) {
           setTransfers(result);
-          setLoading(false);
         }
       } catch {
         if (!cancelled) {
           setLoadError(t("transfers.loadError"));
-          setLoading(false);
         }
+      } finally {
+        if (!cancelled) setLoading(false);
       }
     };
     void load();

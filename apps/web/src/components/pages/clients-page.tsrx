@@ -63,13 +63,13 @@ export function ClientsPage() @{
               client_phone: c.client_phone,
             })),
           );
-          setLoading(false);
         }
       } catch {
         if (!cancelled) {
           setLoadError(t("clients.loadError"));
-          setLoading(false);
         }
+      } finally {
+        if (!cancelled) setLoading(false);
       }
     };
     void load();

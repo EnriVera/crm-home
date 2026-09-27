@@ -185,13 +185,13 @@ export function TasksPage() @{
         })) as TaskRow[];
         if (!cancelled) {
           setTasks(result);
-          setLoading(false);
         }
       } catch {
         if (!cancelled) {
           setLoadError(t("tasks.listLoadError"));
-          setLoading(false);
         }
+      } finally {
+        if (!cancelled) setLoading(false);
       }
     };
     void load();

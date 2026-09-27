@@ -50,13 +50,18 @@ export function IncomesPage() @{
         })) as Income[];
         if (!cancelled) {
           setIncomes(result);
-          setLoading(false);
         }
       } catch {
         if (!cancelled) {
           setLoadError(t("incomes.loadError"));
-          setLoading(false);
         }
+      } finally {
+        // `finally` SIEMPRE corre (success, error, o early return por cancelled).
+        // Si el componente se unmounteó antes de la respuesta, React ignora
+        // el setState silenciosamente — sin warning. Esto evita que la
+        // animación de loading quede atascada para siempre en errores
+        // que llegan después del navigate.
+        if (!cancelled) setLoading(false);
       }
     };
     void load();

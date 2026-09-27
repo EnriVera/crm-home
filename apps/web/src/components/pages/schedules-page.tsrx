@@ -34,13 +34,13 @@ export function SchedulesPage() @{
         })) as Schedule[];
         if (!cancelled) {
           setSchedules(result);
-          setLoading(false);
         }
       } catch {
         if (!cancelled) {
           setLoadError(t("schedules.loadError"));
-          setLoading(false);
         }
+      } finally {
+        if (!cancelled) setLoading(false);
       }
     };
     void load();

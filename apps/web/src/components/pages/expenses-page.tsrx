@@ -45,13 +45,13 @@ export function ExpensesPage() @{
         })) as Expense[];
         if (!cancelled) {
           setExpenses(result);
-          setLoading(false);
         }
       } catch {
         if (!cancelled) {
           setLoadError(t("expenses.loadError"));
-          setLoading(false);
         }
+      } finally {
+        if (!cancelled) setLoading(false);
       }
     };
     void load();
