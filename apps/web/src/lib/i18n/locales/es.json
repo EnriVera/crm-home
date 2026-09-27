@@ -23,6 +23,8 @@
     "collapse": "Colapsar navegación",
     "expand": "Expandir navegación",
     "close": "Cerrar",
+    "logout": "Salir",
+    "loggingOut": "Saliendo...",
     "placeholder": "Esta sección está en construcción. La navegación y el tema ya funcionan; el módulo llega en una próxima entrega.",
     "redirectFallback": "Ir a iniciar sesión"
   },
