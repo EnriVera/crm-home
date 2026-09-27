@@ -48,22 +48,16 @@ export function DashboardPage() @{
     const load = async () => {
       setLoading(true);
       try {
-        const [incomeRes, expenseRes, transferRes] = await Promise.allSettled([
+        const [incomeRes, expenseRes, transferRes] = await Promise.all([
           (RPC as RpcClient).incomes.list({ search: "", date_from: dateFrom, date_to: null, limit: 100 }),
           (RPC as RpcClient).expenses.list({ search: "", date_from: dateFrom, date_to: null, limit: 100 }),
           (RPC as RpcClient).transfers.list({ search: "", date_from: dateFrom, date_to: null, limit: 100 }),
         ]);
 
         if (cancelled) return;
-        if (incomeRes.status === "fulfilled") {
-          setIncomeMonth(compute(incomeRes.value as Array<{ amount: string }>));
-        }
-        if (expenseRes.status === "fulfilled") {
-          setExpenseMonth(compute(expenseRes.value as Array<{ amount: string }>));
-        }
-        if (transferRes.status === "fulfilled") {
-          setTransferMonth(compute(transferRes.value as Array<{ amount: string }>));
-        }
+        setIncomeMonth(compute(incomeRes as Array<{ amount: string }>));
+        setExpenseMonth(compute(expenseRes as Array<{ amount: string }>));
+        setTransferMonth(compute(transferRes as Array<{ amount: string }>));
         setLoading(false);
       } catch {
         if (!cancelled) setLoading(false);
