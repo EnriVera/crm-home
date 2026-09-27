@@ -1,6 +1,4 @@
-import type {
-  TransferRepository,
-} from "../../domain/ports/transfer-repository";
+import type { TransferRepository } from "../../domain/ports/transfer-repository";
 import type { TransferRow } from "../../domain/tasks/types";
 import { InvalidTransferInput, TransferNotFound } from "./errors";
 
@@ -31,7 +29,11 @@ export class UpdateTransfer {
       }
       input = { ...input, amount: numAmount.toFixed(4) };
     }
-    if (input.description !== undefined && input.description !== null && input.description.length > 500) {
+    if (
+      input.description !== undefined &&
+      input.description !== null &&
+      input.description.length > 500
+    ) {
       throw new InvalidTransferInput("description exceeds 500 chars");
     }
 
