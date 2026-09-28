@@ -21,15 +21,23 @@ export const verifyOtpOutputSchema = z.object({
   verdict: verdictSchema,
 });
 
+export const themeSettingSchema = z.enum(["light", "dark", "system"]);
+export type ThemeSetting = z.infer<typeof themeSettingSchema>;
+
 export const sessionOutputSchema = z.object({
   user: z.object({
     id: z.string().uuid(),
     email: z.string().email(),
     name: z.string(),
+    userTheme: themeSettingSchema,
   }),
 });
 
 export const logoutOutputSchema = z.object({ ok: z.literal(true) });
+
+export const updateThemeInputSchema = z.object({
+  setting: themeSettingSchema,
+});
 
 export const authContract = oc.router({
   requestOtp: oc
@@ -45,5 +53,9 @@ export const authContract = oc.router({
     .output(logoutOutputSchema),
   session: oc
     .route({ method: "GET", path: "/auth/session" })
+    .output(sessionOutputSchema),
+  updateTheme: oc
+    .route({ method: "POST", path: "/auth/updateTheme" })
+    .input(updateThemeInputSchema)
     .output(sessionOutputSchema),
 });
