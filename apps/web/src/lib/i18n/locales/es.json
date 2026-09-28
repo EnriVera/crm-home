@@ -363,7 +363,18 @@
       "themeDark": "Oscuro",
       "themeSystem": "Sistema",
       "themeSaveError": "No se pudo guardar el tema. Reintentá."
-    }
+    },
+    "tab": {
+      "user": "Usuario",
+      "appearance": "Apariencia",
+      "types": "Tipos",
+      "categories": "Categorías",
+      "accounts": "Cuentas",
+      "apps": "Apps",
+      "currencies": "Monedas",
+      "attachments": "Adjuntos"
+    },
+    "comingSoon": "Próximamente"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -371,5 +382,8 @@
     "incomesThisMonth": "Ingresos del mes",
     "expensesThisMonth": "Gastos del mes",
     "transfersThisMonth": "Transferencias del mes"
+  },
+  "apps": {
+    "empty": "No hay módulos registrados."
   }
 }

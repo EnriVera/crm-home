@@ -4,6 +4,7 @@ import type { ContractRouterClient } from "@orpc/contract";
 import type {
  authContract,
  clientsContract,
+ configContract,
  expensesContract,
  incomesContract,
  schedulesContract,
@@ -48,6 +49,7 @@ export type IncomeRpcClient = ContractRouterClient<typeof incomesContract>;
 export type ExpenseRpcClient = ContractRouterClient<typeof expensesContract>;
 export type TransferRpcClient = ContractRouterClient<typeof transfersContract>;
 export type ScheduleRpcClient = ContractRouterClient<typeof schedulesContract>;
+export type ConfigRpcClient = ContractRouterClient<typeof configContract>;
 
 export interface RpcClient {
  auth: AuthRpcClient;
@@ -57,6 +59,7 @@ export interface RpcClient {
  expenses: ExpenseRpcClient;
  transfers: TransferRpcClient;
  schedules: ScheduleRpcClient;
+ config: ConfigRpcClient;
 }
 
 export function createRpcClient(baseURL: string): RpcClient {
@@ -131,5 +134,6 @@ export function createRpcClient(baseURL: string): RpcClient {
   expenses: createORPCClient(link, { path: ["expenses"] }),
   transfers: createORPCClient(link, { path: ["transfers"] }),
   schedules: createORPCClient(link, { path: ["schedules"] }),
+  config: createORPCClient(link, { path: ["config"] }),
  };
 }
