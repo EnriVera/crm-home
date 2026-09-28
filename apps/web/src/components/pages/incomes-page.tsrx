@@ -7,7 +7,7 @@ import { DataList } from "../molecules/data-list.tsrx";
 import { EmptyState } from "../molecules/empty-state.tsrx";
 import { IncomeListItem } from "../molecules/income-list-item.tsrx";
 import { IncomeForm } from "../organisms/income-form/income-form.tsrx";
-import { useFetch } from "../../hooks/use-fetch";
+import { useOctaneQuery } from "../../hooks/use-octane-query";
 import type { Income } from "@crm/types";
 
 /**
@@ -34,8 +34,9 @@ export function IncomesPage() @{
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
-  // Carga vía useFetch (centraliza cancelled+finally).
-  const incomesFetch = useFetch<Income[]>(
+  // Carga vía useOctaneQuery (deduplicación + cancelled + finally vía
+  // QueryObserver; misma contract surface que useFetch).
+  const incomesQuery = useOctaneQuery<Income[]>(
     () =>
       (RPC as RpcClient).incomes.list({
         search,
@@ -45,9 +46,9 @@ export function IncomesPage() @{
       }) as Promise<Income[]>,
     [search, dateFrom, dateTo],
   );
-  const incomes = incomesFetch.data ?? [];
-  const loading = incomesFetch.loading;
-  const loadError = incomesFetch.error;
+  const incomes = incomesQuery.data ?? [];
+  const loading = incomesQuery.loading;
+  const loadError = incomesQuery.error;
 
   const handleCreate = async (payload: {
     inco_account_id: string;
@@ -59,7 +60,7 @@ export function IncomesPage() @{
   }) => {
     setCreateOpen(false);
     await (RPC as RpcClient).incomes.create(payload);
-    incomesFetch.refetch();
+    incomesQuery.refetch();
   };
 
   const handleDelete = async (incomeId: string) => {
@@ -68,7 +69,7 @@ export function IncomesPage() @{
     try {
       await (RPC as RpcClient).incomes.remove({ inco_id: incomeId });
       setDeletingId(null);
-      incomesFetch.refetch();
+      incomesQuery.refetch();
     } catch {
       setDeletingId(null);
       setDeleteError(t("incomes.loadError"));
