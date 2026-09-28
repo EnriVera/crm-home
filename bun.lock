@@ -50,6 +50,7 @@
         "@fontsource/poppins": "5.3.0",
         "@octanejs/dnd-kit": "0.1.50",
         "@octanejs/lexical": "0.1.56",
+        "@octanejs/nuqs": "0.1.45",
         "@octanejs/phosphor-icons": "0.0.35",
         "@octanejs/resizable-panels": "0.0.14",
         "@octanejs/sonner": "0.1.51",
@@ -299,6 +300,8 @@
     "@octanejs/floating-ui": ["@octanejs/floating-ui@0.1.56", "", { "dependencies": { "@floating-ui/dom": "^1.8.0", "@floating-ui/utils": "^0.2.12", "tabbable": "^6.5.0" }, "peerDependencies": { "octane": "^0.5.0" } }, "sha512-zrFXf5C1ZdeP1e6dg2Jk5btHFYBYZqYXZh3qEsn92Kp9MP2dRb+zQ0XdJenKsQ0rLRUqpC0T1nf2gQWnlOFKXQ=="],
 
     "@octanejs/lexical": ["@octanejs/lexical@0.1.56", "", { "dependencies": { "@lexical/devtools-core": "0.46.0", "@lexical/dragon": "0.46.0", "@lexical/extension": "0.46.0", "@lexical/hashtag": "0.46.0", "@lexical/history": "0.46.0", "@lexical/internal": "0.46.0", "@lexical/link": "0.46.0", "@lexical/list": "0.46.0", "@lexical/mark": "0.46.0", "@lexical/markdown": "0.46.0", "@lexical/overflow": "0.46.0", "@lexical/plain-text": "0.46.0", "@lexical/rich-text": "0.46.0", "@lexical/table": "0.46.0", "@lexical/text": "0.46.0", "@lexical/utils": "0.46.0", "@lexical/yjs": "0.46.0", "@octanejs/floating-ui": "0.1.56", "lexical": "0.46.0", "yjs": "^13.6.31" }, "peerDependencies": { "octane": "^0.5.0" } }, "sha512-Q+6e4TMNi2n/AcJMQV4jfGNsyyzBveqC8YTBro8It6IijiDixy/uc1B/mQuaRewk8vqOvzMKj44gdjRYlL6nPQ=="],
+
+    "@octanejs/nuqs": ["@octanejs/nuqs@0.1.45", "", { "dependencies": { "@standard-schema/spec": "1.1.0" }, "peerDependencies": { "octane": "^0.6.0" } }, "sha512-5gFnSrR7ye1HYwhKGAJAp6L+8e4IriopBs3Afb8iBA8CPLoBkabYwWIIG2a/rtOFzxQr+B8BAC7uAB/FLyOYNQ=="],
 
     "@octanejs/phosphor-icons": ["@octanejs/phosphor-icons@0.0.35", "", { "peerDependencies": { "octane": "^0.5.0" } }, "sha512-zeZhrJ84uN0g62I/Yf+ydOoYtX5UdhnMjUs92a7rkuUHneMvNYw/a7odwpYUC1n7uRAku89q3S8z8bJhOfQilA=="],
 
