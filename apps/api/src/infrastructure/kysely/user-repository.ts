@@ -1,17 +1,11 @@
-import type {
-  User,
-  UserRepository,
-} from "../../domain/ports/user-repository";
+import type { User, UserRepository } from "../../domain/ports/user-repository";
 import type { Transaction } from "../../domain/ports/transaction";
 import type { Database } from "./database";
 
 export class KyselyUserRepository implements UserRepository {
   constructor(private readonly db: Database) {}
 
-  async findById(
-    id: string,
-    trx?: Transaction,
-  ): Promise<User | undefined> {
+  async findById(id: string, trx?: Transaction): Promise<User | undefined> {
     const db = this.resolve(trx);
     const row = await db
       .selectFrom("user")

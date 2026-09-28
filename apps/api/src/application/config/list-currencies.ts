@@ -1,7 +1,7 @@
 import type { CurrencyRepository } from "../../domain/ports/currency-repository";
 
 export interface ListCurrenciesDependencies {
-  currencyRepository: CurrencyRepository;
+ currencyRepository: CurrencyRepository;
 }
 
 /**
@@ -11,11 +11,11 @@ export interface ListCurrenciesDependencies {
  * aunque el dato no sea per-user — `/config` es página autenticada.
  */
 export class ListCurrencies {
-  constructor(private readonly deps: ListCurrenciesDependencies) {}
+ constructor(private readonly deps: ListCurrenciesDependencies) {}
 
-  async execute(): Promise<
-    Array<{ id: string; name: string; symbol: string; decimals: number }>
-  > {
-    return this.deps.currencyRepository.list();
-  }
+ async execute(): Promise<
+  Array<{ id: string; name: string; symbol: string; decimals: number }>
+ > {
+  return this.deps.currencyRepository.list();
+ }
 }

@@ -2,9 +2,15 @@ import { describe, expect, test } from "bun:test";
 import { VerifyOtp } from "./verify-otp";
 import type { Clock } from "../../domain/ports/clock";
 import type { IdGenerator } from "../../domain/ports/id-generator";
-import type { Login, LoginRepository } from "../../domain/ports/login-repository";
+import type {
+  Login,
+  LoginRepository,
+} from "../../domain/ports/login-repository";
 import type { SecureComparator } from "../../domain/ports/secure-comparator";
-import type { Session, SessionRepository } from "../../domain/ports/session-repository";
+import type {
+  Session,
+  SessionRepository,
+} from "../../domain/ports/session-repository";
 import type { TokenHasher } from "../../domain/ports/token-hasher";
 import type { TransactionManager } from "../../domain/ports/transaction-manager";
 import type { Transaction } from "../../domain/ports/transaction";
@@ -68,10 +74,7 @@ class InMemoryLoginRepository implements LoginRepository {
     }
   }
 
-  async countRecentByEmail(
-    _email: string,
-    _since: Date,
-  ): Promise<number> {
+  async countRecentByEmail(_email: string, _since: Date): Promise<number> {
     return 0;
   }
 }
@@ -149,22 +152,26 @@ class FailingTransactionManager implements TransactionManager {
   }
 }
 
-function createUseCase(overrides: {
-  clock?: Clock;
-  idGenerator?: IdGenerator;
-  loginRepository?: InMemoryLoginRepository;
-  sessionRepository?: InMemorySessionRepository;
-  userRepository?: InMemoryUserRepository;
-  userSeedService?: UserSeedService;
-  comparator?: SecureComparator;
-  tokenHasher?: TokenHasher;
-  transactionManager?: TransactionManager;
-} = {}) {
+function createUseCase(
+  overrides: {
+    clock?: Clock;
+    idGenerator?: IdGenerator;
+    loginRepository?: InMemoryLoginRepository;
+    sessionRepository?: InMemorySessionRepository;
+    userRepository?: InMemoryUserRepository;
+    userSeedService?: UserSeedService;
+    comparator?: SecureComparator;
+    tokenHasher?: TokenHasher;
+    transactionManager?: TransactionManager;
+  } = {},
+) {
   const now = new Date("2025-01-15T12:00:00.000Z");
-  const loginRepository = overrides.loginRepository ?? new InMemoryLoginRepository();
+  const loginRepository =
+    overrides.loginRepository ?? new InMemoryLoginRepository();
   const sessionRepository =
     overrides.sessionRepository ?? new InMemorySessionRepository();
-  const userRepository = overrides.userRepository ?? new InMemoryUserRepository();
+  const userRepository =
+    overrides.userRepository ?? new InMemoryUserRepository();
   return {
     now,
     loginRepository,

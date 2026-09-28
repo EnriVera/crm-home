@@ -1,7 +1,4 @@
-import type {
-  App,
-  AppRepository,
-} from "../../domain/ports/app-repository";
+import type { App, AppRepository } from "../../domain/ports/app-repository";
 import type { Transaction } from "../../domain/ports/transaction";
 import type { Database } from "./database";
 

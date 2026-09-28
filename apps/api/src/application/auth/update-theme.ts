@@ -41,7 +41,8 @@ export class UpdateTheme {
   async execute(input: UpdateThemeInput): Promise<UpdateThemeOutput | null> {
     const now = this.deps.clock.now();
     const tokenHash = this.deps.tokenHasher.hash(input.token);
-    const session = await this.deps.sessionRepository.findByTokenHash(tokenHash);
+    const session =
+      await this.deps.sessionRepository.findByTokenHash(tokenHash);
 
     if (!session || session.deletedAt || session.expiresAt < now) {
       return null;
@@ -55,9 +56,7 @@ export class UpdateTheme {
     // RPC boundary, the use case is the last line of defense before
     // hitting the DB CHECK constraint (apps/api/migrations 001_initial
     // defines CHECK on user_theme IN ('light', 'dark', 'system')).
-    if (
-      !ALLOWED_THEMES.includes(input.setting as AllowedTheme)
-    ) {
+    if (!ALLOWED_THEMES.includes(input.setting as AllowedTheme)) {
       throw new InvalidThemeError(input.setting);
     }
 

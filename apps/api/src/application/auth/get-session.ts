@@ -2,10 +2,7 @@ import type { Clock } from "../../domain/ports/clock";
 import type { SessionRepository } from "../../domain/ports/session-repository";
 import type { TokenHasher } from "../../domain/ports/token-hasher";
 import type { UserRepository } from "../../domain/ports/user-repository";
-import {
-  SESSION_RENEWAL_THRESHOLD_MS,
-  SESSION_TTL_MS,
-} from "./constants";
+import { SESSION_RENEWAL_THRESHOLD_MS, SESSION_TTL_MS } from "./constants";
 
 export interface GetSessionInput {
   token: string;
@@ -34,7 +31,8 @@ export class GetSession {
   async execute(input: GetSessionInput): Promise<GetSessionOutput | null> {
     const now = this.deps.clock.now();
     const tokenHash = this.deps.tokenHasher.hash(input.token);
-    const session = await this.deps.sessionRepository.findByTokenHash(tokenHash);
+    const session =
+      await this.deps.sessionRepository.findByTokenHash(tokenHash);
 
     if (!session || session.deletedAt || session.expiresAt < now) {
       return null;
@@ -45,7 +43,10 @@ export class GetSession {
     }
 
     let renewed: true | undefined;
-    if (session.expiresAt.getTime() - now.getTime() < SESSION_RENEWAL_THRESHOLD_MS) {
+    if (
+      session.expiresAt.getTime() - now.getTime() <
+      SESSION_RENEWAL_THRESHOLD_MS
+    ) {
       await this.deps.sessionRepository.updateExpiresAt(
         session.id,
         new Date(now.getTime() + SESSION_TTL_MS),

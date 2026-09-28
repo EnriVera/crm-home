@@ -1,7 +1,7 @@
 import type { AppRepository } from "../../domain/ports/app-repository";
 
 export interface ListAppsDependencies {
-  appRepository: AppRepository;
+ appRepository: AppRepository;
 }
 
 /**
@@ -14,9 +14,9 @@ export interface ListAppsDependencies {
  * para verla, aunque el dato en sí no sea per-user).
  */
 export class ListApps {
-  constructor(private readonly deps: ListAppsDependencies) {}
+ constructor(private readonly deps: ListAppsDependencies) {}
 
-  async execute(): Promise<Array<{ id: string; name: string }>> {
-    return this.deps.appRepository.list();
-  }
+ async execute(): Promise<Array<{ id: string; name: string }>> {
+  return this.deps.appRepository.list();
+ }
 }

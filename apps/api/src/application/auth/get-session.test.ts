@@ -1,7 +1,10 @@
 import { describe, expect, test } from "bun:test";
 import { GetSession } from "./get-session";
 import type { Clock } from "../../domain/ports/clock";
-import type { Session, SessionRepository } from "../../domain/ports/session-repository";
+import type {
+  Session,
+  SessionRepository,
+} from "../../domain/ports/session-repository";
 import type { TokenHasher } from "../../domain/ports/token-hasher";
 import type { User, UserRepository } from "../../domain/ports/user-repository";
 
@@ -72,16 +75,19 @@ class InMemoryUserRepository implements UserRepository {
   }
 }
 
-function createUseCase(overrides: {
-  clock?: Clock;
-  sessionRepository?: InMemorySessionRepository;
-  userRepository?: InMemoryUserRepository;
-  tokenHasher?: TokenHasher;
-} = {}) {
+function createUseCase(
+  overrides: {
+    clock?: Clock;
+    sessionRepository?: InMemorySessionRepository;
+    userRepository?: InMemoryUserRepository;
+    tokenHasher?: TokenHasher;
+  } = {},
+) {
   const now = new Date("2025-01-15T12:00:00.000Z");
   const sessionRepository =
     overrides.sessionRepository ?? new InMemorySessionRepository();
-  const userRepository = overrides.userRepository ?? new InMemoryUserRepository();
+  const userRepository =
+    overrides.userRepository ?? new InMemoryUserRepository();
   return {
     now,
     sessionRepository,
@@ -285,6 +291,8 @@ describe("GetSession", () => {
     const result = await useCase.execute({ token: "token-1" });
 
     expect(result!.renewed).toBeUndefined();
-    expect(repo.sessions[0]!.expiresAt.getTime()).toBe(originalExpiresAt.getTime());
+    expect(repo.sessions[0]!.expiresAt.getTime()).toBe(
+      originalExpiresAt.getTime(),
+    );
   });
 });

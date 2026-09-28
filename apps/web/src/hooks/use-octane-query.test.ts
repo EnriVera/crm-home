@@ -34,20 +34,19 @@ describe("useOctaneQuery hook — type contract", () => {
 
   test("acepta fetcher y deps como parámetros (igual que useFetch)", () => {
     const content = readFileSync(HOOK_PATH, "utf-8");
-    expect(content).toMatch(/function useOctaneQuery<T>\(\s*fetcher:\s*Fetcher<T>/);
+    expect(content).toMatch(
+      /function useOctaneQuery<T>\(\s*fetcher:\s*Fetcher<T>/,
+    );
     expect(content).toMatch(/deps:\s*ReadonlyArray<unknown>/);
   });
 
-  test(
-    "importa useState/useEffect/useCallback de octane (mismas primitives que useFetch)",
-    () => {
-      const content = readFileSync(HOOK_PATH, "utf-8");
-      expect(content).toMatch(/from "octane"/);
-      expect(content).toContain("useState");
-      expect(content).toContain("useEffect");
-      expect(content).toContain("useCallback");
-    },
-  );
+  test("importa useState/useEffect/useCallback de octane (mismas primitives que useFetch)", () => {
+    const content = readFileSync(HOOK_PATH, "utf-8");
+    expect(content).toMatch(/from "octane"/);
+    expect(content).toContain("useState");
+    expect(content).toContain("useEffect");
+    expect(content).toContain("useCallback");
+  });
 
   test("usa @tanstack/query-core (NO @tanstack/react-query)", () => {
     const content = readFileSync(HOOK_PATH, "utf-8");
@@ -70,72 +69,57 @@ describe("useOctaneQuery hook — type contract", () => {
     expect(content).toContain("err instanceof Error");
   });
 
-  test(
-    "loading cubre primer fetch (status=pending) y re-fetch (fetchStatus=fetching)",
-    () => {
-      const content = readFileSync(HOOK_PATH, "utf-8");
-      // Mapeo del contrato: usa OR lógico entre los dos casos. Coincide
-      // con el useFetch original (loading=true mientras fetcher no resolvió).
-      expect(content).toMatch(
-        /fetchStatus\s*===\s*["']fetching["']\s*\|\|\s*\w+\.status\s*===\s*["']pending["']/,
-      );
-    },
-  );
+  test("loading cubre primer fetch (status=pending) y re-fetch (fetchStatus=fetching)", () => {
+    const content = readFileSync(HOOK_PATH, "utf-8");
+    // Mapeo del contrato: usa OR lógico entre los dos casos. Coincide
+    // con el useFetch original (loading=true mientras fetcher no resolvió).
+    expect(content).toMatch(
+      /fetchStatus\s*===\s*["']fetching["']\s*\|\|\s*\w+\.status\s*===\s*["']pending["']/,
+    );
+  });
 
-  test(
-    "refetch llama observer.refetch() — sin throw si no hay abort",
-    () => {
-      const content = readFileSync(HOOK_PATH, "utf-8");
-      expect(content).toContain("observer.refetch()");
-      // El wrapper ignora la Promise devuelta (void) — fire-and-forget
-      // como useFetch original.
-      expect(content).toContain("void observer.refetch()");
-    },
-  );
+  test("refetch llama observer.refetch() — sin throw si no hay abort", () => {
+    const content = readFileSync(HOOK_PATH, "utf-8");
+    expect(content).toContain("observer.refetch()");
+    // El wrapper ignora la Promise devuelta (void) — fire-and-forget
+    // como useFetch original.
+    expect(content).toContain("void observer.refetch()");
+  });
 
-  test(
-    "tiene shallowChanged() para evitar setState redundantes cuando el snapshot no cambió",
-    () => {
-      const content = readFileSync(HOOK_PATH, "utf-8");
-      // Octane (como React) compara via Object.is — si retornamos el mismo
-      // objeto, no re-renderiza. shallowChanged() garantiza que solo
-      // setState cuando un campo relevante realmente cambió.
-      expect(content).toContain("function shallowChanged");
-      expect(content).toMatch(/a\.data\s*!==\s*b\.data/);
-      expect(content).toMatch(/a\.error\s*!==\s*b\.error/);
-      expect(content).toMatch(/a\.status\s*!==\s*b\.status/);
-      expect(content).toMatch(/a\.fetchStatus\s*!==\s*b\.fetchStatus/);
-    },
-  );
+  test("tiene shallowChanged() para evitar setState redundantes cuando el snapshot no cambió", () => {
+    const content = readFileSync(HOOK_PATH, "utf-8");
+    // Octane (como React) compara via Object.is — si retornamos el mismo
+    // objeto, no re-renderiza. shallowChanged() garantiza que solo
+    // setState cuando un campo relevante realmente cambió.
+    expect(content).toContain("function shallowChanged");
+    expect(content).toMatch(/a\.data\s*!==\s*b\.data/);
+    expect(content).toMatch(/a\.error\s*!==\s*b\.error/);
+    expect(content).toMatch(/a\.status\s*!==\s*b\.status/);
+    expect(content).toMatch(/a\.fetchStatus\s*!==\s*b\.fetchStatus/);
+  });
 
-  test(
-    "useMemo estabiliza el observer para evitar loops infinitos de fetch",
-    () => {
-      const content = readFileSync(HOOK_PATH, "utf-8");
-      // El bug clásico con QueryObserver: si se crea uno nuevo cada
-      // render, el useEffect del subscribe vuelve a fetchear, lo cual
-      // setea result, lo cual re-renderiza, lo cual crea otro observer
-      // → bucle. useMemo con [client, stableKey] rompe el ciclo.
-      expect(content).toMatch(/useMemo\s*\(\s*\(\s*\)\s*=>\s*new QueryObserver/);
-      expect(content).toMatch(/stableKey/);
-      // stableKey se calcula desde queryKey.join para evitar deps array
-      // nuevos disparando useMemo invalidation.
-      expect(content).toMatch(/queryKey\.join/);
-    },
-  );
+  test("useMemo estabiliza el observer para evitar loops infinitos de fetch", () => {
+    const content = readFileSync(HOOK_PATH, "utf-8");
+    // El bug clásico con QueryObserver: si se crea uno nuevo cada
+    // render, el useEffect del subscribe vuelve a fetchear, lo cual
+    // setea result, lo cual re-renderiza, lo cual crea otro observer
+    // → bucle. useMemo con [client, stableKey] rompe el ciclo.
+    expect(content).toMatch(/useMemo\s*\(\s*\(\s*\)\s*=>\s*new QueryObserver/);
+    expect(content).toMatch(/stableKey/);
+    // stableKey se calcula desde queryKey.join para evitar deps array
+    // nuevos disparando useMemo invalidation.
+    expect(content).toMatch(/queryKey\.join/);
+  });
 
-  test(
-    "useEffect subscribe + cleanup unsubscribe al desmontar — sin setOptions",
-    () => {
-      const content = readFileSync(HOOK_PATH, "utf-8");
-      // Solo subscribe + cleanup. El observer se recrea via useMemo
-      // cuando stableKey cambia; no hay setOptions por useEffect
-      // (eso fue el bug original).
-      expect(content).toContain("observer.subscribe");
-      expect(content).toMatch(/return\s*\(\s*\)\s*=>\s*{\s*unsubscribe\(\)/);
-      expect(content).not.toContain("observer.setOptions");
-    },
-  );
+  test("useEffect subscribe + cleanup unsubscribe al desmontar — sin setOptions", () => {
+    const content = readFileSync(HOOK_PATH, "utf-8");
+    // Solo subscribe + cleanup. El observer se recrea via useMemo
+    // cuando stableKey cambia; no hay setOptions por useEffect
+    // (eso fue el bug original).
+    expect(content).toContain("observer.subscribe");
+    expect(content).toMatch(/return\s*\(\s*\)\s*=>\s*{\s*unsubscribe\(\)/);
+    expect(content).not.toContain("observer.setOptions");
+  });
 
   test("default options del QueryClient: staleTime 30s, retry 1, sin refetchOnWindowFocus", () => {
     const content = readFileSync(HOOK_PATH, "utf-8");
@@ -152,11 +136,8 @@ describe("useOctaneQuery hook — type contract", () => {
     expect(content).toContain("odd/tanstack-query-migration");
   });
 
-  test(
-    "advertise explícito: NO usa el React adapter (scheduler rompería octane)",
-    () => {
-      const content = readFileSync(HOOK_PATH, "utf-8");
-      expect(content).toContain("scheduler de React");
-    },
-  );
+  test("advertise explícito: NO usa el React adapter (scheduler rompería octane)", () => {
+    const content = readFileSync(HOOK_PATH, "utf-8");
+    expect(content).toContain("scheduler de React");
+  });
 });

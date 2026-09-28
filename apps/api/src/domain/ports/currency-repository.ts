@@ -9,14 +9,14 @@ import type { Transaction } from "./transaction";
  * `user-repository.ts`).
  */
 export interface Currency {
-  id: string;
-  name: string;
-  symbol: string;
-  /** Cantidad de decimales que se muestran al usuario. Default 2 (peso). */
-  decimals: number;
+ id: string;
+ name: string;
+ symbol: string;
+ /** Cantidad de decimales que se muestran al usuario. Default 2 (peso). */
+ decimals: number;
 }
 
 export interface CurrencyRepository {
-  /** Lista todas las monedas (sin paginación — el seed actual es chico). */
-  list(trx?: Transaction): Promise<Currency[]>;
+ /** Lista todas las monedas (sin paginación — el seed actual es chico). */
+ list(trx?: Transaction): Promise<Currency[]>;
 }

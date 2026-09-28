@@ -10,11 +10,11 @@ import type { Transaction } from "./transaction";
  * `user-repository.ts`).
  */
 export interface App {
-  id: string;
-  name: string;
+ id: string;
+ name: string;
 }
 
 export interface AppRepository {
-  /** Lista todos los módulos (sin paginación — el seed actual es chico). */
-  list(trx?: Transaction): Promise<App[]>;
+ /** Lista todos los módulos (sin paginación — el seed actual es chico). */
+ list(trx?: Transaction): Promise<App[]>;
 }

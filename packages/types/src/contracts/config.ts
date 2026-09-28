@@ -10,8 +10,8 @@ import { uuidSchema } from "./_shared";
  * disponibles pero no puede crear/editar/eliminar.
  */
 export const appSchema = z.object({
-  id: uuidSchema,
-  name: z.string(),
+ id: uuidSchema,
+ name: z.string(),
 });
 export type App = z.infer<typeof appSchema>;
 
@@ -21,10 +21,10 @@ export type App = z.infer<typeof appSchema>;
  * se muestran al usuario (default 2 para la mayoría de las monedas).
  */
 export const currencySchema = z.object({
-  id: uuidSchema,
-  name: z.string(),
-  symbol: z.string(),
-  decimals: z.number().int().min(0).max(10),
+ id: uuidSchema,
+ name: z.string(),
+ symbol: z.string(),
+ decimals: z.number().int().min(0).max(10),
 });
 export type Currency = z.infer<typeof currencySchema>;
 
@@ -45,10 +45,10 @@ export const listCurrenciesOutputSchema = z.array(currencySchema);
 /* ---------- Contract router ---------- */
 
 export const configContract = oc.router({
-  listApps: oc
-    .route({ method: "POST", path: "/config/listApps" })
-    .output(listAppsOutputSchema),
-  listCurrencies: oc
-    .route({ method: "POST", path: "/config/listCurrencies" })
-    .output(listCurrenciesOutputSchema),
+ listApps: oc
+  .route({ method: "POST", path: "/config/listApps" })
+  .output(listAppsOutputSchema),
+ listCurrencies: oc
+  .route({ method: "POST", path: "/config/listCurrencies" })
+  .output(listCurrenciesOutputSchema),
 });

@@ -111,6 +111,7 @@ will be separate changes.
 ### Phase 1e — E2E ⏸ deferred
 
 Backend smoke test (curl, in this turn) **passed**:
+
 - `listApps` → `[{"id":"...","name":"Core"}]`
 - `listCurrencies` → `[{"id":"...","name":"Peso argentino","symbol":"$","decimals":2}]`
 
@@ -118,6 +119,7 @@ Browser E2E with agent-browser deferred to next session because the
 OTP rate limit (3 attempts per hour per email — `apps/api/src/application/auth/constants.ts`) was exhausted during the session. The fresh requestOTP returned 429 before this feature doc was committed, and the pre-existing cookie (`01a0e972-...`) returned `expired` on verify.
 
 Next-session checklist for Phase 1e:
+
 - Wait for rate limit window to reset (~60 min).
 - Login flow → cookie → agent-browser open /config.
 - Click each of the 8 tabs.
