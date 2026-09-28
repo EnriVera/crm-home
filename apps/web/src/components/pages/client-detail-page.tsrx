@@ -4,7 +4,7 @@ import { createRpcClient, type RpcClient } from "../../lib/api/rpc";
 import { Button } from "../atoms/button.tsrx";
 import { EmptyState } from "../molecules/empty-state.tsrx";
 import { ClientForm } from "../organisms/client-form/client-form.tsrx";
-import { useFetch } from "../../hooks/use-fetch";
+import { useOctaneQuery } from "../../hooks/use-octane-query";
 import type { Client } from "@crm/types";
 
 /**
@@ -36,9 +36,9 @@ export function ClientDetailPage(props: ClientDetailPageProps) @{
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
-  // Load client by id via useFetch (arregla el bug latente: este useEffect
-  // no tenía finally — loading quedaba en true si la RPC se colgaba).
-  const clientFetch = useFetch<Client>(
+  // Load client by id via useOctaneQuery (loading siempre resuelve a false
+  // gracias al QueryObserver; misma contract surface que useFetch).
+  const clientQuery = useOctaneQuery<Client>(
     async () => {
       try {
         const result = ((await (RPC as RpcClient).clients.get({
@@ -61,8 +61,8 @@ export function ClientDetailPage(props: ClientDetailPageProps) @{
     },
     [props.clientId],
   );
-  const loading = clientFetch.loading;
-  const loadError = clientFetch.error;
+  const loading = clientQuery.loading;
+  const loadError = clientQuery.error;
 
   const handleEdit = async (payload: {
     client_name: string;
