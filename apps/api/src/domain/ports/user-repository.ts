@@ -15,4 +15,9 @@ export interface UserRepository {
   findByEmail(email: string, trx?: Transaction): Promise<User | undefined>;
   create(user: User, trx?: Transaction): Promise<void>;
   markEmailVerified(id: string, trx?: Transaction): Promise<void>;
+  updateTheme(
+    id: string,
+    theme: string,
+    trx?: Transaction,
+  ): Promise<void>;
 }

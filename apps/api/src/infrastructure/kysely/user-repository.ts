@@ -82,6 +82,22 @@ export class KyselyUserRepository implements UserRepository {
       .execute();
   }
 
+  async updateTheme(
+    id: string,
+    theme: string,
+    trx?: Transaction,
+  ): Promise<void> {
+    const db = this.resolve(trx);
+    await db
+      .updateTable("user")
+      .set({
+        user_theme: theme,
+        user_updated_at: new Date(),
+      })
+      .where("user_id", "=", id)
+      .execute();
+  }
+
   private resolve(trx?: Transaction): Database {
     // SAFETY: Transaction is an opaque domain token; only Kysely transaction
     // objects are ever passed from the transaction manager.

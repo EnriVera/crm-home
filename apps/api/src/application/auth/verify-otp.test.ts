@@ -108,6 +108,13 @@ class InMemoryUserRepository implements UserRepository {
   }
 
   async markEmailVerified(_id: string): Promise<void> {}
+
+  async updateTheme(id: string, theme: string): Promise<void> {
+    const user = this.users.find((u) => u.id === id);
+    if (user !== undefined) {
+      user.theme = theme;
+    }
+  }
 }
 
 class FakeUserSeedService implements UserSeedService {
