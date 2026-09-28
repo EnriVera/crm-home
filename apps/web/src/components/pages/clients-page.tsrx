@@ -7,7 +7,7 @@ import { DataList } from "../molecules/data-list.tsrx";
 import { EmptyState } from "../molecules/empty-state.tsrx";
 import { ClientListItem } from "../molecules/client-list-item.tsrx";
 import { ClientForm } from "../organisms/client-form/client-form.tsrx";
-import { useFetch } from "../../hooks/use-fetch";
+import { useOctaneQuery } from "../../hooks/use-octane-query";
 import type { Client } from "@crm/types";
 
 /**
@@ -41,8 +41,11 @@ export function ClientsPage() @{
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
 
-  // Carga de clientes vía useFetch (centraliza cancelled+finally).
-  const clientsFetch = useFetch<ClientRow[]>(
+  // Carga de clientes vía useOctaneQuery (cancelled-on-unmount + finally
+  // invariant vienen gratis de QueryObserver; deduplicación automática
+  // entre componentes que pidan la misma queryKey; staleTime 30s por
+  // default del QueryClient singleton).
+  const clientsQuery = useOctaneQuery<ClientRow[]>(
     async () => {
       const result = ((await (RPC as RpcClient).clients.list({
         search,
@@ -57,9 +60,9 @@ export function ClientsPage() @{
     },
     [search],
   );
-  const clients = clientsFetch.data ?? [];
-  const loading = clientsFetch.loading;
-  const loadError = clientsFetch.error;
+  const clients = clientsQuery.data ?? [];
+  const loading = clientsQuery.loading;
+  const loadError = clientsQuery.error;
 
   const handleCreate = async (payload: {
     client_name: string;
@@ -68,7 +71,7 @@ export function ClientsPage() @{
   }) => {
     setCreateOpen(false);
     await (RPC as RpcClient).clients.create(payload);
-    clientsFetch.refetch();
+    clientsQuery.refetch();
   };
 
   const handleDelete = async (clientId: string) => {
@@ -77,7 +80,7 @@ export function ClientsPage() @{
     try {
       await (RPC as RpcClient).clients.remove({ client_id: clientId });
       setDeletingId(null);
-      clientsFetch.refetch();
+      clientsQuery.refetch();
     } catch {
       setDeletingId(null);
       setDeleteError(t("clients.loadError"));
