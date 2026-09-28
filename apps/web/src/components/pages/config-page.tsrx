@@ -3,7 +3,7 @@ import { createRpcClient, type RpcClient } from "../../lib/api/rpc";
 import { Button } from "../atoms/button.tsrx";
 import { Icon } from "../vendor/icons";
 import { ThemeToggle } from "../molecules/theme-toggle.tsrx";
-import { useFetch } from "../../hooks/use-fetch";
+import { useOctaneQuery } from "../../hooks/use-octane-query";
 
 /**
  * Página `/config` — Settings del user.
@@ -22,18 +22,19 @@ interface UserInfo {
 }
 
 export function ConfigPage() @{
-  // Carga vía useFetch (arregla el bug latente: este useEffect no tenía
-  // finally — loading quedaba en true si la RPC se colgaba).
-  const sessionFetch = useFetch<{ user: UserInfo } | null>(
+  // Carga vía useOctaneQuery (loading se resuelve a false vía QueryObserver
+  // aunque el hook original era propenso al bug del missing-finally; el
+  // query core garantiza la invariante por diseño).
+  const sessionQuery = useOctaneQuery<{ user: UserInfo } | null>(
     () =>
       (RPC as RpcClient).auth.session() as Promise<
         { user: UserInfo } | null
       >,
     [],
   );
-  const loading = sessionFetch.loading;
-  const error = sessionFetch.error;
-  const user = sessionFetch.data?.user ?? null;
+  const loading = sessionQuery.loading;
+  const error = sessionQuery.error;
+  const user = sessionQuery.data?.user ?? null;
 
   <section data-page="config" class="mx-auto w-full max-w-2xl px-6 py-8 sm:py-10">
     <header class="mb-8">
