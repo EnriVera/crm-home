@@ -6,7 +6,7 @@ import { Icon } from "../vendor/icons";
 import { DataList } from "../molecules/data-list.tsrx";
 import { EmptyState } from "../molecules/empty-state.tsrx";
 import { TransferListItem } from "../molecules/transfer-list-item.tsrx";
-import { useFetch } from "../../hooks/use-fetch";
+import { useOctaneQuery } from "../../hooks/use-octane-query";
 import type { Transfer } from "@crm/types";
 
 /**
@@ -28,8 +28,9 @@ export function TransfersPage() @{
   const [dateTo, setDateTo] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  // Carga vía useFetch (centraliza cancelled+finally).
-  const transfersFetch = useFetch<Transfer[]>(
+  // Carga vía useOctaneQuery (deduplicación + cancelled + finally vía
+  // QueryObserver; misma contract surface que useFetch).
+  const transfersQuery = useOctaneQuery<Transfer[]>(
     () =>
       (RPC as RpcClient).transfers.list({
         search,
@@ -39,16 +40,16 @@ export function TransfersPage() @{
       }) as Promise<Transfer[]>,
     [search, dateFrom, dateTo],
   );
-  const transfers = transfersFetch.data ?? [];
-  const loading = transfersFetch.loading;
-  const loadError = transfersFetch.error;
+  const transfers = transfersQuery.data ?? [];
+  const loading = transfersQuery.loading;
+  const loadError = transfersQuery.error;
 
   const handleDelete = async (transferId: string) => {
     setDeletingId(transferId);
     try {
       await (RPC as RpcClient).transfers.remove({ tran_id: transferId });
       setDeletingId(null);
-      transfersFetch.refetch();
+      transfersQuery.refetch();
     } catch {
       setDeletingId(null);
       setDeleteError(t("transfers.loadError"));
