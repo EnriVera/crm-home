@@ -6,6 +6,7 @@ import { Icon } from "../vendor/icons";
 import { Tabs, type TabItem } from "../molecules/tabs.tsrx";
 import { ThemeSelect } from "../molecules/theme-select.tsrx";
 import { useOctaneQuery } from "../../hooks/use-octane-query";
+import { TypesTab } from "./types-tab.tsrx";
 import {
   useQueryState,
   parseAsStringLiteral,
@@ -277,8 +278,9 @@ export function ConfigPage() @{
           </div>
         )}
 
-        {(activeTab === "types" ||
-          activeTab === "categories" ||
+        {activeTab === "types" && <TypesTab />}
+
+        {(activeTab === "categories" ||
           activeTab === "accounts" ||
           activeTab === "attachments") && (
           <div class="flex flex-col items-center rounded-lg border border-dashed border-border bg-surface px-6 py-12 text-center">

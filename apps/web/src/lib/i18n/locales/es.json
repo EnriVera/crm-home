@@ -385,5 +385,56 @@
   },
   "apps": {
     "empty": "No hay módulos registrados."
+  },
+  "types": {
+    "title": "Tipos",
+    "count": {
+      "one": "1 tipo",
+      "many": "{count} tipos"
+    },
+    "search": {
+      "placeholder": "Buscar por nombre",
+      "label": "Buscar"
+    },
+    "filter": {
+      "allModules": "Todos los módulos",
+      "moduleLabel": "Filtrar por módulo"
+    },
+    "module": {
+      "tasks": "Tareas",
+      "incomes": "Ingresos",
+      "expenses": "Gastos",
+      "schedules": "Reglas recurrentes"
+    },
+    "actions": {
+      "new": "Nuevo tipo",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "deleting": "Eliminando..."
+    },
+    "fields": {
+      "name": "Nombre",
+      "module": "Módulo"
+    },
+    "form": {
+      "cancel": "Cancelar"
+    },
+    "create": {
+      "title": "Nuevo tipo",
+      "submit": "Crear"
+    },
+    "edit": {
+      "title": "Editar tipo",
+      "submit": "Guardar"
+    },
+    "listEmpty": {
+      "noTypes": "Todavía no hay tipos",
+      "noTypesBody": "Los tipos te permiten clasificar tus tareas, ingresos y gastos.",
+      "noResults": "Sin coincidencias",
+      "noResultsBody": "Probá con otro nombre o cambiá el filtro de módulo."
+    },
+    "errors": {
+      "deleteFailed": "No pudimos eliminar el tipo. Intentá de nuevo."
+    }
   }
 }
