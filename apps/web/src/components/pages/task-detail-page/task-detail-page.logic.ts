@@ -4,6 +4,14 @@
  * Maneja los handlers de Editar / Eliminar y construye los params
  * para `rpc.tasks.get/remove`. La página `.tsrx` los conecta al flujo
  * de UI (botones, navegación, confirmación).
+ *
+ * Nota sobre `?edit=true`: la URL canónica del edit drawer se construye
+ * con `editUrl(taskId)`. La lectura del flag vive en el componente
+ * `.tsrx` a través de `useQueryState("edit", parseAsBoolean.withDefault(false))`
+ * de `@octanejs/nuqs` — la lógica pura del helper original
+ * (`isEditModeFromSearchParams`) se reemplazó por el hook tipado. Mantener
+ * un helper que duplica el parser sólo agrega drift entre el tipo del URL
+ * state y la firma del helper.
  */
 
 export interface DeleteTaskParams {
@@ -17,10 +25,11 @@ export interface DeleteConfirmationState {
 }
 
 /**
- * Decisión de navegación cuando el usuario hace click "Editar":
- * - `?edit=true` query param permite abrir el form lateral sobre la misma
- *   página (mismo URL, sólo cambia el flag).
- * - La page lee `searchParams.get("edit") === "true"` y monta el TaskForm.
+ * URL canónica del edit drawer de un task.
+ *
+ * Ejemplo: `editUrl("t-42")` → `"/tasks/t-42?edit=true"`. Consumida por
+ * el botón "Editar" en `tasks-page` para deep-link al form de edición.
+ * La page destino lee el flag con `useQueryState("edit", ...)`.
  */
 export function editUrl(taskId: string): string {
  return `/tasks/${taskId}?edit=true`;
@@ -45,17 +54,6 @@ export function openDeleteConfirmation(
 
 export function closeDeleteConfirmation(): DeleteConfirmationState {
  return { visible: false, taskId: null };
-}
-
-/**
- * Decide si el form lateral de edición debe estar abierto según los
- * search params de la URL. Devuelve `true` cuando `?edit=true` está
- * presente.
- */
-export function isEditModeFromSearchParams(
- searchParams: URLSearchParams,
-): boolean {
- return searchParams.get("edit") === "true";
 }
 
 /**

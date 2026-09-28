@@ -4,7 +4,6 @@ import {
   closeDeleteConfirmation,
   editUrl,
   initialDeleteConfirmationState,
-  isEditModeFromSearchParams,
   openDeleteConfirmation,
   TASKS_LIST_PATH,
 } from "./task-detail-page.logic";
@@ -38,23 +37,6 @@ describe("delete confirmation state machine", () => {
     const closed = closeDeleteConfirmation();
     expect(closed.visible).toBe(false);
     expect(closed.taskId).toBeNull();
-  });
-});
-
-describe("isEditModeFromSearchParams", () => {
-  test("true cuando search params tiene edit=true", () => {
-    const params = new URLSearchParams("edit=true");
-    expect(isEditModeFromSearchParams(params)).toBe(true);
-  });
-
-  test("false cuando search params no tiene edit", () => {
-    const params = new URLSearchParams("");
-    expect(isEditModeFromSearchParams(params)).toBe(false);
-  });
-
-  test("false cuando search params tiene edit=false", () => {
-    const params = new URLSearchParams("edit=false");
-    expect(isEditModeFromSearchParams(params)).toBe(false);
   });
 });
 
