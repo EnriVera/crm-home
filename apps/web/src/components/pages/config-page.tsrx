@@ -1,17 +1,31 @@
+import { useEffect, useState } from "octane";
 import { t } from "../vendor/i18n/core";
 import { createRpcClient, type RpcClient } from "../../lib/api/rpc";
 import { Button } from "../atoms/button.tsrx";
 import { Icon } from "../vendor/icons";
-import { ThemeToggle } from "../molecules/theme-toggle.tsrx";
+import { ThemeSelect } from "../molecules/theme-select.tsrx";
 import { useOctaneQuery } from "../../hooks/use-octane-query";
 
 /**
- * Página `/config` — Settings del user.
+ * Página `/config` — Settings del user (PRD-v2.md §8.7).
  *
- * MVP: muestra info del user (nombre, email) desde `rpc.auth.session()`,
- * permite cambiar el tema (ThemeToggle ya existente), y expone el botón
- * de logout. No hay todavía endpoint público para update de perfil —
- * ese vendría en una Fase 2.
+ * Secciones:
+ * - Perfil: nombre + email desde `rpc.auth.session()`.
+ * - Apariencia: selector 3-way de tema (claro / oscuro / sistema) con
+ *   persistencia en la cuenta del usuario. La selección se escribe
+ *   inmediatamente a `user_theme` (sin recargar) vía
+ *   `rpc.auth.updateTheme`. El ThemeSelect molecule se encarga del apply
+ *   local (clase `dark` en `<html>` + localStorage) via su propio
+ *   useTheme() — la página solo orquesta la persistencia remota.
+ *
+ * Notas de la interación local ↔ servidor:
+ * - `currentSetting` arranca en `"system"` (default del DB) y se sincroniza
+ *   desde `user.userTheme` cuando la session query resuelve. Breve flash
+ *   en el primer load si localStorage dice otra cosa — aceptable, el
+ *   session query resuelve en < 200 ms en dev.
+ * - En error de red durante `updateTheme`, revertimos al último valor
+ *   conocido del servidor (o al previo local si no hay sesión). El error
+ *   se muestra inline debajo del selector.
  */
 const RPC = createRpcClient(import.meta.env.VITE_API_URL ?? "/rpc");
 
@@ -19,12 +33,12 @@ interface UserInfo {
   id: string;
   email: string;
   name: string;
+  userTheme: "light" | "dark" | "system";
 }
 
+type ThemeOption = "light" | "dark" | "system";
+
 export function ConfigPage() @{
-  // Carga vía useOctaneQuery (loading se resuelve a false vía QueryObserver
-  // aunque el hook original era propenso al bug del missing-finally; el
-  // query core garantiza la invariante por diseño).
   const sessionQuery = useOctaneQuery<{ user: UserInfo } | null>(
     () =>
       (RPC as RpcClient).auth.session() as Promise<
@@ -35,6 +49,45 @@ export function ConfigPage() @{
   const loading = sessionQuery.loading;
   const error = sessionQuery.error;
   const user = sessionQuery.data?.user ?? null;
+  const serverTheme = user?.userTheme;
+
+  const [currentSetting, setCurrentSetting] = useState<ThemeOption>("system");
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
+  // Sync: cuando la session query resuelve, la elección del servidor
+  // es la fuente de verdad. localStorage es la cache para el apply
+  // instantáneo entre page loads (y entre dispositivos, per PRD line 40).
+  useEffect(() => {
+    if (serverTheme !== undefined) {
+      setCurrentSetting(serverTheme);
+    }
+  }, [serverTheme]);
+
+  const handleThemeChange = async (next: ThemeOption): Promise<void> => {
+    const previous = currentSetting;
+    setCurrentSetting(next);
+    if (user === null) return; // no autenticado, no hay server-side save
+    setSaving(true);
+    setSaveError(null);
+    try {
+      await (RPC as RpcClient).auth.updateTheme({ setting: next });
+      // No invalidamos la session query: el next refetch (window focus
+      // o re-mount) traerá el userTheme fresco. El state local
+      // (currentSetting) es la fuente de verdad para la UI.
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : String(err));
+      // Revert: preferir el server value si lo tenemos, si no el
+      // previous local.
+      if (serverTheme !== undefined) {
+        setCurrentSetting(serverTheme);
+      } else {
+        setCurrentSetting(previous);
+      }
+    } finally {
+      setSaving(false);
+    }
+  };
 
   <section data-page="config" class="mx-auto w-full max-w-2xl px-6 py-8 sm:py-10">
     <header class="mb-8">
@@ -76,10 +129,23 @@ export function ConfigPage() @{
           <h2 class="mb-4 text-sm font-medium text-text-secondary">
             {t("config.appearance.title")}
           </h2>
-          <ThemeToggle
-            labelLight={t("theme.toLight")}
-            labelDark={t("theme.toDark")}
+          <ThemeSelect
+            value={currentSetting}
+            labelLight={t("config.appearance.themeLight")}
+            labelDark={t("config.appearance.themeDark")}
+            labelSystem={t("config.appearance.themeSystem")}
+            onChange={handleThemeChange}
+            disabled={saving}
           />
+          {saveError !== null && (
+            <p
+              role="alert"
+              class="mt-3 text-xs text-error"
+              data-error="theme-save"
+            >
+              {t("config.appearance.themeSaveError")}: {saveError}
+            </p>
+          )}
         </div>
       </>
     )}
