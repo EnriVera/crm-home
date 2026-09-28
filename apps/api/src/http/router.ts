@@ -75,6 +75,13 @@ import {
   createListCurrenciesHandler,
   type ConfigRouteDependencies,
 } from "./config/config-routes";
+import {
+  createCreateTypeHandler,
+  createListTypesHandler,
+  createRemoveTypeHandler,
+  createUpdateTypeHandler,
+  type TypesRouteDependencies,
+} from "./types/types-routes";
 
 export interface RouterDependencies
   extends AuthRouteDependencies,
@@ -84,7 +91,8 @@ export interface RouterDependencies
     ExpensesRouteDependencies,
     TransfersRouteDependencies,
     SchedulesRouteDependencies,
-    ConfigRouteDependencies {
+    ConfigRouteDependencies,
+    TypesRouteDependencies {
   getHealth: GetHealth;
   listClientsHandler: ReturnType<typeof createListClientsHandler>;
 }
@@ -198,6 +206,11 @@ export function createRpcHandler(
 
   const listAppsH3 = asBridgeHandler(createListAppsHandler(deps));
   const listCurrenciesH3 = asBridgeHandler(createListCurrenciesHandler(deps));
+
+  const listTypesH3 = asBridgeHandler(createListTypesHandler(deps));
+  const createTypeH3 = asBridgeHandler(createCreateTypeHandler(deps));
+  const updateTypeH3 = asBridgeHandler(createUpdateTypeHandler(deps));
+  const removeTypeH3 = asBridgeHandler(createRemoveTypeHandler(deps));
 
   const typesForFormH3 = createListTypesForFormHandler(deps);
   const categoriesByTypeH3 = createListCategoriesByTypeHandler(deps);
@@ -477,6 +490,26 @@ export function createRpcHandler(
       method: "POST",
       path: "/config/listCurrencies",
       run: wrapPost(listCurrenciesH3, "/config/listCurrencies"),
+    },
+    {
+      method: "POST",
+      path: "/types/list",
+      run: wrapPost(listTypesH3, "/types/list"),
+    },
+    {
+      method: "POST",
+      path: "/types/create",
+      run: wrapPost(createTypeH3, "/types/create"),
+    },
+    {
+      method: "POST",
+      path: "/types/update",
+      run: wrapPost(updateTypeH3, "/types/update"),
+    },
+    {
+      method: "POST",
+      path: "/types/remove",
+      run: wrapPost(removeTypeH3, "/types/remove"),
     },
   ];
 

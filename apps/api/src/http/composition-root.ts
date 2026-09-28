@@ -30,6 +30,10 @@ import { UpdateTransfer } from "../application/transfers/update-transfer";
 import { RemoveTransfer } from "../application/transfers/remove-transfer";
 import { ListApps } from "../application/config/list-apps";
 import { ListCurrencies } from "../application/config/list-currencies";
+import { ListTypes } from "../application/types/list-types";
+import { CreateType } from "../application/types/create-type";
+import { UpdateType } from "../application/types/update-type";
+import { RemoveType } from "../application/types/remove-type";
 import { ListSchedules } from "../application/schedules/list-schedules";
 import { CreateSchedule } from "../application/schedules/create-schedule";
 import { UpdateSchedule } from "../application/schedules/update-schedule";
@@ -58,6 +62,7 @@ import { KyselyExpenseRepository } from "../infrastructure/kysely/expense-reposi
 import { KyselyTransferRepository } from "../infrastructure/kysely/transfer-repository";
 import { KyselyAppRepository } from "../infrastructure/kysely/app-repository";
 import { KyselyCurrencyRepository } from "../infrastructure/kysely/currency-repository";
+import { KyselyTypeRepository } from "../infrastructure/kysely/type-repository";
 import { KyselyScheduleRepository } from "../infrastructure/kysely/schedule-repository";
 import { KyselyEmailSendingRepository } from "../infrastructure/kysely/email-sending-repository";
 import { KyselyLoginRepository } from "../infrastructure/kysely/login-repository";
@@ -224,6 +229,7 @@ export function createCompositionRoot(
     const scheduleRepository = new KyselyScheduleRepository(db);
     const appRepository = new KyselyAppRepository(db);
     const currencyRepository = new KyselyCurrencyRepository(db);
+    const typeRepository = new KyselyTypeRepository(db);
     const listExpenses = new ListExpenses({ expenseRepository });
     const createExpenseUseCase = new CreateExpense({ expenseRepository });
     const updateExpenseUseCase = new UpdateExpense({ expenseRepository });
@@ -238,6 +244,10 @@ export function createCompositionRoot(
     const removeScheduleUseCase = new RemoveSchedule({ scheduleRepository });
     const listApps = new ListApps({ appRepository });
     const listCurrencies = new ListCurrencies({ currencyRepository });
+    const listTypes = new ListTypes({ typeRepository });
+    const createType = new CreateType({ typeRepository });
+    const updateType = new UpdateType({ typeRepository });
+    const removeType = new RemoveType({ typeRepository });
     const listClientsForSelector = new ListClientsForSelector({
       clientLookupRepository,
     });
@@ -292,6 +302,10 @@ export function createCompositionRoot(
       listCategoriesByType,
       listApps,
       listCurrencies,
+      listTypes,
+      createType,
+      updateType,
+      removeType,
     });
     app.all("/rpc/**", (event) => rpcHandler(event));
   } else {
