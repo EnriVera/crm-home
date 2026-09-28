@@ -6,6 +6,10 @@ import { Icon } from "../vendor/icons";
 import { Tabs, type TabItem } from "../molecules/tabs.tsrx";
 import { ThemeSelect } from "../molecules/theme-select.tsrx";
 import { useOctaneQuery } from "../../hooks/use-octane-query";
+import {
+  useQueryState,
+  parseAsStringLiteral,
+} from "@octanejs/nuqs";
 
 /**
  * Página `/config` — Settings del user (PRD-v2.md §8.7).
@@ -45,17 +49,7 @@ interface UserInfo {
 
 type ThemeOption = "light" | "dark" | "system";
 
-type ConfigTabId =
-  | "user"
-  | "appearance"
-  | "types"
-  | "categories"
-  | "accounts"
-  | "apps"
-  | "currencies"
-  | "attachments";
-
-const TAB_IDS: ConfigTabId[] = [
+const TAB_IDS = [
   "user",
   "appearance",
   "types",
@@ -64,7 +58,11 @@ const TAB_IDS: ConfigTabId[] = [
   "apps",
   "currencies",
   "attachments",
-];
+] as const;
+
+type ConfigTabId = (typeof TAB_IDS)[number];
+
+const TAB_PARSER = parseAsStringLiteral(TAB_IDS).withDefault("user");
 
 export function ConfigPage() @{
   const sessionQuery = useOctaneQuery<{ user: UserInfo } | null>(
@@ -96,7 +94,7 @@ export function ConfigPage() @{
   const user = sessionQuery.data?.user ?? null;
   const serverTheme = user?.userTheme;
 
-  const [activeTab, setActiveTab] = useState<ConfigTabId>("user");
+  const [activeTab, setActiveTab] = useQueryState("tab", TAB_PARSER);
   const [currentSetting, setCurrentSetting] = useState<ThemeOption>("system");
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -158,7 +156,15 @@ export function ConfigPage() @{
     )}
 
     {user !== null && (
-      <Tabs items={tabs} activeId={activeTab} onChange={(id) => setActiveTab(id as ConfigTabId)}>
+      <Tabs
+        items={tabs}
+        activeId={activeTab}
+        onChange={(id) => {
+          // El setter de nuqs devuelve una Promise (URL write pasa por la
+          // cola throttled); al Tabs molecule sólo le importa el side-effect.
+          void setActiveTab(id as ConfigTabId);
+        }}
+      >
         {activeTab === "user" && (
           <div class="rounded-md border border-border bg-surface p-5">
             <h2 class="mb-4 text-sm font-medium text-text-secondary">
