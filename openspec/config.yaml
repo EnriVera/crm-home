@@ -48,9 +48,16 @@ stack:
       # variante equivalente §9; se re-evalúa @octanejs/i18next cuando un
       # change necesite Trans/ICU/pluralización o el contrato crezca
       - "i18next (integración propia; gate de re-evaluación abierto)"
+      # D-SA9 (config-tabs-nuqs): @octanejs/nuqs port oficial de nuqs 2.9.1
+      # sobre los hooks de Octane; full vendored port. Cubre estado en URL
+      # tipado (useQueryState/useQueryStates) para tabs, drawers, filtros
+      # y paginación. peer dep octane ^0.6.0 — proyecto corre octane@0.5.0;
+      # ABI consumido (hooks lifecycle) es estable, --ignore-peer si bun
+      # rechaza. Verifica typecheck y dev tras instalar.
+      - "@octanejs/nuqs@0.1.45 (URL state tipado; D-SA9)"
     no_aplican:
       - "tanstack router / router-ssr-query (router MPA propio de Octane)"
-      - "nuqs (estado en URL vía URLSearchParams del router propio)"
+      - "nuqs upstream (React-only; reemplazado por @octanejs/nuqs)"
       # D-SA2: octane@0.2.3 expone ErrorBoundary/@try-@catch nativos;
       # divergencia component-stack vacío documentada; wiring de raíz
       # diferido al primer change con UI de error

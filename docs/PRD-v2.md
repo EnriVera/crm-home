@@ -112,7 +112,7 @@ Tabla canónica de rutas (fuente única de verdad — cualquier otra mención de
 
 Las páginas legales son **públicas** (no requieren sesión) y se linkean desde el footer del login y del layout principal de la app.
 
-Toda acción que consulta/crea un registro o levanta una modal se refleja en la URL usando el router MPA propio de Octane + `URLSearchParams` (deep-linking y estado compartible). **nuqs NO aplica** (su rol lo cubre el router propio).
+Toda acción que consulta/crea un registro o levanta una modal se refleja en la URL usando el router MPA propio de Octane + `URLSearchParams` (deep-linking y estado compartible). **Estado en URL tipado: `@octanejs/nuqs`** (binding de Octane para nuqs 2.9.1; ver §10). Cubre tabs, drawers, filtros y paginación con deep-linking, back/forward nativo y tipos seguros.
 
 ---
 
@@ -315,7 +315,7 @@ Ningún componente de negocio importa una librería de UI de terceros directamen
 | `ColorPicker` | colorful (diferido → change config, categorías) |
 | `Motion` | spring (diferido → primer change con animación) |
 
-NO aplican: tanstack `router` / `router-ssr-query` y `nuqs` (router MPA propio de Octane + `URLSearchParams`).
+NO aplican: tanstack `router` / `router-ssr-query` (router MPA propio de Octane).
 
 Regla verificable: un import de cualquiera de esas librerías fuera de `components/vendor/` es un error de review (y, cuando exista tooling, de lint).
 
@@ -363,7 +363,7 @@ Telemetría de frontend (web vitals, trazas de navegación) y logs estructurados
 
 **Backend:** nitro, h3, orpc, kysely, PostgreSQL, bun, vite, effect, xstate, shiki, OpenTelemetry (SDK + instrumentations + exporter OTLP), Makefile.
 **Tooling de repo:** husky + @commitlint (Conventional Commits en hook `commit-msg`).
-**Frontend:** octanejs (tsrx), vite, bun, tailwindcss, @fontsource/poppins, effect, xstate + @octanejs/xstate, i18next (integración propia; `@octanejs/i18next` en gate de re-evaluación). Bindings adoptados: @octanejs/zag (+@zag-js/pin-input), @octanejs/phosphor-icons, @octanejs/resizable-panels, @octanejs/sonner, @octanejs/usehooks-ts (cohorte parcial). Diferidos con change consumidor: @octanejs/lexical (tasks), @octanejs/dnd-kit (tasks/kanban), day-picker (schedule), @octanejs/recharts (schedule; SSR no testeado), colorful (config/categorías), tanstack store/db/query/form/table/virtual (data layer), spring (primera animación), shiki (sin consumidor en frontend). NO aplican: tanstack router / router-ssr-query / nuqs (router MPA propio de Octane + URLSearchParams); @octanejs/react-error-boundary (ErrorBoundary nativa de Octane 0.2.3).
+**Frontend:** octanejs (tsrx), vite, bun, tailwindcss, @fontsource/poppins, effect, xstate + @octanejs/xstate, i18next (integración propia; `@octanejs/i18next` en gate de re-evaluación). Bindings adoptados: @octanejs/zag (+@zag-js/pin-input), @octanejs/phosphor-icons, @octanejs/resizable-panels, @octanejs/sonner, @octanejs/usehooks-ts (cohorte parcial). Diferidos con change consumidor: @octanejs/lexical (tasks), @octanejs/dnd-kit (tasks/kanban), day-picker (schedule), @octanejs/recharts (schedule; SSR no testeado), colorful (config/categorías), tanstack store/db/query/form/table/virtual (data layer), spring (primera animación), shiki (sin consumidor en frontend). NO aplican: tanstack router / router-ssr-query (router MPA propio de Octane + URLSearchParams). Adopta `@octanejs/nuqs` para estado en URL tipado (tabs, drawers, filtros, paginación). NO aplica `@octanejs/react-error-boundary` (ErrorBoundary nativa de Octane 0.2.3).
 
 ---
 
