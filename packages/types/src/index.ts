@@ -7,3 +7,4 @@ export * from "./contracts/incomes";
 export * from "./contracts/expenses";
 export * from "./contracts/transfers";
 export * from "./contracts/schedules";
+export * from "./contracts/config";
