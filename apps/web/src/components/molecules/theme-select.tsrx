@@ -93,6 +93,7 @@ export function ThemeSelect(props: ThemeSelectProps) @{
       const isActive = opt.value === props.value;
       return (
         <button
+          key={opt.value}
           type="button"
           role="radio"
           aria-checked={isActive}
