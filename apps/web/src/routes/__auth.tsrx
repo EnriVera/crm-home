@@ -2,6 +2,7 @@ import type { OctaneNode } from "octane";
 import { systemThemeStore, useTheme } from "../lib/theme/use-theme";
 import { I18nProvider, useT } from "../components/vendor/i18n";
 import "../lib/i18n/config";
+import { NuqsAdapter } from "@octanejs/nuqs/adapters/react";
 
 interface AuthLayoutProps {
   children: OctaneNode;
@@ -21,22 +22,24 @@ export function AuthLayout(props: AuthLayoutProps) @{
   // Suscripción al tema del SO: re-aplica `.dark` si el SO cambia en vivo.
   useTheme(systemThemeStore);
 
-  <I18nProvider>
-    <div class="flex min-h-dvh flex-col bg-background">
-      <main class="flex flex-1 items-center justify-center p-4">
-        {props.children}
-      </main>
-      <footer class="flex items-center justify-center gap-6 p-6">
-        <a href="/terms" class={FOOTER_LINK_CLASS}>
-          {t("auth.footer.terms")}
-        </a>
-        <a href="/privacy" class={FOOTER_LINK_CLASS}>
-          {t("auth.footer.privacy")}
-        </a>
-        <a href="/cookies" class={FOOTER_LINK_CLASS}>
-          {t("auth.footer.cookies")}
-        </a>
-      </footer>
-    </div>
-  </I18nProvider>
+  <NuqsAdapter>
+    <I18nProvider>
+      <div class="flex min-h-dvh flex-col bg-background">
+        <main class="flex flex-1 items-center justify-center p-4">
+          {props.children}
+        </main>
+        <footer class="flex items-center justify-center gap-6 p-6">
+          <a href="/terms" class={FOOTER_LINK_CLASS}>
+            {t("auth.footer.terms")}
+          </a>
+          <a href="/privacy" class={FOOTER_LINK_CLASS}>
+            {t("auth.footer.privacy")}
+          </a>
+          <a href="/cookies" class={FOOTER_LINK_CLASS}>
+            {t("auth.footer.cookies")}
+          </a>
+        </footer>
+      </div>
+    </I18nProvider>
+  </NuqsAdapter>
 }

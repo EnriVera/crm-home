@@ -21,6 +21,7 @@ import {
   SIDEBAR_LAYOUT_ID,
 } from "../lib/nav/sidebar-layout";
 import { createRpcClient } from "../lib/api/rpc";
+import { NuqsAdapter } from "@octanejs/nuqs/adapters/react";
 
 interface AppShellLayoutProps {
   children: OctaneNode;
@@ -92,36 +93,38 @@ export function AppShellLayout(props: AppShellLayoutProps) @{
     },
   };
 
-  <I18nProvider>
-    <ClientRouter />
-    <SkipLink label={t("shell.skipToContent")} />
-    <Group
-      orientation="horizontal"
-      class="min-h-dvh bg-background"
-      defaultLayout={defaultLayout}
-      onLayoutChange={onLayoutChange}
-      onLayoutChanged={onLayoutChanged}
-    >
-      <Panel
-        id="sidebar"
-        collapsible
-        collapsedSize={`${SIDEBAR_LAYOUT.collapsedSize}%`}
-        minSize={`${SIDEBAR_LAYOUT.minSize}%`}
-        maxSize={`${SIDEBAR_LAYOUT.maxSize}%`}
-        defaultSize={`${SIDEBAR_LAYOUT.defaultSize}%`}
-        panelRef={sidebarPanelRef}
-        onResize={(size) => setCollapsed(isCollapsedSize(size.asPercentage))}
+  <NuqsAdapter>
+    <I18nProvider>
+      <ClientRouter />
+      <SkipLink label={t("shell.skipToContent")} />
+      <Group
+        orientation="horizontal"
+        class="min-h-dvh bg-background"
+        defaultLayout={defaultLayout}
+        onLayoutChange={onLayoutChange}
+        onLayoutChanged={onLayoutChanged}
       >
-        <SidebarCollapseContext value={collapseValue}>
-          <SidebarNav url={props.url} />
-        </SidebarCollapseContext>
-      </Panel>
-      <Separator class="w-1 shrink-0 bg-border transition-colors hover:bg-text-secondary focus-visible:bg-text-secondary" />
-      <Panel id="content">
-        <main id="content" class="min-w-0 flex-1 p-8">
-          {props.children}
-        </main>
-      </Panel>
-    </Group>
-  </I18nProvider>
+        <Panel
+          id="sidebar"
+          collapsible
+          collapsedSize={`${SIDEBAR_LAYOUT.collapsedSize}%`}
+          minSize={`${SIDEBAR_LAYOUT.minSize}%`}
+          maxSize={`${SIDEBAR_LAYOUT.maxSize}%`}
+          defaultSize={`${SIDEBAR_LAYOUT.defaultSize}%`}
+          panelRef={sidebarPanelRef}
+          onResize={(size) => setCollapsed(isCollapsedSize(size.asPercentage))}
+        >
+          <SidebarCollapseContext value={collapseValue}>
+            <SidebarNav url={props.url} />
+          </SidebarCollapseContext>
+        </Panel>
+        <Separator class="w-1 shrink-0 bg-border transition-colors hover:bg-text-secondary focus-visible:bg-text-secondary" />
+        <Panel id="content">
+          <main id="content" class="min-w-0 flex-1 p-8">
+            {props.children}
+          </main>
+        </Panel>
+      </Group>
+    </I18nProvider>
+  </NuqsAdapter>
 }
