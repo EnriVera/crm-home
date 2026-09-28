@@ -357,7 +357,12 @@
       "email": "Email"
     },
     "appearance": {
-      "title": "Apariencia"
+      "title": "Apariencia",
+      "themeLabel": "Tema",
+      "themeLight": "Claro",
+      "themeDark": "Oscuro",
+      "themeSystem": "Sistema",
+      "themeSaveError": "No se pudo guardar el tema. Reintentá."
     }
   },
   "dashboard": {
