@@ -5,7 +5,7 @@ import { Icon } from "../vendor/icons";
 import { DataList } from "../molecules/data-list.tsrx";
 import { EmptyState } from "../molecules/empty-state.tsrx";
 import { ScheduleListItem } from "../molecules/schedule-list-item.tsrx";
-import { useFetch } from "../../hooks/use-fetch";
+import { useOctaneQuery } from "../../hooks/use-octane-query";
 import type { Schedule } from "@crm/types";
 
 /**
@@ -21,22 +21,23 @@ const RPC = createRpcClient(import.meta.env.VITE_API_URL ?? "/rpc");
 export function SchedulesPage() @{
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  // Carga vía useFetch (centraliza cancelled+finally).
-  const schedulesFetch = useFetch<Schedule[]>(
+  // Carga vía useOctaneQuery (deduplicación + cancelled + finally vía
+  // QueryObserver; misma contract surface que useFetch).
+  const schedulesQuery = useOctaneQuery<Schedule[]>(
     () =>
       (RPC as RpcClient).schedules.list({ limit: 50 }) as Promise<Schedule[]>,
     [],
   );
-  const schedules = schedulesFetch.data ?? [];
-  const loading = schedulesFetch.loading;
-  const loadError = schedulesFetch.error;
+  const schedules = schedulesQuery.data ?? [];
+  const loading = schedulesQuery.loading;
+  const loadError = schedulesQuery.error;
 
   const handleDelete = async (scheduleId: string) => {
     setDeletingId(scheduleId);
     try {
       await (RPC as RpcClient).schedules.remove({ sche_id: scheduleId });
       setDeletingId(null);
-      schedulesFetch.refetch();
+      schedulesQuery.refetch();
     } catch {
       setDeletingId(null);
       setLoadError(t("schedules.loadError"));
