@@ -70,6 +70,11 @@ import {
   updateScheduleHandler,
   type SchedulesRouteDependencies,
 } from "./schedules/schedules-routes";
+import {
+  createListAppsHandler,
+  createListCurrenciesHandler,
+  type ConfigRouteDependencies,
+} from "./config/config-routes";
 
 export interface RouterDependencies
   extends AuthRouteDependencies,
@@ -78,7 +83,8 @@ export interface RouterDependencies
     IncomesRouteDependencies,
     ExpensesRouteDependencies,
     TransfersRouteDependencies,
-    SchedulesRouteDependencies {
+    SchedulesRouteDependencies,
+    ConfigRouteDependencies {
   getHealth: GetHealth;
   listClientsHandler: ReturnType<typeof createListClientsHandler>;
 }
@@ -189,6 +195,9 @@ export function createRpcHandler(
   const createScheduleH3 = asBridgeHandler(createScheduleHandler(deps));
   const updateScheduleH3 = asBridgeHandler(updateScheduleHandler(deps));
   const removeScheduleH3 = asBridgeHandler(removeScheduleHandler(deps));
+
+  const listAppsH3 = asBridgeHandler(createListAppsHandler(deps));
+  const listCurrenciesH3 = asBridgeHandler(createListCurrenciesHandler(deps));
 
   const typesForFormH3 = createListTypesForFormHandler(deps);
   const categoriesByTypeH3 = createListCategoriesByTypeHandler(deps);
@@ -457,6 +466,17 @@ export function createRpcHandler(
       method: "POST",
       path: "/schedules/remove",
       run: wrapPost(removeScheduleH3, "/schedules/remove"),
+    },
+    {
+      // Config (read-only seed tables: apps + currencies).
+      method: "POST",
+      path: "/config/listApps",
+      run: wrapPost(listAppsH3, "/config/listApps"),
+    },
+    {
+      method: "POST",
+      path: "/config/listCurrencies",
+      run: wrapPost(listCurrenciesH3, "/config/listCurrencies"),
     },
   ];
 
