@@ -9,7 +9,7 @@ import { TaskListItem } from "../molecules/task-list-item.tsrx";
 import { TaskKanbanBoard } from "../organisms/task-kanban-board/task-kanban-board.tsrx";
 import { DataList } from "../molecules/data-list.tsrx";
 import { TaskForm } from "../organisms/task-form/task-form.tsrx";
-import { useFetch } from "../../hooks/use-fetch";
+import { useOctaneQuery } from "../../hooks/use-octane-query";
 import type {
   TaskFormState,
 } from "../organisms/task-form/task-form.logic";
@@ -165,20 +165,20 @@ export function TasksPage() @{
   const [creatingOpen, setCreatingOpen] = useState(false);
   const titleInputRef = useRef<HTMLInputElement | null>(null);
 
-  // Carga de la lista de tasks vía useFetch (centraliza cancelled+finally
-  // y la invariante de "loading siempre vuelve a false").
-  const tasksFetch = useFetch<TaskRow[]>(
+  // Carga de la lista de tasks vía useOctaneQuery (cancel + finally vienen
+  // gratis de QueryObserver; deduplicación entre componentes; staleTime 30s).
+  const tasksQuery = useOctaneQuery<TaskRow[]>(
     () =>
       (RPC as RpcClient).tasks.list({ search: filters.search }) as Promise<TaskRow[]>,
     [filters.search],
   );
-  const tasks: TaskRow[] = tasksFetch.data ?? [];
-  const loading = tasksFetch.loading;
-  const loadError = tasksFetch.error;
+  const tasks: TaskRow[] = tasksQuery.data ?? [];
+  const loading = tasksQuery.loading;
+  const loadError = tasksQuery.error;
 
   // Carga de task_states + task_types para los selects del form (fire-and-forget
   // — si falla, los selects quedan vacíos y el form no se puede abrir).
-  const formDataFetch = useFetch<{
+  const formDataQuery = useOctaneQuery<{
     states: TaskStateOption[];
     types: TypeForFormOption[];
   }>(
@@ -191,8 +191,8 @@ export function TasksPage() @{
     },
     [],
   );
-  const taskStates = formDataFetch.data?.states ?? [];
-  const taskTypes = formDataFetch.data?.types ?? [];
+  const taskStates = formDataQuery.data?.states ?? [];
+  const taskTypes = formDataQuery.data?.types ?? [];
 
   // Escape cierra el drawer. Listener solo activo cuando el drawer está abierto.
   useEffect(() => {
@@ -222,7 +222,7 @@ export function TasksPage() @{
   }, [creatingOpen]);
 
   const handleCreate = async (state: TaskFormState): Promise<void> => {
-    // Cerramos el drawer antes del RPC; el loading del useFetch muestra
+    // Cerramos el drawer antes del RPC; el loading del useOctaneQuery muestra
     // "saving..." mientras el server responde y el refetch trae la versión
     // canónica (con ID real y orden correcto del server).
     setCreatingOpen(false);
@@ -233,9 +233,9 @@ export function TasksPage() @{
         task_tast_id: state.stateId || undefined,
         task_type_id: state.typeId || undefined,
       });
-      tasksFetch.refetch();
+      tasksQuery.refetch();
     } catch (err) {
-      // El error del create queda en el state del useFetch si lo
+      // El error del create queda en el state del observer si lo
       // exponemos; acá lo dejamos a la UI estándar de error (que el
       // hook ya mantiene en `error`).
       console.error("[tasks] create failed:", err);
@@ -371,10 +371,10 @@ export function TasksPage() @{
                     task_id: params.taskId,
                     target_state_id: params.targetStateId,
                   });
-                  tasksFetch.refetch();
+                  tasksQuery.refetch();
                 } catch (err) {
                   console.error("[tasks] move failed:", err);
-                  tasksFetch.refetch();
+                  tasksQuery.refetch();
                 }
                 void onMove;
               }}
