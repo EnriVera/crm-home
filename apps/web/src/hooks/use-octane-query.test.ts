@@ -109,15 +109,31 @@ describe("useOctaneQuery hook — type contract", () => {
   );
 
   test(
-    "useEffect resetea opciones del observer en cada cambio de deps + se desuscribe al cleanup",
+    "useMemo estabiliza el observer para evitar loops infinitos de fetch",
     () => {
       const content = readFileSync(HOOK_PATH, "utf-8");
-      // setOptions + subscribe + unsubscribe en el cleanup cubren los
-      // dos invariantes críticas: re-fetch cuando deps cambian y
-      // no-leak al desmontar (QueryObserver lo maneja por diseño).
-      expect(content).toContain("observer.setOptions");
+      // El bug clásico con QueryObserver: si se crea uno nuevo cada
+      // render, el useEffect del subscribe vuelve a fetchear, lo cual
+      // setea result, lo cual re-renderiza, lo cual crea otro observer
+      // → bucle. useMemo con [client, stableKey] rompe el ciclo.
+      expect(content).toMatch(/useMemo\s*\(\s*\(\s*\)\s*=>\s*new QueryObserver/);
+      expect(content).toMatch(/stableKey/);
+      // stableKey se calcula desde queryKey.join para evitar deps array
+      // nuevos disparando useMemo invalidation.
+      expect(content).toMatch(/queryKey\.join/);
+    },
+  );
+
+  test(
+    "useEffect subscribe + cleanup unsubscribe al desmontar — sin setOptions",
+    () => {
+      const content = readFileSync(HOOK_PATH, "utf-8");
+      // Solo subscribe + cleanup. El observer se recrea via useMemo
+      // cuando stableKey cambia; no hay setOptions por useEffect
+      // (eso fue el bug original).
       expect(content).toContain("observer.subscribe");
       expect(content).toMatch(/return\s*\(\s*\)\s*=>\s*{\s*unsubscribe\(\)/);
+      expect(content).not.toContain("observer.setOptions");
     },
   );
 

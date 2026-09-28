@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "octane";
+import { useCallback, useEffect, useMemo, useState } from "octane";
 
 import {
   QueryClient,
@@ -35,9 +35,7 @@ import {
  * Caveats:
  * - **WebSocket cache invalidation (PRD-v2.md línea 69) NO está
  *   implementado** — pendiente para otra fase.
- * - `defaultOptions.staleTime` se setea en el `QueryClient` singleton,
- *   no por llamada. Tunearlo por página requiere un segundo argumento
- *   en el futuro.
+ * - `defaultOptions.staleTime` se setea en el `QueryClient` singleton.
  */
 
 interface OctaneQueryResult<T> {
@@ -95,19 +93,15 @@ function shallowChanged<T, TError>(
 /**
  * Mapear el resultado de QueryObserver al contrato estable de `useFetch`.
  * `loading` cubre los dos casos: primer fetch (`status === 'pending'`)
- * y re-fetch en background (`fetchStatus === 'fetching'`). Coincide con
- * `useFetch.loading` original.
+ * y re-fetch en background (`fetchStatus === 'fetching'`).
  */
-function toContract<T>(snap: QueryObserverResult<T, unknown>): OctaneQueryResult<T>["loading"] extends true
-  ? never
-  : OctaneQueryResult<T> {
+function toContract<T>(
+  snap: QueryObserverResult<T, unknown>,
+): Omit<OctaneQueryResult<T>, "refetch"> {
   return {
     loading: snap.fetchStatus === "fetching" || snap.status === "pending",
     error: errorMessage(snap.error),
     data: (snap.data ?? null) as T | null,
-    refetch: () => {
-      /* bound at call site */
-    },
   };
 }
 
@@ -117,26 +111,36 @@ export function useOctaneQuery<T>(
 ): OctaneQueryResult<T> {
   const client = getQueryClient();
   const queryKey: QueryKey = ["octane", ...deps];
+  // Serializa el queryKey para que useMemo solo re-cree el observer
+  // cuando el contenido lógico cambia (NO la referencia del array).
+  const stableKey = queryKey.join("|");
 
-  const observer = new QueryObserver<T, unknown>(client, {
-    queryKey,
-    queryFn: fetcher,
-  });
+  // El observer se crea una sola vez por (client, stableKey). Si el
+  // deps array cambia lógicamente, stableKey cambia, useMemo invalida
+  // la cache y se crea un observer nuevo con el nuevo queryFn. Eso es
+  // exactamente lo que queremos: deps change → refetch.
+  const observer = useMemo(
+    () =>
+      new QueryObserver<T, unknown>(client, {
+        queryKey,
+        queryFn: fetcher,
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [client, stableKey],
+  );
 
   const [result, setResult] = useState<QueryObserverResult<T, unknown>>(
     () => observer.getCurrentResult(),
   );
 
   useEffect(() => {
-    observer.setOptions({ queryKey, queryFn: fetcher });
     const unsubscribe = observer.subscribe((next) => {
       setResult((prev) => (shallowChanged(prev, next) ? next : prev));
     });
     return () => {
       unsubscribe();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [observer, queryKey, ...deps]);
+  }, [observer]);
 
   const refetch = useCallback(() => {
     void observer.refetch();
