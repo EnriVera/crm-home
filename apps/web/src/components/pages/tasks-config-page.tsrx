@@ -6,7 +6,7 @@ import { StatusMessage } from "../atoms/status-message.tsrx";
 import { TaskStateForm } from "../organisms/task-state-form/task-state-form.tsrx";
 import { DataList } from "../molecules/data-list.tsrx";
 import { EmptyState } from "../molecules/empty-state.tsrx";
-import { useFetch } from "../../hooks/use-fetch";
+import { useOctaneQuery } from "../../hooks/use-octane-query";
 import {
   buildStateSubmitParams,
   type TaskStateFormMode,
@@ -84,20 +84,20 @@ export function TasksConfigPage() @{
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Carga de estados vía useFetch (centraliza cancelled+finally y arregla
-  // el bug latente: este useEffect no tenía finally — si la RPC se colgaba,
-  // loading quedaba en true para siempre).
-  const statesFetch = useFetch<TaskState[]>(
+  // Carga de estados vía useOctaneQuery. Cancel + finally vienen gratis del
+  // QueryObserver (el bug original del useEffect sin finally está curado
+  // por el query core, no por el hook).
+  const statesQuery = useOctaneQuery<TaskState[]>(
     () =>
       (RPC as RpcClient).tasks.states.list() as Promise<TaskState[]>,
     [],
   );
-  const states = statesFetch.data ?? [];
-  const loading = statesFetch.loading;
-  const loadError = statesFetch.error;
+  const states = statesQuery.data ?? [];
+  const loading = statesQuery.loading;
+  const loadError = statesQuery.error;
 
   function refresh(): void {
-    statesFetch.refetch();
+    statesQuery.refetch();
   }
 
   // Escape cierra drawer / modal.
