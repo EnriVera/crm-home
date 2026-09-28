@@ -16,6 +16,7 @@ export interface GetSessionOutput {
     id: string;
     email: string;
     name: string;
+    userTheme: string;
   };
   renewed?: boolean;
 }
@@ -62,6 +63,7 @@ export class GetSession {
         id: user.id,
         email: user.email,
         name: user.name,
+        userTheme: user.theme,
       },
       renewed,
     };

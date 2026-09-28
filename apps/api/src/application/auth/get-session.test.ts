@@ -175,6 +175,7 @@ describe("GetSession", () => {
         id: "user-1",
         email: "ana@example.com",
         name: "Ana",
+        userTheme: "system",
       },
     });
   });
