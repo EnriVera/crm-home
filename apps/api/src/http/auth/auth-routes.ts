@@ -2,13 +2,16 @@ import { readValidatedBody } from "h3";
 import type { H3Event } from "h3";
 import {
   requestOtpInputSchema,
+  updateThemeInputSchema,
   verifyOtpInputSchema,
 } from "@crm/types";
 import type { GetSession } from "../../application/auth/get-session";
 import type { Logout } from "../../application/auth/logout";
 import type { RequestOtp } from "../../application/auth/request-otp";
+import type { UpdateTheme } from "../../application/auth/update-theme";
 import type { VerifyOtp } from "../../application/auth/verify-otp";
 import { RateLimitedError } from "../../application/auth/errors";
+import { InvalidThemeError } from "../../application/auth/update-theme";
 import {
   deleteSessionCookie,
   getSessionToken,
@@ -20,6 +23,7 @@ export interface AuthRouteDependencies {
   verifyOtp: VerifyOtp;
   logout: Logout;
   getSession: GetSession;
+  updateTheme: UpdateTheme;
 }
 
 export function createRequestOtpHandler(deps: AuthRouteDependencies) {
@@ -81,5 +85,34 @@ export function createLogoutHandler(deps: AuthRouteDependencies) {
     }
     deleteSessionCookie(event);
     return { ok: true };
+  };
+}
+
+export function createUpdateThemeHandler(deps: AuthRouteDependencies) {
+  return async (event: H3Event) => {
+    const token = getSessionToken(event);
+    if (!token) {
+      return new Response(null, { status: 401 });
+    }
+
+    const body = await readValidatedBody(event, updateThemeInputSchema.parse);
+    try {
+      const result = await deps.updateTheme.execute({
+        token,
+        setting: body.setting,
+      });
+      if (!result) {
+        return new Response(null, { status: 401 });
+      }
+      return { user: result.user };
+    } catch (err) {
+      if (err instanceof InvalidThemeError) {
+        return new Response(
+          JSON.stringify({ code: err.code, message: err.message }),
+          { status: 400, headers: { "Content-Type": "application/json" } },
+        );
+      }
+      throw err;
+    }
   };
 }
