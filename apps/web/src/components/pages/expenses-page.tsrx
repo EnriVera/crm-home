@@ -7,7 +7,7 @@ import { DataList } from "../molecules/data-list.tsrx";
 import { EmptyState } from "../molecules/empty-state.tsrx";
 import { ExpenseListItem } from "../molecules/expense-list-item.tsrx";
 import { ExpenseForm } from "../organisms/expense-form/expense-form.tsrx";
-import { useFetch } from "../../hooks/use-fetch";
+import { useOctaneQuery } from "../../hooks/use-octane-query";
 import type { Expense } from "@crm/types";
 
 /**
@@ -29,8 +29,9 @@ export function ExpensesPage() @{
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
-  // Carga vía useFetch (centraliza cancelled+finally).
-  const expensesFetch = useFetch<Expense[]>(
+  // Carga vía useOctaneQuery (deduplicación + cancelled + finally vía
+  // QueryObserver; misma contract surface que useFetch).
+  const expensesQuery = useOctaneQuery<Expense[]>(
     () =>
       (RPC as RpcClient).expenses.list({
         search,
@@ -40,9 +41,9 @@ export function ExpensesPage() @{
       }) as Promise<Expense[]>,
     [search, dateFrom, dateTo],
   );
-  const expenses = expensesFetch.data ?? [];
-  const loading = expensesFetch.loading;
-  const loadError = expensesFetch.error;
+  const expenses = expensesQuery.data ?? [];
+  const loading = expensesQuery.loading;
+  const loadError = expensesQuery.error;
 
   const handleCreate = async (payload: {
     expe_account_id: string;
@@ -55,7 +56,7 @@ export function ExpensesPage() @{
   }) => {
     setCreateOpen(false);
     await (RPC as RpcClient).expenses.create(payload);
-    expensesFetch.refetch();
+    expensesQuery.refetch();
   };
 
   const handleDelete = async (expenseId: string) => {
@@ -64,7 +65,7 @@ export function ExpensesPage() @{
     try {
       await (RPC as RpcClient).expenses.remove({ expe_id: expenseId });
       setDeletingId(null);
-      expensesFetch.refetch();
+      expensesQuery.refetch();
     } catch {
       setDeletingId(null);
       setDeleteError(t("expenses.loadError"));
