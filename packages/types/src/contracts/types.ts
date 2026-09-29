@@ -28,9 +28,12 @@ export const TYPE_MODULE_NAMES = [
 ] as const;
 export type TypeModuleName = (typeof TYPE_MODULE_NAMES)[number];
 
+/** Array de módulos. Vacío = "all modules". */
+export type TypeModules = readonly TypeModuleName[];
+
 export const typeModuleNameSchema = z.enum(TYPE_MODULE_NAMES);
 
-/** Array de módulos. Vacío = "all modules". */
+/** Array de módulos (Zod). Vacío = "all modules". */
 export const typeModulesSchema = z.array(typeModuleNameSchema);
 
 /* ---------- Schemas entidad (read-side) ---------- */

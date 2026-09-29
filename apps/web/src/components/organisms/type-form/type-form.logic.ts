@@ -1,4 +1,8 @@
-import type { TypeModule } from "@crm/types";
+import {
+  TYPE_MODULE_NAMES,
+  type TypeModuleName,
+  type TypeModules,
+} from "@crm/types";
 
 /**
  * Lógica pura del form de `type` (sin DOM, sin imports de UI).
@@ -7,30 +11,30 @@ import type { TypeModule } from "@crm/types";
  *   - Estado tipado + reducer de acciones.
  *   - Validaciones puras (testables sin octane).
  *   - Helpers de armado del payload para el contract Zod.
+ *
+ * Multi-módulo: el form ahora soporta N módulos por type. La lista
+ * vacía `[]` = "all modules" (semántica invertida del viejo single-module
+ * donde un valor era required).
  */
 
-export const TYPE_FORM_MODULES = [
-  "tasks",
-  "incomes",
-  "expenses",
-  "schedules",
-] as const satisfies readonly TypeModule[];
+export const TYPE_FORM_MODULES: readonly TypeModuleName[] = TYPE_MODULE_NAMES;
 
 export interface TypeFormState {
   name: string;
-  module: TypeModule;
+  modules: TypeModules;
 }
 
 export type TypeFormAction =
   | { type: "set_name"; value: string }
-  | { type: "set_module"; value: TypeModule };
+  | { type: "toggle_module"; value: TypeModuleName }
+  | { type: "set_modules"; value: TypeModules };
 
 export function initialTypeFormState(
   initial: Partial<TypeFormState> = {},
 ): TypeFormState {
   return {
     name: initial.name ?? "",
-    module: initial.module ?? "tasks",
+    modules: initial.modules ?? [],
   };
 }
 
@@ -41,17 +45,26 @@ export function applyTypeFormAction(
   switch (action.type) {
     case "set_name":
       return { ...state, name: action.value };
-    case "set_module":
-      return { ...state, module: action.value };
+    case "toggle_module": {
+      const has = state.modules.includes(action.value);
+      const next = has
+        ? state.modules.filter((m) => m !== action.value)
+        : [...state.modules, action.value];
+      return { ...state, modules: next };
+    }
+    case "set_modules":
+      return { ...state, modules: action.value };
   }
 }
 
 export interface TypeFormError {
-  field: "name" | "module";
+  field: "name" | "modules";
   message: string;
 }
 
-export function firstTypeFormError(state: TypeFormState): TypeFormError | null {
+export function firstTypeFormError(
+  state: TypeFormState,
+): TypeFormError | null {
   const trimmed = state.name.trim();
   if (trimmed.length === 0) {
     return { field: "name", message: "El nombre es obligatorio" };
@@ -62,8 +75,10 @@ export function firstTypeFormError(state: TypeFormState): TypeFormError | null {
       message: "El nombre no puede superar 100 caracteres",
     };
   }
-  if (!TYPE_FORM_MODULES.includes(state.module)) {
-    return { field: "module", message: "Módulo inválido" };
+  for (const module of state.modules) {
+    if (!TYPE_FORM_MODULES.includes(module)) {
+      return { field: "modules", message: `Módulo inválido: ${module}` };
+    }
   }
   return null;
 }
@@ -74,12 +89,12 @@ export function isTypeFormReadyToSubmit(state: TypeFormState): boolean {
 
 export interface TypeFormPayload {
   type_name: string;
-  type_module: TypeModule;
+  type_modules: TypeModules;
 }
 
 export function typeFormToApiPayload(state: TypeFormState): TypeFormPayload {
   return {
     type_name: state.name.trim(),
-    type_module: state.module,
+    type_modules: [...state.modules].sort() as TypeModules,
   };
 }

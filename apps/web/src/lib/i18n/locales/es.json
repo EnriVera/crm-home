@@ -404,7 +404,8 @@
       "tasks": "Tareas",
       "incomes": "Ingresos",
       "expenses": "Gastos",
-      "schedules": "Reglas recurrentes"
+      "schedules": "Reglas recurrentes",
+      "allModules": "Todos"
     },
     "actions": {
       "new": "Nuevo tipo",
@@ -414,7 +415,9 @@
     },
     "fields": {
       "name": "Nombre",
-      "module": "Módulo"
+      "modules": "Módulos",
+      "modulesHint": "Marcá los módulos donde se puede usar este tipo.",
+      "modulesEmptyHint": "Sin módulos = aplica a todos."
     },
     "form": {
       "cancel": "Cancelar"
@@ -432,6 +435,14 @@
       "noTypesBody": "Los tipos te permiten clasificar tus tareas, ingresos y gastos.",
       "noResults": "Sin coincidencias",
       "noResultsBody": "Probá con otro nombre o cambiá el filtro de módulo."
+    },
+    "confirm": {
+      "delete": {
+        "title": "¿Eliminar este tipo?",
+        "body": "Esta acción no se puede deshacer.",
+        "confirm": "Eliminar",
+        "cancel": "Cancelar"
+      }
     },
     "errors": {
       "deleteFailed": "No pudimos eliminar el tipo. Intentá de nuevo."

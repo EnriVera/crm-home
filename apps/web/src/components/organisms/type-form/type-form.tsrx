@@ -4,13 +4,16 @@ import { Button } from "../../atoms/button.tsrx";
 import { TextInput } from "../../atoms/text-input.tsrx";
 import { StatusMessage } from "../../atoms/status-message.tsrx";
 import { Drawer } from "../../atoms/drawer.tsrx";
-import type { TypeModule } from "@crm/types";
+import {
+  TYPE_MODULE_NAMES,
+  type TypeModuleName,
+  type TypeModules,
+} from "@crm/types";
 import {
   applyTypeFormAction,
   firstTypeFormError,
   initialTypeFormState,
   isTypeFormReadyToSubmit,
-  TYPE_FORM_MODULES,
   typeFormToApiPayload,
   type TypeFormState,
 } from "./type-form.logic";
@@ -20,27 +23,23 @@ import {
  *
  * Campos (todos i18n):
  *   - Nombre (obligatorio, 1-100 chars, trim)
- *   - Módulo (select cerrado: tasks / incomes / expenses / schedules)
+ *   - Módulos (checkboxes N-modulos; vacío = "all modules")
  *
  * Modos:
  *   - `create` → submit llama `rpc.types.create(...)`.
- *   - `edit`   → submit llama `rpc.types.update({ type_id, type_name, type_module })`.
+ *   - `edit`   → submit llama `rpc.types.update({ type_id, ...payload })`.
  *
- * El form NO usa `useQueryState` para "edit open" porque el estado de
- * "qué type se está editando" vive en `types-tab.tsrx` (vía
- * `editingType` local + handler). Sólo el `tab` activo está en URL;
- * el sub-estado de UI (qué fila está expandida) sigue siendo local
- * por ahora. Si en el futuro se quiere deep-link a
- * `/config?tab=types&edit=<type_id>`, este drawer se conecta a
- * `useQueryStates({ tab, edit })` (work-unit aparte).
+ * Estado del drawer: controlado por el padre (TypesTab) via la URL
+ * (\`?tab=types&new\` o \`?tab=types&edit=<id>\`). Este componente
+ * sólo recibe los handlers y el estado inicial.
  */
 
-const MODULE_LABEL_KEYS = {
+const MODULE_LABEL_KEYS: Record<TypeModuleName, string> = {
   tasks: "types.module.tasks",
   incomes: "types.module.incomes",
   expenses: "types.module.expenses",
   schedules: "types.module.schedules",
-} as const satisfies Record<TypeModule, string>;
+};
 
 export interface TypeFormProps {
   mode: "create" | "edit";
@@ -49,7 +48,7 @@ export interface TypeFormProps {
   editingId?: string;
   onSubmit: (payload: {
     type_name: string;
-    type_module: TypeModule;
+    type_modules: TypeModules;
   }) => Promise<void> | void;
   onClose: () => void;
   isSubmitting?: boolean;
@@ -79,7 +78,6 @@ export function TypeForm(props: TypeFormProps) @{
   };
 
   <Drawer
-    open
     onClose={props.onClose}
     title={
       props.mode === "create" ? t("types.create.title") : t("types.edit.title")
@@ -102,32 +100,44 @@ export function TypeForm(props: TypeFormProps) @{
         />
       </div>
 
-      <div class="flex flex-col gap-1.5">
-        <label for="type-module" class="text-xs font-medium text-text-secondary">
-          {t("types.fields.module")} *
-        </label>
-        <select
-          id="type-module"
-          value={state.module}
-          onInput={(e: Event) => {
-            const target = e.currentTarget as HTMLSelectElement;
-            setState((prev) =>
-              applyTypeFormAction(prev, {
-                type: "set_module",
-                value: target.value as TypeModule,
-              }),
+      <fieldset class="flex flex-col gap-2">
+        <legend class="text-xs font-medium text-text-secondary">
+          {t("types.fields.modules")}
+        </legend>
+        <p class="text-xs text-text-secondary">{t("types.fields.modulesHint")}</p>
+        <div class="flex flex-col gap-1.5">
+          {TYPE_MODULE_NAMES.map((moduleValue) => {
+            const checked = state.modules.includes(moduleValue);
+            return (
+              <label
+                key={moduleValue}
+                class="flex cursor-pointer items-center gap-2 rounded-md border border-border bg-background px-3 py-2 text-sm text-text-primary hover:bg-surface"
+              >
+                <input
+                  type="checkbox"
+                  checked={checked}
+                  disabled={isSubmitting}
+                  onChange={() => {
+                    setState((prev) =>
+                      applyTypeFormAction(prev, {
+                        type: "toggle_module",
+                        value: moduleValue,
+                      }),
+                    );
+                  }}
+                  class="h-4 w-4 rounded border-border text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+                />
+                <span>{t(MODULE_LABEL_KEYS[moduleValue])}</span>
+              </label>
             );
-          }}
-          disabled={isSubmitting}
-          class="rounded-md border border-border bg-background px-3 py-2 text-sm text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
-        >
-          {TYPE_FORM_MODULES.map((moduleValue) => (
-            <option key={moduleValue} value={moduleValue}>
-              {t(MODULE_LABEL_KEYS[moduleValue])}
-            </option>
-          ))}
-        </select>
-      </div>
+          })}
+        </div>
+        {state.modules.length === 0 && (
+          <p class="text-xs text-text-secondary">
+            {t("types.fields.modulesEmptyHint")}
+          </p>
+        )}
+      </fieldset>
 
       {errorMessage !== null ? (
         <StatusMessage variant="error">{errorMessage}</StatusMessage>
