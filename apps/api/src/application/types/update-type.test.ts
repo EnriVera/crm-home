@@ -8,7 +8,7 @@ function makeRow(overrides: Partial<TypeRow> = {}): TypeRow {
     id: "t-1",
     userId: "u-1",
     name: "Desarrollo",
-    module: "tasks",
+    modules: ["tasks"],
     createdAt: new Date("2026-01-01T00:00:00Z"),
     ...overrides,
   };
@@ -40,7 +40,7 @@ function makeRepo(initial: TypeRow[]) {
       const next: TypeRow = {
         ...prev,
         ...(params.name === undefined ? {} : { name: params.name }),
-        ...(params.module === undefined ? {} : { module: params.module }),
+        ...(params.modules === undefined ? {} : { modules: params.modules }),
       };
       rows[idx] = next;
       return next;
@@ -67,19 +67,32 @@ describe("UpdateType", () => {
     expect(rows[0]?.name).toBe("Frontend");
   });
 
-  test("actualiza solo module", async () => {
-    const { repo, rows } = makeRepo([makeRow()]);
+  test("actualiza solo modules (replace, normaliza y ordena)", async () => {
+    const { repo, rows } = makeRepo([makeRow({ modules: ["tasks"] })]);
     const useCase = new UpdateType({ typeRepository: repo });
 
     const updated = await useCase.execute({
       userId: "u-1",
       typeId: "t-1",
-      module: "incomes",
+      modules: ["expenses", "tasks", "expenses"],
     });
 
-    expect(updated.module).toBe("incomes");
-    expect(updated.name).toBe("Desarrollo"); // intacto
-    expect(rows[0]?.module).toBe("incomes");
+    expect(updated.modules).toEqual(["expenses", "tasks"]);
+    expect(rows[0]?.modules).toEqual(["expenses", "tasks"]);
+  });
+
+  test("acepta modules=[] para pasar a all-modules", async () => {
+    const { repo, rows } = makeRepo([makeRow({ modules: ["tasks"] })]);
+    const useCase = new UpdateType({ typeRepository: repo });
+
+    const updated = await useCase.execute({
+      userId: "u-1",
+      typeId: "t-1",
+      modules: [],
+    });
+
+    expect(updated.modules).toEqual([]);
+    expect(rows[0]?.modules).toEqual([]);
   });
 
   test("rechaza name vacío", async () => {
@@ -103,13 +116,13 @@ describe("UpdateType", () => {
       useCase.execute({
         userId: "u-1",
         typeId: "t-1",
-        module: "nope" as unknown as TypeRow["module"],
+        modules: ["nope" as never],
       }),
     ).rejects.toBeInstanceOf(InvalidTypeInput);
   });
 
   test("traduce 'no result' del repo a TypeNotFound", async () => {
-    const { repo } = makeRepo([]); // vacío: el update no encuentra la fila
+    const { repo } = makeRepo([]);
     const useCase = new UpdateType({ typeRepository: repo });
 
     expect(

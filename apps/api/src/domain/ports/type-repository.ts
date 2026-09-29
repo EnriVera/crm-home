@@ -10,22 +10,31 @@ import type { Transaction } from "./transaction";
  * Multi-tenant: filtra por user + `type_deleted_at IS NULL` en toda
  * operación. El repo nunca devuelve filas de otro user.
  *
- * Tipo de módulo:
- * - `tasks` → type visible en el form de nueva tarea
- * - `incomes` / `expenses` → type visible en el form de income/expense
- * - `schedules` → type visible en el form de schedule
- *   (otros módulos se agregan cuando se necesiten)
- *
- * El repo NO valida que `type_module` pertenezca a un set cerrado: la
- * validación queda en el contract Zod de `packages/types/src/contracts/types.ts`.
+ * Multi-módulo:
+ * - Un `type` pertenece a N módulos (0..4). Vacío `[]` = "aplica a todos
+ *   los módulos" (semántica all-modules).
+ * - Set cerrado enforced por CHECK en DB (migration 007) Y por
+ *   validación en el use case `CreateType` / `UpdateType`.
+ * - El filter del list usa array-contains (Postgres `@>`) para matchear
+ *   un type con el módulo seleccionado.
  */
-export type TypeModule = "tasks" | "incomes" | "expenses" | "schedules";
+export const TYPE_MODULE_NAMES = [
+  "tasks",
+  "incomes",
+  "expenses",
+  "schedules",
+] as const;
+
+export type TypeModuleName = (typeof TYPE_MODULE_NAMES)[number];
+
+/** Array de módulos. Vacío = "aplica a todos". */
+export type TypeModules = readonly TypeModuleName[];
 
 export interface TypeRow {
   id: string;
   userId: string;
   name: string;
-  module: TypeModule;
+  modules: TypeModules;
   createdAt: Date;
 }
 
@@ -33,7 +42,8 @@ export interface TypeRepository {
   list(params: {
     userId: string;
     search: string;
-    module: TypeModule | null;
+    /** Filtro por módulo. `null` = traer types con `modules = []` (all). */
+    module: TypeModuleName | null;
     limit: number;
   }): Promise<TypeRow[]>;
 
@@ -45,14 +55,14 @@ export interface TypeRepository {
   insert(params: {
     userId: string;
     name: string;
-    module: TypeModule;
+    modules: TypeModules;
   }): Promise<TypeRow>;
 
   update(params: {
     userId: string;
     typeId: string;
     name?: string;
-    module?: TypeModule;
+    modules?: TypeModules;
   }): Promise<TypeRow>;
 
   softDelete(params: {

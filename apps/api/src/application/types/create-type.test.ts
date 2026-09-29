@@ -17,7 +17,7 @@ function makeRepo() {
         id: `t-${rows.length + 1}`,
         userId: params.userId,
         name: params.name,
-        module: params.module,
+        modules: params.modules,
         createdAt: new Date(),
       };
       rows.push(row);
@@ -34,18 +34,32 @@ function makeRepo() {
 }
 
 describe("CreateType", () => {
-  test("inserta con name trimmed y módulo válido", async () => {
+  test("inserta con name trimmed, normaliza y deduplica módulos", async () => {
     const { repo, rows } = makeRepo();
     const useCase = new CreateType({ typeRepository: repo });
 
     const row = await useCase.execute({
       userId: "u-1",
-      name: "  Desarrollo  ",
-      module: "tasks",
+      name: "  Diseño  ",
+      modules: ["incomes", "tasks", "incomes"],
     });
 
-    expect(row.name).toBe("Desarrollo");
-    expect(row.module).toBe("tasks");
+    expect(row.name).toBe("Diseño");
+    expect(row.modules).toEqual(["incomes", "tasks"]);
+    expect(rows).toHaveLength(1);
+  });
+
+  test("acepta modules=[] (all-modules)", async () => {
+    const { repo, rows } = makeRepo();
+    const useCase = new CreateType({ typeRepository: repo });
+
+    const row = await useCase.execute({
+      userId: "u-1",
+      name: "General",
+      modules: [],
+    });
+
+    expect(row.modules).toEqual([]);
     expect(rows).toHaveLength(1);
   });
 
@@ -54,7 +68,7 @@ describe("CreateType", () => {
     const useCase = new CreateType({ typeRepository: repo });
 
     expect(
-      useCase.execute({ userId: "u-1", name: "   ", module: "tasks" }),
+      useCase.execute({ userId: "u-1", name: "   ", modules: ["tasks"] }),
     ).rejects.toBeInstanceOf(InvalidTypeInput);
   });
 
@@ -66,7 +80,7 @@ describe("CreateType", () => {
       useCase.execute({
         userId: "u-1",
         name: "x".repeat(101),
-        module: "tasks",
+        modules: ["tasks"],
       }),
     ).rejects.toBeInstanceOf(InvalidTypeInput);
   });
@@ -79,8 +93,7 @@ describe("CreateType", () => {
       useCase.execute({
         userId: "u-1",
         name: "OK",
-        // Cast forzado: en runtime el caller podría mandar cualquier string.
-        module: "nope" as unknown as TypeRow["module"],
+        modules: ["nope" as never],
       }),
     ).rejects.toBeInstanceOf(InvalidTypeInput);
   });

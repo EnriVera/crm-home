@@ -88,7 +88,13 @@ export interface TypesTable {
   type_id: string;
   type_user_id: string;
   type_name: string;
-  type_module: string;
+  /**
+   * Array de módulos a los que pertenece el type. Vacío `{}` = "aplica a
+   * todos los módulos" (semántica all-modules). Cada elemento ∈
+   * `{tasks, incomes, expenses, schedules}` enforced por CHECK en
+   * migration 007.
+   */
+  type_modules: string[];
   type_created_at: Generated<Date>;
   type_deleted_at: Date | null;
 }

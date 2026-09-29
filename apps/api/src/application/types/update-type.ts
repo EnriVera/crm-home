@@ -1,22 +1,17 @@
-import type {
-  TypeModule,
-  TypeRepository,
-  TypeRow,
+import {
+  TYPE_MODULE_NAMES,
+  type TypeModuleName,
+  type TypeModules,
+  type TypeRepository,
+  type TypeRow,
 } from "../../domain/ports/type-repository";
 import { InvalidTypeInput, TypeNotFound } from "./errors";
-
-const TYPE_MODULES: readonly TypeModule[] = [
-  "tasks",
-  "incomes",
-  "expenses",
-  "schedules",
-];
 
 export interface UpdateTypeInput {
   userId: string;
   typeId: string;
   name?: string;
-  module?: TypeModule;
+  modules?: TypeModules;
 }
 
 export interface UpdateTypeDependencies {
@@ -41,10 +36,18 @@ export class UpdateType {
       }
       input = { ...input, name: trimmed };
     }
-    if (input.module !== undefined && !TYPE_MODULES.includes(input.module)) {
-      throw new InvalidTypeInput(
-        `type module must be one of: ${TYPE_MODULES.join(", ")}`,
-      );
+    if (input.modules !== undefined) {
+      for (const module of input.modules) {
+        if (!TYPE_MODULE_NAMES.includes(module as TypeModuleName)) {
+          throw new InvalidTypeInput(
+            `type modules must be a subset of: ${TYPE_MODULE_NAMES.join(", ")}`,
+          );
+        }
+      }
+      const normalized: TypeModules = Array.from(
+        new Set(input.modules),
+      ).sort() as TypeModules;
+      input = { ...input, modules: normalized };
     }
 
     try {

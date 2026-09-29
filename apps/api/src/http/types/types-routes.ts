@@ -22,6 +22,13 @@ import { readUserId } from "../tasks/tasks-routes";
  *    Zod antes de invocar el use case.
  *  - Errores ORPC mapeados via `mapTaskErrorToStatus` (compartido
  *    con tasks / clients — el shape del error envelope es idéntico).
+ *
+ * Multi-módulo (migration 007):
+ *  - `type_modules` es un array en create / update. Vacío `[]` permitido
+ *    (= "applies to all modules" — el filter de list con `module=null`
+ *    matchea los types con `modules = []`).
+ *  - List input sigue aceptando un único `module` (filter), no un array
+ *    (el UI filtra por un módulo a la vez, no multi-filter).
  */
 
 export interface TypesRouteDependencies {
@@ -32,7 +39,6 @@ export interface TypesRouteDependencies {
 }
 
 const TYPE_MODULES = ["tasks", "incomes", "expenses", "schedules"] as const;
-type TypeModule = (typeof TYPE_MODULES)[number];
 
 const listTypesInputSchema = z.object({
   search: z.string().max(100).default(""),
@@ -42,13 +48,13 @@ const listTypesInputSchema = z.object({
 
 const createTypeInputSchema = z.object({
   type_name: z.string().min(1).max(100),
-  type_module: z.enum(TYPE_MODULES),
+  type_modules: z.array(z.enum(TYPE_MODULES)).default([]),
 });
 
 const updateTypeInputSchema = z.object({
   type_id: z.string().uuid(),
   type_name: z.string().min(1).max(100).optional(),
-  type_module: z.enum(TYPE_MODULES).optional(),
+  type_modules: z.array(z.enum(TYPE_MODULES)).optional(),
 });
 
 const removeTypeInputSchema = z.object({
@@ -59,13 +65,13 @@ function mapTypeRowToContract(row: {
   id: string;
   userId: string;
   name: string;
-  module: TypeModule;
+  modules: readonly string[];
   createdAt: Date;
 }) {
   return {
     type_id: row.id,
     type_name: row.name,
-    type_module: row.module,
+    type_modules: [...row.modules],
     type_created_at: row.createdAt,
   };
 }
@@ -97,7 +103,7 @@ export function createCreateTypeHandler(deps: TypesRouteDependencies) {
       const row = await deps.createType.execute({
         userId,
         name: body.type_name,
-        module: body.type_module,
+        modules: body.type_modules,
       });
       return Response.json(mapTypeRowToContract(row), { status: 201 });
     } catch (err) {
@@ -126,7 +132,7 @@ export function createUpdateTypeHandler(deps: TypesRouteDependencies) {
         userId,
         typeId: body.type_id,
         name: body.type_name,
-        module: body.type_module,
+        modules: body.type_modules,
       });
       return Response.json(mapTypeRowToContract(row));
     } catch (err) {

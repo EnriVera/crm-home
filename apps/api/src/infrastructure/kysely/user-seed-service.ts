@@ -79,9 +79,9 @@ export class KyselyUserSeedService implements UserSeedService {
       .execute();
 
     const types = [
-      { module: "Tasks", name: "Tarea" },
-      { module: "Schedule", name: "Evento" },
-      { module: "Clients", name: "Cliente" },
+      { modules: ["tasks"], name: "Tarea" },
+      { modules: ["schedules"], name: "Evento" },
+      { modules: ["incomes"], name: "Ingreso" },
     ];
 
     for (const type of types) {
@@ -92,7 +92,7 @@ export class KyselyUserSeedService implements UserSeedService {
           type_id: typeId,
           type_user_id: userId,
           type_name: type.name,
-          type_module: type.module,
+          type_modules: type.modules,
         })
         .execute();
 

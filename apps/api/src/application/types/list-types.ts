@@ -1,5 +1,5 @@
 import type {
-  TypeModule,
+  TypeModuleName,
   TypeRepository,
   TypeRow,
 } from "../../domain/ports/type-repository";
@@ -7,7 +7,7 @@ import type {
 export interface ListTypesInput {
   userId: string;
   search: string;
-  module: TypeModule | null;
+  module: TypeModuleName | null;
   limit: number;
 }
 

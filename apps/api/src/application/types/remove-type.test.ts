@@ -9,7 +9,7 @@ function makeRepo() {
       id: "t-1",
       userId: "u-1",
       name: "Desarrollo",
-      module: "tasks",
+      modules: ["tasks"],
       createdAt: new Date(),
     },
   ];
@@ -47,6 +47,7 @@ describe("RemoveType", () => {
     const row = await useCase.execute({ userId: "u-1", typeId: "t-1" });
 
     expect(row.id).toBe("t-1");
+    expect(row.modules).toEqual(["tasks"]);
     expect(rows).toHaveLength(1);
   });
 

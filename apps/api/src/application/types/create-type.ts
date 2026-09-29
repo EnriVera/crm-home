@@ -1,21 +1,16 @@
-import type {
-  TypeModule,
-  TypeRepository,
-  TypeRow,
+import {
+  TYPE_MODULE_NAMES,
+  type TypeModuleName,
+  type TypeModules,
+  type TypeRepository,
+  type TypeRow,
 } from "../../domain/ports/type-repository";
 import { InvalidTypeInput } from "./errors";
-
-const TYPE_MODULES: readonly TypeModule[] = [
-  "tasks",
-  "incomes",
-  "expenses",
-  "schedules",
-];
 
 export interface CreateTypeInput {
   userId: string;
   name: string;
-  module: TypeModule;
+  modules: TypeModules;
 }
 
 export interface CreateTypeDependencies {
@@ -28,7 +23,9 @@ export interface CreateTypeDependencies {
  * Validaciones (defensa en profundidad — el contract Zod ya valida, pero
  * un caller directo como un seeder podría saltárselas):
  * - `name` 1-100 chars tras trim.
- * - `module` pertenece al set cerrado (tasks/incomes/expenses/schedules).
+ * - `modules` es un array; cada elemento ∈ set cerrado.
+ * - Vacío `[]` permitido (= "all modules").
+ * - Dedup + orden estable (sort) antes de persistir.
  */
 export class CreateType {
   constructor(private readonly deps: CreateTypeDependencies) {}
@@ -38,16 +35,21 @@ export class CreateType {
     if (trimmedName.length === 0 || trimmedName.length > 100) {
       throw new InvalidTypeInput("type name must be 1-100 chars");
     }
-    if (!TYPE_MODULES.includes(input.module)) {
-      throw new InvalidTypeInput(
-        `type module must be one of: ${TYPE_MODULES.join(", ")}`,
-      );
+    for (const module of input.modules) {
+      if (!TYPE_MODULE_NAMES.includes(module as TypeModuleName)) {
+        throw new InvalidTypeInput(
+          `type modules must be a subset of: ${TYPE_MODULE_NAMES.join(", ")}`,
+        );
+      }
     }
+    const normalized: TypeModules = Array.from(
+      new Set(input.modules),
+    ).sort() as TypeModules;
 
     return this.deps.typeRepository.insert({
       userId: input.userId,
       name: trimmedName,
-      module: input.module,
+      modules: normalized,
     });
   }
 }
