@@ -400,7 +400,8 @@
     "filters": {
       "modules": "Módulos",
       "clear": "Limpiar",
-      "clearAll": "Limpiar todos los filtros"
+      "clearAll": "Limpiar todos los filtros",
+      "clearModules": "Limpiar módulos"
     },
     "module": {
       "tasks": "Tareas",

@@ -256,9 +256,9 @@ export function TypesTab() @{
       </Button>
     </header>
 
-    {/* ─── Filtros: search + multi-select módulos + X ──────────── */}
-    <div class="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto_auto]">
-      {/* Search con X para limpiar */}
+    {/* ─── Filtros: search + multi-select módulos (X dentro de cada uno) ─ */}
+    <div class="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto]">
+      {/* Search con X inline (dentro del input, aparece cuando hay texto) */}
       <div class="relative">
         <input
           type="search"
@@ -277,28 +277,39 @@ export function TypesTab() @{
             onClick={clearSearch}
             aria-label={t("types.search.clear")}
             data-action="clear-search"
-            class="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-text-secondary hover:bg-surface hover:text-text-primary"
+            class="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-text-secondary hover:bg-surface hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
           >
             <span aria-hidden="true" class="block text-base leading-none">×</span>
           </button>
         )}
       </div>
 
-      {/* Multi-select de módulos */}
-      <div ref={moduleMenuRef} class="relative">
+      {/* Multi-select de módulos (X dentro del filtro, como split-button) */}
+      <div ref={moduleMenuRef} class="relative flex">
         <button
           type="button"
           onClick={() => setIsModuleMenuOpen((v) => !v)}
           aria-haspopup="listbox"
           aria-expanded={isModuleMenuOpen}
           data-action="toggle-module-menu"
-          class="flex w-full min-w-[180px] items-center justify-between gap-2 rounded-md border border-border bg-background px-3 py-2 text-sm text-text-primary hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+          class="flex min-w-[180px] flex-1 items-center justify-between gap-2 rounded-l-md border border-r-0 border-border bg-background px-3 py-2 text-sm text-text-primary hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
         >
           <span class="truncate">{moduleButtonLabel}</span>
           <span aria-hidden="true" class="text-xs">
             ▾
           </span>
         </button>
+        {modules.length > 0 && (
+          <button
+            type="button"
+            onClick={clearModules}
+            aria-label={t("types.filters.clearModules")}
+            data-action="clear-modules"
+            class="flex items-center rounded-r-md border border-border bg-background px-3 text-text-secondary hover:bg-surface hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+          >
+            <span aria-hidden="true" class="block text-base leading-none">×</span>
+          </button>
+        )}
         {isModuleMenuOpen && (
           <div
             role="listbox"
@@ -327,23 +338,6 @@ export function TypesTab() @{
           </div>
         )}
       </div>
-
-      {/* X grande para limpiar todos los filtros */}
-      {(search !== "" || modules.length > 0) && (
-        <button
-          type="button"
-          onClick={() => {
-            clearSearch();
-            clearModules();
-          }}
-          aria-label={t("types.filters.clearAll")}
-          data-action="clear-all-filters"
-          class="flex items-center gap-1 rounded-md border border-border bg-background px-3 py-2 text-sm text-text-secondary hover:bg-surface hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
-        >
-          <span aria-hidden="true">×</span>
-          <span>{t("types.filters.clear")}</span>
-        </button>
-      )}
     </div>
 
     {actionError !== null && (
