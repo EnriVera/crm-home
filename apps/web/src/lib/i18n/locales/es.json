@@ -394,11 +394,13 @@
     },
     "search": {
       "placeholder": "Buscar por nombre",
-      "label": "Buscar"
+      "label": "Buscar",
+      "clear": "Limpiar búsqueda"
     },
-    "filter": {
-      "allModules": "Todos los módulos",
-      "moduleLabel": "Filtrar por módulo"
+    "filters": {
+      "modules": "Módulos",
+      "clear": "Limpiar",
+      "clearAll": "Limpiar todos los filtros"
     },
     "module": {
       "tasks": "Tareas",

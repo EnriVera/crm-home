@@ -1,5 +1,5 @@
 import type {
-  TypeModuleName,
+  TypeModules,
   TypeRepository,
   TypeRow,
 } from "../../domain/ports/type-repository";
@@ -7,7 +7,7 @@ import type {
 export interface ListTypesInput {
   userId: string;
   search: string;
-  module: TypeModuleName | null;
+  modules: TypeModules;
   limit: number;
 }
 
@@ -20,6 +20,9 @@ export interface ListTypesDependencies {
  *
  * El limit se capa en [1, 100] igual que en los demás módulos (clients,
  * incomes, expenses). El repository ya filtra por user + deleted_at IS NULL.
+ *
+ * `modules` vacío = sin filtro (mostrar todos). No vacío = filtrar por
+ * "any of" los módulos seleccionados (OR).
  */
 export class ListTypes {
   constructor(private readonly deps: ListTypesDependencies) {}
@@ -29,7 +32,7 @@ export class ListTypes {
     return this.deps.typeRepository.list({
       userId: input.userId,
       search: input.search,
-      module: input.module,
+      modules: input.modules,
       limit,
     });
   }

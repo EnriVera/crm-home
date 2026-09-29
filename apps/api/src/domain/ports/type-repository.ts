@@ -15,8 +15,8 @@ import type { Transaction } from "./transaction";
  *   los módulos" (semántica all-modules).
  * - Set cerrado enforced por CHECK en DB (migration 007) Y por
  *   validación en el use case `CreateType` / `UpdateType`.
- * - El filter del list usa array-contains (Postgres `@>`) para matchear
- *   un type con el módulo seleccionado.
+ * - El filter del list usa array-overlap (Postgres `&&`) para matchear
+ *   un type que tenga AL MENOS uno de los módulos seleccionados.
  */
 export const TYPE_MODULE_NAMES = [
   "tasks",
@@ -27,7 +27,7 @@ export const TYPE_MODULE_NAMES = [
 
 export type TypeModuleName = (typeof TYPE_MODULE_NAMES)[number];
 
-/** Array de módulos. Vacío = "aplica a todos". */
+/** Array de módulos. Vacío = sin filtro. */
 export type TypeModules = readonly TypeModuleName[];
 
 export interface TypeRow {
@@ -42,15 +42,15 @@ export interface TypeRepository {
   list(params: {
     userId: string;
     search: string;
-    /** Filtro por módulo. `null` = traer types con `modules = []` (all). */
-    module: TypeModuleName | null;
+    /**
+     * Filtro multi-módulo. Vacío `[]` = sin filtro (mostrar todos).
+     * No vacío = "el type tiene AL MENOS uno de estos módulos" (OR).
+     */
+    modules: TypeModules;
     limit: number;
   }): Promise<TypeRow[]>;
 
-  findById(params: {
-    userId: string;
-    typeId: string;
-  }): Promise<TypeRow | null>;
+  findById(params: { userId: string; typeId: string }): Promise<TypeRow | null>;
 
   insert(params: {
     userId: string;
@@ -65,8 +65,5 @@ export interface TypeRepository {
     modules?: TypeModules;
   }): Promise<TypeRow>;
 
-  softDelete(params: {
-    userId: string;
-    typeId: string;
-  }): Promise<TypeRow>;
+  softDelete(params: { userId: string; typeId: string }): Promise<TypeRow>;
 }

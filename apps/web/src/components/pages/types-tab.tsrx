@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "octane";
+import { useEffect, useMemo, useRef, useState } from "octane";
 import { t } from "../vendor/i18n/core";
 import { createRpcClient, type RpcClient } from "../../lib/api/rpc";
 import { Button } from "../atoms/button.tsrx";
@@ -11,6 +11,8 @@ import {
   useQueryState,
   parseAsString,
   parseAsBoolean,
+  parseAsArrayOf,
+  parseAsStringLiteral,
 } from "@octanejs/nuqs";
 import {
   TYPE_MODULE_NAMES,
@@ -23,116 +25,56 @@ import {
  * Tab `tipos` dentro de `/config?tab=types`.
  *
  * CRUD completo (PRD-v2.md §8.7):
- *   - list (search + module filter, ambos persistidos en URL + localStorage)
+ *   - list (search + multi-module filter)
  *   - create (drawer via `?tab=types&new`)
  *   - edit   (drawer via `?tab=types&edit=<id>`)
- *   - remove (modal de confirmación local, NO en URL)
+ *   - remove (modal de confirmación local, no en URL)
  *
  * Estado en URL (via @octanejs/nuqs):
- *   - `search`  → usePersistedQueryState (URL + localStorage)
- *   - `module`  → usePersistedQueryState (URL + localStorage). Internamente
- *                 se persiste como string; al leer se valida contra
- *                 TYPE_MODULE_NAMES y se normaliza a `TypeModuleName | null`.
- *   - `new`     → useQueryState transient (sin localStorage)
- *   - `edit`    → useQueryState transient (sin localStorage)
+ *   - `search`  → useQueryState + useEffect para localStorage sync
+ *   - `modules` → useQueryState (array via parseAsArrayOf) + localStorage
+ *   - `new`     → useQueryState transient
+ *   - `edit`    → useQueryState transient
  *
- * Decisión de scope: el modal de confirmación de delete vive en local
- * state (no URL) — un reload accidental no debería completar un delete
- * que el user no confirmó explícitamente.
+ * Filtros en localStorage (`crm-config-types-tab`):
+ *   - `{ search: string, modules: TypeModuleName[] }` como JSON.
+ *   - Hidratación one-shot en mount (si URL vacía, leer de storage).
+ *   - Sync en cada cambio.
  *
- * Multi-módulo: cada type puede tener N módulos. La lista muestra un
- * tag por módulo; array vacío `[]` = "all modules" → un único tag "Todos".
- * El filter `module=null` matchea los all-modules (lo hace el backend
- * con `type_modules = '{}'`).
+ * Multi-select de módulos:
+ *   - Botón "Módulos (N)" abre un dropdown con 4 checkboxes.
+ *   - N seleccionados → filtra con OR (cualquier módulo del type).
+ *   - 0 seleccionados → sin filtro (muestra todos).
+ *   - X al lado del botón limpia la selección.
+ *   - Sin opción "Todos los módulos" en el dropdown (vacío = sin filtro).
  */
 
 const RPC = createRpcClient(import.meta.env.VITE_API_URL ?? "/rpc");
 
-/** Set cerrado de módulos + null, para el filter del UI. */
-const MODULE_FILTER_VALUES = ["", ...TYPE_MODULE_NAMES] as const;
-type ModuleFilterValue = (typeof MODULE_FILTER_VALUES)[number];
+const STORAGE_KEY = "crm-config-types-tab";
+const modulesFilterParser = parseAsArrayOf(
+  parseAsStringLiteral(TYPE_MODULE_NAMES as unknown as readonly TypeModuleName[]),
+).withDefault([] as TypeModuleName[]);
 
-/** Normaliza un string del URL a `TypeModuleName | null`. */
-function parseModuleFilter(value: string): TypeModuleName | null {
-  if (value === "") return null;
-  return (TYPE_MODULE_NAMES as readonly string[]).includes(value)
-    ? (value as TypeModuleName)
-    : null;
+interface StoredFilters {
+  search: string;
+  modules: TypeModuleName[];
 }
 
-/** Serializa `TypeModuleName | null` a string para el URL. */
-function serializeModuleFilter(value: TypeModuleName | null): string {
-  return value ?? "";
-}
-
-const MODULE_FILTER_OPTIONS = [
-  { value: null, labelKey: "types.filter.allModules" },
-  { value: "tasks", labelKey: "types.module.tasks" },
-  { value: "incomes", labelKey: "types.module.incomes" },
-  { value: "expenses", labelKey: "types.module.expenses" },
-  { value: "schedules", labelKey: "types.module.schedules" },
-] as const satisfies ReadonlyArray<{
-  value: TypeModuleName | null;
-  labelKey: string;
-}>;
+const MODULE_LABEL_KEYS: Record<TypeModuleName, string> = {
+  tasks: "types.module.tasks",
+  incomes: "types.module.incomes",
+  expenses: "types.module.expenses",
+  schedules: "types.module.schedules",
+};
 
 export function TypesTab() @{
   // ─── URL state: filtros (persistidos en URL + localStorage) ──────
-  // Uso `useQueryState` directo + useEffect para localStorage en vez
-  // de `usePersistedQueryState` porque el hook genérico tiene un
-  // problema de inferencia con `parseAsString.withDefault("")` que
-  // propaga `string | null` a los call sites downstream. Con
-  // `useQueryState` directo el tipo es estricto `string`.
   const [search, setSearch] = useQueryState(
     "search",
     parseAsString.withDefault(""),
   );
-  const [moduleFilterRaw, setModuleFilterRaw] = useQueryState(
-    "module",
-    parseAsString.withDefault(""),
-  );
-
-  // Persistencia localStorage: si la URL está vacía en mount,
-  // hidrata desde localStorage. En cada cambio, escribe a
-  // localStorage con la key namespace por tab.
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const storageKey = "crm-config-types-tab";
-    try {
-      const stored = window.localStorage.getItem(storageKey);
-      if (stored === null) return;
-      const parsed = JSON.parse(stored) as {
-        search?: string;
-        module?: string;
-      };
-      if (search === "" && typeof parsed.search === "string") {
-        setSearch(parsed.search);
-      }
-      if (moduleFilterRaw === "" && typeof parsed.module === "string") {
-        setModuleFilterRaw(parsed.module);
-      }
-    } catch {
-      // localStorage deshabilitado o JSON inválido — caemos al default.
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    try {
-      window.localStorage.setItem(
-        "crm-config-types-tab",
-        JSON.stringify({ search, module: moduleFilterRaw }),
-      );
-    } catch {
-      // Quota / private mode — la app sigue funcionando.
-    }
-  }, [search, moduleFilterRaw]);
-
-  const moduleFilter = parseModuleFilter(moduleFilterRaw);
-  const setModuleFilter = (value: TypeModuleName | null): void => {
-    setModuleFilterRaw(value === null ? "" : (value as string));
-  };
+  const [modules, setModules] = useQueryState("module", modulesFilterParser);
 
   // ─── URL state: drawer create/edit (transient) ──────────────────
   const [isNewOpen, setIsNewOpen] = useQueryState(
@@ -141,27 +83,80 @@ export function TypesTab() @{
   );
   const [editId, setEditId] = useQueryState("edit", parseAsString.withDefault(""));
 
-  // ─── Local state: confirmación de delete ─────────────────────────
+  // ─── Local state: confirmación de delete + multi-select dropdown ─
   const [deleteTypeId, setDeleteTypeId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [isModuleMenuOpen, setIsModuleMenuOpen] = useState(false);
+  const moduleMenuRef = useRef<HTMLDivElement | null>(null);
 
-  // ─── Query: list de types con filtros ─────────────────────────────
+  // ─── Persistencia localStorage: hidratación one-shot + sync ────
+  const hydratedRef = useRef(false);
+
+  useEffect(() => {
+    if (hydratedRef.current) return;
+    hydratedRef.current = true;
+    if (typeof window === "undefined") return;
+    if (search !== "" || modules.length > 0) return;
+    try {
+      const raw = window.localStorage.getItem(STORAGE_KEY);
+      if (raw === null) return;
+      const parsed = JSON.parse(raw) as Partial<StoredFilters>;
+      if (typeof parsed.search === "string" && parsed.search.length > 0) {
+        setSearch(parsed.search);
+      }
+      if (
+        Array.isArray(parsed.modules) &&
+        parsed.modules.every((m) => TYPE_MODULE_NAMES.includes(m as TypeModuleName))
+      ) {
+        setModules(parsed.modules as TypeModuleName[]);
+      }
+    } catch {
+      // localStorage deshabilitado o JSON inválido — caemos al default.
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (hydratedRef.current === false) return;
+    if (typeof window === "undefined") return;
+    try {
+      const data: StoredFilters = { search, modules };
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch {
+      // Quota / private mode — la app sigue funcionando.
+    }
+  }, [search, modules]);
+
+  // Click-outside para cerrar el dropdown de módulos.
+  useEffect(() => {
+    if (!isModuleMenuOpen) return;
+    const handler = (event: MouseEvent): void => {
+      const target = event.target;
+      if (!(target instanceof Node)) return;
+      if (moduleMenuRef.current && !moduleMenuRef.current.contains(target)) {
+        setIsModuleMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [isModuleMenuOpen]);
+
+  // ─── Query: list de types con filtros ────────────────────────────
   const typesQuery = useOctaneQuery<Type[]>(
     () =>
       (RPC as RpcClient).types.list({
         search,
-        module: moduleFilter,
+        modules,
         limit: 100,
       }) as Promise<Type[]>,
-    [search, moduleFilter],
+    [search, modules],
   );
   const types = typesQuery.data ?? [];
   const loading = typesQuery.loading;
   const loadError = typesQuery.error;
 
-  // El type que se está editando: primero busca en la lista (sin RPC),
-  // si no está (recarga con deep-link a /edit) → no se muestra el drawer.
+  // El type que se está editando: primero busca en la lista (sin RPC).
   const editingType = useMemo(
     () => (editId === "" ? null : types.find((t) => t.type_id === editId) ?? null),
     [types, editId],
@@ -219,6 +214,24 @@ export function TypesTab() @{
     }
   };
 
+  const toggleModule = (moduleValue: TypeModuleName): void => {
+    const has = modules.includes(moduleValue);
+    setModules(has ? modules.filter((m) => m !== moduleValue) : [...modules, moduleValue]);
+  };
+
+  const clearSearch = (): void => {
+    setSearch("");
+  };
+
+  const clearModules = (): void => {
+    setModules([]);
+  };
+
+  const moduleButtonLabel =
+    modules.length === 0
+      ? t("types.filters.modules")
+      : `${t("types.filters.modules")} (${modules.length})`;
+
   // ─── Render ───────────────────────────────────────────────────────
   <div data-component="types-tab" class="flex flex-col gap-6">
     <header class="flex flex-wrap items-end justify-between gap-3">
@@ -243,37 +256,94 @@ export function TypesTab() @{
       </Button>
     </header>
 
-    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-      <input
-        type="search"
-        value={(search ?? "") as string}
-        onInput={(e: Event) => {
-          const target = e.currentTarget as HTMLInputElement;
-          setSearch(target.value);
-        }}
-        placeholder={t("types.search.placeholder")}
-        aria-label={t("types.search.label")}
-        class="rounded-md border border-border bg-background px-3 py-2 text-sm text-text-primary placeholder:text-text-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
-      />
-      <select
-        value={(moduleFilter ?? "") as string}
-        onInput={(e: Event) => {
-          const target = e.currentTarget as HTMLSelectElement;
-          const next = parseModuleFilter(target.value);
-          setModuleFilter(next);
-        }}
-        aria-label={t("types.filter.moduleLabel")}
-        class="rounded-md border border-border bg-background px-3 py-2 text-sm text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
-      >
-        {MODULE_FILTER_OPTIONS.map((opt) => (
-          <option
-            key={opt.value ?? "all"}
-            value={opt.value ?? ""}
+    {/* ─── Filtros: search + multi-select módulos + X ──────────── */}
+    <div class="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto_auto]">
+      {/* Search con X para limpiar */}
+      <div class="relative">
+        <input
+          type="search"
+          value={search}
+          onInput={(e: Event) => {
+            const target = e.currentTarget as HTMLInputElement;
+            setSearch(target.value);
+          }}
+          placeholder={t("types.search.placeholder")}
+          aria-label={t("types.search.label")}
+          class="w-full rounded-md border border-border bg-background px-3 py-2 pr-9 text-sm text-text-primary placeholder:text-text-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+        />
+        {search !== "" && (
+          <button
+            type="button"
+            onClick={clearSearch}
+            aria-label={t("types.search.clear")}
+            data-action="clear-search"
+            class="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-text-secondary hover:bg-surface hover:text-text-primary"
           >
-            {t(opt.labelKey)}
-          </option>
-        ))}
-      </select>
+            <span aria-hidden="true" class="block text-base leading-none">×</span>
+          </button>
+        )}
+      </div>
+
+      {/* Multi-select de módulos */}
+      <div ref={moduleMenuRef} class="relative">
+        <button
+          type="button"
+          onClick={() => setIsModuleMenuOpen((v) => !v)}
+          aria-haspopup="listbox"
+          aria-expanded={isModuleMenuOpen}
+          data-action="toggle-module-menu"
+          class="flex w-full min-w-[180px] items-center justify-between gap-2 rounded-md border border-border bg-background px-3 py-2 text-sm text-text-primary hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+        >
+          <span class="truncate">{moduleButtonLabel}</span>
+          <span aria-hidden="true" class="text-xs">
+            ▾
+          </span>
+        </button>
+        {isModuleMenuOpen && (
+          <div
+            role="listbox"
+            aria-multiselectable="true"
+            class="absolute right-0 z-20 mt-1 w-56 rounded-md border border-border bg-surface py-1 shadow-lg"
+          >
+            {TYPE_MODULE_NAMES.map((moduleValue) => {
+              const checked = modules.includes(moduleValue);
+              return (
+                <label
+                  key={moduleValue}
+                  class="flex cursor-pointer items-center gap-2 px-3 py-2 text-sm text-text-primary hover:bg-background"
+                >
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={() => {
+                      toggleModule(moduleValue);
+                    }}
+                    class="h-4 w-4 rounded border-border text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+                  />
+                  <span>{t(MODULE_LABEL_KEYS[moduleValue])}</span>
+                </label>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* X grande para limpiar todos los filtros */}
+      {(search !== "" || modules.length > 0) && (
+        <button
+          type="button"
+          onClick={() => {
+            clearSearch();
+            clearModules();
+          }}
+          aria-label={t("types.filters.clearAll")}
+          data-action="clear-all-filters"
+          class="flex items-center gap-1 rounded-md border border-border bg-background px-3 py-2 text-sm text-text-secondary hover:bg-surface hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+        >
+          <span aria-hidden="true">×</span>
+          <span>{t("types.filters.clear")}</span>
+        </button>
+      )}
     </div>
 
     {actionError !== null && (
@@ -305,17 +375,17 @@ export function TypesTab() @{
         <EmptyState
           icon={<Icon name="gear" size={48} />}
           title={
-            search !== "" || moduleFilter !== null
+            search !== "" || modules.length > 0
               ? t("types.listEmpty.noResults")
               : t("types.listEmpty.noTypes")
           }
           description={
-            search !== "" || moduleFilter !== null
+            search !== "" || modules.length > 0
               ? t("types.listEmpty.noResultsBody")
               : t("types.listEmpty.noTypesBody")
           }
           action={
-            search === "" && moduleFilter === null ? (
+            search === "" && modules.length === 0 ? (
               <Button variant="primary" onClick={() => setIsNewOpen(true)}>
                 {t("types.actions.new")}
               </Button>

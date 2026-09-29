@@ -1,6 +1,10 @@
 import { describe, expect, test } from "bun:test";
 import { ListTypes } from "./list-types";
-import type { TypeRepository, TypeRow } from "../../domain/ports/type-repository";
+import type {
+  TypeModuleName,
+  TypeRepository,
+  TypeRow,
+} from "../../domain/ports/type-repository";
 
 function makeType(overrides: Partial<TypeRow> = {}): TypeRow {
   return {
@@ -21,17 +25,15 @@ class InMemoryTypeRepository implements TypeRepository {
   async list(params: {
     userId: string;
     search: string;
-    module: TypeRow["modules"][number] | null;
+    modules: readonly TypeModuleName[];
     limit: number;
   }) {
     return this.rows
       .filter((r) => r.userId === params.userId)
-      .filter(
-        (r) =>
-          params.module === null
-            ? r.modules.length === 0
-            : r.modules.includes(params.module),
-      )
+      .filter((r) => {
+        if (params.modules.length === 0) return true;
+        return params.modules.some((m) => r.modules.includes(m));
+      })
       .filter(
         (r) =>
           params.search === "" ||
@@ -93,10 +95,28 @@ class InMemoryTypeRepository implements TypeRepository {
 }
 
 describe("ListTypes", () => {
-  test("devuelve los types del user filtrando por módulo (array-contains)", async () => {
+  test("modules=[] devuelve todos los types (sin filter)", async () => {
     const repo = new InMemoryTypeRepository([
-      makeType({ id: "t-1", name: "Desarrollo", modules: ["tasks"] }),
-      makeType({ id: "t-2", name: "Diseño", modules: ["tasks", "incomes"] }),
+      makeType({ id: "t-1", name: "General", modules: [] }),
+      makeType({ id: "t-2", name: "Tasks-only", modules: ["tasks"] }),
+      makeType({ id: "t-3", name: "Income", modules: ["incomes"] }),
+    ]);
+    const useCase = new ListTypes({ typeRepository: repo });
+
+    const rows = await useCase.execute({
+      userId: "u-1",
+      search: "",
+      modules: [],
+      limit: 50,
+    });
+
+    expect(rows.map((r) => r.id).sort()).toEqual(["t-1", "t-2", "t-3"]);
+  });
+
+  test("modules=['tasks'] devuelve types con tasks (cualquiera que lo incluya)", async () => {
+    const repo = new InMemoryTypeRepository([
+      makeType({ id: "t-1", name: "Dev", modules: ["tasks"] }),
+      makeType({ id: "t-2", name: "Diseno", modules: ["tasks", "incomes"] }),
       makeType({ id: "t-3", name: "Sueldo", modules: ["incomes"] }),
     ]);
     const useCase = new ListTypes({ typeRepository: repo });
@@ -104,28 +124,47 @@ describe("ListTypes", () => {
     const rows = await useCase.execute({
       userId: "u-1",
       search: "",
-      module: "tasks",
+      modules: ["tasks"],
       limit: 50,
     });
 
-    expect(rows.map((r) => r.id)).toEqual(["t-1", "t-2"]);
+    expect(rows.map((r) => r.id).sort()).toEqual(["t-1", "t-2"]);
   });
 
-  test("module=null devuelve los types con modules=[] (all-modules)", async () => {
+  test("modules=['tasks','incomes'] es OR (any-of): incluye rows en cualquiera", async () => {
     const repo = new InMemoryTypeRepository([
-      makeType({ id: "t-1", name: "General", modules: [] }),
-      makeType({ id: "t-2", name: "Tasks-only", modules: ["tasks"] }),
+      makeType({ id: "t-1", name: "Dev", modules: ["tasks"] }),
+      makeType({ id: "t-2", name: "Diseno", modules: ["tasks", "incomes"] }),
+      makeType({ id: "t-3", name: "Sueldo", modules: ["incomes"] }),
+      makeType({ id: "t-4", name: "Schedule", modules: ["schedules"] }),
     ]);
     const useCase = new ListTypes({ typeRepository: repo });
 
     const rows = await useCase.execute({
       userId: "u-1",
       search: "",
-      module: null,
+      modules: ["tasks", "incomes"],
       limit: 50,
     });
 
-    expect(rows.map((r) => r.id)).toEqual(["t-1"]);
+    expect(rows.map((r) => r.id).sort()).toEqual(["t-1", "t-2", "t-3"]);
+  });
+
+  test("modules=['tasks'] NO incluye types all-modules (modules=[])", async () => {
+    const repo = new InMemoryTypeRepository([
+      makeType({ id: "t-1", name: "General", modules: [] }),
+      makeType({ id: "t-2", name: "Dev", modules: ["tasks"] }),
+    ]);
+    const useCase = new ListTypes({ typeRepository: repo });
+
+    const rows = await useCase.execute({
+      userId: "u-1",
+      search: "",
+      modules: ["tasks"],
+      limit: 50,
+    });
+
+    expect(rows.map((r) => r.id)).toEqual(["t-2"]);
   });
 
   test("filtra por search case-insensitive", async () => {
@@ -133,17 +172,14 @@ describe("ListTypes", () => {
       makeType({ id: "t-1", name: "Backend" }),
       makeType({ id: "t-2", name: "Frontend" }),
       makeType({ id: "t-3", name: "Betatesting" }),
-      makeType({ id: "t-4", name: "Diseño" }),
+      makeType({ id: "t-4", name: "Diseno" }),
     ]);
     const useCase = new ListTypes({ typeRepository: repo });
 
     const rows = await useCase.execute({
       userId: "u-1",
       search: "BA",
-      // module: "tasks" (no null) — el filter null matchea solo all-modules;
-      // acá queremos ejercitar el search, así que pedimos un módulo que
-      // contenga los 4 rows de prueba.
-      module: "tasks",
+      modules: ["tasks"],
       limit: 50,
     });
 
@@ -157,13 +193,13 @@ describe("ListTypes", () => {
     await useCase.execute({
       userId: "u-1",
       search: "",
-      module: null,
+      modules: [],
       limit: 0,
     });
     await useCase.execute({
       userId: "u-1",
       search: "",
-      module: null,
+      modules: [],
       limit: 9999,
     });
     expect(true).toBe(true);
@@ -179,8 +215,7 @@ describe("ListTypes", () => {
     const rows = await useCase.execute({
       userId: "u-1",
       search: "",
-      // module: "tasks" (no null) — ver comentario en el test de search.
-      module: "tasks",
+      modules: ["tasks"],
       limit: 50,
     });
 

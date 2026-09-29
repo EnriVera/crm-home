@@ -21,10 +21,10 @@ import { uuidSchema } from "./_shared";
  * y al `typeModulesSchema` (que se deriva de este tuple).
  */
 export const TYPE_MODULE_NAMES = [
-  "tasks",
-  "incomes",
-  "expenses",
-  "schedules",
+ "tasks",
+ "incomes",
+ "expenses",
+ "schedules",
 ] as const;
 export type TypeModuleName = (typeof TYPE_MODULE_NAMES)[number];
 
@@ -68,7 +68,7 @@ export const typeLimitSchema = z.number().int().min(1).max(100).default(50);
 
 export const listTypesInputSchema = z.object({
  search: typeSearchSchema,
- module: typeModuleNameSchema.nullable().default(null),
+ modules: typeModulesSchema.default([]),
  limit: typeLimitSchema,
 });
 

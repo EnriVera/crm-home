@@ -1,7 +1,6 @@
 import { sql } from "kysely";
 import type { Database } from "./database";
 import type {
-  TypeModuleName,
   TypeModules,
   TypeRepository,
   TypeRow,
@@ -46,7 +45,7 @@ export class KyselyTypeRepository implements TypeRepository {
   async list(params: {
     userId: string;
     search: string;
-    module: TypeModuleName | null;
+    modules: TypeModules;
     limit: number;
   }): Promise<TypeRow[]> {
     const cappedLimit = Math.min(Math.max(params.limit, 1), 100);
@@ -62,17 +61,26 @@ export class KyselyTypeRepository implements TypeRepository {
       .where("type_user_id", "=", params.userId)
       .where("type_deleted_at", "is", null);
 
-    if (params.module === null) {
-      // module=null → "all modules" = array vacío '{}'.
-      query = query.where("type_modules", "=", sql<string[]>`ARRAY[]::TEXT[]`);
-    } else {
-      // Array-contains: matchea cualquier type que tenga `module` en su
-      // array de módulos. En kysely usamos `eb` para construir la
-      // expresión `@>` raw (no hay helper directo).
+    if (params.modules.length > 0) {
+      // Array overlap (`&&`): matchea cualquier type que tenga AL
+      // MENOS uno de los módulos seleccionados. Es el operador
+      // simétrico a "any of" (vs `@>` "contains all of" que usamos
+      // en un single-module flow anterior). La diferencia con el
+      // filtro viejo: ahora es multi-módulo con OR (no AND).
+      //
+      // IMPORTANTE: kysely no tiene helper directo para `&&` con un
+      // array bind — usamos sql.lit por cada elemento (los valores
+      // del set cerrado son conocidos y no vienen del user input, así
+      // que sql.lit es seguro contra injection).
+      const modulesArray = sql<string[]>`ARRAY[${sql.join(
+        params.modules.map((m) => sql.lit(m)),
+      )}]::TEXT[]`;
       query = query.where(
-        sql<boolean>`type_modules @> ARRAY[${sql.lit(params.module)}]::TEXT[]`,
+        sql<boolean>`type_modules && ${modulesArray}`,
       );
     }
+    // modules.length === 0 → sin filtro (mostrar todos los types,
+    // incluidos los all-modules con modules=[]).
 
     const trimmed = params.search.trim();
     if (trimmed !== "") {

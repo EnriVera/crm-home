@@ -5,10 +5,7 @@ import type { ListTypes } from "../../application/types/list-types";
 import type { CreateType } from "../../application/types/create-type";
 import type { UpdateType } from "../../application/types/update-type";
 import type { RemoveType } from "../../application/types/remove-type";
-import {
-  InvalidTypeInput,
-  TypeNotFound,
-} from "../../application/types/errors";
+import { InvalidTypeInput, TypeNotFound } from "../../application/types/errors";
 import { mapTaskErrorToStatus } from "../tasks/error-mapping";
 import { readUserId } from "../tasks/tasks-routes";
 
@@ -42,7 +39,7 @@ const TYPE_MODULES = ["tasks", "incomes", "expenses", "schedules"] as const;
 
 const listTypesInputSchema = z.object({
   search: z.string().max(100).default(""),
-  module: z.enum(TYPE_MODULES).nullable().default(null),
+  modules: z.array(z.enum(TYPE_MODULES)).default([]),
   limit: z.number().int().min(1).max(100).default(50),
 });
 
@@ -84,7 +81,7 @@ export function createListTypesHandler(deps: TypesRouteDependencies) {
       const rows = await deps.listTypes.execute({
         userId,
         search: body.search,
-        module: body.module,
+        modules: body.modules,
         limit: body.limit,
       });
       return Response.json(rows.map(mapTypeRowToContract));
