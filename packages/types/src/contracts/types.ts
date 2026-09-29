@@ -6,23 +6,32 @@ import { uuidSchema } from "./_shared";
 
 /**
  * Set cerrado de módulos donde un `type` puede usarse. Constraint de
- * PRD §8.7: cada type pertenece a un módulo (tasks / incomes /
+ * PRD §8.7: cada type pertenece a uno o más módulos (tasks / incomes /
  * expenses / schedules) y el form correspondiente filtra los types
- * por módulo.
+ * por módulo. El array vacío = "aplica a todos" (semántica
+ * all-modules).
  *
- * Si en el futuro se agregan módulos (por ej. `clients`), se suman al
- * tuple acá y se propaga al Zod enum en `apps/api/src/http/types/types-routes.ts`
- * y al `TYPE_MODULES` en `apps/api/src/application/types/{create,update}-type.ts`.
+ * La validación del set cerrado ocurre en 3 lugares alineados:
+ *   1. CHECK constraint en DB (migration 007).
+ *   2. Use case `CreateType` / `UpdateType` (defensa en profundidad).
+ *   3. Zod enum acá en el contract (input del cliente).
+ * Si en el futuro se agregan módulos, se suman al tuple acá, al
+ * Zod enum en `apps/api/src/http/types/types-routes.ts`, al
+ * `TYPE_MODULE_NAMES` en `apps/api/src/domain/ports/type-repository.ts`,
+ * y al `typeModulesSchema` (que se deriva de este tuple).
  */
-export const TYPE_MODULES = [
+export const TYPE_MODULE_NAMES = [
   "tasks",
   "incomes",
   "expenses",
   "schedules",
 ] as const;
-export type TypeModule = (typeof TYPE_MODULES)[number];
+export type TypeModuleName = (typeof TYPE_MODULE_NAMES)[number];
 
-export const typeModuleSchema = z.enum(TYPE_MODULES);
+export const typeModuleNameSchema = z.enum(TYPE_MODULE_NAMES);
+
+/** Array de módulos. Vacío = "all modules". */
+export const typeModulesSchema = z.array(typeModuleNameSchema);
 
 /* ---------- Schemas entidad (read-side) ---------- */
 
@@ -30,13 +39,16 @@ export const typeModuleSchema = z.enum(TYPE_MODULES);
  * Output shape del CRUD de types. Mapea el row DB snake_case a la
  * convención del resto de los contratos (`<entity>_<field>`).
  *
+ * `type_modules` es el array de módulos a los que pertenece. Vacío `[]`
+ * = "applies to all modules".
+ *
  * No exponemos `type_user_id` (interno; el handler ya filtra por user
  * antes de llegar al caller).
  */
 export const typeSchema = z.object({
  type_id: uuidSchema,
  type_name: z.string().min(1).max(100),
- type_module: typeModuleSchema,
+ type_modules: typeModulesSchema,
  type_created_at: z.coerce.date(),
 });
 
@@ -53,19 +65,19 @@ export const typeLimitSchema = z.number().int().min(1).max(100).default(50);
 
 export const listTypesInputSchema = z.object({
  search: typeSearchSchema,
- module: typeModuleSchema.nullable().default(null),
+ module: typeModuleNameSchema.nullable().default(null),
  limit: typeLimitSchema,
 });
 
 export const createTypeInputSchema = z.object({
  type_name: typeNameSchema,
- type_module: typeModuleSchema,
+ type_modules: typeModulesSchema.default([]),
 });
 
 export const updateTypeInputSchema = z.object({
  type_id: uuidSchema,
  type_name: typeNameSchema.optional(),
- type_module: typeModuleSchema.optional(),
+ type_modules: typeModulesSchema.optional(),
 });
 
 export const removeTypeInputSchema = z.object({
@@ -81,8 +93,8 @@ const okOutputSchema = z.object({ ok: z.literal(true) });
  *
  * CRUD completo:
  *   rpc.types.list({ search, module?, limit })
- *   rpc.types.create({ type_name, type_module })
- *   rpc.types.update({ type_id, type_name?, type_module? })
+ *   rpc.types.create({ type_name, type_modules? })
+ *   rpc.types.update({ type_id, type_name?, type_modules? })
  *   rpc.types.remove({ type_id })
  *
  * El handler traduce errores de dominio (`InvalidTypeInput`,
