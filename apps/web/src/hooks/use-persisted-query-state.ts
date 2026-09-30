@@ -50,88 +50,88 @@ import { useQueryState } from "@octanejs/nuqs";
  * ```
  */
 export interface UsePersistedQueryStateOptions<T> {
-  /** Key de la URL (lo que aparece como `?key=value`). */
-  key: string;
-  /** Parser de nuqs SIN default aplicado. El hook le aplica `defaultValue`. */
-  parser: {
-    withDefault: (defaultValue: T) => unknown;
-  };
-  /** Valor inicial cuando ni URL ni localStorage tienen valor. */
-  defaultValue: T;
-  /** Override del localStorage key. Default: `crm-${key}`. */
-  storageKey?: string;
+ /** Key de la URL (lo que aparece como `?key=value`). */
+ key: string;
+ /** Parser de nuqs SIN default aplicado. El hook le aplica `defaultValue`. */
+ parser: {
+  withDefault: (defaultValue: T) => unknown;
+ };
+ /** Valor inicial cuando ni URL ni localStorage tienen valor. */
+ defaultValue: T;
+ /** Override del localStorage key. Default: `crm-${key}`. */
+ storageKey?: string;
 }
 
 export function usePersistedQueryState<T>(
-  opts: UsePersistedQueryStateOptions<T>,
+ opts: UsePersistedQueryStateOptions<T>,
 ): ReturnType<typeof useQueryState<T>> {
-  // El cast a `Parameters<typeof useQueryState<T>>[1]` es necesario porque
-  // el `parser.withDefault()` retorna `ParserWithDefault<T>` (un tipo más
-  // narrow que el `Parser<T>` que acepta useQueryState) y TS no propaga la
-  // inferencia por el wrapper. El runtime es correcto: nuqs hace narrowing
-  // del tipo en compile time cuando ve `withDefault`.
-  const [value, setValue] = useQueryState(
-    opts.key,
-    opts.parser.withDefault(opts.defaultValue) as Parameters<
-      typeof useQueryState<T>
-    >[1],
-  );
+ // El cast a `Parameters<typeof useQueryState<T>>[1]` es necesario porque
+ // el `parser.withDefault()` retorna `ParserWithDefault<T>` (un tipo más
+ // narrow que el `Parser<T>` que acepta useQueryState) y TS no propaga la
+ // inferencia por el wrapper. El runtime es correcto: nuqs hace narrowing
+ // del tipo en compile time cuando ve `withDefault`.
+ const [value, setValue] = useQueryState(
+  opts.key,
+  opts.parser.withDefault(opts.defaultValue) as Parameters<
+   typeof useQueryState<T>
+  >[1],
+ );
 
-  const storageKey = `crm-${opts.storageKey ?? opts.key}`;
-  const hydratedRef = useRef(false);
+ const storageKey = `crm-${opts.storageKey ?? opts.key}`;
+ const hydratedRef = useRef(false);
 
-  // Effect 1: hidratación one-shot desde localStorage en el mount.
-  // Corre UNA vez (deps: []). Si la URL ya tiene un valor, el `if` lo
-  // detecta comparando con el default y sale. Si no, lee localStorage y
-  // popula la URL via `setValue` (que dispara una re-render y el
-  // Effect 2 se ocupa de persistir el nuevo valor de vuelta).
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (hydratedRef.current === true) return;
-    hydratedRef.current = true;
+ // Effect 1: hidratación one-shot desde localStorage en el mount.
+ // Corre UNA vez (deps: []). Si la URL ya tiene un valor, el `if` lo
+ // detecta comparando con el default y sale. Si no, lee localStorage y
+ // popula la URL via `setValue` (que dispara una re-render y el
+ // Effect 2 se ocupa de persistir el nuevo valor de vuelta).
+ useEffect(() => {
+  if (typeof window === "undefined") return;
+  if (hydratedRef.current === true) return;
+  hydratedRef.current = true;
 
-    if (value !== opts.defaultValue) {
-      // URL ya trae un valor (deep-link). No pisamos; el sync effect
-      // lo va a persistir como nueva "preferencia" la próxima vez que
-      // el user edite el filtro.
-      return;
-    }
+  if (value !== opts.defaultValue) {
+   // URL ya trae un valor (deep-link). No pisamos; el sync effect
+   // lo va a persistir como nueva "preferencia" la próxima vez que
+   // el user edite el filtro.
+   return;
+  }
 
-    try {
-      const stored = window.localStorage.getItem(storageKey);
-      if (stored === null) return;
-      const parsed = JSON.parse(stored) as T;
-      // SAFETY: `setValue` rechaza `null | undefined` cuando `T` los
-      // incluye en la unión (la firma del setter de nuqs usa `T & {}`
-      // para distinguir valores reales de "clear"). El valor que
-      // viene de localStorage fue escrito por este mismo hook
-      // (effect 2 más abajo), por lo que NO es nullish en runtime —
-      // el cast es seguro y no se necesita validación extra.
-      setValue(parsed as T & {});
-    } catch {
-      // localStorage deshabilitado, JSON inválido, o cualquier otro error:
-      // caemos al default y no rompemos la página.
-    }
-    // deps intencionalmente vacías: la hidratación es one-shot.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  try {
+   const stored = window.localStorage.getItem(storageKey);
+   if (stored === null) return;
+   const parsed = JSON.parse(stored) as T;
+   // SAFETY: `setValue` rechaza `null | undefined` cuando `T` los
+   // incluye en la unión (la firma del setter de nuqs usa `T & {}`
+   // para distinguir valores reales de "clear"). El valor que
+   // viene de localStorage fue escrito por este mismo hook
+   // (effect 2 más abajo), por lo que NO es nullish en runtime —
+   // el cast es seguro y no se necesita validación extra.
+   setValue(parsed as T & {});
+  } catch {
+   // localStorage deshabilitado, JSON inválido, o cualquier otro error:
+   // caemos al default y no rompemos la página.
+  }
+  // deps intencionalmente vacías: la hidratación es one-shot.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+ }, []);
 
-  // Effect 2: persistencia en cada cambio de `value`. Skip el primer
-  // render via `hydratedRef` (que el Effect 1 setea en true antes de
-  // que este corra) para no pisar el valor almacenado antes de que la
-  // hidratación haya tenido oportunidad de ejecutarse.
-  useEffect(() => {
-    if (hydratedRef.current === false) return;
-    if (typeof window === "undefined") return;
+ // Effect 2: persistencia en cada cambio de `value`. Skip el primer
+ // render via `hydratedRef` (que el Effect 1 setea en true antes de
+ // que este corra) para no pisar el valor almacenado antes de que la
+ // hidratación haya tenido oportunidad de ejecutarse.
+ useEffect(() => {
+  if (hydratedRef.current === false) return;
+  if (typeof window === "undefined") return;
 
-    try {
-      window.localStorage.setItem(storageKey, JSON.stringify(value));
-    } catch {
-      // QuotaExceededError, Safari private mode, etc. — la app sigue
-      // funcionando; solo perdemos la persistencia hasta que se libere
-      // espacio o el user salga de private mode.
-    }
-  }, [storageKey, value]);
+  try {
+   window.localStorage.setItem(storageKey, JSON.stringify(value));
+  } catch {
+   // QuotaExceededError, Safari private mode, etc. — la app sigue
+   // funcionando; solo perdemos la persistencia hasta que se libere
+   // espacio o el user salga de private mode.
+  }
+ }, [storageKey, value]);
 
-  return [value, setValue] as ReturnType<typeof useQueryState<T>>;
+ return [value, setValue] as ReturnType<typeof useQueryState<T>>;
 }

@@ -57,7 +57,9 @@ describe("lib/nav", () => {
     const { NAV_TREE } = await import("./tree");
     const { SHELL_ROUTES } = await import("./routes");
     const hrefs = NAV_TREE.flatMap((node) =>
-      node.type === "group" ? node.children.map((child) => child.href) : [node.href],
+      node.type === "group"
+        ? node.children.map((child) => child.href)
+        : [node.href],
     );
     expect([...hrefs].sort()).toEqual([...SHELL_ROUTES].sort());
   });
@@ -84,7 +86,9 @@ describe("lib/nav", () => {
 
   test("ruta desconocida: ningún item ni grupo activo", async () => {
     const { NAV_TREE } = await import("./tree");
-    const { isItemActive, isGroupActive, pathnameOf } = await import("./active");
+    const { isItemActive, isGroupActive, pathnameOf } = await import(
+      "./active"
+    );
     const pathname = pathnameOf("/no-existe");
     for (const node of NAV_TREE) {
       if (node.type === "group") {

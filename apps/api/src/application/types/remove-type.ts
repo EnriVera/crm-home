@@ -1,13 +1,16 @@
-import type { TypeRepository, TypeRow } from "../../domain/ports/type-repository";
+import type {
+ TypeRepository,
+ TypeRow,
+} from "../../domain/ports/type-repository";
 import { TypeNotFound } from "./errors";
 
 export interface RemoveTypeInput {
-  userId: string;
-  typeId: string;
+ userId: string;
+ typeId: string;
 }
 
 export interface RemoveTypeDependencies {
-  typeRepository: TypeRepository;
+ typeRepository: TypeRepository;
 }
 
 /**
@@ -31,19 +34,19 @@ export interface RemoveTypeDependencies {
  * un check acá contra `CategoryLookupRepository.findByTypeId`.
  */
 export class RemoveType {
-  constructor(private readonly deps: RemoveTypeDependencies) {}
+ constructor(private readonly deps: RemoveTypeDependencies) {}
 
-  async execute(input: RemoveTypeInput): Promise<TypeRow> {
-    try {
-      return await this.deps.typeRepository.softDelete(input);
-    } catch (err) {
-      if (
-        err instanceof Error &&
-        (err.message.includes("no result") || err.message.includes("not found"))
-      ) {
-        throw new TypeNotFound();
-      }
-      throw err;
-    }
+ async execute(input: RemoveTypeInput): Promise<TypeRow> {
+  try {
+   return await this.deps.typeRepository.softDelete(input);
+  } catch (err) {
+   if (
+    err instanceof Error &&
+    (err.message.includes("no result") || err.message.includes("not found"))
+   ) {
+    throw new TypeNotFound();
+   }
+   throw err;
   }
+ }
 }

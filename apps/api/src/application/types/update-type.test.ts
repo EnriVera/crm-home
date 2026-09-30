@@ -1,7 +1,10 @@
 import { describe, expect, test } from "bun:test";
 import { UpdateType } from "./update-type";
 import { InvalidTypeInput, TypeNotFound } from "./errors";
-import type { TypeRepository, TypeRow } from "../../domain/ports/type-repository";
+import type {
+  TypeRepository,
+  TypeRow,
+} from "../../domain/ports/type-repository";
 
 function makeRow(overrides: Partial<TypeRow> = {}): TypeRow {
   return {

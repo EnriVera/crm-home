@@ -6,18 +6,18 @@
 
 /** Extrae el pathname de una url (`pathname + search`, origin-free). */
 export function pathnameOf(url: string): string {
-  return url.split("?")[0] ?? url;
+ return url.split("?")[0] ?? url;
 }
 
 /** Item activo: match EXACTO de pathname (sin prefijos). */
 export function isItemActive(pathname: string, href: string): boolean {
-  return pathname === href;
+ return pathname === href;
 }
 
 /** Grupo activo: alguno de sus hijos está activo. */
 export function isGroupActive(
-  pathname: string,
-  children: ReadonlyArray<{ href: string }>,
+ pathname: string,
+ children: ReadonlyArray<{ href: string }>,
 ): boolean {
-  return children.some((child) => isItemActive(pathname, child.href));
+ return children.some((child) => isItemActive(pathname, child.href));
 }

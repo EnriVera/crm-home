@@ -37,9 +37,7 @@ export class KyselyUserSeedService implements UserSeedService {
       .select("curr_id")
       .where("curr_symbol", "=", "$")
       .limit(1)
-      .executeTakeFirstOrThrow(
-        () => new Error("ARS currency not found"),
-      );
+      .executeTakeFirstOrThrow(() => new Error("ARS currency not found"));
 
     await db
       .insertInto("task_state")

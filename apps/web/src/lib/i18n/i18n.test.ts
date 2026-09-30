@@ -17,13 +17,15 @@ import es from "./locales/es.json";
 const SRC_DIR = join(import.meta.dir, "../..");
 
 function catalogValue(key: string): unknown {
-  return key.split(".").reduce<unknown>(
-    (node, segment) =>
-      node !== null && typeof node === "object"
-        ? (node as Record<string, unknown>)[segment]
-        : undefined,
-    es,
-  );
+  return key
+    .split(".")
+    .reduce<unknown>(
+      (node, segment) =>
+        node !== null && typeof node === "object"
+          ? (node as Record<string, unknown>)[segment]
+          : undefined,
+      es,
+    );
 }
 
 /** Escanea todas las fuentes y devuelve el set de claves literales `t("...")`. */
@@ -79,9 +81,10 @@ describe("i18n (es default)", () => {
     );
     expect(labelKeys.length).toBe(9);
     for (const key of labelKeys) {
-      expect(typeof catalogValue(key), `labelKey ausente en es.json: ${key}`).toBe(
-        "string",
-      );
+      expect(
+        typeof catalogValue(key),
+        `labelKey ausente en es.json: ${key}`,
+      ).toBe("string");
     }
   });
 

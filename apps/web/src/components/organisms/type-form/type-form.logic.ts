@@ -62,9 +62,7 @@ export interface TypeFormError {
   message: string;
 }
 
-export function firstTypeFormError(
-  state: TypeFormState,
-): TypeFormError | null {
+export function firstTypeFormError(state: TypeFormState): TypeFormError | null {
   const trimmed = state.name.trim();
   if (trimmed.length === 0) {
     return { field: "name", message: "El nombre es obligatorio" };

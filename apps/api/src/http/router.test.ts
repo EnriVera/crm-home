@@ -20,8 +20,8 @@ describe("composition root (smoke)", () => {
 
   test("sin OTEL_EXPORTER_OTLP_ENDPOINT la telemetría degrada a no-op", () => {
     expect(createTelemetry({})).toBeInstanceOf(NoopTelemetry);
-    expect(
-      createTelemetry({ OTEL_EXPORTER_OTLP_ENDPOINT: "" }),
-    ).toBeInstanceOf(NoopTelemetry);
+    expect(createTelemetry({ OTEL_EXPORTER_OTLP_ENDPOINT: "" })).toBeInstanceOf(
+      NoopTelemetry,
+    );
   });
 });

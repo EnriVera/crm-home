@@ -9,9 +9,9 @@ import es from "./locales/es.json";
  * instancia existe tanto en SSR como en hidratación.
  */
 export const i18n = createI18n({
-  lng: "es",
-  fallbackLng: "es",
-  resources: {
-    es: { translation: es },
-  },
+ lng: "es",
+ fallbackLng: "es",
+ resources: {
+  es: { translation: es },
+ },
 });

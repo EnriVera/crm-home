@@ -19,10 +19,10 @@ import type { Transaction } from "./transaction";
  *   un type que tenga AL MENOS uno de los módulos seleccionados.
  */
 export const TYPE_MODULE_NAMES = [
-  "tasks",
-  "incomes",
-  "expenses",
-  "schedules",
+ "tasks",
+ "incomes",
+ "expenses",
+ "schedules",
 ] as const;
 
 export type TypeModuleName = (typeof TYPE_MODULE_NAMES)[number];
@@ -31,39 +31,39 @@ export type TypeModuleName = (typeof TYPE_MODULE_NAMES)[number];
 export type TypeModules = readonly TypeModuleName[];
 
 export interface TypeRow {
-  id: string;
-  userId: string;
-  name: string;
-  modules: TypeModules;
-  createdAt: Date;
+ id: string;
+ userId: string;
+ name: string;
+ modules: TypeModules;
+ createdAt: Date;
 }
 
 export interface TypeRepository {
-  list(params: {
-    userId: string;
-    search: string;
-    /**
-     * Filtro multi-módulo. Vacío `[]` = sin filtro (mostrar todos).
-     * No vacío = "el type tiene AL MENOS uno de estos módulos" (OR).
-     */
-    modules: TypeModules;
-    limit: number;
-  }): Promise<TypeRow[]>;
+ list(params: {
+  userId: string;
+  search: string;
+  /**
+   * Filtro multi-módulo. Vacío `[]` = sin filtro (mostrar todos).
+   * No vacío = "el type tiene AL MENOS uno de estos módulos" (OR).
+   */
+  modules: TypeModules;
+  limit: number;
+ }): Promise<TypeRow[]>;
 
-  findById(params: { userId: string; typeId: string }): Promise<TypeRow | null>;
+ findById(params: { userId: string; typeId: string }): Promise<TypeRow | null>;
 
-  insert(params: {
-    userId: string;
-    name: string;
-    modules: TypeModules;
-  }): Promise<TypeRow>;
+ insert(params: {
+  userId: string;
+  name: string;
+  modules: TypeModules;
+ }): Promise<TypeRow>;
 
-  update(params: {
-    userId: string;
-    typeId: string;
-    name?: string;
-    modules?: TypeModules;
-  }): Promise<TypeRow>;
+ update(params: {
+  userId: string;
+  typeId: string;
+  name?: string;
+  modules?: TypeModules;
+ }): Promise<TypeRow>;
 
-  softDelete(params: { userId: string; typeId: string }): Promise<TypeRow>;
+ softDelete(params: { userId: string; typeId: string }): Promise<TypeRow>;
 }

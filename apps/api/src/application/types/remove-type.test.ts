@@ -1,7 +1,10 @@
 import { describe, expect, test } from "bun:test";
 import { RemoveType } from "./remove-type";
 import { TypeNotFound } from "./errors";
-import type { TypeRepository, TypeRow } from "../../domain/ports/type-repository";
+import type {
+  TypeRepository,
+  TypeRow,
+} from "../../domain/ports/type-repository";
 
 function makeRepo() {
   const rows: TypeRow[] = [

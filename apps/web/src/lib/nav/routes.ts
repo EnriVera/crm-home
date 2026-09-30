@@ -4,14 +4,14 @@
  * registradas no pueden divergir (test de consistencia en `tree.test.ts`).
  */
 export const SHELL_ROUTES = [
-  "/dashboard",
-  "/tasks",
-  "/schedules",
-  "/clients",
-  "/incomes",
-  "/expenses",
-  "/transfers",
-  "/config",
+ "/dashboard",
+ "/tasks",
+ "/schedules",
+ "/clients",
+ "/incomes",
+ "/expenses",
+ "/transfers",
+ "/config",
 ] as const;
 
 export type ShellRoute = (typeof SHELL_ROUTES)[number];

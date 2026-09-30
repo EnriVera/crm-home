@@ -11,9 +11,9 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /** ¿El string tiene formato de email válido (tras trim)? */
 export function isValidEmail(value: string): boolean {
-  const trimmed = value.trim();
-  if (trimmed === "") return false;
-  // Un solo `@` (la regex admite varios en el local part al no anclar clases).
-  if (trimmed.indexOf("@") !== trimmed.lastIndexOf("@")) return false;
-  return EMAIL_PATTERN.test(trimmed);
+ const trimmed = value.trim();
+ if (trimmed === "") return false;
+ // Un solo `@` (la regex admite varios en el local part al no anclar clases).
+ if (trimmed.indexOf("@") !== trimmed.lastIndexOf("@")) return false;
+ return EMAIL_PATTERN.test(trimmed);
 }

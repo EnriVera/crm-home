@@ -22,29 +22,32 @@ export const STORAGE_KEY = "crm-theme";
  * sub-secciones legales también son públicas.
  */
 export const PUBLIC_PATHS = [
-  "/login",
-  "/login-verification",
-  "/terms",
-  "/privacy",
-  "/cookies",
+ "/login",
+ "/login-verification",
+ "/terms",
+ "/privacy",
+ "/cookies",
 ] as const;
 
 /**
  * Resuelve el tema efectivo a partir de la preferencia y del estado del SO.
  * Un setting desconocido (p. ej. localStorage corrupto) cae a `system`.
  */
-export function resolveTheme(setting: ThemeSetting, systemDark: boolean): Theme {
-  if (setting === "light" || setting === "dark") {
-    return setting;
-  }
-  return systemDark ? "dark" : "light";
+export function resolveTheme(
+ setting: ThemeSetting,
+ systemDark: boolean,
+): Theme {
+ if (setting === "light" || setting === "dark") {
+  return setting;
+ }
+ return systemDark ? "dark" : "light";
 }
 
 /** Indica si un path (con o sin query string) pertenece a una ruta pública. */
 export function isPublicPath(path: string): boolean {
-  const pathname = path.split("?")[0] ?? path;
-  return PUBLIC_PATHS.some(
-    (publicPath) =>
-      pathname === publicPath || pathname.startsWith(`${publicPath}/`),
-  );
+ const pathname = path.split("?")[0] ?? path;
+ return PUBLIC_PATHS.some(
+  (publicPath) =>
+   pathname === publicPath || pathname.startsWith(`${publicPath}/`),
+ );
 }

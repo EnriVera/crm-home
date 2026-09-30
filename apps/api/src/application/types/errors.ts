@@ -7,19 +7,19 @@
  */
 
 export class InvalidTypeInput extends Error {
-  readonly code = "INVALID_TYPE_INPUT" as const;
+ readonly code = "INVALID_TYPE_INPUT" as const;
 
-  constructor(message: string) {
-    super(message);
-    this.name = "InvalidTypeInput";
-  }
+ constructor(message: string) {
+  super(message);
+  this.name = "InvalidTypeInput";
+ }
 }
 
 export class TypeNotFound extends Error {
-  readonly code = "TYPE_NOT_FOUND" as const;
+ readonly code = "TYPE_NOT_FOUND" as const;
 
-  constructor(message = "Type not found") {
-    super(message);
-    this.name = "TypeNotFound";
-  }
+ constructor(message = "Type not found") {
+  super(message);
+  this.name = "TypeNotFound";
+ }
 }

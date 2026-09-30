@@ -75,9 +75,7 @@ export class KyselyTypeRepository implements TypeRepository {
       const modulesArray = sql<string[]>`ARRAY[${sql.join(
         params.modules.map((m) => sql.lit(m)),
       )}]::TEXT[]`;
-      query = query.where(
-        sql<boolean>`type_modules && ${modulesArray}`,
-      );
+      query = query.where(sql<boolean>`type_modules && ${modulesArray}`);
     }
     // modules.length === 0 → sin filtro (mostrar todos los types,
     // incluidos los all-modules con modules=[]).

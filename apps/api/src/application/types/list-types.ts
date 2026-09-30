@@ -1,18 +1,18 @@
 import type {
-  TypeModules,
-  TypeRepository,
-  TypeRow,
+ TypeModules,
+ TypeRepository,
+ TypeRow,
 } from "../../domain/ports/type-repository";
 
 export interface ListTypesInput {
-  userId: string;
-  search: string;
-  modules: TypeModules;
-  limit: number;
+ userId: string;
+ search: string;
+ modules: TypeModules;
+ limit: number;
 }
 
 export interface ListTypesDependencies {
-  typeRepository: TypeRepository;
+ typeRepository: TypeRepository;
 }
 
 /**
@@ -25,15 +25,15 @@ export interface ListTypesDependencies {
  * "any of" los módulos seleccionados (OR).
  */
 export class ListTypes {
-  constructor(private readonly deps: ListTypesDependencies) {}
+ constructor(private readonly deps: ListTypesDependencies) {}
 
-  async execute(input: ListTypesInput): Promise<TypeRow[]> {
-    const limit = Math.min(Math.max(input.limit, 1), 100);
-    return this.deps.typeRepository.list({
-      userId: input.userId,
-      search: input.search,
-      modules: input.modules,
-      limit,
-    });
-  }
+ async execute(input: ListTypesInput): Promise<TypeRow[]> {
+  const limit = Math.min(Math.max(input.limit, 1), 100);
+  return this.deps.typeRepository.list({
+   userId: input.userId,
+   search: input.search,
+   modules: input.modules,
+   limit,
+  });
+ }
 }
