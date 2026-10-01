@@ -1,5 +1,6 @@
 import { useEffect, useState } from "octane";
 import { t } from "../vendor/i18n/core";
+import { useT } from "../vendor/i18n";
 import { createRpcClient, type RpcClient } from "../../lib/api/rpc";
 import { Button } from "../atoms/button.tsrx";
 import { Icon } from "../vendor/icons";
@@ -7,6 +8,7 @@ import { DataList } from "../molecules/data-list.tsrx";
 import { EmptyState } from "../molecules/empty-state.tsrx";
 import { ExpenseListItem } from "../molecules/expense-list-item.tsrx";
 import { ExpenseForm } from "../organisms/expense-form/expense-form.tsrx";
+import { PageHeader } from "../molecules/page-header/page-header.tsrx";
 import { useOctaneQuery } from "../../hooks/use-octane-query";
 import type { Expense } from "@crm/types";
 
@@ -22,6 +24,7 @@ import type { Expense } from "@crm/types";
 const RPC = createRpcClient(import.meta.env.VITE_API_URL ?? "/rpc");
 
 export function ExpensesPage() @{
+  const tT = useT();
   const [search, setSearch] = useState("");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
@@ -72,22 +75,25 @@ export function ExpensesPage() @{
     }
   };
 
-  <section data-page="expenses" class="mx-auto w-full max-w-4xl px-6 py-8 sm:py-10">
-    <header class="mb-8 flex flex-wrap items-end justify-between gap-4">
-      <div class="min-w-0">
-        <h1 class="text-2xl font-bold text-text-primary tracking-tight sm:text-3xl">
-          {t("expenses.page.title")}
-        </h1>
-        {expenses.length > 0 && (
-          <p class="mt-1 text-sm text-text-secondary">
-            {expenses.length === 1 ? "1 gasto" : `${expenses.length} gastos`}
-          </p>
-        )}
-      </div>
-      <Button variant="primary" onClick={() => setCreateOpen(true)}>
-        {t("expenses.page.add")}
-      </Button>
-    </header>
+  <section data-page="expenses" class="mx-auto flex w-full max-w-4xl flex-col gap-6 px-6 py-8 sm:py-10">
+    <PageHeader
+      breadcrumb={[
+        { href: "/dashboard", label: tT("common.breadcrumbHome") },
+        { label: tT("nav.finance") },
+        { label: tT("nav.expenses") },
+      ]}
+      title={tT("expenses.page.title")}
+      subtitle={expenses.length === 0
+        ? undefined
+        : expenses.length === 1
+          ? "1 gasto"
+          : `${expenses.length} gastos`}
+      action={{
+        label: tT("expenses.page.add"),
+        icon: "plus",
+        onClick: () => setCreateOpen(true),
+      }}
+    />
 
     <div class="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
       <input

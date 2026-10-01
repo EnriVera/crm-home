@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "octane";
 import { t } from "../vendor/i18n/core";
+import { useT } from "../vendor/i18n";
 import { createRpcClient, type RpcClient } from "../../lib/api/rpc";
 import { BaseView, type ViewKind } from "../base-view/base-view.tsrx";
 import { Button } from "../atoms/button.tsrx";
@@ -9,6 +10,7 @@ import { TaskListItem } from "../molecules/task-list-item.tsrx";
 import { TaskKanbanBoard } from "../organisms/task-kanban-board/task-kanban-board.tsrx";
 import { DataList } from "../molecules/data-list.tsrx";
 import { TaskForm } from "../organisms/task-form/task-form.tsrx";
+import { PageHeader } from "../molecules/page-header/page-header.tsrx";
 import { useOctaneQuery } from "../../hooks/use-octane-query";
 import type {
   TaskFormState,
@@ -161,6 +163,7 @@ function TaskListItemSkeleton() @{
 }
 
 export function TasksPage() @{
+  const tT = useT();
   const [filters, setFilters] = useState<TaskFilters>({ search: "" });
   const [creatingOpen, setCreatingOpen] = useState(false);
   const titleInputRef = useRef<HTMLInputElement | null>(null);
@@ -245,39 +248,41 @@ export function TasksPage() @{
   // Lookup: stateId → state name (closure sobre taskStates).
   const stateNameById = new Map(taskStates.map((s) => [s.tast_id, s.tast_name]));
 
-  <section data-page="tasks" class="mx-auto w-full max-w-4xl px-6 py-8 sm:py-10">
-    <header class="mb-8 flex flex-wrap items-end justify-between gap-4">
-      <div class="min-w-0">
-        <h1 class="text-2xl font-bold text-text-primary tracking-tight sm:text-3xl">
-          {t("tasks.page.title")}
-        </h1>
-        {tasks.length > 0 && (
-          <p class="mt-1 text-sm text-text-secondary">
-            {tasks.length === 1
-              ? "1 tarea"
-              : `${tasks.length} tareas`}
-          </p>
-        )}
-      </div>
-      <div class="flex items-center gap-2">
-        <a
-          href="/tasks-config"
-          aria-label={t("tasks.page.configTooltip")}
-          title={t("tasks.page.configTooltip")}
-          data-component="tasks-config-link"
-          class="inline-flex h-10 w-10 items-center justify-center rounded-md border border-border bg-surface text-text-secondary transition-colors hover:bg-background hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
-          suppressHydrationWarning
-        >
-          <Icon name="gear" size={18} />
-        </a>
-        <Button
-          variant="primary"
-          onClick={() => setCreatingOpen(true)}
-        >
-          {t("tasks.page.newTask")}
-        </Button>
-      </div>
-    </header>
+  <section data-page="tasks" class="mx-auto flex w-full max-w-4xl flex-col gap-6 px-6 py-8 sm:py-10">
+    <PageHeader
+      breadcrumb={[
+        { href: "/dashboard", label: tT("common.breadcrumbHome") },
+        { label: tT("nav.tasks") },
+      ]}
+      title={tT("tasks.page.title")}
+      subtitle={tasks.length === 0
+        ? undefined
+        : tasks.length === 1
+          ? "1 tarea"
+          : `${tasks.length} tareas`}
+      trailing={
+        <div class="flex items-center gap-2">
+          <a
+            href="/tasks-config"
+            aria-label={tT("tasks.page.configTooltip")}
+            title={tT("tasks.page.configTooltip")}
+            data-component="tasks-config-link"
+            class="inline-flex size-9 items-center justify-center rounded-md text-text-secondary transition-colors hover:bg-text-primary/5 hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+            suppressHydrationWarning
+          >
+            <Icon name="gear" size={18} />
+          </a>
+          <button
+            type="button"
+            onClick={() => setCreatingOpen(true)}
+            class="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-1.5 font-medium text-sm text-white transition-colors hover:bg-primary-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+          >
+            <Icon name="plus" size={16} />
+            <span>{tT("tasks.page.newTask")}</span>
+          </button>
+        </div>
+      }
+    />
 
     <DataList
       loading={loading}

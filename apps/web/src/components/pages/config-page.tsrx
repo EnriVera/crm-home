@@ -1,10 +1,12 @@
 import { useEffect, useState } from "octane";
 import { t } from "../vendor/i18n/core";
+import { useT } from "../vendor/i18n";
 import { createRpcClient, type RpcClient } from "../../lib/api/rpc";
 import { Button } from "../atoms/button.tsrx";
 import { Icon } from "../vendor/icons";
 import { Tabs, type TabItem } from "../molecules/tabs.tsrx";
 import { ThemeSelect } from "../molecules/theme-select.tsrx";
+import { PageHeader } from "../molecules/page-header/page-header.tsrx";
 import { useOctaneQuery } from "../../hooks/use-octane-query";
 import { TypesTab } from "./types-tab.tsrx";
 import {
@@ -66,6 +68,7 @@ type ConfigTabId = (typeof TAB_IDS)[number];
 const TAB_PARSER = parseAsStringLiteral(TAB_IDS).withDefault("user");
 
 export function ConfigPage() @{
+  const tT = useT();
   const sessionQuery = useOctaneQuery<{ user: UserInfo } | null>(
     () =>
       (RPC as RpcClient).auth.session() as Promise<
@@ -131,15 +134,15 @@ export function ConfigPage() @{
     label: t(`config.tab.${id}`),
   }));
 
-  <section data-page="config" class="mx-auto w-full max-w-3xl px-6 py-8 sm:py-10">
-    <header class="mb-8">
-      <h1 class="text-2xl font-bold text-text-primary tracking-tight sm:text-3xl">
-        {t("config.title")}
-      </h1>
-      <p class="mt-1 text-sm text-text-secondary">
-        {t("config.subtitle")}
-      </p>
-    </header>
+  <section data-page="config" class="mx-auto flex w-full max-w-3xl flex-col gap-6 px-6 py-8 sm:py-10">
+    <PageHeader
+      breadcrumb={[
+        { href: "/dashboard", label: tT("common.breadcrumbHome") },
+        { label: tT("nav.config") },
+      ]}
+      title={tT("config.title")}
+      subtitle={tT("config.subtitle")}
+    />
 
     {loading && (
       <div class="rounded-md border border-border bg-surface p-4 text-sm text-text-secondary">

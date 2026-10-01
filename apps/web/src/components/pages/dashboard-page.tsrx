@@ -1,7 +1,10 @@
+import type { OctaneNode } from "octane";
 import { useEffect, useState } from "octane";
-import { t } from "../vendor/i18n/core";
-import { createRpcClient, type RpcClient } from "../../lib/api/rpc";
+import type { Expense, Income, Transfer } from "@crm/types";
+import { useT } from "../vendor/i18n";
 import { Icon } from "../vendor/icons";
+import { PageHeader } from "../molecules/page-header/page-header.tsrx";
+import { createRpcClient, type RpcClient } from "../../lib/api/rpc";
 
 /**
  * Página `/dashboard` — Resumen del estado financiero del user.
@@ -13,6 +16,11 @@ import { Icon } from "../vendor/icons";
  * No hay un endpoint /dashboard agregado porque cada módulo tiene su
  * propia lista. Cuando los volúmenes crezcan, conviene un endpoint
  * /stats que devuelva counters pre-calculados server-side.
+ *
+ * Layout (rediseño 2026-Q4): breadcrumb `Home / Dashboard` + título
+ * grande + acción primaria "Nuevo" + grid de 3 stats cards + lista de
+ * actividad reciente (placeholder vacío por ahora; los datos reales
+ * llegan cuando el módulo de auditoría exista).
  */
 
 interface TotalCount {
@@ -28,6 +36,7 @@ function startOfMonthIso(): string {
 }
 
 export function DashboardPage() @{
+  const t = useT();
   const [incomeMonth, setIncomeMonth] = useState<TotalCount | null>(null);
   const [expenseMonth, setExpenseMonth] = useState<TotalCount | null>(null);
   const [transferMonth, setTransferMonth] = useState<TotalCount | null>(null);
@@ -37,10 +46,19 @@ export function DashboardPage() @{
     let cancelled = false;
     const dateFrom = startOfMonthIso();
 
-    const compute = (rows: Array<{ amount: string }>) => {
+    const compute = (
+      rows: Array<{ inco_amount: string } | { expe_amount: string } | { tran_amount: string }>,
+    ): TotalCount => {
       const count = rows.length;
       const total = rows
-        .reduce((acc, r) => acc + Number(r.amount), 0)
+        .reduce((acc, r) => {
+          const amount = "inco_amount" in r
+            ? r.inco_amount
+            : "expe_amount" in r
+              ? r.expe_amount
+              : (r as { tran_amount: string }).tran_amount;
+          return acc + Number(amount);
+        }, 0)
         .toFixed(2);
       return { count, total };
     };
@@ -55,9 +73,9 @@ export function DashboardPage() @{
         ]);
 
         if (cancelled) return;
-        setIncomeMonth(compute(incomeRes as Array<{ amount: string }>));
-        setExpenseMonth(compute(expenseRes as Array<{ amount: string }>));
-        setTransferMonth(compute(transferRes as Array<{ amount: string }>));
+        setIncomeMonth(compute(incomeRes as unknown as Array<Income>));
+        setExpenseMonth(compute(expenseRes as unknown as Array<Expense>));
+        setTransferMonth(compute(transferRes as unknown as Array<Transfer>));
         setLoading(false);
       } catch {
         if (!cancelled) setLoading(false);
@@ -69,71 +87,102 @@ export function DashboardPage() @{
     };
   }, []);
 
-  <section data-page="dashboard" class="mx-auto w-full max-w-5xl px-6 py-8 sm:py-10">
-    <header class="mb-8">
-      <h1 class="text-2xl font-bold text-text-primary tracking-tight sm:text-3xl">
-        {t("dashboard.title")}
-      </h1>
-      <p class="mt-1 text-sm text-text-secondary">
-        {t("dashboard.subtitle")}
-      </p>
-    </header>
+  <section data-page="dashboard" class="mx-auto w-full max-w-5xl px-2 py-2">
+    <PageHeader
+      breadcrumb={[
+        { href: "/dashboard", label: t("common.breadcrumbHome") },
+        { label: t("nav.dashboard") },
+      ]}
+      title={t("dashboard.title")}
+      subtitle={t("dashboard.subtitle")}
+      action={{
+        label: t("dashboard.newAction"),
+        icon: "plus",
+      }}
+    />
 
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+    <div class="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
       <SummaryCard
         title={t("dashboard.incomesThisMonth")}
-        icon={<Icon name="arrow-up-circle" size={32} />}
-        iconColor="text-success"
+        icon={<Icon name="arrow-up-circle" size={20} />}
+        tone="success"
         data={incomeMonth}
         loading={loading}
       />
       <SummaryCard
         title={t("dashboard.expensesThisMonth")}
-        icon={<Icon name="arrow-down-circle" size={32} />}
-        iconColor="text-error"
+        icon={<Icon name="arrow-down-circle" size={20} />}
+        tone="error"
         data={expenseMonth}
         loading={loading}
       />
       <SummaryCard
         title={t("dashboard.transfersThisMonth")}
-        icon={<Icon name="arrows-left-right" size={32} />}
-        iconColor="text-text-secondary"
+        icon={<Icon name="arrows-left-right" size={20} />}
+        tone="neutral"
         data={transferMonth}
         loading={loading}
       />
     </div>
+
+    <section class="mt-6" aria-labelledby="recent-activity-heading">
+      <h2
+        id="recent-activity-heading"
+        class="mb-2 font-mono text-[10px] text-text-secondary uppercase tracking-[0.25em]"
+      >
+        {t("dashboard.recentActivity")}
+      </h2>
+      <div class="rounded-lg border border-border bg-surface">
+        <div class="px-4 py-6 text-center text-sm text-text-secondary">
+          {t("dashboard.recentActivityEmpty")}
+        </div>
+      </div>
+    </section>
   </section>
 }
+
+type SummaryTone = "success" | "error" | "neutral";
+
+const TONE_CLASS: Record<SummaryTone, string> = {
+  success: "text-success",
+  error: "text-error",
+  neutral: "text-text-secondary",
+};
 
 function SummaryCard(props: {
   title: string;
   icon: OctaneNode;
-  iconColor: string;
+  tone: SummaryTone;
   data: TotalCount | null;
   loading: boolean;
 }) {
   return (
-    <div class="rounded-md border border-border bg-surface p-5">
-      <div class="mb-3 flex items-center justify-between">
-        <h2 class="text-xs font-medium text-text-secondary">{props.title}</h2>
-        <div class={props.iconColor}>{props.icon}</div>
+    <article class="rounded-lg border border-border bg-surface p-4">
+      <div class="flex items-center justify-between">
+        <h3 class="font-mono text-[10px] text-text-secondary uppercase tracking-[0.25em]">
+          {props.title}
+        </h3>
+        <div class={TONE_CLASS[props.tone]}>{props.icon}</div>
       </div>
-      {props.loading && props.data === null ? (
-        <div aria-hidden="true" class="h-8 w-20 animate-pulse rounded bg-background" />
+      {props.loading === true && props.data === null ? (
+        <div
+          aria-hidden="true"
+          class="mt-3 h-8 w-24 animate-pulse rounded bg-background"
+        />
       ) : props.data !== null ? (
         <>
-          <p class="text-2xl font-semibold text-text-primary">
+          <p class="mt-3 font-semibold text-2xl text-text-primary">
             ${props.data.total}
           </p>
-          <p class="mt-1 text-xs text-text-secondary">
+          <p class="mt-1 text-text-secondary text-xs">
             {props.data.count === 1
               ? "1 transacción"
               : `${props.data.count} transacciones`}
           </p>
         </>
       ) : (
-        <p class="text-sm text-text-secondary">—</p>
+        <p class="mt-3 text-sm text-text-secondary">—</p>
       )}
-    </div>
+    </article>
   );
 }

@@ -1,11 +1,14 @@
 import { useEffect, useState } from "octane";
 import { t } from "../vendor/i18n/core";
+import { useT } from "../vendor/i18n";
 import { createRpcClient, type RpcClient } from "../../lib/api/rpc";
 import { Button } from "../atoms/button.tsrx";
 import { StatusMessage } from "../atoms/status-message.tsrx";
+import { Icon } from "../vendor/icons";
 import { TaskStateForm } from "../organisms/task-state-form/task-state-form.tsrx";
 import { DataList } from "../molecules/data-list.tsrx";
 import { EmptyState } from "../molecules/empty-state.tsrx";
+import { PageHeader } from "../molecules/page-header/page-header.tsrx";
 import { useOctaneQuery } from "../../hooks/use-octane-query";
 import {
   buildStateSubmitParams,
@@ -79,6 +82,7 @@ function CloseIcon() @{
 }
 
 export function TasksConfigPage() @{
+  const tT = useT();
   const [editing, setEditing] = useState<TaskStateFormMode | null>(null);
   const [editingState, setEditingState] = useState<TaskState | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -186,32 +190,30 @@ export function TasksConfigPage() @{
 
   <section
     data-page="tasks-config"
-    class="mx-auto w-full max-w-3xl px-6 py-8 sm:py-10"
+    class="mx-auto flex w-full max-w-3xl flex-col gap-6 px-6 py-8 sm:py-10"
   >
-    <header class="mb-8 flex flex-wrap items-end justify-between gap-4">
-      <div class="min-w-0">
-        <h1 class="text-2xl font-bold tracking-tight text-text-primary sm:text-3xl">
-          {t("tasks.statuses.label")}
-        </h1>
-        <p class="mt-1 text-sm text-text-secondary">
-          {states.length === 0
-            ? "Configurá los estados del kanban."
-            : states.length === 1
-            ? "1 estado configurado"
-            : `${states.length} estados configurados`}
-        </p>
-      </div>
-      <Button
-        variant="primary"
-        data-action="new-state"
-        onClick={() => {
+    <PageHeader
+      breadcrumb={[
+        { href: "/dashboard", label: tT("common.breadcrumbHome") },
+        { href: "/tasks", label: tT("nav.tasks") },
+        { label: tT("tasks.statuses.label") },
+      ]}
+      title={tT("tasks.statuses.label")}
+      subtitle={states.length === 0
+        ? "Configurá los estados del kanban."
+        : states.length === 1
+          ? "1 estado configurado"
+          : `${states.length} estados configurados`}
+      action={{
+        label: tT("tasks.statuses.add"),
+        icon: "plus",
+        onClick: () => {
           setEditing("create");
           setEditingState(null);
-        }}
-      >
-        {t("tasks.statuses.add")}
-      </Button>
-    </header>
+        },
+        "data-action": "new-state",
+      }}
+    />
 
     <DataList
       loading={loading}

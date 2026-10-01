@@ -1,9 +1,11 @@
 import { useEffect, useState } from "octane";
 import { t } from "../vendor/i18n/core";
+import { useT } from "../vendor/i18n";
 import { createRpcClient, type RpcClient } from "../../lib/api/rpc";
 import { Button } from "../atoms/button.tsrx";
 import { EmptyState } from "../molecules/empty-state.tsrx";
 import { ClientForm } from "../organisms/client-form/client-form.tsrx";
+import { PageHeader } from "../molecules/page-header/page-header.tsrx";
 import { useOctaneQuery } from "../../hooks/use-octane-query";
 import type { Client } from "@crm/types";
 
@@ -29,6 +31,7 @@ export interface ClientDetailPageProps {
 }
 
 export function ClientDetailPage(props: ClientDetailPageProps) @{
+  const tT = useT();
   const [client, setClient] = useState<Client | null>(null);
   const [notFound, setNotFound] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
@@ -99,16 +102,23 @@ export function ClientDetailPage(props: ClientDetailPageProps) @{
 
   <section
     data-page="client-detail"
-    class="mx-auto w-full max-w-3xl px-6 py-8 sm:py-10"
+    class="mx-auto flex w-full max-w-3xl flex-col gap-6 px-6 py-8 sm:py-10"
   >
-    <div class="mb-6">
+    <nav
+      aria-label={tT("pageHeader.breadcrumbAriaLabel")}
+      class="font-mono text-[10px] text-text-secondary uppercase tracking-[0.25em]"
+    >
       <a
         href="/clients"
-        class="text-sm text-text-secondary hover:text-text-primary"
+        class="transition-colors hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
       >
-        ← {t("clients.detail.title")}
+        {tT("nav.clients")}
       </a>
-    </div>
+      <span aria-hidden="true" class="mx-1.5 opacity-60">/</span>
+      <span class="text-text-primary">
+        {client?.client_name ?? tT("clients.detail.title")}
+      </span>
+    </nav>
 
     {loading && (
       <div aria-hidden="true" class="animate-pulse">
@@ -142,40 +152,38 @@ export function ClientDetailPage(props: ClientDetailPageProps) @{
 
     {client !== null && (
       <>
-        <header class="mb-6 flex flex-wrap items-end justify-between gap-4">
-          <div class="min-w-0">
-            <h1 class="text-2xl font-bold text-text-primary tracking-tight sm:text-3xl">
-              {client.client_name}
-            </h1>
-          </div>
-          <div class="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              onClick={() => setEditOpen(true)}
-              disabled={deleting}
-            >
-              {t("clients.detail.edit")}
-            </Button>
-            <Button
-              variant="ghost"
-              onClick={() => {
-                void handleDelete();
-              }}
-              disabled={deleting}
-              class={
-                deleteArmed
-                  ? "!bg-error !text-white hover:!bg-error/90"
-                  : "text-error hover:bg-error/10"
-              }
-            >
-              {deleting
-                ? t("clients.form.submitting")
-                : deleteArmed
-                  ? t("clients.detail.confirmDelete")
-                  : t("clients.detail.delete")}
-            </Button>
-          </div>
-        </header>
+        <PageHeader
+          title={client.client_name}
+          trailing={
+            <div class="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                onClick={() => setEditOpen(true)}
+                disabled={deleting}
+              >
+                {t("clients.detail.edit")}
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  void handleDelete();
+                }}
+                disabled={deleting}
+                class={
+                  deleteArmed
+                    ? "!bg-error !text-white hover:!bg-error/90"
+                    : "text-error hover:bg-error/10"
+                }
+              >
+                {deleting
+                  ? t("clients.form.submitting")
+                  : deleteArmed
+                    ? t("clients.detail.confirmDelete")
+                    : t("clients.detail.delete")}
+              </Button>
+            </div>
+          }
+        />
 
         {deleteError !== null && (
           <div

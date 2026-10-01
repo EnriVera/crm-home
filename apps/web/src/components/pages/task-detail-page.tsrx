@@ -1,9 +1,11 @@
 import { useEffect, useState } from "octane";
 import { t } from "../vendor/i18n/core";
+import { useT } from "../vendor/i18n";
 import { createRpcClient, type RpcClient } from "../../lib/api/rpc";
 import { Button } from "../atoms/button.tsrx";
 import { StatusMessage } from "../atoms/status-message.tsrx";
 import { EmptyState } from "../molecules/empty-state.tsrx";
+import { PageHeader } from "../molecules/page-header/page-header.tsrx";
 import { TaskForm } from "../organisms/task-form/task-form.tsrx";
 import {
   closeDeleteConfirmation,
@@ -98,6 +100,7 @@ function CloseIcon() @{
 }
 
 export function TaskDetailPage(props: { taskId: string; url: string }) @{
+  const tT = useT();
   const [task, setTask] = useState<TaskDetail | null>(null);
   const [taskStates, setTaskStates] = useState<TaskState[]>([]);
   const [taskTypes, setTaskTypes] = useState<TypeForFormOption[]>([]);
@@ -256,24 +259,26 @@ export function TaskDetailPage(props: { taskId: string; url: string }) @{
   <article
     data-page="task-detail"
     data-task-id={props.taskId}
-    class="mx-auto w-full max-w-4xl px-6 py-8 sm:py-10"
+    class="mx-auto flex w-full max-w-4xl flex-col gap-6 px-6 py-8 sm:py-10"
   >
-    <header class="mb-8">
-      <a
-        href="/tasks"
-        class="inline-flex items-center gap-1 text-sm text-text-secondary transition-colors hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus rounded"
-      >
-        <span aria-hidden="true">←</span>
-        {t("tasks.page.title")}
-      </a>
-      <h1 class="mt-3 text-2xl font-bold tracking-tight text-text-primary sm:text-3xl">
-        {notFound
-          ? t("tasks.detail.notFoundTitle")
-          : task
+    <PageHeader
+      breadcrumb={[
+        { href: "/dashboard", label: tT("common.breadcrumbHome") },
+        { href: "/tasks", label: tT("nav.tasks") },
+        {
+          label: notFound
+            ? tT("tasks.detail.notFoundTitle")
+            : task
+              ? task.task_title || props.taskId
+              : tT("tasks.detail.loading"),
+        },
+      ]}
+      title={notFound
+        ? tT("tasks.detail.notFoundTitle")
+        : task
           ? task.task_title || props.taskId
-          : t("tasks.detail.loading")}
-      </h1>
-    </header>
+          : tT("tasks.detail.loading")}
+    />
 
     {notFound && !loading ? (
       <EmptyState

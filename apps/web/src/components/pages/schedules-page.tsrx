@@ -1,10 +1,12 @@
 import { useState } from "octane";
 import { t } from "../vendor/i18n/core";
+import { useT } from "../vendor/i18n";
 import { createRpcClient, type RpcClient } from "../../lib/api/rpc";
 import { Icon } from "../vendor/icons";
 import { DataList } from "../molecules/data-list.tsrx";
 import { EmptyState } from "../molecules/empty-state.tsrx";
 import { ScheduleListItem } from "../molecules/schedule-list-item.tsrx";
+import { PageHeader } from "../molecules/page-header/page-header.tsrx";
 import { useOctaneQuery } from "../../hooks/use-octane-query";
 import type { Schedule } from "@crm/types";
 
@@ -19,6 +21,7 @@ import type { Schedule } from "@crm/types";
 const RPC = createRpcClient(import.meta.env.VITE_API_URL ?? "/rpc");
 
 export function SchedulesPage() @{
+  const tT = useT();
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   // Carga vía useOctaneQuery (deduplicación + cancelled + finally vía
@@ -44,11 +47,14 @@ export function SchedulesPage() @{
     }
   };
 
-  <section data-page="schedules" class="mx-auto w-full max-w-4xl px-6 py-8 sm:py-10">
-    <header class="mb-8">
-      <h1 class="text-2xl font-bold text-text-primary tracking-tight sm:text-3xl">
-        {t("schedules.page.title")}
-      </h1>
+  <section data-page="schedules" class="mx-auto flex w-full max-w-4xl flex-col gap-6 px-6 py-8 sm:py-10">
+    <PageHeader
+      breadcrumb={[
+        { href: "/dashboard", label: tT("common.breadcrumbHome") },
+        { label: tT("nav.schedule") },
+      ]}
+      title={tT("schedules.page.title")}
+    />
       <p class="mt-1 text-sm text-text-secondary">
         {t("schedules.page.subtitle")}
       </p>
