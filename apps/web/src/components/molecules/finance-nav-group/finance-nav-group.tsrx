@@ -58,41 +58,12 @@ export function FinanceNavGroup(props: FinanceNavGroupProps) @{
     setHydratedCollapsed(loadFinanceCollapsed());
   }, []);
 
-  // Mientras no estamos montados, renderizamos un fallback SSR-safe
-  // (lista plana con los hijos, sin máquina de estado).
-  if (mounted === false) {
-    <li>
-      <span
-        class={`flex w-full items-center gap-3 px-3 pb-1 pt-3 text-xs font-semibold uppercase tracking-wide ${
-          props.children.some((c) => isItemActive(props.pathname, c.href))
-            ? "text-text-primary"
-            : "text-text-secondary"
-        } ${props.collapsed === true ? "justify-center px-0" : ""}`}
-      >
-        <Icon name="wallet" size={20} />
-        {props.collapsed === true ? null : (
-          <span class="flex-1 text-left">{props.label}</span>
-        )}
-      </span>
-      <ul class="m-0 flex list-none flex-col gap-0.5 p-0 pl-2">
-        {props.children.map((child) => (
-          <li key={child.href}>
-            <NavItem
-              href={child.href}
-              icon={child.icon}
-              label={child.label}
-              active={isItemActive(props.pathname, child.href)}
-              collapsed={props.collapsed}
-            />
-          </li>
-        ))}
-      </ul>
-    </li>;
-    return;
-  }
-
-  // Cliente (post-mount): disclosure completo con persistencia.
-  const initialOpen = hydratedCollapsed === null ? true : !hydratedCollapsed;
+  // Pre-computamos el contenido en una variable JS (no TSRX template) para
+  // evitar el error "TSRX template output is unused" cuando hay ramas
+  // condicionales con markup distinto. TSRX exige una sola expresión
+  // template (`@{...}`) por función; un `<li>...</li>` suelto dentro de un
+  // `if` se interpreta como template output huérfano.
+  const initialOpen = mounted ? (hydratedCollapsed === null ? true : !hydratedCollapsed) : true;
   const open = initialOpen;
   const handleOpenChange = (details: { open: boolean }) => {
     saveFinanceCollapsed(!details.open);
@@ -102,59 +73,96 @@ export function FinanceNavGroup(props: FinanceNavGroupProps) @{
     isItemActive(props.pathname, c.href),
   );
 
-  <li>
-    <Disclosure
-      defaultOpen={initialOpen}
-      open={open}
-      onOpenChange={handleOpenChange}
-      trigger={
+  // Mientras NO estamos montados (SSR), renderizamos un fallback sin la
+  // máquina de Disclosure (zag emite markup distinto entre SSR y cliente).
+  // Post-mount, el `Disclosure` completo con persistencia localStorage.
+  const fallbackOrDisclosure = mounted === false
+    ? (
+      <li>
         <span
           class={`flex w-full items-center gap-3 px-3 pb-1 pt-3 text-xs font-semibold uppercase tracking-wide ${
-            hasActiveChild ? "text-text-primary" : "text-text-secondary"
+            props.children.some((c) => isItemActive(props.pathname, c.href))
+              ? "text-text-primary"
+              : "text-text-secondary"
           } ${props.collapsed === true ? "justify-center px-0" : ""}`}
         >
           <Icon name="wallet" size={20} />
           {props.collapsed === true ? null : (
-            <>
-              <span class="flex-1 text-left">{props.label}</span>
-              <span
-                data-part="indicator"
-                data-state={open ? "open" : "closed"}
-                aria-hidden="true"
-                class="inline-block size-3 transition-transform data-[state=open]:rotate-180"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="12"
-                  height="12"
-                  viewBox="0 0 12 12"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <polyline points="3 4.5 6 7.5 9 4.5" />
-                </svg>
-              </span>
-            </>
+            <span class="flex-1 text-left">{props.label}</span>
           )}
         </span>
-      }
-    >
-      <ul class="m-0 flex list-none flex-col gap-0.5 p-0 pl-2">
-        {props.children.map((child) => (
-          <li key={child.href}>
-            <NavItem
-              href={child.href}
-              icon={child.icon}
-              label={child.label}
-              active={isItemActive(props.pathname, child.href)}
-              collapsed={props.collapsed}
-            />
-          </li>
-        ))}
-      </ul>
-    </Disclosure>
-  </li>;
+        <ul class="m-0 flex list-none flex-col gap-0.5 p-0 pl-2">
+          {props.children.map((child) => (
+            <li key={child.href}>
+              <NavItem
+                href={child.href}
+                icon={child.icon}
+                label={child.label}
+                active={isItemActive(props.pathname, child.href)}
+                collapsed={props.collapsed}
+              />
+            </li>
+          ))}
+        </ul>
+      </li>
+    )
+    : (
+      <li>
+        <Disclosure
+          defaultOpen={initialOpen}
+          open={open}
+          onOpenChange={handleOpenChange}
+          trigger={
+            <span
+              class={`flex w-full items-center gap-3 px-3 pb-1 pt-3 text-xs font-semibold uppercase tracking-wide ${
+                hasActiveChild ? "text-text-primary" : "text-text-secondary"
+              } ${props.collapsed === true ? "justify-center px-0" : ""}`}
+            >
+              <Icon name="wallet" size={20} />
+              {props.collapsed === true ? null : (
+                <>
+                  <span class="flex-1 text-left">{props.label}</span>
+                  <span
+                    data-part="indicator"
+                    data-state={open ? "open" : "closed"}
+                    aria-hidden="true"
+                    class="inline-block size-3 transition-transform data-[state=open]:rotate-180"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="12"
+                      height="12"
+                      viewBox="0 0 12 12"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <polyline points="3 4.5 6 7.5 9 4.5" />
+                    </svg>
+                  </span>
+                </>
+              )}
+            </span>
+          }
+        >
+          <ul class="m-0 flex list-none flex-col gap-0.5 p-0 pl-2">
+            {props.children.map((child) => (
+              <li key={child.href}>
+                <NavItem
+                  href={child.href}
+                  icon={child.icon}
+                  label={child.label}
+                  active={isItemActive(props.pathname, child.href)}
+                  collapsed={props.collapsed}
+                />
+              </li>
+            ))}
+          </ul>
+        </Disclosure>
+      </li>
+    );
+
+  <>{fallbackOrDisclosure}</>;
 }
