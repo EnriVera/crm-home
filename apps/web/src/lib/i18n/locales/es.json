@@ -2,6 +2,13 @@
   "app": {
     "title": "CRM Home"
   },
+  "common": {
+    "breadcrumbHome": "Inicio",
+    "newAction": "Nuevo"
+  },
+  "pageHeader": {
+    "breadcrumbAriaLabel": "Ruta de navegación"
+  },
   "nav": {
     "ariaLabel": "Navegación principal",
     "dashboard": "Dashboard",
@@ -12,7 +19,25 @@
     "income": "Income",
     "expenses": "Expenses",
     "transfers": "Transfers",
-    "config": "Config"
+    "config": "Config",
+    "section": {
+      "main": "Principal",
+      "finance": "Finanzas",
+      "settings": "Ajustes"
+    }
+  },
+  "topbar": {
+    "brand": "Mi CRM",
+    "brandMenu": "Menú del workspace",
+    "search": "Buscar…",
+    "searchHint": "Atajo de teclado: ⌘K",
+    "notifications": "Notificaciones",
+    "online": "En línea",
+    "userAvatar": "Tu cuenta"
+  },
+  "sidebarUserCard": {
+    "menuLabel": "Menú de la cuenta",
+    "openMenuHint": "Abrir menú de la cuenta"
   },
   "theme": {
     "toLight": "Cambiar a tema claro",
@@ -381,7 +406,11 @@
     "subtitle": "Resumen del mes en curso.",
     "incomesThisMonth": "Ingresos del mes",
     "expensesThisMonth": "Gastos del mes",
-    "transfersThisMonth": "Transferencias del mes"
+    "transfersThisMonth": "Transferencias del mes",
+    "breadcrumbHome": "Inicio",
+    "newAction": "Nuevo",
+    "recentActivity": "Actividad reciente",
+    "recentActivityEmpty": "Sin actividad reciente. Cuando registres ingresos, gastos o transferencias, aparecerán acá."
   },
   "apps": {
     "empty": "No hay módulos registrados."
