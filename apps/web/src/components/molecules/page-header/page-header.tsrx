@@ -70,27 +70,40 @@ export function PageHeader(props: PageHeaderProps) @{
       >
         {crumbs.map((crumb, idx) => {
           const isLast = idx === crumbs.length - 1;
-          return (
-            <>
-              {crumb.href !== undefined && !isLast ? (
-                <a
-                  href={crumb.href}
-                  class="transition-colors hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+          // Devolvemos un array plano con keys explícitos (NO un
+          // fragment `<>...</>`) para que el walker de hidratación
+          // de octane pueda reconciliar cada item. Devolver un
+          // fragment sin key desde un `.map()` produce markers
+          // open/close anidados que rompen `findMatchingClose` cuando
+          // hay ternarios condicionales internos.
+          const labelNode = crumb.href !== undefined && !isLast
+            ? (
+              <a
+                href={crumb.href}
+                class="transition-colors hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+              >
+                {crumb.label}
+              </a>
+            )
+            : (
+              <span class={isLast ? "text-text-primary" : ""}>
+                {crumb.label}
+              </span>
+            );
+          return [
+            <span key={`crumb-${idx}`}>{labelNode}</span>,
+            isLast
+              ? null
+              : (
+                <span
+                  key={`sep-${idx}`}
+                  aria-hidden="true"
+                  class="mx-1.5 opacity-60"
                 >
-                  {crumb.label}
-                </a>
-              ) : (
-                <span class={isLast ? "text-text-primary" : ""}>
-                  {crumb.label}
-                </span>
-              )}
-              {isLast ? null : (
-                <span aria-hidden="true" class="mx-1.5 opacity-60">
                   /
                 </span>
-              )}
-            </>
-          );
+              ),
+          ];
         })}
       </nav>
     ) : null}
