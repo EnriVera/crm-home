@@ -54,11 +54,8 @@ export function SchedulesPage() @{
         { label: tT("nav.schedule") },
       ]}
       title={tT("schedules.page.title")}
+      subtitle={t("schedules.page.subtitle")}
     />
-      <p class="mt-1 text-sm text-text-secondary">
-        {t("schedules.page.subtitle")}
-      </p>
-    </header>
 
     <DataList
       loading={loading}
