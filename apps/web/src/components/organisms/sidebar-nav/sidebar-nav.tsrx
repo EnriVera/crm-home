@@ -194,17 +194,6 @@ export function SidebarNav(props: SidebarNavProps) @{
         />
         <button
           type="button"
-          onClick={toggle}
-          aria-label={collapseLabel}
-          aria-expanded={!collapsed}
-          title={collapseLabel}
-          class={`flex items-center gap-3 rounded-md px-2.5 py-1.5 text-sm text-text-secondary transition-colors hover:bg-text-primary/5 hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus ${collapsed === true ? "justify-center px-0" : ""}`}
-        >
-          <Icon name="sidebar" size={18} class="opacity-70" />
-          {collapsed === true ? null : <span>{t("shell.collapse")}</span>}
-        </button>
-        <button
-          type="button"
           onClick={() => {
             void handleLogout();
           }}
