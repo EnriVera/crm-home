@@ -80,7 +80,14 @@ function onPaste(event: ClipboardEvent) {
   const digits = pasted.replace(/\D/g, "").slice(0, props.length);
   if (digits.length === 0) return;
   event.preventDefault();
-  api.value.setValue(digits.split(""));
+  // Defer setValue to a microtask so Zag's machine finishes processing
+  // the paste event first; calling setValue synchronously after
+  // preventDefault can race with the machine's internal paste handler
+  // and leave the value empty. The microtask lets both writes settle
+  // before the watch on `api` fires with the final valueAsString.
+  setTimeout(() => {
+   api.value.setValue(digits.split(""));
+  }, 0);
 }
 </script>
 

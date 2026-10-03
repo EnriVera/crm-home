@@ -40,11 +40,11 @@
  --color-accent: var(--color-primary-600);
  --color-accent-fg: white;
 
- /* Radius — generous rounded look across the whole app.
+ /* Radius — 0.8rem base across the whole app.
   * sm: subtle rounding for chips/tags. md: default for inputs/buttons.
   * lg: card / modal / drawer outer corners. */
  --radius-sm: 0.5rem;
- --radius: 0.875rem;
+ --radius: 0.8rem;
  --radius-lg: 1.25rem;
 
  /* Spacing */
