@@ -1,4 +1,4 @@
-import { fromWebHandler, H3 } from "h3";
+import { fromWebHandler, H3, defineEventHandler, handleCors } from "h3";
 import { GetHealth } from "../application/health/get-health";
 import { GetSession } from "../application/auth/get-session";
 import { Logout } from "../application/auth/logout";
@@ -117,6 +117,32 @@ export function createCompositionRoot(
   const getHealth = new GetHealth(healthRepository, telemetry);
 
   const app = new H3();
+
+  // Dev-mode CORS: the orpc client sends credentials: 'include' (cookies
+  // for the session), so Access-Control-Allow-Origin must be the explicit
+  // origin (not '*') and Access-Control-Allow-Credentials must be true.
+  // Both frontends are allowed:
+  //   - apps/web      (octane) on http://localhost:5173
+  //   - apps/web-v2   (Vue)    on http://localhost:5174
+  // The orpc handler is mounted at /rpc/** and uses POST for procedures,
+  // so the preflight (OPTIONS) must accept POST + the standard headers.
+  // For production, replace the explicit origins with a vetted allowlist.
+  const devCors = {
+   origin: [
+    "http://localhost:5173",
+    "http://localhost:5174",
+   ],
+   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+   credentials: true,
+   allowedHeaders: ["Content-Type", "Authorization"],
+  };
+  app.use(
+   defineEventHandler(async (event) => {
+    const corsResponse = await handleCors(event, devCors);
+    if (corsResponse) return corsResponse;
+   }),
+  );
+
   app.get("/health", createHealthRoute(getHealth));
 
   const databaseUrl = env.DATABASE_URL ?? env.TEST_DATABASE_URL ?? "";
