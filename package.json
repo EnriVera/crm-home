@@ -5,7 +5,8 @@
   "packageManager": "bun@1.4.0",
   "workspaces": [
     "apps/*",
-    "packages/*"
+    "packages/*",
+    "apps/web-v2"
   ],
   "scripts": {
     "prepare": "husky",
@@ -13,7 +14,8 @@
     "build": "turbo run build",
     "test": "turbo run test",
     "lint": "turbo run lint",
-    "typecheck": "turbo run typecheck"
+    "typecheck": "turbo run typecheck",
+    "dev:v2": "turbo run dev --filter=@crm/web-v2"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.5.3",
