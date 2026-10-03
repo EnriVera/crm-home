@@ -134,25 +134,21 @@ export const makeUpdateTask =
     }),
    );
   }
-  // Re-validate the policy only when the patch touches the
-  // category/type pair. A title-only patch must not need to carry
-  // the current type id; the backend already enforces the invariant
-  // and will surface a conflict if violated.
+  // Re-validate the policy only when the patch sets a real (non-null)
+  // categoryId. A title-only patch must not need to carry the current
+  // type id. Note: zod applies .default(null) to categoryId, so the
+  // field is null (not undefined) when the user didn't touch it; we
+  // use !== null so the policy only fires on an actual categoryId value.
   if (
-   patchParse.data.typeId !== undefined ||
-   patchParse.data.categoryId !== undefined
+   patchParse.data.categoryId !== null &&
+   patchParse.data.typeId === undefined
   ) {
-   if (
-    patchParse.data.categoryId !== undefined &&
-    patchParse.data.typeId === undefined
-   ) {
-    return err(
-     domainError(
-      "validation",
-      "A category requires a type. Include typeId or clear categoryId.",
-     ),
-    );
-   }
+   return err(
+    domainError(
+     "validation",
+     "A category requires a type. Include typeId or clear categoryId.",
+    ),
+   );
   }
   return repo.patch(idParse.data as Task["id"], patchParse.data);
  };
