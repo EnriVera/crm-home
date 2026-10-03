@@ -17,19 +17,22 @@ const queryClient = new QueryClient({
 });
 
 async function bootstrap() {
-    // Boot the auth store BEFORE the router is installed. By the time the
-    // router's auth guard runs, `isBooted` is already true and the guard
-    // can make the right redirect decision (B-010).
-    await bootAuth();
-
     const app = createApp(App);
 
+    // Pinia MUST be installed before any code calls useStore(). The auth
+    // boot calls useAuthStore() to read/write the session, so the install
+    // order is: createApp -> pinia -> other plugins -> bootAuth -> mount.
     app.use(createPinia());
     app.use(VueQueryPlugin, { queryClient });
     app.use(i18n);
-    // The router is provided to the tree via <RouterProvider :router="router" />
-    // in App.vue — not as a Vue plugin. Calling app.use(router) here fails
-    // the typecheck because the TanStack Router core is not a Vue plugin.
+
+    // Boot the auth store BEFORE the app mounts. The router is provided
+    // to the tree via <RouterProvider :router="router" /> in App.vue
+    // (not as a Vue plugin — TanStack Router is not one), so it only
+    // becomes active after mount. By the time the router resolves any
+    // route, `isBooted` is already true and the auth guard can make the
+    // right redirect decision (B-010).
+    await bootAuth();
 
     app.mount("#app");
 }
