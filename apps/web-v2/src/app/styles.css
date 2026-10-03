@@ -1,0 +1,128 @@
+/* Tailwind v4 entry point for web-v2. */
+/* Design tokens (CSS custom properties) are the single source of truth for */
+/* colors, spacing, radius, and type. They are imported first so that every */
+/* shadcn-vue / ReUI / handwritten utility references the same variables. */
+
+@import "../shared/ui/tokens.css";
+
+@import "tailwindcss";
+
+@import "@fontsource/roboto/400.css";
+@import "@fontsource/roboto/500.css";
+@import "@fontsource/roboto/600.css";
+@import "@fontsource/roboto/700.css";
+
+/* Tailwind v4 @theme block reads the same tokens so utility classes like */
+/* `bg-surface` or `text-text-2` resolve to the same value as `var(--color-surface)`. */
+@theme {
+  --color-bg: var(--color-bg);
+  --color-surface: var(--color-surface);
+  --color-border: var(--color-border);
+  --color-text: var(--color-text);
+  --color-text-2: var(--color-text-2);
+  --color-accent: var(--color-accent);
+  --color-accent-fg: var(--color-accent-fg);
+
+  --color-primary-50: var(--color-primary-50);
+  --color-primary-100: var(--color-primary-100);
+  --color-primary-200: var(--color-primary-200);
+  --color-primary-300: var(--color-primary-300);
+  --color-primary-400: var(--color-primary-400);
+  --color-primary-500: var(--color-primary-500);
+  --color-primary-600: var(--color-primary-600);
+  --color-primary-700: var(--color-primary-700);
+  --color-primary-800: var(--color-primary-800);
+  --color-primary-900: var(--color-primary-900);
+
+  --color-zinc-50: var(--color-zinc-50);
+  --color-zinc-100: var(--color-zinc-100);
+  --color-zinc-200: var(--color-zinc-200);
+  --color-zinc-300: var(--color-zinc-300);
+  --color-zinc-400: var(--color-zinc-400);
+  --color-zinc-500: var(--color-zinc-500);
+  --color-zinc-600: var(--color-zinc-600);
+  --color-zinc-700: var(--color-zinc-700);
+  --color-zinc-800: var(--color-zinc-800);
+  --color-zinc-900: var(--color-zinc-900);
+  --color-zinc-950: var(--color-zinc-950);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius);
+  --radius-lg: var(--radius-lg);
+
+  --font-sans: var(--font-family);
+  --font-heading: var(--font-heading);
+}
+
+/* shadcn-vue ships CSS variables that map to the same tokens. The shadcn CLI */
+/* will write them here at first install. We predefine the slots we use. */
+:root {
+  --background: var(--color-bg);
+  --foreground: var(--color-text);
+  --card: var(--color-surface);
+  --card-foreground: var(--color-text);
+  --popover: var(--color-surface);
+  --popover-foreground: var(--color-text);
+  --primary: var(--color-accent);
+  --primary-foreground: var(--color-accent-fg);
+  --secondary: var(--color-zinc-100);
+  --secondary-foreground: var(--color-zinc-900);
+  --muted: var(--color-zinc-100);
+  --muted-foreground: var(--color-zinc-500);
+  --accent: var(--color-zinc-100);
+  --accent-foreground: var(--color-zinc-900);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: white;
+  --border: var(--color-border);
+  --input: var(--color-border);
+  --ring: var(--color-accent);
+  --radius: var(--radius);
+}
+
+.dark {
+  --background: var(--color-bg);
+  --foreground: var(--color-text);
+  --card: var(--color-surface);
+  --card-foreground: var(--color-text);
+  --popover: var(--color-surface);
+  --popover-foreground: var(--color-text);
+  --primary: var(--color-accent);
+  --primary-foreground: var(--color-accent-fg);
+  --secondary: var(--color-zinc-800);
+  --secondary-foreground: var(--color-zinc-50);
+  --muted: var(--color-zinc-800);
+  --muted-foreground: var(--color-zinc-400);
+  --accent: var(--color-zinc-800);
+  --accent-foreground: var(--color-zinc-50);
+  --destructive: oklch(0.396 0.141 25.723);
+  --destructive-foreground: var(--color-zinc-50);
+  --border: var(--color-border);
+  --input: var(--color-border);
+  --ring: var(--color-accent);
+}
+
+html,
+body,
+#app {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-family);
+  font-feature-settings: "rlig" 1, "calt" 1;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}

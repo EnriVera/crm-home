@@ -1,0 +1,64 @@
+/* Design tokens for web-v2 (PRD-v3 §8.2).
+ *
+ * The ONLY file in the codebase that contains raw color values. Every
+ * shadcn-vue variable, ReUI variable, Tailwind v4 @theme entry, and
+ * hand-written utility class resolves to one of these.
+ */
+
+:root {
+ /* Primary (green) */
+ --color-primary-50: #f0fdf4;
+ --color-primary-100: #dcfce7;
+ --color-primary-200: #bbf7d0;
+ --color-primary-300: #86efac;
+ --color-primary-400: #4ade80;
+ --color-primary-500: #22c55e; /* accent (dark mode) */
+ --color-primary-600: #16a34a; /* accent (light mode) */
+ --color-primary-700: #15803d;
+ --color-primary-800: #166534;
+ --color-primary-900: #14532d;
+
+ /* Zinc (neutral) */
+ --color-zinc-50: #fafafa;
+ --color-zinc-100: #f4f4f5;
+ --color-zinc-200: #e4e4e7;
+ --color-zinc-300: #d4d4d8;
+ --color-zinc-400: #a1a1aa;
+ --color-zinc-500: #71717a;
+ --color-zinc-600: #52525b;
+ --color-zinc-700: #3f3f46;
+ --color-zinc-800: #27272a;
+ --color-zinc-900: #18181b;
+ --color-zinc-950: #09090b;
+
+ /* Semantic surfaces (light) */
+ --color-bg: var(--color-zinc-50);
+ --color-surface: white;
+ --color-border: var(--color-zinc-200);
+ --color-text: var(--color-zinc-900);
+ --color-text-2: var(--color-zinc-600);
+ --color-accent: var(--color-primary-600);
+ --color-accent-fg: white;
+
+ /* Radius — "large" shadcn-vue preset */
+ --radius-sm: 0.375rem;
+ --radius: 0.625rem;
+ --radius-lg: 1rem;
+
+ /* Spacing */
+ --space-section: 2rem;
+
+ /* Type */
+ --font-family: "Roboto", system-ui, sans-serif;
+ --font-heading: "Roboto", system-ui, sans-serif;
+}
+
+.dark {
+ --color-bg: var(--color-zinc-950);
+ --color-surface: var(--color-zinc-900);
+ --color-border: var(--color-zinc-800);
+ --color-text: var(--color-zinc-50);
+ --color-text-2: var(--color-zinc-400);
+ --color-accent: var(--color-primary-500);
+ --color-accent-fg: var(--color-zinc-950);
+}
