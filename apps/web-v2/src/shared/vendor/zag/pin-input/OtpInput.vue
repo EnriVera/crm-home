@@ -88,7 +88,6 @@ function onPaste(event: ClipboardEvent) {
   <div
     v-bind="api.getRootProps()"
     :class="cn('flex items-center gap-2', invalid && 'text-red-600')"
-    @paste="onPaste"
   >
     <input
       v-for="(_, i) in Array.from({ length: props.length }, (_, k) => k)"
@@ -96,12 +95,13 @@ function onPaste(event: ClipboardEvent) {
       v-bind="mergeProps(api.getInputProps({ index: i }), $attrs)"
       :class="
         cn(
-          'h-12 w-10 rounded-md border border-zinc-200 bg-surface text-center text-lg font-semibold',
+          'h-12 w-10 rounded-lg border border-zinc-200 bg-surface text-center text-lg font-semibold',
           'focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30',
           'dark:border-zinc-800',
           invalid && 'border-red-500',
         )
       "
+      @paste="onPaste"
     />
     <input v-bind="api.getHiddenInputProps()" />
   </div>
