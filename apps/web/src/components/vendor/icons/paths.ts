@@ -12,11 +12,16 @@ import {
   ArrowCircleDown,
   ArrowCircleUp,
   ArrowsLeftRight,
+  Bell,
   Calendar,
+  CaretDown,
+  CaretUp,
   CheckSquare,
   Gear,
   House,
+  MagnifyingGlass,
   Moon,
+  Plus,
   Sidebar,
   Sun,
   Users,
@@ -36,7 +41,12 @@ export type IconName =
   | "gear"
   | "sun"
   | "moon"
-  | "sidebar";
+  | "sidebar"
+  | "caret-down"
+  | "caret-up"
+  | "magnifying-glass"
+  | "bell"
+  | "plus";
 
 /** Componente phosphor por ícono del set cerrado. */
 export const ICON_COMPONENTS: Record<IconName, PhosphorIcon> = {
@@ -52,4 +62,9 @@ export const ICON_COMPONENTS: Record<IconName, PhosphorIcon> = {
   sun: Sun,
   moon: Moon,
   sidebar: Sidebar,
+  "caret-down": CaretDown,
+  "caret-up": CaretUp,
+  "magnifying-glass": MagnifyingGlass,
+  bell: Bell,
+  plus: Plus,
 };

@@ -30,18 +30,22 @@ export interface NavItemProps {
  * inactivo `text-text-secondary`.
  */
 export function NavItem(props: NavItemProps) @{
+  // Active: fondo text-primary al 5% (más limpio que bg-surface sólido) +
+  // verde primary-700/400 (regla §1 caso 2 — Selección actual de navegación).
+  // Inactive: text-secondary, hover:text-primary sobre la misma superficie
+  // translúcida (jerarquía sin sombras decorativas, §4).
   const stateClass = props.active
-    ? "bg-surface font-medium text-primary-700 dark:text-primary-400"
-    : "text-text-secondary hover:bg-surface hover:text-text-primary";
+    ? "bg-text-primary/5 font-medium text-primary-700 dark:text-primary-400"
+    : "text-text-secondary hover:bg-text-primary/5 hover:text-text-primary";
 
   <a
     href={props.href}
     aria-current={props.active ? "page" : undefined}
     aria-label={props.collapsed ? props.label : undefined}
     title={props.collapsed ? props.label : undefined}
-    class={`flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus ${props.collapsed ? "justify-center px-0" : ""} ${stateClass}`}
+    class={`flex items-center gap-3 rounded-md px-2.5 py-1.5 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus ${props.collapsed === true ? "justify-center px-0" : ""} ${stateClass}`}
   >
-    <Icon name={props.icon} size={20} />
-    {props.collapsed ? null : <span>{props.label}</span>}
+    <Icon name={props.icon} size={18} class={props.active === true ? "opacity-80" : "opacity-70"} />
+    {props.collapsed === true ? null : <span class="flex-1">{props.label}</span>}
   </a>
 }

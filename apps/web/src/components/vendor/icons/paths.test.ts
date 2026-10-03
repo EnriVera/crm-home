@@ -15,10 +15,15 @@ const EXPECTED_NAMES: IconName[] = [
   "sun",
   "moon",
   "sidebar",
+  "caret-down",
+  "caret-up",
+  "magnifying-glass",
+  "bell",
+  "plus",
 ];
 
 describe("vendor/icons paths (mapa nombre → componente del binding)", () => {
-  it("ICON_COMPONENTS cubre exactamente la union cerrada de 12 IconName", () => {
+  it("ICON_COMPONENTS cubre exactamente la union cerrada de 17 IconName", () => {
     expect(Object.keys(ICON_COMPONENTS).sort()).toEqual(
       [...EXPECTED_NAMES].sort(),
     );

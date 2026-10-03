@@ -68,17 +68,17 @@ export function PageHeader(props: PageHeaderProps) @{
         aria-label={t("pageHeader.breadcrumbAriaLabel")}
         class="font-mono text-[10px] text-text-secondary uppercase tracking-[0.25em]"
       >
-        {crumbs.map((crumb, idx) => {
+        {crumbs.flatMap((crumb, idx) => {
           const isLast = idx === crumbs.length - 1;
-          // Devolvemos un array plano con keys explícitos (NO un
-          // fragment `<>...</>`) para que el walker de hidratación
-          // de octane pueda reconciliar cada item. Devolver un
-          // fragment sin key desde un `.map()` produce markers
-          // open/close anidados que rompen `findMatchingClose` cuando
-          // hay ternarios condicionales internos.
+          // flatMap sin `null` en el array: el walker de hidratación
+          // de octane choca con `findMatchingClose` cuando un array
+          // tiene elementos null (SSR produce `<!--[--><!--]-->` para
+          // cada null, y el walker no los cuenta bien al reconciliar).
+          // Devolvemos 1 elemento para el último item, 2 para el resto.
           const labelNode = crumb.href !== undefined && !isLast
             ? (
               <a
+                key={`crumb-${idx}`}
                 href={crumb.href}
                 class="transition-colors hover:text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
               >
@@ -86,23 +86,23 @@ export function PageHeader(props: PageHeaderProps) @{
               </a>
             )
             : (
-              <span class={isLast ? "text-text-primary" : ""}>
+              <span
+                key={`crumb-${idx}`}
+                class={isLast ? "text-text-primary" : ""}
+              >
                 {crumb.label}
               </span>
             );
+          if (isLast) return [labelNode];
           return [
-            <span key={`crumb-${idx}`}>{labelNode}</span>,
-            isLast
-              ? null
-              : (
-                <span
-                  key={`sep-${idx}`}
-                  aria-hidden="true"
-                  class="mx-1.5 opacity-60"
-                >
-                  /
-                </span>
-              ),
+            labelNode,
+            <span
+              key={`sep-${idx}`}
+              aria-hidden="true"
+              class="mx-1.5 opacity-60"
+            >
+              /
+            </span>,
           ];
         })}
       </nav>
