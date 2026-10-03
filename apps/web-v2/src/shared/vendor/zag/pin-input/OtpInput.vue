@@ -52,18 +52,28 @@ const service = useMachine(
 const api = computed(() => pinInput.connect(service, normalizeProps));
 
 watch(
-  () => props.modelValue,
-  (next) => {
+    () => props.modelValue,
+    (next) => {
     if (next === api.value.valueAsString) return;
     api.value.setValue(next.split(""));
-  },
+    },
 );
-watch(api.value, (next) => {
-  const joined = next.valueAsString;
-  emit("update:modelValue", joined);
-  const parsed = OtpDigits.safeParse(joined);
-  if (parsed.success) emit("complete", parsed.data);
-});
+// Watch the ComputedRef (api), NOT api.value. api.value is a plain
+// object returned by pinInput.connect() — Vue cannot track reactivity
+// on a raw object, so `watch(api.value, ...)` throws "Invalid watch
+// source" and triggers a downstream "Cannot read properties of
+// undefined (reading 'startTime')" in the reactivity scheduler.
+// Watching the computed ref re-fires when the underlying Zag service
+// state changes, which is exactly when valueAsString updates.
+watch(
+    api,
+    (next) => {
+    const joined = next.valueAsString;
+    emit("update:modelValue", joined);
+    const parsed = OtpDigits.safeParse(joined);
+    if (parsed.success) emit("complete", parsed.data);
+    },
+);
 
 function onPaste(event: ClipboardEvent) {
   const pasted = event.clipboardData?.getData("text") ?? "";
