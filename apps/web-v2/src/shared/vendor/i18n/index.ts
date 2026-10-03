@@ -11,7 +11,11 @@ export const i18n = createI18n({
     en: {
       auth: {
         emailLabel: "Email",
-        emailPlaceholder: "you@work.com",
+        // Placeholder is a visual hint; cannot contain '@' because
+        // vue-i18n's tokenizer treats '@' as the start of a linked
+        // message reference (@:key, @.modifier:key) and throws
+        // 'Invalid linked format' on a bare '@'.
+        emailPlaceholder: "name at work.com",
         requestOtp: "Send code",
         verifyTitle: "Enter the code we sent",
         verifyHelper: "Check your inbox. The code is 6 digits and expires in 10 minutes.",
