@@ -7,7 +7,7 @@ import type { TokenHasher } from "../../domain/ports/token-hasher";
 import type { TransactionManager } from "../../domain/ports/transaction-manager";
 import type { UserRepository } from "../../domain/ports/user-repository";
 import type { UserSeedService } from "../../domain/ports/user-seed-service";
-import type { Verdict } from "@crm/types";
+import type { Verdict } from "@crm/contract/auth";
 import { SESSION_TTL_MS } from "./constants";
 
 export interface VerifyOtpInput {

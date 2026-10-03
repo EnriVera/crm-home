@@ -1,8 +1,11 @@
 import type { H3Event } from "h3";
 import { readValidatedBody, getHeader, getQuery } from "h3";
 import {
-  type Task,
-  type TaskState,
+  // Wire types (snake_case) — imported from `./contracts` to avoid
+  // colliding with the entity `Task` / `TaskState` of the same name
+  // re-exported from the barrel `@crm/contract/task` (camelCase).
+  type TaskWire,
+  type TaskStateWire,
   type ClientListItem,
   type TypeForForm,
   type CategoryForForm,
@@ -19,7 +22,7 @@ import {
   listClientsSearchInputSchema,
   listTypesForFormInputSchema,
   listCategoriesByTypeInputSchema,
-} from "@crm/types";
+} from "@crm/contract/task";
 import type { CreateTask } from "../../application/tasks/create-task";
 import type { CreateTaskState } from "../../application/tasks/create-task-state";
 import type { DeleteTask } from "../../application/tasks/delete-task";
@@ -99,7 +102,7 @@ async function runOrMapError<T>(fn: () => Promise<T>): Promise<Response> {
 
 // ─── Domain → wire mappers (camelCase → snake_case) ─────────────────────────
 
-function asTask(row: TaskRow): Task {
+function asTask(row: TaskRow): TaskWire {
   return {
     task_id: row.id,
     task_title: row.title,
@@ -114,7 +117,7 @@ function asTask(row: TaskRow): Task {
   };
 }
 
-function asTaskState(row: TaskStateRow): TaskState {
+function asTaskState(row: TaskStateRow): TaskStateWire {
   return {
     tast_id: row.id,
     tast_name: row.name,
@@ -130,10 +133,24 @@ function asClientListItem(row: ClientRow): ClientListItem {
 }
 
 function asTypeForForm(row: TypeCategoriesClientRow): TypeForForm {
+  // The row type from the application layer does not yet carry
+  // `typeName` / `typeModules` (those columns land in a follow-up change
+  // that touches the SELECT for `listTypesForForm`). Until then, we
+  // satisfy the wire schema with the safe defaults: typeName reuses
+  // typeId, typeModules is empty. The result is type-safe at the wire
+  // boundary even if it is lossy at the domain boundary.
   return {
     type_id: row.typeId,
-    type_name: row.typeId, // El adapter devuelve typeId por ahora; WU11 form organism
-    // consume `type_name` del join. Placeholder hasta que se exponga la col.
+    // SAFETY: TypeCategoriesClientRow does not declare typeName at
+    // the type level; the runtime row may carry it once the
+    // application-layer SELECT is widened. The cast is a no-op at
+    // runtime when the field is missing.
+    type_name: (row as unknown as { typeName?: string }).typeName ?? row.typeId,
+    // SAFETY: same as above for typeModules; the array defaults to
+    // empty when the row doesn't carry it. The wire contract requires
+    // a non-nullable string[].
+    type_modules:
+      (row as unknown as { typeModules?: string[] }).typeModules ?? [],
   };
 }
 
@@ -141,6 +158,9 @@ function asCategoryForForm(row: CategoryRow): CategoryForForm {
   return {
     cate_id: row.id,
     cate_name: row.name,
+    // The wire schema requires `cate_type_id`; the row carries it as
+    // `typeId` (the category's parent type in the cascade).
+    cate_type_id: row.typeId,
   };
 }
 
@@ -328,7 +348,7 @@ export function createReorderTaskStatesHandler(deps: TasksRouteDependencies) {
       );
       await deps.reorderTaskStates.execute({
         userId,
-        stateOrders: body.map((s) => ({
+        stateOrders: body.map((s: { tast_id: string; tast_order: number }) => ({
           id: s.tast_id,
           order: s.tast_order,
         })),

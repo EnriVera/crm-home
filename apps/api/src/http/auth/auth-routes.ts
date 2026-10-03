@@ -4,7 +4,7 @@ import {
   requestOtpInputSchema,
   updateThemeInputSchema,
   verifyOtpInputSchema,
-} from "@crm/types";
+} from "@crm/contract/auth";
 import type { GetSession } from "../../application/auth/get-session";
 import type { Logout } from "../../application/auth/logout";
 import type { RequestOtp } from "../../application/auth/request-otp";
@@ -18,6 +18,14 @@ import {
   setSessionCookie,
 } from "./cookie";
 
+/**
+ * Day-of-judgment fix A-001 (canonical): the request schemas for the
+ * auth bounded context (requestOtp, verifyOtp, updateTheme) now come
+ * from `@crm/contract/auth` (single source of truth) instead of
+ * `@crm/types`. The same pattern applies to the other 7 route files
+ * (clients, config, expenses, incomes, schedules, tasks, transfers,
+ * types) — their migration follows in the next turns.
+ */
 export interface AuthRouteDependencies {
   requestOtp: RequestOtp;
   verifyOtp: VerifyOtp;
