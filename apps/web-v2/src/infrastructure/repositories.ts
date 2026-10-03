@@ -12,8 +12,11 @@ import { createOrpcAuthRepository } from "./api/procedures/auth-repository";
 import {
  createOrpcTaskRepository,
  createOrpcTaskStateRepository,
+ createOrpcTaskFormListersRepository,
 } from "./api/procedures/task-repository";
 
 export const authRepository = createOrpcAuthRepository();
 export const taskRepository = createOrpcTaskRepository();
 export const taskStateRepository = createOrpcTaskStateRepository();
+export const taskFormListersRepository =
+ createOrpcTaskFormListersRepository();

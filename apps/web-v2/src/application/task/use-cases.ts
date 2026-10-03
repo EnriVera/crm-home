@@ -22,10 +22,16 @@ import {
  TaskPage,
  ListTasksQuery,
 } from "@crm/contract/task";
+import type {
+ TypeForForm,
+ CategoryForForm,
+ ClientListItem,
+} from "@crm/contract/task";
 import { uuidSchema } from "@crm/contract/shared/identifiers";
 import type {
  TaskRepository,
  TaskStateRepository,
+ TaskFormListersRepository,
 } from "@/domain/task/ports";
 import { validateCategoryRequiresType } from "@/domain/task/entities";
 import { err, type Result } from "@/domain/shared/result";
@@ -225,3 +231,77 @@ export const makeDeleteTask =
 export const makeListTaskStates =
  (repo: TaskStateRepository) =>
  (): Promise<Result<TaskState[], DomainError>> => repo.list();
+
+/* ============================================================== */
+/*  Form listers (EditTaskDrawer cascade)                          */
+/* ============================================================== */
+
+const listTypesForFormInputSchema = z
+ .object({
+  module: z.string().min(1).optional(),
+  clie_id: uuidSchema.optional(),
+ })
+ .strict();
+
+const listCategoriesByTypeInputSchema = z
+ .object({
+  type_id: uuidSchema,
+ })
+ .strict();
+
+const searchClientsInputSchema = z
+ .object({
+  query: z.string().min(1, { message: "search query is required" }),
+  limit: z.number().int().min(1).max(50).default(20),
+ })
+ .strict();
+
+export const makeListTypesForForm =
+ (repo: TaskFormListersRepository) =>
+ async (rawInput: unknown): Promise<Result<TypeForForm[], DomainError>> => {
+  const parsed = listTypesForFormInputSchema.safeParse(rawInput);
+  if (!parsed.success) {
+   return err(
+    domainError("validation", "Invalid types-for-form input.", {
+     issues: parsed.error.issues,
+    }),
+   );
+  }
+  // Branded id cast: parsed.data.clie_id is a plain uuid string at
+  // runtime; the brand is a type-level operation only.
+  return repo.listTypesForForm(
+   parsed.data as Parameters<TaskFormListersRepository["listTypesForForm"]>[0],
+  );
+ };
+
+export const makeListCategoriesByType =
+ (repo: TaskFormListersRepository) =>
+ async (rawInput: unknown): Promise<Result<CategoryForForm[], DomainError>> => {
+  const parsed = listCategoriesByTypeInputSchema.safeParse(rawInput);
+  if (!parsed.success) {
+   return err(
+    domainError("validation", "Invalid categories-by-type input.", {
+     issues: parsed.error.issues,
+    }),
+   );
+  }
+  return repo.listCategoriesByType(
+   parsed.data as Parameters<
+    TaskFormListersRepository["listCategoriesByType"]
+   >[0],
+  );
+ };
+
+export const makeSearchClients =
+ (repo: TaskFormListersRepository) =>
+ async (rawInput: unknown): Promise<Result<ClientListItem[], DomainError>> => {
+  const parsed = searchClientsInputSchema.safeParse(rawInput);
+  if (!parsed.success) {
+   return err(
+    domainError("validation", "Invalid client search input.", {
+     issues: parsed.error.issues,
+    }),
+   );
+  }
+  return repo.searchClients(parsed.data);
+ };
