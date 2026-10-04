@@ -3,7 +3,7 @@ import { ref } from "vue";
 import { useRouter } from "@/shared/vendor/router";
 import { useAuth } from "@/shared/composables/use-auth";
 import { useT } from "@/shared/vendor/i18n";
-import { Icon } from "@/shared/vendor/icons";
+import Button from "@/shared/ui/Button.vue";
 import { toast } from "@/shared/vendor/toast";
 import AuthLayout from "@/ui/templates/auth-layout.vue";
 
@@ -55,15 +55,16 @@ async function onSubmit() {
           class="h-10 rounded-md border border-zinc-200 bg-surface px-3 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/30 dark:border-zinc-800"
         />
       </label>
-      <p v-if="errorMessage" class="text-xs text-red-600">{{ errorMessage }}</p>
-      <button
-        type="submit"
-        :disabled="isSubmitting"
-        class="flex h-10 items-center justify-center gap-2 rounded-md bg-accent px-3 text-sm font-medium text-accent-fg transition disabled:opacity-50"
+<p v-if="errorMessage" class="text-xs text-red-600">{{ errorMessage }}</p>
+      <Button
+       type="submit"
+       size="md"
+       variant="primary"
+       :loading="isSubmitting"
+       class="w-full"
       >
-        <Icon v-if="isSubmitting" name="PhCircleNotch" :size="16" class="animate-spin" />
-        <span>{{ t("auth.requestOtp") }}</span>
-      </button>
+       {{ t("auth.requestOtp") }}
+      </Button>
     </form>
     <template #footer>
       <p class="text-xs text-text-2">

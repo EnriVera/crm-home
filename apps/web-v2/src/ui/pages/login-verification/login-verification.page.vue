@@ -137,7 +137,7 @@ onUnmounted(() => {
     {{ t("auth.backToLogin") }}
    </Button>
    <Button
-    variant="secondary"
+    variant="primary"
     size="sm"
     :disabled="!canResend"
     :loading="isResending"

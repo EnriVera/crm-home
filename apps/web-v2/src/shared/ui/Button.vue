@@ -2,22 +2,29 @@
 /**
  * Button — the single source of truth for button styling across web-v2.
  *
+ * Design rule (PRD-v3 §8.2 + user clarification):
+ *   POSITIVE ACTIONS (anything that progresses the user toward a
+ *   goal — submit, save, confirm, resend, create, send) use
+ *   variant="primary": accent green background, dark grey text.
+ *
+ *   NEGATIVE / NAVIGATIONAL ACTIONS (cancel, go back, close,
+ *   discard, "use a different email") use variant="dark" or
+ *   variant="secondary" — never green. Green is reserved for
+ *   "this advances your work".
+ *
  * Variants:
- *  - primary:   accent background, white text. Main CTAs.
- *  - secondary: zinc-100 background, text-2 color. Paired actions
- *               (e.g. "Resend" with cooldown).
- *  - dark:      zinc-800 background, white text. High-emphasis
- *               neutral button (alternative to primary when brand
- *               colour would be too loud).
- *  - ghost:     transparent background, accent text. Low-emphasis
- *               links-styled-as-buttons.
+ *  - primary:   accent green bg + zinc-800 text. Positive actions.
+ *  - secondary: zinc-100 bg + text-2 color. Paired / cooldown actions.
+ *  - dark:      zinc-800 bg + white text. High-emphasis neutral
+ *               (cancel, navigation back).
+ *  - ghost:     transparent bg + accent text. Low-emphasis links.
  *
  * Sizes:
  *  - sm: h-8 px-3 text-sm. Inline row actions.
  *  - md: h-10 px-4 text-sm. Form submit.
  *
- * All variants use rounded-sm and respect the design tokens (no
- * raw hex). Loading shows a spinner; disabled short-circuits clicks.
+ * All variants use rounded-sm. Loading shows a spinner; disabled
+ * short-circuits clicks.
  */
 import { computed } from "vue";
 import { cn } from "@/shared/ui/cn";
@@ -55,7 +62,7 @@ const baseClass =
 const variantClass = computed<string>(() => {
  switch (props.variant) {
   case "primary":
-   return "bg-accent text-white hover:bg-accent/90";
+   return "bg-accent text-zinc-800 hover:bg-accent/90";
   case "secondary":
    return "border border-zinc-200 bg-zinc-100 text-text-2 hover:bg-zinc-200 dark:border-zinc-800 dark:bg-zinc-800 dark:hover:bg-zinc-700";
   case "dark":
