@@ -130,7 +130,7 @@ onUnmounted(() => {
   </div>
   <div class="mt-6 flex items-center justify-between gap-3">
    <Button
-    variant="secondary"
+    variant="primary"
     size="sm"
     @click="backToLogin"
    >
