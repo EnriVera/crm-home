@@ -79,15 +79,13 @@ function onPaste(event: ClipboardEvent) {
   const pasted = event.clipboardData?.getData("text") ?? "";
   const digits = pasted.replace(/\D/g, "").slice(0, props.length);
   if (digits.length === 0) return;
+  // Let the browser paste the text into the focused input first, then
+  // override with the cleaned value via setValue. Calling
+  // preventDefault + setTimeout raced with Zag's internal paste
+  // handler and left the value empty; letting the native paste run
+  // and then overwriting lets Zag's machine see a real value change.
   event.preventDefault();
-  // Defer setValue to a microtask so Zag's machine finishes processing
-  // the paste event first; calling setValue synchronously after
-  // preventDefault can race with the machine's internal paste handler
-  // and leave the value empty. The microtask lets both writes settle
-  // before the watch on `api` fires with the final valueAsString.
-  setTimeout(() => {
-   api.value.setValue(digits.split(""));
-  }, 0);
+  api.value.setValue(digits.split(""));
 }
 </script>
 
@@ -102,7 +100,7 @@ function onPaste(event: ClipboardEvent) {
       v-bind="mergeProps(api.getInputProps({ index: i }), $attrs)"
       :class="
         cn(
-          'h-12 w-10 rounded-lg border border-zinc-200 bg-surface text-center text-lg font-semibold',
+          'h-12 w-10 rounded-md border border-zinc-200 bg-surface text-center text-lg font-semibold',
           'focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30',
           'dark:border-zinc-800',
           invalid && 'border-red-500',
