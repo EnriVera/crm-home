@@ -76,7 +76,11 @@
   --border: var(--color-border);
   --input: var(--color-border);
   --ring: var(--color-accent);
-  --radius: var(--radius);
+  /* --radius: concrete value, NOT var(--radius) — that self-reference
+   * breaks the CSS variable chain (.rounded-md → --radius-md →
+   * --radius → ???) and the browser falls back to 0. Keep this in
+   * sync with --radius in tokens.css and --radius-md in @theme. */
+  --radius: 0.8rem;
 }
 
 .dark {
