@@ -23,6 +23,8 @@ export const i18n = createI18n({
         verifyCta: "Verify",
         backToLogin: "Use a different email",
         resendCode: "Send a new code",
+        resend: "Resend",
+        resendIn: "Resend in {time}",
         signOut: "Sign out",
         signedInAs: "Signed in as {name}",
         errors: {
