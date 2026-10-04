@@ -8,17 +8,25 @@
 import { createFileRoute, redirect } from "@tanstack/vue-router";
 import AppShell from "@/ui/templates/app-shell.vue";
 import { useAuthStore } from "@/stores/auth";
+import { useRedirectStore } from "@/stores/redirect";
 
 export const Route = createFileRoute("/(authed)")({
-  component: AppShell,
-  beforeLoad: ({ location }) => {
-    const auth = useAuthStore();
-    if (!auth.isBooted) return; // boot in-flight, let it resolve and re-run
-    if (!auth.isAuthenticated) {
-      throw redirect({
-        to: "/login",
-        search: { redirect: location.href },
-      });
-    }
-  },
+ component: AppShell,
+ beforeLoad: ({ location }) => {
+  const auth = useAuthStore();
+  if (!auth.isBooted) return; // boot in-flight, let it resolve and re-run
+  if (!auth.isAuthenticated) {
+   // Stash the target in the redirect store (not the URL) so the
+   // address bar stays clean — no `?redirect=…` visible to the
+   // user during the login flow. The login pages read+clear the
+   // store. Only accept relative paths (open-redirect guard).
+   const raw = location.pathname + location.search;
+   const target =
+    typeof raw === "string" && raw.startsWith("/") && !raw.startsWith("//")
+     ? raw
+     : "/dashboard";
+   useRedirectStore().set(target);
+   throw redirect({ to: "/login" });
+  }
+ },
 });

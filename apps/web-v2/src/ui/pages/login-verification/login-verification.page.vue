@@ -8,10 +8,12 @@ import { OtpInput } from "@/shared/vendor/zag";
 import { toast } from "@/shared/vendor/toast";
 import Button from "@/shared/ui/Button.vue";
 import AuthLayout from "@/ui/templates/auth-layout.vue";
+import { useRedirectStore } from "@/stores/redirect";
 
 const router = useRouter();
 const search = useSearch({ from: "/login-verification" });
 const auth = useAuth();
+const redirectStore = useRedirectStore();
 const t = useT();
 
 const code = ref("");
@@ -27,18 +29,6 @@ const errorKeyByCode: Record<string, string> = {
  unknown: "auth.errors.unknown",
 };
 
-/**
- * Resolve the post-login destination. The /login page forwards the
- * `redirect` query param (set by the (authed) layout guard) through
- * to here. Only accept relative paths starting with '/' to prevent
- * open-redirect attacks. Fall back to /dashboard.
- */
-function safeRedirect(raw: string | undefined): string {
- if (typeof raw !== "string" || !raw.startsWith("/")) return "/dashboard";
- if (raw.startsWith("//")) return "/dashboard";
- return raw;
-}
-
 async function onComplete(value: string) {
  errorMessage.value = null;
  isSubmitting.value = true;
@@ -53,7 +43,11 @@ async function onComplete(value: string) {
  // main.ts). After verifyOtp succeeds, refresh the session+profile
  // so the dashboard sees the new cookie-backed identity.
  await auth.getSession();
- const target = safeRedirect((search.value as { redirect?: string }).redirect);
+ // The redirect target was stashed by the (authed) guard in the
+ // redirect store (Pinia). Consume it so a future visit to /login
+ // doesn't bounce to a stale target. Default to /dashboard.
+ const target = redirectStore.pending ?? "/dashboard";
+ redirectStore.clear();
  await router.navigate({ to: target });
 }
 

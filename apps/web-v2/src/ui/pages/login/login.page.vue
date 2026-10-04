@@ -1,37 +1,18 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { useRouter, useSearch } from "@/shared/vendor/router";
+import { ref } from "vue";
+import { useRouter } from "@/shared/vendor/router";
 import { useAuth } from "@/shared/composables/use-auth";
 import { useT } from "@/shared/vendor/i18n";
 import Button from "@/shared/ui/Button.vue";
 import AuthLayout from "@/ui/templates/auth-layout.vue";
 
 const router = useRouter();
-const search = useSearch({ from: "/login" });
 const auth = useAuth();
 const t = useT();
 
 const email = ref("");
 const isSubmitting = ref(false);
 const errorMessage = ref<string | null>(null);
-
-/**
- * Read the `redirect` query param. The (authed) layout guard sets it
- * to the URL the user was trying to visit when the session check
- * failed. We forward it through to /login-verification so the
- * verify step can return the user to the original page.
- *
- * Only accept relative paths starting with '/' (no scheme, no host)
- * to prevent open-redirect attacks via the query param.
- */
-const redirect = computed<string | null>(() => {
-  const raw = (search.value as { redirect?: string }).redirect;
-  if (typeof raw !== "string" || !raw.startsWith("/")) return null;
-  if (raw.startsWith("//")) return null;
-  return raw;
-});
-
-const redirectLabel = computed(() => redirect.value ?? "/dashboard");
 
 const errorKeyByCode: Record<string, string> = {
  validation: "auth.errors.invalidEmail",
@@ -48,13 +29,11 @@ async function onSubmit() {
   errorMessage.value = t(errorKeyByCode[result.error.code] ?? "auth.errors.unknown");
   return;
  }
- // Stash the email + redirect in the URL so /login-verification can
- // read them without another form. In production the email is a
- // one-time signed token; the redirect stays as a relative path.
- await router.navigate({
-  to: "/login-verification",
-  search: { email: email.value, redirect: redirect.value ?? undefined },
- });
+ // The post-login destination is held in the redirect store (set
+ // by the (authed) layout guard). It survives this route change
+ // because Pinia is app-scoped, so the verification page reads it
+ // directly. No URL param, no hint UI.
+ await router.navigate({ to: "/login-verification", search: { email: email.value } });
 }
 </script>
 
@@ -87,14 +66,6 @@ async function onSubmit() {
     {{ t("auth.requestOtp") }}
    </Button>
   </form>
-  <div
-   v-if="redirect"
-   class="mt-4 flex items-center justify-end gap-2 text-xs text-text-2"
-   data-testid="redirect-hint"
-  >
-   <span>You'll be redirected to</span>
-   <code class="rounded-sm bg-zinc-100 px-1.5 py-0.5 font-mono text-[11px] text-text dark:bg-zinc-800">{{ redirectLabel }}</code>
-  </div>
   <template #footer>
    <p class="text-xs text-text-2">
     By continuing you accept the

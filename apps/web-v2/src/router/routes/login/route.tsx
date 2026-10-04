@@ -7,23 +7,19 @@
  * NOT by this parent route — putting it here would render the layout
  * without the child (the AuthLayout has no <RouterView />), so the
  * login form would never mount.
+ *
+ * The post-login destination is carried in the redirect store (Pinia),
+ * not the URL — so this guard doesn't read ?redirect=. A logged-in
+ * user who lands on /login always goes to /dashboard.
  */
 import { createFileRoute, redirect } from "@tanstack/vue-router";
 import { useAuthStore } from "@/stores/auth";
 
 export const Route = createFileRoute("/login")({
- beforeLoad: ({ location }) => {
-  const auth = useAuthStore();
-  if (auth.isBooted && auth.isAuthenticated) {
-   // Honor a ?redirect=… param so a logged-in user landing on
-   // /login?redirect=/tasks bounces to /tasks instead of always
-   // /dashboard. Same relative-path guard as the (authed) layout.
-   const raw = (location.search as { redirect?: unknown }).redirect;
-   const target =
-    typeof raw === "string" && raw.startsWith("/") && !raw.startsWith("//")
-     ? raw
-     : "/dashboard";
-   throw redirect({ to: target });
-  }
- },
+  beforeLoad: () => {
+    const auth = useAuthStore();
+    if (auth.isBooted && auth.isAuthenticated) {
+      throw redirect({ to: "/dashboard" });
+    }
+  },
 });
