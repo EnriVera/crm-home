@@ -52,7 +52,7 @@ const baseClass =
 const variantClass = computed<string>(() => {
  switch (props.variant) {
   case "primary":
-   return "bg-accent text-accent-fg hover:bg-accent/90";
+   return "bg-accent text-white hover:bg-accent/90";
   case "secondary":
    return "border border-zinc-200 bg-zinc-100 text-text-2 hover:bg-zinc-200 dark:border-zinc-800 dark:bg-zinc-800 dark:hover:bg-zinc-700";
   case "ghost":
