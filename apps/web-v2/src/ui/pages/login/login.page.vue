@@ -4,7 +4,6 @@ import { useRouter } from "@/shared/vendor/router";
 import { useAuth } from "@/shared/composables/use-auth";
 import { useT } from "@/shared/vendor/i18n";
 import Button from "@/shared/ui/Button.vue";
-import { toast } from "@/shared/vendor/toast";
 import AuthLayout from "@/ui/templates/auth-layout.vue";
 
 const router = useRouter();
@@ -33,7 +32,6 @@ async function onSubmit() {
   // Stash the email in the URL so /login-verification can read it
   // without another form. In production this is a one-time signed token.
   await router.navigate({ to: "/login-verification", search: { email: email.value } });
-  toast.success("Code sent. Check your inbox.");
 }
 </script>
 

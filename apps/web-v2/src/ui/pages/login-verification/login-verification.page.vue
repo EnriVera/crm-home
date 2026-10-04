@@ -41,7 +41,6 @@ async function onComplete(value: string) {
  // main.ts). After verifyOtp succeeds, refresh the session+profile
  // so the dashboard sees the new cookie-backed identity.
  await auth.getSession();
- toast.success("Signed in.");
  await router.navigate({ to: "/dashboard" });
 }
 
@@ -96,7 +95,6 @@ async function resendCode() {
  }
  resendSecondsLeft.value = RESEND_COOLDOWN_SECONDS;
  startResendTimer();
- toast.success("Code sent. Check your inbox.");
 }
 
 onMounted(() => {
