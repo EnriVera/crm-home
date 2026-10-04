@@ -130,7 +130,7 @@ onUnmounted(() => {
   <div class="mt-6 flex items-center justify-between gap-3">
    <button
     type="button"
-    class="text-sm text-accent hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 rounded-sm px-1 py-0.5"
+    class="rounded-sm border border-zinc-200 bg-zinc-100 px-3 py-1.5 text-sm font-medium text-text-2 transition hover:bg-zinc-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 dark:border-zinc-800 dark:bg-zinc-800 dark:hover:bg-zinc-700"
     @click="backToLogin"
    >
     {{ t("auth.backToLogin") }}
