@@ -130,14 +130,14 @@ onUnmounted(() => {
   </div>
   <div class="mt-6 flex items-center justify-between gap-3">
    <Button
-    variant="dark"
+    variant="primary"
     size="sm"
     @click="backToLogin"
    >
     {{ t("auth.backToLogin") }}
    </Button>
    <Button
-    variant="primary"
+    variant="secondary"
     size="sm"
     :disabled="!canResend"
     :loading="isResending"
