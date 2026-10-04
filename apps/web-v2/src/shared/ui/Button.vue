@@ -3,9 +3,12 @@
  * Button — the single source of truth for button styling across web-v2.
  *
  * Variants:
- *  - primary:   accent background, accent-fg text. Main CTAs.
+ *  - primary:   accent background, white text. Main CTAs.
  *  - secondary: zinc-100 background, text-2 color. Paired actions
- *               (e.g. "Use a different email" + "Resend").
+ *               (e.g. "Resend" with cooldown).
+ *  - dark:      zinc-800 background, white text. High-emphasis
+ *               neutral button (alternative to primary when brand
+ *               colour would be too loud).
  *  - ghost:     transparent background, accent text. Low-emphasis
  *               links-styled-as-buttons.
  *
@@ -20,7 +23,7 @@ import { computed } from "vue";
 import { cn } from "@/shared/ui/cn";
 import { Icon } from "@/shared/vendor/icons";
 
-type Variant = "primary" | "secondary" | "ghost";
+type Variant = "primary" | "secondary" | "dark" | "ghost";
 type Size = "sm" | "md";
 
 const props = withDefaults(
@@ -55,6 +58,8 @@ const variantClass = computed<string>(() => {
    return "bg-accent text-white hover:bg-accent/90";
   case "secondary":
    return "border border-zinc-200 bg-zinc-100 text-text-2 hover:bg-zinc-200 dark:border-zinc-800 dark:bg-zinc-800 dark:hover:bg-zinc-700";
+  case "dark":
+   return "bg-zinc-800 text-white hover:bg-zinc-700 dark:bg-zinc-700 dark:hover:bg-zinc-600";
   case "ghost":
    return "text-accent hover:bg-zinc-100 dark:hover:bg-zinc-800";
  }
