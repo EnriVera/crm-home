@@ -27,6 +27,18 @@ const errorKeyByCode: Record<string, string> = {
  unknown: "auth.errors.unknown",
 };
 
+/**
+ * Resolve the post-login destination. The /login page forwards the
+ * `redirect` query param (set by the (authed) layout guard) through
+ * to here. Only accept relative paths starting with '/' to prevent
+ * open-redirect attacks. Fall back to /dashboard.
+ */
+function safeRedirect(raw: string | undefined): string {
+ if (typeof raw !== "string" || !raw.startsWith("/")) return "/dashboard";
+ if (raw.startsWith("//")) return "/dashboard";
+ return raw;
+}
+
 async function onComplete(value: string) {
  errorMessage.value = null;
  isSubmitting.value = true;
@@ -41,7 +53,8 @@ async function onComplete(value: string) {
  // main.ts). After verifyOtp succeeds, refresh the session+profile
  // so the dashboard sees the new cookie-backed identity.
  await auth.getSession();
- await router.navigate({ to: "/dashboard" });
+ const target = safeRedirect((search.value as { redirect?: string }).redirect);
+ await router.navigate({ to: target });
 }
 
 function backToLogin() {

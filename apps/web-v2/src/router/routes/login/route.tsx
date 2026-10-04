@@ -12,10 +12,18 @@ import { createFileRoute, redirect } from "@tanstack/vue-router";
 import { useAuthStore } from "@/stores/auth";
 
 export const Route = createFileRoute("/login")({
- beforeLoad: () => {
+ beforeLoad: ({ location }) => {
   const auth = useAuthStore();
   if (auth.isBooted && auth.isAuthenticated) {
-   throw redirect({ to: "/dashboard" });
+   // Honor a ?redirect=… param so a logged-in user landing on
+   // /login?redirect=/tasks bounces to /tasks instead of always
+   // /dashboard. Same relative-path guard as the (authed) layout.
+   const raw = (location.search as { redirect?: unknown }).redirect;
+   const target =
+    typeof raw === "string" && raw.startsWith("/") && !raw.startsWith("//")
+     ? raw
+     : "/dashboard";
+   throw redirect({ to: target });
   }
  },
 });
