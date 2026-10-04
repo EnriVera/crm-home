@@ -6,6 +6,7 @@ import { useT } from "@/shared/vendor/i18n";
 import { Icon } from "@/shared/vendor/icons";
 import { OtpInput } from "@/shared/vendor/zag";
 import { toast } from "@/shared/vendor/toast";
+import Button from "@/shared/ui/Button.vue";
 import AuthLayout from "@/ui/templates/auth-layout.vue";
 
 const router = useRouter();
@@ -128,23 +129,23 @@ onUnmounted(() => {
    </p>
   </div>
   <div class="mt-6 flex items-center justify-between gap-3">
-   <button
-    type="button"
-    class="rounded-sm border border-zinc-200 bg-zinc-100 px-3 py-1.5 text-sm font-medium text-text-2 transition hover:bg-zinc-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 dark:border-zinc-800 dark:bg-zinc-800 dark:hover:bg-zinc-700"
+   <Button
+    variant="secondary"
+    size="sm"
     @click="backToLogin"
    >
     {{ t("auth.backToLogin") }}
-   </button>
-   <button
-    type="button"
+   </Button>
+   <Button
+    variant="secondary"
+    size="sm"
     :disabled="!canResend"
-    class="flex items-center gap-2 rounded-sm border border-zinc-200 bg-zinc-100 px-3 py-1.5 text-sm font-medium text-text-2 transition hover:bg-zinc-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 disabled:cursor-not-allowed disabled:opacity-60 dark:border-zinc-800 dark:bg-zinc-800 dark:hover:bg-zinc-700"
+    :loading="isResending"
     @click="resendCode"
    >
-    <Icon v-if="isResending" name="PhCircleNotch" :size="14" class="animate-spin" />
     <span v-if="canResend">{{ t("auth.resend") }}</span>
     <span v-else>{{ t("auth.resendIn", { time: resendCountdown }) }}</span>
-   </button>
+   </Button>
   </div>
   <template #footer>
    <p class="text-xs text-text-2">Sent to {{ email || "(missing email)" }}</p>
