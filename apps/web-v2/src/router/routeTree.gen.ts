@@ -8,325 +8,326 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from "./routes/__root";
-import { Route as IndexRouteImport } from "./routes/index";
-import { Route as authedRouteRouteImport } from "./routes/(authed)/route";
-import { Route as CookiesRouteImport } from "./routes/cookies";
-import { Route as LoginRouteRouteImport } from "./routes/login/route";
-import { Route as PrivacyRouteImport } from "./routes/privacy";
-import { Route as TermsRouteImport } from "./routes/terms";
-import { Route as authedConfigRouteImport } from "./routes/(authed)/config";
-import { Route as authedDashboardRouteImport } from "./routes/(authed)/dashboard";
-import { Route as authedSchedulesRouteImport } from "./routes/(authed)/schedules";
-import { Route as authedTasksConfigRouteImport } from "./routes/(authed)/tasks-config";
-import { Route as LoginIndexRouteImport } from "./routes/login/index";
-import { Route as LoginLoginVerificationRouteImport } from "./routes/login/login-verification";
-import { Route as authedClientsIndexRouteImport } from "./routes/(authed)/clients/index";
-import { Route as authedClientsIdRouteImport } from "./routes/(authed)/clients/$id";
-import { Route as authedTasksIndexRouteImport } from "./routes/(authed)/tasks/index";
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as authedRouteRouteImport } from './routes/(authed)/route'
+import { Route as CookiesRouteImport } from './routes/cookies'
+import { Route as LoginRouteRouteImport } from './routes/login/route'
+import { Route as LoginVerificationRouteImport } from './routes/login-verification'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as authedConfigRouteImport } from './routes/(authed)/config'
+import { Route as authedDashboardRouteImport } from './routes/(authed)/dashboard'
+import { Route as authedSchedulesRouteImport } from './routes/(authed)/schedules'
+import { Route as authedTasksConfigRouteImport } from './routes/(authed)/tasks-config'
+import { Route as LoginIndexRouteImport } from './routes/login/index'
+import { Route as authedClientsIndexRouteImport } from './routes/(authed)/clients/index'
+import { Route as authedClientsIdRouteImport } from './routes/(authed)/clients/$id'
+import { Route as authedTasksIndexRouteImport } from './routes/(authed)/tasks/index'
 
 const IndexRoute = IndexRouteImport.update({
-  id: "/",
-  path: "/",
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const authedRouteRoute = authedRouteRouteImport.update({
-  id: "/(authed)",
+  id: '/(authed)',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const CookiesRoute = CookiesRouteImport.update({
-  id: "/cookies",
-  path: "/cookies",
+  id: '/cookies',
+  path: '/cookies',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const LoginRouteRoute = LoginRouteRouteImport.update({
-  id: "/login",
-  path: "/login",
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
+const LoginVerificationRoute = LoginVerificationRouteImport.update({
+  id: '/login-verification',
+  path: '/login-verification',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacyRoute = PrivacyRouteImport.update({
-  id: "/privacy",
-  path: "/privacy",
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const TermsRoute = TermsRouteImport.update({
-  id: "/terms",
-  path: "/terms",
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const authedConfigRoute = authedConfigRouteImport.update({
-  id: "/config",
-  path: "/config",
+  id: '/config',
+  path: '/config',
   getParentRoute: () => authedRouteRoute,
-} as any);
+} as any)
 const authedDashboardRoute = authedDashboardRouteImport.update({
-  id: "/dashboard",
-  path: "/dashboard",
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => authedRouteRoute,
-} as any);
+} as any)
 const authedSchedulesRoute = authedSchedulesRouteImport.update({
-  id: "/schedules",
-  path: "/schedules",
+  id: '/schedules',
+  path: '/schedules',
   getParentRoute: () => authedRouteRoute,
-} as any);
+} as any)
 const authedTasksConfigRoute = authedTasksConfigRouteImport.update({
-  id: "/tasks-config",
-  path: "/tasks-config",
+  id: '/tasks-config',
+  path: '/tasks-config',
   getParentRoute: () => authedRouteRoute,
-} as any);
+} as any)
 const LoginIndexRoute = LoginIndexRouteImport.update({
-  id: "/",
-  path: "/",
+  id: '/',
+  path: '/',
   getParentRoute: () => LoginRouteRoute,
-} as any);
-const LoginLoginVerificationRoute = LoginLoginVerificationRouteImport.update({
-  id: "/login-verification",
-  path: "/login-verification",
-  getParentRoute: () => LoginRouteRoute,
-} as any);
+} as any)
 const authedClientsIndexRoute = authedClientsIndexRouteImport.update({
-  id: "/clients/",
-  path: "/clients/",
+  id: '/clients/',
+  path: '/clients/',
   getParentRoute: () => authedRouteRoute,
-} as any);
+} as any)
 const authedClientsIdRoute = authedClientsIdRouteImport.update({
-  id: "/clients/$id",
-  path: "/clients/$id",
+  id: '/clients/$id',
+  path: '/clients/$id',
   getParentRoute: () => authedRouteRoute,
-} as any);
+} as any)
 const authedTasksIndexRoute = authedTasksIndexRouteImport.update({
-  id: "/tasks/",
-  path: "/tasks/",
+  id: '/tasks/',
+  path: '/tasks/',
   getParentRoute: () => authedRouteRoute,
-} as any);
+} as any)
 
 export interface FileRoutesByFullPath {
-  "/": typeof IndexRoute;
-  "/login": typeof LoginRouteRouteWithChildren;
-  "/cookies": typeof CookiesRoute;
-  "/privacy": typeof PrivacyRoute;
-  "/terms": typeof TermsRoute;
-  "/config": typeof authedConfigRoute;
-  "/dashboard": typeof authedDashboardRoute;
-  "/schedules": typeof authedSchedulesRoute;
-  "/tasks-config": typeof authedTasksConfigRoute;
-  "/login/login-verification": typeof LoginLoginVerificationRoute;
-  "/login/": typeof LoginIndexRoute;
-  "/clients/$id": typeof authedClientsIdRoute;
-  "/clients/": typeof authedClientsIndexRoute;
-  "/tasks/": typeof authedTasksIndexRoute;
+  '/': typeof IndexRoute
+  '/login': typeof LoginRouteRouteWithChildren
+  '/cookies': typeof CookiesRoute
+  '/login-verification': typeof LoginVerificationRoute
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
+  '/config': typeof authedConfigRoute
+  '/dashboard': typeof authedDashboardRoute
+  '/schedules': typeof authedSchedulesRoute
+  '/tasks-config': typeof authedTasksConfigRoute
+  '/login/': typeof LoginIndexRoute
+  '/clients/$id': typeof authedClientsIdRoute
+  '/clients/': typeof authedClientsIndexRoute
+  '/tasks/': typeof authedTasksIndexRoute
 }
 export interface FileRoutesByTo {
-  "/": typeof IndexRoute;
-  "/cookies": typeof CookiesRoute;
-  "/privacy": typeof PrivacyRoute;
-  "/terms": typeof TermsRoute;
-  "/config": typeof authedConfigRoute;
-  "/dashboard": typeof authedDashboardRoute;
-  "/schedules": typeof authedSchedulesRoute;
-  "/tasks-config": typeof authedTasksConfigRoute;
-  "/login/login-verification": typeof LoginLoginVerificationRoute;
-  "/login": typeof LoginIndexRoute;
-  "/clients/$id": typeof authedClientsIdRoute;
-  "/clients": typeof authedClientsIndexRoute;
-  "/tasks": typeof authedTasksIndexRoute;
+  '/': typeof IndexRoute
+  '/cookies': typeof CookiesRoute
+  '/login-verification': typeof LoginVerificationRoute
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
+  '/config': typeof authedConfigRoute
+  '/dashboard': typeof authedDashboardRoute
+  '/schedules': typeof authedSchedulesRoute
+  '/tasks-config': typeof authedTasksConfigRoute
+  '/login': typeof LoginIndexRoute
+  '/clients/$id': typeof authedClientsIdRoute
+  '/clients': typeof authedClientsIndexRoute
+  '/tasks': typeof authedTasksIndexRoute
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport;
-  "/": typeof IndexRoute;
-  "/(authed)": typeof authedRouteRouteWithChildren;
-  "/login": typeof LoginRouteRouteWithChildren;
-  "/cookies": typeof CookiesRoute;
-  "/privacy": typeof PrivacyRoute;
-  "/terms": typeof TermsRoute;
-  "/(authed)/config": typeof authedConfigRoute;
-  "/(authed)/dashboard": typeof authedDashboardRoute;
-  "/(authed)/schedules": typeof authedSchedulesRoute;
-  "/(authed)/tasks-config": typeof authedTasksConfigRoute;
-  "/login/login-verification": typeof LoginLoginVerificationRoute;
-  "/login/": typeof LoginIndexRoute;
-  "/(authed)/clients/$id": typeof authedClientsIdRoute;
-  "/(authed)/clients/": typeof authedClientsIndexRoute;
-  "/(authed)/tasks/": typeof authedTasksIndexRoute;
+  __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/(authed)': typeof authedRouteRouteWithChildren
+  '/login': typeof LoginRouteRouteWithChildren
+  '/cookies': typeof CookiesRoute
+  '/login-verification': typeof LoginVerificationRoute
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
+  '/(authed)/config': typeof authedConfigRoute
+  '/(authed)/dashboard': typeof authedDashboardRoute
+  '/(authed)/schedules': typeof authedSchedulesRoute
+  '/(authed)/tasks-config': typeof authedTasksConfigRoute
+  '/login/': typeof LoginIndexRoute
+  '/(authed)/clients/$id': typeof authedClientsIdRoute
+  '/(authed)/clients/': typeof authedClientsIndexRoute
+  '/(authed)/tasks/': typeof authedTasksIndexRoute
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath;
+  fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | "/"
-    | "/login"
-    | "/cookies"
-    | "/privacy"
-    | "/terms"
-    | "/config"
-    | "/dashboard"
-    | "/schedules"
-    | "/tasks-config"
-    | "/login/login-verification"
-    | "/login/"
-    | "/clients/$id"
-    | "/clients/"
-    | "/tasks/";
-  fileRoutesByTo: FileRoutesByTo;
+    | '/'
+    | '/login'
+    | '/cookies'
+    | '/login-verification'
+    | '/privacy'
+    | '/terms'
+    | '/config'
+    | '/dashboard'
+    | '/schedules'
+    | '/tasks-config'
+    | '/login/'
+    | '/clients/$id'
+    | '/clients/'
+    | '/tasks/'
+  fileRoutesByTo: FileRoutesByTo
   to:
-    | "/"
-    | "/cookies"
-    | "/privacy"
-    | "/terms"
-    | "/config"
-    | "/dashboard"
-    | "/schedules"
-    | "/tasks-config"
-    | "/login/login-verification"
-    | "/login"
-    | "/clients/$id"
-    | "/clients"
-    | "/tasks";
+    | '/'
+    | '/cookies'
+    | '/login-verification'
+    | '/privacy'
+    | '/terms'
+    | '/config'
+    | '/dashboard'
+    | '/schedules'
+    | '/tasks-config'
+    | '/login'
+    | '/clients/$id'
+    | '/clients'
+    | '/tasks'
   id:
-    | "__root__"
-    | "/"
-    | "/(authed)"
-    | "/login"
-    | "/cookies"
-    | "/privacy"
-    | "/terms"
-    | "/(authed)/config"
-    | "/(authed)/dashboard"
-    | "/(authed)/schedules"
-    | "/(authed)/tasks-config"
-    | "/login/login-verification"
-    | "/login/"
-    | "/(authed)/clients/$id"
-    | "/(authed)/clients/"
-    | "/(authed)/tasks/";
-  fileRoutesById: FileRoutesById;
+    | '__root__'
+    | '/'
+    | '/(authed)'
+    | '/login'
+    | '/cookies'
+    | '/login-verification'
+    | '/privacy'
+    | '/terms'
+    | '/(authed)/config'
+    | '/(authed)/dashboard'
+    | '/(authed)/schedules'
+    | '/(authed)/tasks-config'
+    | '/login/'
+    | '/(authed)/clients/$id'
+    | '/(authed)/clients/'
+    | '/(authed)/tasks/'
+  fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute;
-  authedRouteRoute: typeof authedRouteRouteWithChildren;
-  LoginRouteRoute: typeof LoginRouteRouteWithChildren;
-  CookiesRoute: typeof CookiesRoute;
-  PrivacyRoute: typeof PrivacyRoute;
-  TermsRoute: typeof TermsRoute;
+  IndexRoute: typeof IndexRoute
+  authedRouteRoute: typeof authedRouteRouteWithChildren
+  LoginRouteRoute: typeof LoginRouteRouteWithChildren
+  CookiesRoute: typeof CookiesRoute
+  LoginVerificationRoute: typeof LoginVerificationRoute
+  PrivacyRoute: typeof PrivacyRoute
+  TermsRoute: typeof TermsRoute
 }
 
-declare module "@tanstack/vue-router" {
+declare module '@tanstack/vue-router' {
   interface FileRoutesByPath {
-    "/": {
-      id: "/";
-      path: "/";
-      fullPath: "/";
-      preLoaderRoute: typeof IndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/(authed)": {
-      id: "/(authed)";
-      path: "";
-      fullPath: "";
-      preLoaderRoute: typeof authedRouteRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/cookies": {
-      id: "/cookies";
-      path: "/cookies";
-      fullPath: "/cookies";
-      preLoaderRoute: typeof CookiesRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/login": {
-      id: "/login";
-      path: "/login";
-      fullPath: "/login";
-      preLoaderRoute: typeof LoginRouteRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/privacy": {
-      id: "/privacy";
-      path: "/privacy";
-      fullPath: "/privacy";
-      preLoaderRoute: typeof PrivacyRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/terms": {
-      id: "/terms";
-      path: "/terms";
-      fullPath: "/terms";
-      preLoaderRoute: typeof TermsRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/(authed)/config": {
-      id: "/(authed)/config";
-      path: "/config";
-      fullPath: "/config";
-      preLoaderRoute: typeof authedConfigRouteImport;
-      parentRoute: typeof authedRouteRoute;
-    };
-    "/(authed)/dashboard": {
-      id: "/(authed)/dashboard";
-      path: "/dashboard";
-      fullPath: "/dashboard";
-      preLoaderRoute: typeof authedDashboardRouteImport;
-      parentRoute: typeof authedRouteRoute;
-    };
-    "/(authed)/schedules": {
-      id: "/(authed)/schedules";
-      path: "/schedules";
-      fullPath: "/schedules";
-      preLoaderRoute: typeof authedSchedulesRouteImport;
-      parentRoute: typeof authedRouteRoute;
-    };
-    "/(authed)/tasks-config": {
-      id: "/(authed)/tasks-config";
-      path: "/tasks-config";
-      fullPath: "/tasks-config";
-      preLoaderRoute: typeof authedTasksConfigRouteImport;
-      parentRoute: typeof authedRouteRoute;
-    };
-    "/login/": {
-      id: "/login/";
-      path: "/";
-      fullPath: "/login/";
-      preLoaderRoute: typeof LoginIndexRouteImport;
-      parentRoute: typeof LoginRouteRoute;
-    };
-    "/login/login-verification": {
-      id: "/login/login-verification";
-      path: "/login-verification";
-      fullPath: "/login/login-verification";
-      preLoaderRoute: typeof LoginLoginVerificationRouteImport;
-      parentRoute: typeof LoginRouteRoute;
-    };
-    "/(authed)/clients/": {
-      id: "/(authed)/clients/";
-      path: "/clients";
-      fullPath: "/clients/";
-      preLoaderRoute: typeof authedClientsIndexRouteImport;
-      parentRoute: typeof authedRouteRoute;
-    };
-    "/(authed)/clients/$id": {
-      id: "/(authed)/clients/$id";
-      path: "/clients/$id";
-      fullPath: "/clients/$id";
-      preLoaderRoute: typeof authedClientsIdRouteImport;
-      parentRoute: typeof authedRouteRoute;
-    };
-    "/(authed)/tasks/": {
-      id: "/(authed)/tasks/";
-      path: "/tasks";
-      fullPath: "/tasks/";
-      preLoaderRoute: typeof authedTasksIndexRouteImport;
-      parentRoute: typeof authedRouteRoute;
-    };
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(authed)': {
+      id: '/(authed)'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof authedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cookies': {
+      id: '/cookies'
+      path: '/cookies'
+      fullPath: '/cookies'
+      preLoaderRoute: typeof CookiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login-verification': {
+      id: '/login-verification'
+      path: '/login-verification'
+      fullPath: '/login-verification'
+      preLoaderRoute: typeof LoginVerificationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(authed)/config': {
+      id: '/(authed)/config'
+      path: '/config'
+      fullPath: '/config'
+      preLoaderRoute: typeof authedConfigRouteImport
+      parentRoute: typeof authedRouteRoute
+    }
+    '/(authed)/dashboard': {
+      id: '/(authed)/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof authedDashboardRouteImport
+      parentRoute: typeof authedRouteRoute
+    }
+    '/(authed)/schedules': {
+      id: '/(authed)/schedules'
+      path: '/schedules'
+      fullPath: '/schedules'
+      preLoaderRoute: typeof authedSchedulesRouteImport
+      parentRoute: typeof authedRouteRoute
+    }
+    '/(authed)/tasks-config': {
+      id: '/(authed)/tasks-config'
+      path: '/tasks-config'
+      fullPath: '/tasks-config'
+      preLoaderRoute: typeof authedTasksConfigRouteImport
+      parentRoute: typeof authedRouteRoute
+    }
+    '/login/': {
+      id: '/login/'
+      path: '/'
+      fullPath: '/login/'
+      preLoaderRoute: typeof LoginIndexRouteImport
+      parentRoute: typeof LoginRouteRoute
+    }
+    '/(authed)/clients/': {
+      id: '/(authed)/clients/'
+      path: '/clients'
+      fullPath: '/clients/'
+      preLoaderRoute: typeof authedClientsIndexRouteImport
+      parentRoute: typeof authedRouteRoute
+    }
+    '/(authed)/clients/$id': {
+      id: '/(authed)/clients/$id'
+      path: '/clients/$id'
+      fullPath: '/clients/$id'
+      preLoaderRoute: typeof authedClientsIdRouteImport
+      parentRoute: typeof authedRouteRoute
+    }
+    '/(authed)/tasks/': {
+      id: '/(authed)/tasks/'
+      path: '/tasks'
+      fullPath: '/tasks/'
+      preLoaderRoute: typeof authedTasksIndexRouteImport
+      parentRoute: typeof authedRouteRoute
+    }
   }
 }
 
 interface authedRouteRouteChildren {
-  authedConfigRoute: typeof authedConfigRoute;
-  authedDashboardRoute: typeof authedDashboardRoute;
-  authedSchedulesRoute: typeof authedSchedulesRoute;
-  authedTasksConfigRoute: typeof authedTasksConfigRoute;
-  authedClientsIdRoute: typeof authedClientsIdRoute;
-  authedClientsIndexRoute: typeof authedClientsIndexRoute;
-  authedTasksIndexRoute: typeof authedTasksIndexRoute;
+  authedConfigRoute: typeof authedConfigRoute
+  authedDashboardRoute: typeof authedDashboardRoute
+  authedSchedulesRoute: typeof authedSchedulesRoute
+  authedTasksConfigRoute: typeof authedTasksConfigRoute
+  authedClientsIdRoute: typeof authedClientsIdRoute
+  authedClientsIndexRoute: typeof authedClientsIndexRoute
+  authedTasksIndexRoute: typeof authedTasksIndexRoute
 }
 
 const authedRouteRouteChildren: authedRouteRouteChildren = {
@@ -337,34 +338,33 @@ const authedRouteRouteChildren: authedRouteRouteChildren = {
   authedClientsIdRoute: authedClientsIdRoute,
   authedClientsIndexRoute: authedClientsIndexRoute,
   authedTasksIndexRoute: authedTasksIndexRoute,
-};
+}
 
 const authedRouteRouteWithChildren = authedRouteRoute._addFileChildren(
   authedRouteRouteChildren,
-);
+)
 
 interface LoginRouteRouteChildren {
-  LoginLoginVerificationRoute: typeof LoginLoginVerificationRoute;
-  LoginIndexRoute: typeof LoginIndexRoute;
+  LoginIndexRoute: typeof LoginIndexRoute
 }
 
 const LoginRouteRouteChildren: LoginRouteRouteChildren = {
-  LoginLoginVerificationRoute: LoginLoginVerificationRoute,
   LoginIndexRoute: LoginIndexRoute,
-};
+}
 
 const LoginRouteRouteWithChildren = LoginRouteRoute._addFileChildren(
   LoginRouteRouteChildren,
-);
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   authedRouteRoute: authedRouteRouteWithChildren,
   LoginRouteRoute: LoginRouteRouteWithChildren,
   CookiesRoute: CookiesRoute,
+  LoginVerificationRoute: LoginVerificationRoute,
   PrivacyRoute: PrivacyRoute,
   TermsRoute: TermsRoute,
-};
+}
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>();
+  ._addFileTypes<FileRouteTypes>()
