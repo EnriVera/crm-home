@@ -185,7 +185,7 @@ onMounted(() => {
   :data-testid="`otp-cell-${i}`"
   :class="
   cn(
-  'h-12 w-10 text-center text-lg font-semibold bg-surface rounded-lg',
+  'h-12 w-10 text-center text-lg font-semibold bg-surface rounded-sm',
   'border border-zinc-200 focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30',
   'dark:border-zinc-800',
   invalid && 'border-red-500',
