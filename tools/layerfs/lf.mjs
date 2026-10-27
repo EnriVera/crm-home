@@ -6,14 +6,17 @@
 //   lf init            one-time Store install from LAYERFS_SOURCE (must run as root; see README)
 //   lf fork <branch> [from-ref]          fork a branch (default: from main)
 //   lf run <branch> "<cmd>" [message]    one-shot: sandbox → mount → exec → commit → unmount
-//   lf ship <branch> [message]           safe publish: release = merge(main, branch) → publish
+//   lf ship <branch> [message]           release = merge(main, branch) → publish
+//                                        (publish = release head becomes main's next
+//                                        Layer IN THE STORE; the repo folder is never
+//                                        written by LayerFS after init)
 //   lf status                            branches + sandboxes
 //
 // Root model: the installed Store is root:root 0700/0600 (the sandbox daemons open it as
 // root). When the Store is root-owned and we are not root, we re-exec ourselves under
 // `sudo -E` (password prompted by sudo). Set LF_NO_SUDO=1 to disable the re-exec.
 import { spawnSync } from "node:child_process";
-import { existsSync, statSync } from "node:fs";
+import { accessSync, constants, existsSync, statSync } from "node:fs";
 import { pathToFileURL, fileURLToPath } from "node:url";
 import path from "node:path";
 
@@ -39,9 +42,17 @@ function out(value) {
 // --- root re-exec -------------------------------------------------------------
 function maybeReExec() {
   if (process.geteuid() === 0 || process.env.LF_NO_SUDO === "1") return;
-  const storeExists = existsSync(STORE);
-  const rootOwned = storeExists && statSync(STORE).uid === 0;
-  const needRoot = cmd === "init" || rootOwned;
+  // The Store lives under a 0700 dir owned by whoever installed it. When that
+  // owner is root, a plain user cannot even stat through the dir (EACCES),
+  // so "inaccessible" also means "needs root" — not only "uid === 0".
+  let foreign = true;
+  try {
+    accessSync(STORE, constants.R_OK);
+    foreign = statSync(STORE).uid !== process.geteuid();
+  } catch {
+    /* inaccessible (EACCES through the private dir) or missing: try root */
+  }
+  const needRoot = cmd === "init" || foreign;
   if (!needRoot) return;
   const script = fileURLToPath(import.meta.url);
   const res = spawnSync(
@@ -55,6 +66,19 @@ function maybeReExec() {
   process.exit(res.status ?? 1);
 }
 maybeReExec();
+
+// smoke delegates to smoke.mjs (same env, same root re-exec rule lives there)
+if (cmd === "smoke") {
+  const res = spawnSync(
+    process.execPath,
+    [fileURLToPath(new URL("./smoke.mjs", import.meta.url))],
+    {
+      stdio: "inherit",
+      env: process.env,
+    },
+  );
+  process.exit(res.status ?? 1);
+}
 
 if (!STORE) fail("LAYERFS_STORE_PATH is not set (see lf.env.example)");
 if (!existsSync(STORE) && cmd !== "init") {

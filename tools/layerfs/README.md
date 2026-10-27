@@ -16,25 +16,55 @@ desde ramas/branches isolated, sin tocar el working tree.
 | Requisito | Estado en esta máquina |
 | --- | --- |
 | Linux + un solo kernel (Store local) | ✓ |
-| Store en ext4/xfs/btrfs **local** | ✓ (`/home` es btrfs) |
+| Store en ext4/xfs/btrfs **local** | ✓ (volume docker en `/`, btrfs) |
 | Docker Engine | ✓ 29.7.2 |
+| Imagen sandbox `layerfs-crm-runtime` | ✓ (node 24 + bun 1.4.4, local) |
+| Daemon Linux compilado | ✓ `/home/enri/layerfs/daemon/layerfs-daemon` |
 | Node ≥ 20 | ✓ 26 |
 | Rust (para el addon nativo) | ✓ |
 | Checkout de LayerFS | `~/tools/layerfs` (ya clonado + compilado) |
 
 > **El proyecto NO se mueve.** `init` lee el árbol una vez desde el disco externo
-> (NTFS/fuseblk sirve como *fuente*; el Store queda en `/home`). La carpeta
-> `/run/media/enri/DISCO DURO/crm-home/crm` queda donde está.
+> (NTFS/fuseblk sirve como *fuente*). La carpeta `/run/media/enri/DISCO DURO/crm-home/crm`
+> queda donde está — **y LayerFS nunca la escribe después del init** (ver
+> "Semántica de publish" abajo).
+
+## Topología del Store
+
+El Store vive **dentro de un volume docker plain** (`layerfs-crm-home`):
+
+- Los sandboxes solo aceptan volumes *plain* (driver `local`, sin opciones) — un
+  bind volume falla con `"exact plain local VM volume"`.
+- Los contenedores lo montan en `/layerfs-store`; el daemon abre
+  `/layerfs-store/global/store.sqlite` ahí adentro.
+- En el host, el SDK abre el mismo archivo vía
+  `/var/lib/docker/volumes/layerfs-crm-home/_data/global/store.sqlite` (corre como
+  root, ver abajo).
+- Bootstrap del volume (si hay que rehacerlo): copiá el contenido del Store con un
+  contenedor efímero — ver los comentarios de `lf.env.example`.
+
+## Semántica de publish (clave)
+
+`branch.publish(x)` hace que el head de `x` sea el **próximo Layer de `main`, dentro
+ del Store**. No existe materialize/export en el SDK público: **LayerFS nunca escribe
+la carpeta del repo** después del init. Para ver el estado de main: `./lf fs read main /ruta`.
+Traer cambios del Store al disco de forma masiva queda como paso aparte (pendiente de
+Definir si se necesita; el valor acá es el aislamiento + historial + sandbox).
 
 ## Modelo de permisos (importante)
 
 El Store instalado queda `root:root 0700/0600` porque los daemons de los sandboxes lo
-abren como root. Por eso:
+abren como root (el SDK chequea ownership del `LAYERFS_HOME` contra el euid y exige
+mode 0700/0600). Por eso:
 
 - el **init** (one-time) necesita `sudo` → pide tu password una vez;
-- las operaciones posteriores también correan como root si el Store es root-owned, y el
-  wrapper hace el re-exec con `sudo -E` por vos;
-- para probar sin root: `LF_NO_SUDO=1` (solo funciona con un Store no-root).
+- **todas** las operaciones corren como root: el wrapper re-ejecuta con `sudo -E`
+  (helpers y llamadas crudas al CLI por igual). La regla es: si el Store es
+  inaccesible o de otro uid → sudo. Bajo un dir `0700` de root, un usuario común
+  ni siquiera puede `stat` el Store (EACCES) — eso también dispara el re-exec;
+- para probar sin root: `LF_NO_SUDO=1` (solo funciona con un Store no-root);
+- **nunca** `sudo ./lf <cmd>` directo: sin `-E`, `HOME` pasa a `/root` y se rompen
+  las rutas del checkout. El wrapper hace `sudo -E` por vos.
 
 ## Uso
 
@@ -46,18 +76,32 @@ chmod 700 ~/$(echo $LAYERFS_HOME) 2>/dev/null || true
 # 1) bootstrap (una vez; pide tu password)
 ./lf init
 
-# 2) trabajo diario
+# 2) verificación end-to-end (fork → write → read → diff → merge → publish)
+./lf smoke
+
+# 3) trabajo diario
 ./lf fork feature-web-v3              # branch desde main (no copia archivos)
 ./lf run feature-web-v3 "bun run test" "verify"   # sandbox: exec + commit + unmount
 ./lf status                            # branches + sandboxes
 
-# 3) publicar (mergea main primero: publish solo sobrescribe)
+# 4) publicar (mergea main primero: publish avanza main al head del release)
 ./lf ship feature-web-v3
 
-# 4) cualquier otra llamada → passthrough al CLI oficial
-./lf fs read main /AGENTS.md --text
+# 5) cualquier otra llamada → passthrough al CLI oficial (también con sudo re-exec)
+./lf fs read main /AGENTS.md
 ./lf branch list_commits feature-web-v3
 ```
+
+## Gotchas del SDK (aprendidos en el smoke test)
+
+| Situación | Comportamiento |
+| --- | --- |
+| `fs.write/read/...` con ruta relativa | `InvalidInput` — las rutas son absolutas dentro del árbol (`/tools/layerfs/x.md`) |
+| Fork de un branch que ya existe | `NameTaken` (no `Exists`; `Exists` es para re-init del proyecto) |
+| Merge a un release que ya existe | `NameTaken` — no hay API de delete de branches; usá nombres únicos |
+| Re-init con socket/FIFO en el árbol | `Project(Unsupported)` — matar el daemon MCP de codegraph y `rm -rf .codegraph` antes |
+| Init que falla a mitad | deja la entrada del proyecto: `sudo rm -rf $LAYERFS_HOME/crm-home` y reintentar |
+| Ejecutar el CLI crudo sin root | `PermissionDenied` — el wrapper ya lo resuelve con sudo; no llamar `sudo` a mano |
 
 ## Reglas de trabajo con esto
 
@@ -75,6 +119,7 @@ chmod 700 ~/$(echo $LAYERFS_HOME) 2>/dev/null || true
 
 | Archivo | Qué es |
 | --- | --- |
-| `lf` | Wrapper bash: aplica `lf.env` y delega al CLI o a `lf.mjs` |
-| `lf.mjs` | Helpers de flujo (init / fork / run / ship / status) sobre `@layerfs/agent` |
+| `lf` | Wrapper bash: aplica `lf.env`, sudo re-exec, y delega al CLI o a `lf.mjs` |
+| `lf.mjs` | Helpers de flujo (init / fork / run / ship / status / smoke) sobre `@layerfs/agent` |
+| `smoke.mjs` | Test end-to-end del flujo (invocado por `./lf smoke`) |
 | `lf.env.example` | Plantilla de configuración (copiar a `lf.env`, gitignored) |

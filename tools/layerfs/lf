@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # lf — LayerFS wrapper for this repo. Passthrough to the `layerfs` CLI with repo env applied.
-# Workflow helpers (init/run/ship/status) live in lf.mjs and are dispatched below.
+# Workflow helpers live in lf.mjs and are dispatched below. Raw CLI calls (fs read,
+# branch list_commits, ...) skip lf.mjs, so this wrapper applies the SAME sudo re-exec
+# rule as lf.mjs: when the Store is root-owned (default here), run as root. The Store
+# path lives under /var/lib/docker, unreadable for a plain user — that also triggers it.
 set -euo pipefail
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 if [ -f "$DIR/lf.env" ]; then set -a; . "$DIR/lf.env"; set +a; fi
@@ -8,6 +11,14 @@ export LAYERFS_CHECKOUT="${LAYERFS_CHECKOUT:-$HOME/tools/layerfs}"
 export LAYERFS_PROJECT="${LAYERFS_PROJECT:-crm-home}"
 CLI="$LAYERFS_CHECKOUT/api/cli/src/layerfs.js"
 case "${1:-}" in
-  init|run|ship|status) exec node "$DIR/lf.mjs" "$@" ;;
-  *) exec node "$CLI" "$@" ;;
+  init|fork|run|ship|status|smoke) exec node "$DIR/lf.mjs" "$@" ;;
+  *)
+    if [ "$(id -u)" != "0" ] && [ "${LF_NO_SUDO:-}" != "1" ]; then
+      # reading 0 bytes still opens the file: EACCES → root-owned Store → sudo
+      if ! head -c 0 "${LAYERFS_STORE_PATH:-}" >/dev/null 2>&1; then
+        exec sudo -E node "$CLI" "$@"
+      fi
+    fi
+    exec node "$CLI" "$@"
+    ;;
 esac
