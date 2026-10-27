@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# lf — LayerFS wrapper for this repo. Passthrough to the `layerfs` CLI with repo env applied.
+# Workflow helpers (init/run/ship/status) live in lf.mjs and are dispatched below.
+set -euo pipefail
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ -f "$DIR/lf.env" ]; then set -a; . "$DIR/lf.env"; set +a; fi
+export LAYERFS_CHECKOUT="${LAYERFS_CHECKOUT:-$HOME/tools/layerfs}"
+export LAYERFS_PROJECT="${LAYERFS_PROJECT:-crm-home}"
+CLI="$LAYERFS_CHECKOUT/api/cli/src/layerfs.js"
+case "${1:-}" in
+  init|run|ship|status) exec node "$DIR/lf.mjs" "$@" ;;
+  *) exec node "$CLI" "$@" ;;
+esac
