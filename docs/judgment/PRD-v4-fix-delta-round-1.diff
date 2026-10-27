@@ -1,0 +1,93 @@
+--- /tmp/prd-v4-round1.bak	2026-10-26 23:59:46.568439020 -0300
++++ docs/PRD-v4.md	2026-10-27 00:01:20.645986800 -0300
+@@ -1,8 +1,8 @@
+ # CRM-HOME — PRD v4 (web-v3)
+ 
+-> **Status:** supersedes PRD-v3. Introduces a new Nuxt 4 frontend (`apps/web-v3`) that ships the same Phase 1 product, replicating the visual design frozen in the screen catalogue `docs/img/CRM-HOME — Diseño UI (web-v2)/` (22 screens). This document is the consolidation of `docs/PRD.md`, `docs/PRD-v2.md`, `docs/PRD-v3.md` and `docs/PRD-DESIGN.md`, and is the single source of truth going forward.
++> **Status:** supersedes PRD-v3. Introduces a new Nuxt 4 frontend (`apps/web-v3`) that ships the same Phase 1 product, replicating the visual design frozen in the screen catalogue `docs/img/CRM-HOME — Diseño UI (web-v2)/` (23 images: 14 page screens + 9 `lateral-derecho-*.png` drawers). This document is the consolidation of `docs/PRD.md`, `docs/PRD-v2.md`, `docs/PRD-v3.md` and `docs/PRD-DESIGN.md`, and is the single source of truth going forward.
+ >
+-> **Backend is unchanged.** `apps/api` (nitro + h3 + orpc + kysely + PostgreSQL) is the single source of truth. `web-v3` consumes the existing orpc contract via `@crm/contract`.
++> **Backend is unchanged except the one-line dev CORS origin for web-v3.** `apps/api` (nitro + h3 + orpc + kysely + PostgreSQL) is the single source of truth. `web-v3` consumes the existing orpc contract via `@crm/contract`. The single permitted backend change is adding the `http://localhost:5175` dev origin to the CORS allowlist (`apps/api/src/http/composition-root.ts`); it is dev-infra and does not change the contract nor the product (§15.1, §17).
+ >
+ > **Coexistence:** `apps/web` (octane) and `apps/web-v2` (Vue 3 + Vite SPA) stay in the monorepo and are **frozen** (bugfix-only). They are removed when `web-v3` passes the cutover gate (§15).
+ >
+@@ -22,8 +22,8 @@
+ | i18n | `vue-i18n` manual | `@nuxtjs/i18n` (encapsulated igual en `shared/vendor/i18n/`) |
+ | Auto-imports | None | Nuxt auto-imports habilitados **solo** para composables/utils propios bajo `app/`; vendor wrappers siguen siendo la única puerta de entrada a librerías |
+ | Directory convention | `src/` plano | Convenciones Nuxt 4: `app/`, `shared/`, `server/` deshabilitado para API (el backend es `apps/api`) |
+-| Design | oil-ui direction (PRD-DESIGN) | **Congelada**: la dirección visual queda especificada por el catálogo de 22 pantallas (§7–§9) + tokens (§8) |
+-| Backend | nitro + h3 + orpc + kysely + PostgreSQL | **Unchanged** |
++| Design | oil-ui direction (PRD-DESIGN) | **Congelada**: la dirección visual queda especificada por el catálogo de 23 imágenes — 14 pantallas + 9 laterales (§7–§9) + tokens (§8) |
++| Backend | nitro + h3 + orpc + kysely + PostgreSQL | **Unchanged** except the one-line dev CORS origin for web-v3 (`http://localhost:5175`, §15.1) |
+ | Product rules (PRD-v2 §6), modules (§8), DB schema (§11), seeds (§12) | inherited | **Inherited unchanged** |
+ 
+ Everything not listed above is inherited from PRD-v3 (which inherits from PRD-v2).
+@@ -307,7 +307,7 @@
+ 
+ ## 11. Arquitectura y stack
+ 
+-Monolito-monorepo (turborepo). Backend clean architecture + ports & adapters; frontend atomic design + DDD layering. Backend: **unchanged** (nitro, h3, orpc, kysely, PostgreSQL, bun, effect, xstate, shiki, OpenTelemetry, Makefile; husky + commitlint).
++Monolito-monorepo (turborepo). Backend clean architecture + ports & adapters; frontend atomic design + DDD layering. Backend: **unchanged except the one-line dev CORS origin for web-v3** (§15.1) (nitro, h3, orpc, kysely, PostgreSQL, bun, effect, xstate, shiki, OpenTelemetry, Makefile; husky + commitlint).
+ 
+ ### 11.1 Stack frontend (web-v3, locked)
+ 
+@@ -434,9 +434,9 @@
+ ├── app/
+ │   ├── app.vue                      # providers: theme, i18n, toast, query client
+ │   ├── app.config.ts
++│   ├── router.options.ts            # extiende vue-router con routes.ts — Nuxt lo resuelve solo en <srcDir>/router.options.ts (= app/)
+ │   ├── router/
+ │   │   ├── routes.ts                # ★ TABLA ÚNICA DE RUTAS (§12)
+-│   │   ├── router.options.ts        # extiende vue-router con routes.ts
+ │   │   └── search-schemas.ts        # zod schemas de search params por ruta
+ │   ├── middleware/
+ │   │   ├── auth.global.ts           # redirige a /login si no hay sesión
+@@ -513,11 +513,11 @@
+ ]
+ ```
+ 
+-`app/router/router.options.ts`:
++`app/router.options.ts` (Nuxt resuelve las router options únicamente en `<srcDir>/router.options.ts`; con Nuxt 4 `srcDir` = `app/`, así que el archivo va en `app/`, no en `app/router/`):
+ 
+ ```ts
+ import type { RouterOptions } from 'vue-router'
+-import { routes } from './routes'
++import { routes } from './router/routes'
+ 
+ export default <RouterOptions>{
+   routes,
+@@ -979,7 +979,8 @@
+ ### 15.1 Durante la construcción
+ 
+ - `apps/web` y `apps/web-v2` quedan **frozen** (solo bugfixes). `web-v3` es el frontend en desarrollo activo.
+-- Puertos: `apps/web` → `WEB_PORT=5173`, `apps/web-v2` → `WEB_V2_PORT=5174`, `apps/web-v3` → **`WEB_V3_PORT=5175`**. El backend (`API_PORT=3000`) acepta CORS de los tres.
++- Puertos: `apps/web` → `WEB_PORT=5173`, `apps/web-v2` → `WEB_V2_PORT=5174`, `apps/web-v3` → **`WEB_V3_PORT=5175`**. El backend (`API_PORT=3000`) **no** acepta hoy CORS de los tres: el allowlist de desarrollo en `apps/api/src/http/composition-root.ts:131` lista solo `http://localhost:5173` y `http://localhost:5174`, y el cliente orpc manda `credentials: 'include'`, de modo que **toda llamada credentialed desde `web-v3` (`:5175`) queda bloqueada por CORS**.
++  - **Work item (único cambio de backend permitido):** agregar el origin `http://localhost:5175` (derivado de `WEB_V3_PORT`) al allowlist de CORS de desarrollo en `apps/api/src/http/composition-root.ts`. Es una línea de dev-infra; no cambia contrato, producto ni datos.
+ - Flag `WEB_V3_ENABLED=1` habilita el routing a web-v3.
+ - `@crm/contract` se construye antes que cualquier frontend; los tres consumen los mismos tipos.
+ - Commit prefix `web-v3:` en mensajes para greppability.
+@@ -989,7 +990,7 @@
+ `apps/web` y `apps/web-v2` se eliminan solo cuando **todo** lo siguiente es verdadero:
+ 
+ 1. `web-v3` implementa **todo** el Phase 1 con los acceptance criteria de PRD-v2 §8 pasando en E2E (no manual).
+-2. Paridad visual contra el catálogo: screenshot diff lado a lado de las 22 pantallas de `docs/img/CRM-HOME — Diseño UI (web-v2)/` + laterales; sin desviaciones no aprobadas (los tokens §11.3 son la referencia).
++2. Paridad visual contra el catálogo: screenshot diff lado a lado de las 23 imágenes de `docs/img/CRM-HOME — Diseño UI (web-v2)/` (14 pantallas de página + 9 drawers `lateral-derecho-*.png`), diffando cada imagen exactamente una vez; sin desviaciones no aprobadas (los tokens §11.3 son la referencia).
+ 3. Dos semanas de dogfooding interno sin P0/P1.
+ 4. Bundle budget: first-load JS ≤ 300 KB gzip en `/dashboard`.
+ 5. Lighthouse: performance ≥ 90, a11y ≥ 95, best-practices ≥ 95 en `/dashboard`, `/tasks`, `/schedules`.
+@@ -1023,13 +1024,14 @@
+ | Conversión de monedas | Fuera del MVP (PRD-v2 §13). |
+ | Redacción legal | Placeholders versionados; contenido profesional pendiente (PRD-v2 §13). |
+ | Re-aceptación de términos | Fase 2. |
++| CORS de desarrollo no incluye el origin de `web-v3` (`:5175`) | Excepción única al backend "unchanged": agregar `http://localhost:5175` al allowlist de CORS de desarrollo en `apps/api/src/http/composition-root.ts` (§15.1). Es dev-infra, sin cambio de contrato; sin esa línea `web-v3` no puede llamar al backend con `credentials: 'include'` en desarrollo. |
+ 
+ ## 18. Acceptance criteria for "PRD-v4 done"
+ 
+ - [ ] `apps/web-v3` corre junto a `apps/web` y `apps/web-v2` en `develop` (puertos 5173/5174/5175) y pasa el E2E suite en CI.
+ - [ ] Todo PRD-v2 §8 acceptance criterion pasa en `web-v3` (E2E, no manual).
+ - [ ] Las rutas existen **solo** en `app/router/routes.ts` (`pages: false`, sin carpeta `pages/`); el test §12.6 lo verifica.
+-- [ ] Paridad visual con las 22 pantallas del catálogo (screenshot diff en CI).
++- [ ] Paridad visual con las 23 imágenes del catálogo — 14 pantallas de página + 9 drawers `lateral-derecho-*.png`, cada una diffada exactamente una vez (screenshot diff en CI).
+ - [ ] `app/shared/vendor/` es el único lugar con imports de librerías UI de terceros (lint-enforced).
+ - [ ] `domain/` tiene cero imports de Nuxt/Vue/orpc/TanStack (lint-enforced).
+ - [ ] `app/assets/css/tokens.css` es el único archivo con valores crudos de color (lint-enforced).
