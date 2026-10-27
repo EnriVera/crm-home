@@ -11,7 +11,7 @@ export LAYERFS_CHECKOUT="${LAYERFS_CHECKOUT:-$HOME/tools/layerfs}"
 export LAYERFS_PROJECT="${LAYERFS_PROJECT:-crm-home}"
 CLI="$LAYERFS_CHECKOUT/api/cli/src/layerfs.js"
 case "${1:-}" in
-  init|fork|run|ship|status|smoke) exec node "$DIR/lf.mjs" "$@" ;;
+  init|fork|run|ship|land|status|smoke) exec node "$DIR/lf.mjs" "$@" ;;
   *)
     if [ "$(id -u)" != "0" ] && [ "${LF_NO_SUDO:-}" != "1" ]; then
       # reading 0 bytes still opens the file: EACCES → root-owned Store → sudo

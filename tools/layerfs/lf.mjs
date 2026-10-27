@@ -10,13 +10,29 @@
 //                                        (publish = release head becomes main's next
 //                                        Layer IN THE STORE; the repo folder is never
 //                                        written by LayerFS after init)
+//   lf land <branch> [message]           the publish that lands: merge → diff →
+//                                        write text delta to LAYERFS_SOURCE (gitignore-
+//                                        aware, clobber-checked) → publish → main
+//                                        advances. Use instead of ship when the change
+//                                        must reach the repo folder.
 //   lf status                            branches + sandboxes
 //
 // Root model: the installed Store is root:root 0700/0600 (the sandbox daemons open it as
 // root). When the Store is root-owned and we are not root, we re-exec ourselves under
 // `sudo -E` (password prompted by sudo). Set LF_NO_SUDO=1 to disable the re-exec.
 import { spawnSync } from "node:child_process";
-import { accessSync, constants, existsSync, statSync } from "node:fs";
+import {
+  accessSync,
+  chmodSync,
+  chownSync,
+  constants,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  rmSync,
+  statSync,
+  writeFileSync,
+} from "node:fs";
 import { pathToFileURL, fileURLToPath } from "node:url";
 import path from "node:path";
 
@@ -146,6 +162,153 @@ async function main() {
       } finally {
         await layerfs.sandbox.close(sandbox);
       }
+      return;
+    }
+    case "land": {
+      const [branch, message] = args;
+      if (!branch) fail("usage: lf land <branch> [message]");
+      if (!SOURCE) fail("LAYERFS_SOURCE is not set");
+      // Unique release per run: disk writes are idempotent, so a failed land
+      // is retried with a fresh merge (there is no branch-delete API).
+      const release = `${branch}-release-${Date.now().toString(36)}`;
+      const merged = await layerfs.branch.merge(
+        "main",
+        branch,
+        release,
+        message ?? `land ${branch}`,
+      );
+      out({ merged: { kind: merged?.kind, release } });
+
+      // Full delta main→release, paged by cursor (pageSize max 1000).
+      const delta = [];
+      let cursor = null;
+      for (;;) {
+        const page = await layerfs.branch.diff_branches(
+          "main",
+          release,
+          1000,
+          0,
+          {
+            hunks: false,
+            ...(cursor ? { cursor } : {}),
+          },
+        );
+        delta.push(...(page.items ?? []));
+        if (!page.hasMore) break;
+        cursor = page.nextCursor;
+      }
+
+      const landed = [],
+        removed = [],
+        skipped = [],
+        binaries = [];
+      const uid = Number(process.env.SUDO_UID ?? process.geteuid());
+      const gid = Number(process.env.SUDO_GID ?? process.getegid());
+      const gitignored = (rel) =>
+        spawnSync("git", ["-C", SOURCE, "check-ignore", "-q", "--", rel], {
+          stdio: "ignore",
+        }).status === 0;
+      const writeDisk = (abs, text, dir = false) => {
+        if (dir) {
+          mkdirSync(abs, { recursive: true, mode: 0o755 });
+        } else {
+          mkdirSync(path.dirname(abs), { recursive: true, mode: 0o755 });
+          writeFileSync(abs, text, "utf8");
+          chmodSync(abs, 0o644);
+        }
+        try {
+          chownSync(abs, uid, gid);
+        } catch {
+          /* ownership best-effort (e.g. NTFS no-op) */
+        }
+      };
+      // Clobber protection: before overwriting, the disk file must match the
+      // reference side — main's old content for Modified/Removed, the release
+      // content for Added (main does not have it yet). Local edits are skipped.
+      const diskMatches = async (item, ref) => {
+        const abs = path.join(SOURCE, item.path.replace(/^\//, ""));
+        if (!existsSync(abs)) return item.kind !== "Modified";
+        try {
+          const refText = await layerfs.fs.read(ref, item.path);
+          return readFileSync(abs, "utf8") === (refText?.text ?? "");
+        } catch (e) {
+          if (e?.code === "Binary") return "binary";
+          return false; // missing on the ref side or unreadable: don't clobber
+        }
+      };
+
+      for (const item of delta) {
+        const rel = item.path.replace(/^\//, "");
+        const abs = path.join(SOURCE, rel);
+        if (gitignored(rel)) {
+          skipped.push(`${rel} (gitignored)`);
+          continue;
+        }
+        if (item.type === "dir" || item.type === "directory") {
+          if (item.kind === "Removed") {
+            rmSync(abs, { recursive: true, force: true });
+            removed.push(`${rel}/`);
+          } else {
+            writeDisk(abs, null, true);
+            landed.push(`${rel}/`);
+          }
+          continue;
+        }
+        if (item.type !== "file") {
+          skipped.push(`${rel} (type ${item.type}: not landable)`);
+          continue;
+        }
+        if (item.kind === "Modified" && item.content === false) {
+          skipped.push(`${rel} (metadata-only change)`);
+          continue;
+        }
+        const ok = await diskMatches(
+          item,
+          item.kind === "Added" ? release : "main",
+        );
+        if (ok === "binary") {
+          binaries.push(rel);
+          continue;
+        }
+        if (!ok) {
+          skipped.push(
+            `${rel} (local edits or unexpected disk state — not overwritten)`,
+          );
+          continue;
+        }
+        if (item.kind === "Removed") {
+          rmSync(abs, { force: true });
+          removed.push(rel);
+        } else {
+          try {
+            const nextText = await layerfs.fs.read(release, item.path);
+            writeDisk(abs, nextText?.text ?? "");
+            landed.push(rel);
+          } catch (e) {
+            if (e?.code === "Binary") binaries.push(rel);
+            else throw e;
+          }
+        }
+      }
+
+      const published = await layerfs.branch.publish(release);
+      out({
+        published,
+        landed: landed.length,
+        removed: removed.length,
+        skipped,
+        binaries,
+      });
+      if (binaries.length > 0) {
+        console.error(
+          `lf: WARNING ${binaries.length} binary file(s) changed in the Store but ` +
+            "cannot be read back as text (fs.read is text-only); land them manually: " +
+            binaries.join(", "),
+        );
+      }
+      console.log(
+        `lf: next: cd ${JSON.stringify(SOURCE)} && git status && git diff`,
+      );
       return;
     }
     case "ship": {
