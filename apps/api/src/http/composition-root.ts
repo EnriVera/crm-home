@@ -100,6 +100,7 @@ export interface AppEnv extends TelemetryEnv {
   SMTP_USER?: string;
   SMTP_PASS?: string;
   SMTP_SECURE?: string;
+  WEB_ORIGINS?: string;
 }
 
 export interface CompositionRootOverrides {
@@ -121,14 +122,19 @@ export function createCompositionRoot(
   // Dev-mode CORS: the orpc client sends credentials: 'include' (cookies
   // for the session), so Access-Control-Allow-Origin must be the explicit
   // origin (not '*') and Access-Control-Allow-Credentials must be true.
-  // Both frontends are allowed:
-  //   - apps/web      (octane) on http://localhost:5173
-  //   - apps/web-v2   (Vue)    on http://localhost:5174
+  // All three dev frontends are allowed (override with WEB_ORIGINS,
+  // comma-separated, e.g. for 127.0.0.1 or CI):
+  //   - apps/web    (octane) on http://localhost:5173
+  //   - apps/web-v2 (Vue)    on http://localhost:5174
+  //   - apps/web-v3 (Nuxt)   on http://localhost:5175
   // The orpc handler is mounted at /rpc/** and uses POST for procedures,
   // so the preflight (OPTIONS) must accept POST + the standard headers.
   // For production, replace the explicit origins with a vetted allowlist.
   const devCors = {
-    origin: ["http://localhost:5173", "http://localhost:5174"],
+    origin: (env.WEB_ORIGINS ?? "http://localhost:5173,http://localhost:5174,http://localhost:5175")
+      .split(",")
+      .map((origin) => origin.trim())
+      .filter(Boolean),
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],

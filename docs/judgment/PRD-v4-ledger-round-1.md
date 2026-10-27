@@ -73,3 +73,20 @@ scoped_rejudgment: approved · fix rounds used: 1 of 2 · terminal_state: approv
 - SQL §13 diffed against PRD-v2 §11: byte-identical (schema fidelity exact; defects are in narrative/spec sections).
 - Catalogue measured: 23 PNGs; every image path referenced in PRD-v4 resolves.
 - Repo facts: apps/ = api, web, web-v2; `apps/api/src/http/composition-root.ts:125-131` CORS allowlist 5173/5174; `apps/web-v2/vite.config.ts` WEB_V2_PORT ?? 5174; no nuxt installed locally (router.options resolution verified via framework contract, not runtime).
+
+## Round-2 decisions (user-confirmed 2026-10-27, post-approval scope)
+
+Resolutions applied to docs/PRD-v4.md (this commit); no re-judgment needed — user arbitration, not judge findings.
+
+| ID | Resolution |
+| --- | --- |
+| S-01 | §8.3 gains a conditional "Timer activo" card (renders only while a timer runs — catalogue absence explained; satisfies PRD-v2 Phase-1 "timer activo" mandate). |
+| S-02 (variant A) | `task.task_due_date timestamptz NULL` + partial index added to §13; §17 updated: drawer still hides it in v1 (§17 decision intact), seeds populate it; tasks without due date render nothing. Read models (§8.3/§8.4) and visual parity now have backing data. |
+| S-03 | `income.inco_status` / `expenses.expe_status` varchar(10) NOT NULL DEFAULT 'paid' CHECK ('pending','paid') added to §13; §17 records the decision; §14 seeds mix statuses. Default 'paid' preserves current behavior. |
+| S-04 | §9.2 drawer rows for ingreso/egreso now include Tipo (obligatory select, `inco_type_id`/`expe_type_id` NOT NULL); Categoría marked optional on egreso. §17 decision now matches the normative table. |
+| FI-1 | §15.1 head clause rewritten: "todavía no acepta CORS desde los tres frontends … queda bloqueada por CORS hoy" (no self-contradiction). |
+| FI-2 | Work item changed: dev CORS reads `WEB_ORIGINS` (comma-separated) with default covering 5173/5174/5175; env override covers 127.0.0.1/CI without code changes. |
+| FI-3 | `apps/api/src/http/composition-root.ts` comment block updated (three frontends + WEB_ORIGINS). |
+| FI-4 | §18 gains the regression criterion; `router.test.ts` adds two guards (default allowlist accepts 5173/5174/5175; WEB_ORIGINS override replaces default). Verified: 237 pass / 0 fail, typecheck clean. |
+
+Evidence: `apps/api/src/http/composition-root.ts` (WEB_ORIGINS + AppEnv), `apps/api/src/http/router.test.ts` (2 new tests), `docs/PRD-v4.md` §8.3/§9.2/§13/§14/§15.1/§17/§18.

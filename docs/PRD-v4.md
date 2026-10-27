@@ -173,6 +173,7 @@ Referencia: `dashboard.png`. Funcional: PRD-v2 §8.2.
 
 - Header: "Dashboard" + "Resumen de tu actividad al <fecha>" + botón primario "+ Nueva tarea".
 - Fila de 4 stat cards (igual ancho, `radius-lg`, superficie blanca, hairline): label en mayúsculas gris, valor grande (dinero con símbolo, contadores en nútero), delta secundaria (positiva en verde `primary-700`, negativa en gris/rojo suave). Ejemplos del catálogo: INGRESOS DEL MES `$ 1.840.000` `+12% vs. mayo`; TAREAS ACTIVAS `12` `3 vencen esta semana`.
+- Card "Timer activo" (**condicional**: se renderiza solo cuando hay un timer corriendo — por eso el catálogo no la muestra): barra pill de ancho completo con borde verde 2px (mismo lenguaje que §8.5), tarea ligada (título + chips de tipo/categoría) o texto libre, timer grande en `tabular-nums`, botón circular verde con `Square` (stop). Sin timer activo no se renderiza (ausencia de dato, no placeholder).
 - Card "Próximas tareas" (2/3 del ancho): header con link "Ver todas"; filas con punto de color del tipo, título, "Cliente · vence <fecha>", chip pill de categoría con su color de dato alineado a la derecha.
 - Card "Actividad reciente" (1/3): feed con ícono en círculo tintado + texto de la acción + timestamp gris.
 - Estado vacío: CTAs "Iniciá tu primer timer" / "Creá tu primera tarea", ícono del módulo en círculo `primary-50`.
@@ -249,8 +250,8 @@ Referencias: las 9 imágenes `lateral-derecho-*.png`.
 | --- | --- | --- |
 | Nueva tarea | `lateral-derecho-tareas.png` | Título · Descripción (tiptap, toolbar mínima B/I/lista/link) · Cliente (select con avatar, opcional) · Tipo (obligatorio) + Categoría (deshabilitada hasta elegir tipo, PRD-v2 §8.3) en 2 columnas · Estado inicial + Fecha límite (date picker) en 2 columnas · Adjuntos (dropzone dashed, Fase 2) |
 | Nuevo cliente | `lateral-derecho-clientes.png` | Avatar (círculo con ícono user + badge `+` verde para subir) · Nombre/Empresa (obligatorio) · Email · Teléfono (un campo, varchar: soporta `+54 9 11 0000-1111`) · País (select) · Rubro · Notas (textarea) |
-| Nuevo ingreso | `lateral-derecho-ingreso.png` | Hero card de Monto (fondo tinte verde, número grande, código de moneda a la derecha) · Concepto · Cuenta destino (select con punto de color) · Cliente (opcional, con avatar) · Fecha + Estado de cobro (2 col; pill Cobrado/Pendiente con punto) · Nota |
-| Nuevo egreso | `lateral-derecho-egreso.png` | Hero card de Monto (tinte rojo suave, label "MONTO" en rojo) · Concepto · Categoría (select con punto de color) · Cuenta origen · Fecha + Estado de pago (2 col) · Nota |
+| Nuevo ingreso | `lateral-derecho-ingreso.png` | Hero card de Monto (fondo tinte verde, número grande, código de moneda a la derecha) · Concepto · Tipo (select con punto de color, obligatorio — `inco_type_id` NOT NULL) · Cuenta destino (select con punto de color) · Cliente (opcional, con avatar) · Fecha + Estado de cobro (2 col; pill Cobrado/Pendiente con punto) · Nota |
+| Nuevo egreso | `lateral-derecho-egreso.png` | Hero card de Monto (tinte rojo suave, label "MONTO" en rojo) · Concepto · Tipo (select con punto de color, obligatorio — `expe_type_id` NOT NULL) · Categoría (select con punto de color, opcional) · Cuenta origen · Fecha + Estado de pago (2 col) · Nota |
 | Nueva transferencia | `lateral-derecho-trasferencia.png` | Hero card de Monto a transferir · Card Origen (cuenta con ícono + "Disponible: $ X") + flecha swap + Card Destino (cuenta + "Saldo actual: $ X") · banner ámbar si las monedas coinciden ("Sin conversión aplicada") · Fecha · Nota (opcional) · strip de previsualización ("Origen quedará en $ X · Destino en $ Y") |
 | Nueva cuenta | `lateral-derecho-cuenta.png` | Nombre de la cuenta · Tipo de cuenta (select con ícono: Banco/Billetera/Efectivo) · Moneda + Saldo inicial (2 col) · Color (8 swatches; el seleccionado con ring verde) |
 | Nuevo tipo | `lateral-derecho-tipo.png` | Nombre del tipo · Color (8 swatches) · Descripción (opcional) |
@@ -541,7 +542,9 @@ Drawers, tabs y filtros viven en la URL. Cada ruta declara su schema zod en `app
 
 Un test de integración (vitest) importa `routes` y la tabla §7.2 y verifica: misma cantidad de rutas, mismos paths, toda ruta autenticada tiene `meta.auth`, toda pública tiene `meta.guest` + layout adecuado. Si alguien crea `pages/` en el futuro, el test de estructura falla (`pages/` debe estar ausente).
 
-## 13. Estructura de BD (schema corregido — inherited unchanged from PRD-v2 §11)
+## 13. Estructura de BD (schema corregido — inherited from PRD-v2 §11 + deltas v4)
+
+Deltas v4 sobre PRD-v2 §11 (decisiones §17): `task.task_due_date` (nullable, para los read models de vencimientos); `income.inco_status` / `expenses.expe_status` (`pending`/`paid`, default `paid`). El resto es byte-identical a PRD-v2 §11.
 
 Convenciones (obligatorias): tablas en inglés; prefijo de 4 letras por tabla (2+2 en tablas de dos palabras); referencias `<prefijo_origen>_<prefijo_referencia>_id`; toda tabla lleva `created_at`/`updated_at`/`deleted_at` salvo excepciones documentadas (`logs` append-only: solo `created_at`; `sino`, `apps`, `currency`: lookups globales seedeados, sin `deleted_at`); UUIDv7; toda tabla de negocio lleva `<prefix>_user_id NOT NULL` + índice; FKs siempre del hijo al padre contra PK o UNIQUE.
 
@@ -726,6 +729,7 @@ CREATE TABLE "task" (
     "task_cate_id" uuid,
     "task_tast_id" uuid NOT NULL,
     "task_kanban_order" double precision NOT NULL DEFAULT 0,
+    "task_due_date" timestamptz,
     "task_created_at" timestamptz NOT NULL,
     "task_updated_at" timestamptz NOT NULL,
     "task_deleted_at" timestamptz,
@@ -733,6 +737,7 @@ CREATE TABLE "task" (
 );
 CREATE INDEX "idx_task_user" ON "task" ("task_user_id") WHERE "task_deleted_at" IS NULL;
 CREATE INDEX "idx_task_kanban" ON "task" ("task_user_id", "task_tast_id", "task_kanban_order");
+CREATE INDEX "idx_task_due" ON "task" ("task_user_id", "task_due_date") WHERE "task_deleted_at" IS NULL AND "task_due_date" IS NOT NULL;
 
 -- ============ Schedule ============
 
@@ -797,11 +802,13 @@ CREATE TABLE "income" (
     "inco_cate_id" uuid,
     "inco_curr_id" uuid NOT NULL,
     "inco_amount" numeric NOT NULL,
+    "inco_status" varchar(10) NOT NULL DEFAULT 'paid',
     "inco_created_at" timestamptz NOT NULL,
     "inco_updated_at" timestamptz NOT NULL,
     "inco_deleted_at" timestamptz,
     PRIMARY KEY ("inco_id"),
-    CONSTRAINT "ck_income_amount" CHECK ("inco_amount" > 0)
+    CONSTRAINT "ck_income_amount" CHECK ("inco_amount" > 0),
+    CONSTRAINT "ck_income_status" CHECK ("inco_status" IN ('pending', 'paid'))
 );
 CREATE INDEX "idx_income_user" ON "income" ("inco_user_id") WHERE "inco_deleted_at" IS NULL;
 
@@ -816,11 +823,13 @@ CREATE TABLE "expenses" (
     "expe_cate_id" uuid,
     "expe_curr_id" uuid NOT NULL,
     "expe_amount" numeric NOT NULL,
+    "expe_status" varchar(10) NOT NULL DEFAULT 'paid',
     "expe_created_at" timestamptz NOT NULL,
     "expe_updated_at" timestamptz NOT NULL,
     "expe_deleted_at" timestamptz,
     PRIMARY KEY ("expe_id"),
-    CONSTRAINT "ck_expenses_amount" CHECK ("expe_amount" > 0)
+    CONSTRAINT "ck_expenses_amount" CHECK ("expe_amount" > 0),
+    CONSTRAINT "ck_expenses_status" CHECK ("expe_status" IN ('pending', 'paid'))
 );
 CREATE INDEX "idx_expenses_user" ON "expenses" ("expe_user_id") WHERE "expe_deleted_at" IS NULL;
 
@@ -973,14 +982,15 @@ ALTER TABLE "logs" ADD CONSTRAINT "fk_logs_user" FOREIGN KEY ("logs_user_id") RE
 
 Al registrarse un usuario (primer OTP validado): estados `Pendiente` (1), `En progreso` (2), `Completado` (3); una cuenta `Efectivo` en su moneda; tipos y categorías base por módulo.
 Seeds globales (migración): `sino` (0/1), `apps` (tasks, schedule, finance), `currency` (USD, EUR, ARS, …).
+Delta v4: las tareas seed incluyen `task_due_date` en algunos casos (sostiene los read models de §8.3/§8.4); los movimientos financieros seed mezclan `inco_status`/`expe_status` (`paid`/`pending`) para las tablas y cards de §8.7.
 
 ## 15. Coexistencia y cutover
 
 ### 15.1 Durante la construcción
 
 - `apps/web` y `apps/web-v2` quedan **frozen** (solo bugfixes). `web-v3` es el frontend en desarrollo activo.
-- Puertos: `apps/web` → `WEB_PORT=5173`, `apps/web-v2` → `WEB_V2_PORT=5174`, `apps/web-v3` → **`WEB_V3_PORT=5175`**. El backend (`API_PORT=3000`) **no** acepta hoy CORS de los tres: el allowlist de desarrollo en `apps/api/src/http/composition-root.ts:131` lista solo `http://localhost:5173` y `http://localhost:5174`, y el cliente orpc manda `credentials: 'include'`, de modo que **toda llamada credentialed desde `web-v3` (`:5175`) queda bloqueada por CORS**.
-  - **Work item (único cambio de backend permitido):** agregar el origin `http://localhost:5175` (derivado de `WEB_V3_PORT`) al allowlist de CORS de desarrollo en `apps/api/src/http/composition-root.ts`. Es una línea de dev-infra; no cambia contrato, producto ni datos.
+- Puertos: `apps/web` → `WEB_PORT=5173`, `apps/web-v2` → `WEB_V2_PORT=5174`, `apps/web-v3` → **`WEB_V3_PORT=5175`**. El backend (`API_PORT=3000`) **todavía no acepta CORS desde los tres frontends**: el allowlist de desarrollo en `apps/api/src/http/composition-root.ts:131` lista solo `http://localhost:5173` y `http://localhost:5174`, y el cliente orpc manda `credentials: 'include'`, de modo que **toda llamada credentialed desde `web-v3` (`:5175`) queda bloqueada por CORS hoy**.
+  - **Work item (único cambio de backend permitido):** hacer que el dev CORS lea `WEB_ORIGINS` (comma-separated) con default `http://localhost:5173,http://localhost:5174,http://localhost:5175` — los tres puertos de desarrollo (`WEB_PORT`/`WEB_V2_PORT`/`WEB_V3_PORT`). Con `WEB_ORIGINS` seteado, hosts como `127.0.0.1` o CI pasan su propio origin sin tocar código. Es dev-infra; no cambia contrato, producto ni datos.
 - Flag `WEB_V3_ENABLED=1` habilita el routing a web-v3.
 - `@crm/contract` se construye antes que cualquier frontend; los tres consumen los mismos tipos.
 - Commit prefix `web-v3:` en mensajes para greppability.
@@ -1016,7 +1026,7 @@ Coverage: 80% líneas en `domain/` + `application/`; 70% en `ui/organisms/`.
 | --- | --- |
 | SSR/hybrid (D-v4-1) | SPA elegido; re-evaluar en Fase 3 si hay requisito SEO/first-paint. `routeRules` es la ruta de migración. |
 | Tabs de Config: el catálogo muestra 5 (Perfil, Estados, Tipos, Categorías, Cuentas); PRD-v2 §8.7 define 8 (+ apps, monedas, adjuntos) | Decisión: implementar los 8 del PRD-v2; los 3 extra usan el mismo patrón pill-tab. El catálogo se considera parcial. |
-| Mock "Nueva tarea" incluye "Estado inicial" y "Fecha límite" | `task` no tiene fecha límite ni estado seleccionable en create (PRD-v2 §8.3: siempre nace en `Pendiente`). Decisión: el drawer **no** muestra esos dos campos en v1; se agregan solo si una Fase posterior agrega las columnas a la BD. |
+| Mock "Nueva tarea" incluye "Estado inicial" y "Fecha límite" | `task_due_date` (nullable) se agrega al schema (§13) en v1 para sostener los read models (§8.3 "vence", §8.4 kanban) y la paridad visual con el catálogo; el drawer de creación **no** lo expone en v1 (PRD-v2 §8.3: siempre nace `Pendiente`) — lo cargan seeds/datos; las tareas sin fecha no muestran nada. El "Estado inicial" sigue fuera: siempre `Pendiente`. |
 | Mock de cliente incluye País/Rubro/Notas; BD solo soporta name/email/phone/atta/acco | Decisión v1: campos name/email/phone (+avatar como `clie_atta_id` Fase 2). País/Rubro/Notas quedan fuera hasta migración de schema. |
 | Mock de ingreso/egreso omite Tipo (obligatorio en BD, PRD-v2 §8.6) | Decisión: el drawer incluye Tipo (select) aunque el mock no lo dibuje; es requisito de BD. |
 | Mock de transferencia dibuja solo cuentas propias | Destino externo (`tran_other`) se ofrece como opción "Externo…" en el select Destino (PRD-v2 §8.6). |
@@ -1024,12 +1034,14 @@ Coverage: 80% líneas en `domain/` + `application/`; 70% en `ui/organisms/`.
 | Conversión de monedas | Fuera del MVP (PRD-v2 §13). |
 | Redacción legal | Placeholders versionados; contenido profesional pendiente (PRD-v2 §13). |
 | Re-aceptación de términos | Fase 2. |
-| CORS de desarrollo no incluye el origin de `web-v3` (`:5175`) | Excepción única al backend "unchanged": agregar `http://localhost:5175` al allowlist de CORS de desarrollo en `apps/api/src/http/composition-root.ts` (§15.1). Es dev-infra, sin cambio de contrato; sin esa línea `web-v3` no puede llamar al backend con `credentials: 'include'` en desarrollo. |
+| ESTADO (Cobrado/Pendiente, Pagado/Pendiente) en ingresos/egresos no tenía columna | Decisión: columnas `inco_status`/`expe_status` (varchar(10), NOT NULL DEFAULT `'paid'`, CHECK `pending`/`paid`) agregadas al schema (§13); UI según §8.7/§9.2. El default `'paid'` = comportamiento actual si no se toca; los seeds mezclan estados. |
+| CORS de desarrollo no incluye el origin de `web-v3` (`:5175`) | Excepción única al backend "unchanged": dev CORS lee `WEB_ORIGINS` (default `http://localhost:5173,http://localhost:5174,http://localhost:5175`) en `apps/api/src/http/composition-root.ts` (§15.1). Es dev-infra, sin cambio de contrato; sin eso `web-v3` no puede llamar al backend con `credentials: 'include'` en desarrollo. |
 
 ## 18. Acceptance criteria for "PRD-v4 done"
 
 - [ ] `apps/web-v3` corre junto a `apps/web` y `apps/web-v2` en `develop` (puertos 5173/5174/5175) y pasa el E2E suite en CI.
 - [ ] Todo PRD-v2 §8 acceptance criterion pasa en `web-v3` (E2E, no manual).
+- [ ] El dev CORS del backend acepta por default los tres origins de desarrollo (5173/5174/5175) y el override por `WEB_ORIGINS` está cubierto por test (regresión del allowlist).
 - [ ] Las rutas existen **solo** en `app/router/routes.ts` (`pages: false`, sin carpeta `pages/`); el test §12.6 lo verifica.
 - [ ] Paridad visual con las 23 imágenes del catálogo — 14 pantallas de página + 9 drawers `lateral-derecho-*.png`, cada una diffada exactamente una vez (screenshot diff en CI).
 - [ ] `app/shared/vendor/` es el único lugar con imports de librerías UI de terceros (lint-enforced).
