@@ -131,7 +131,10 @@ export function createCompositionRoot(
   // so the preflight (OPTIONS) must accept POST + the standard headers.
   // For production, replace the explicit origins with a vetted allowlist.
   const devCors = {
-    origin: (env.WEB_ORIGINS ?? "http://localhost:5173,http://localhost:5174,http://localhost:5175")
+    origin: (
+      env.WEB_ORIGINS ??
+      "http://localhost:5173,http://localhost:5174,http://localhost:5175"
+    )
       .split(",")
       .map((origin) => origin.trim())
       .filter(Boolean),

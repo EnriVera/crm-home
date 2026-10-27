@@ -41,9 +41,7 @@ describe("dev CORS allowlist (PRD-v4 §15.1)", () => {
   test("por default acepta los tres frontends (5173/5174/5175)", async () => {
     const handler = createAppFetch({});
     for (const port of [5173, 5174, 5175]) {
-      const response = await handler(
-        preflight(`http://localhost:${port}`),
-      );
+      const response = await handler(preflight(`http://localhost:${port}`));
       expect(response.headers.get("access-control-allow-origin")).toBe(
         `http://localhost:${port}`,
       );
