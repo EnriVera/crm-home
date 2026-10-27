@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "pages": {
+    "/openwiki/api/orpc-dispatch-and-error-mapping.md": {
+      "pageVersion": "sha256:1eb483cd136905473e40748bcae189c09e654f73c71b1404dfe634a4bc6eaa50",
+      "completedBy": "pi",
+      "completedRunId": "39beefde-34a3-473e-b4be-ba83e0db4613",
+      "gitHead": "138f8d6f1a972ee3057f57b69155b09219434db2",
+      "sourceFingerprint": "sha256:8ef76beeb79a97d57fd3ac073a9f95dad43ac657210d46393d0687c84914a153"
+    },
+    "/openwiki/api/otp-auth-and-session-lifecycle.md": {
+      "pageVersion": "sha256:4c7aeb9ca50f6727380465877c8e5d52f25b034a0931bb1f5102ba3646622522",
+      "completedBy": "pi",
+      "completedRunId": "39beefde-34a3-473e-b4be-ba83e0db4613",
+      "gitHead": "138f8d6f1a972ee3057f57b69155b09219434db2",
+      "sourceFingerprint": "sha256:8ef76beeb79a97d57fd3ac073a9f95dad43ac657210d46393d0687c84914a153"
+    },
+    "/openwiki/architecture/api-layering-and-ports.md": {
+      "pageVersion": "sha256:5fb366460bc7df28ebfd4c814d1b2512c81cdde239e76b43feed745cb26195f4",
+      "completedBy": "pi",
+      "completedRunId": "39beefde-34a3-473e-b4be-ba83e0db4613",
+      "gitHead": "138f8d6f1a972ee3057f57b69155b09219434db2",
+      "sourceFingerprint": "sha256:8ef76beeb79a97d57fd3ac073a9f95dad43ac657210d46393d0687c84914a153"
+    },
+    "/openwiki/architecture/composition-root-and-http-surface.md": {
+      "pageVersion": "sha256:8207fc80df89f9fdf0756ea28e8a2ef048b537f17d91bd03c60c490370166b0f",
+      "completedBy": "pi",
+      "completedRunId": "39beefde-34a3-473e-b4be-ba83e0db4613",
+      "gitHead": "138f8d6f1a972ee3057f57b69155b09219434db2",
+      "sourceFingerprint": "sha256:8ef76beeb79a97d57fd3ac073a9f95dad43ac657210d46393d0687c84914a153"
+    },
+    "/openwiki/architecture/monorepo-and-toolchain.md": {
+      "pageVersion": "sha256:7fd5661ad7b38b7a57f67717e48d922f84cd1b32326d6ee46fbaf19a61d69914",
+      "completedBy": "pi",
+      "completedRunId": "39beefde-34a3-473e-b4be-ba83e0db4613",
+      "gitHead": "138f8d6f1a972ee3057f57b69155b09219434db2",
+      "sourceFingerprint": "sha256:8ef76beeb79a97d57fd3ac073a9f95dad43ac657210d46393d0687c84914a153"
+    },
+    "/openwiki/contract/shared-schemas.md": {
+      "pageVersion": "sha256:5fcf27b42ea4854fc924838e4fd0c959fc10e446f7fa39fc04f5519426307cd4",
+      "completedBy": "pi",
+      "completedRunId": "39beefde-34a3-473e-b4be-ba83e0db4613",
+      "gitHead": "138f8d6f1a972ee3057f57b69155b09219434db2",
+      "sourceFingerprint": "sha256:8ef76beeb79a97d57fd3ac073a9f95dad43ac657210d46393d0687c84914a153"
+    },
+    "/openwiki/frontend/web-v2-architecture.md": {
+      "pageVersion": "sha256:f60f5ded7ffb79957532c4a5f227a66d2937935419b750b961b3b50c9458aed0",
+      "completedBy": "pi",
+      "completedRunId": "39beefde-34a3-473e-b4be-ba83e0db4613",
+      "gitHead": "138f8d6f1a972ee3057f57b69155b09219434db2",
+      "sourceFingerprint": "sha256:8ef76beeb79a97d57fd3ac073a9f95dad43ac657210d46393d0687c84914a153"
+    },
+    "/openwiki/operations/local-development-and-observability.md": {
+      "pageVersion": "sha256:09c85005dd37074367f23720ea53f1701102d379b4beeea8a0ae71fedfe5501c",
+      "completedBy": "pi",
+      "completedRunId": "39beefde-34a3-473e-b4be-ba83e0db4613",
+      "gitHead": "138f8d6f1a972ee3057f57b69155b09219434db2",
+      "sourceFingerprint": "sha256:8ef76beeb79a97d57fd3ac073a9f95dad43ac657210d46393d0687c84914a153"
+    },
+    "/openwiki/persistence/postgres-schema-and-migrations.md": {
+      "pageVersion": "sha256:07aff4e802ac28627c1e84ce1f0584046c22156d34b4b73111af6474ff928c54",
+      "completedBy": "pi",
+      "completedRunId": "39beefde-34a3-473e-b4be-ba83e0db4613",
+      "gitHead": "138f8d6f1a972ee3057f57b69155b09219434db2",
+      "sourceFingerprint": "sha256:8ef76beeb79a97d57fd3ac073a9f95dad43ac657210d46393d0687c84914a153"
+    },
+    "/openwiki/quickstart.md": {
+      "pageVersion": "sha256:c941fa2164d5c0471ef8f100aa659b99a7457f67781d048feaa57bc4bdfdb8ef",
+      "completedBy": "pi",
+      "completedRunId": "39beefde-34a3-473e-b4be-ba83e0db4613",
+      "gitHead": "138f8d6f1a972ee3057f57b69155b09219434db2",
+      "sourceFingerprint": "sha256:8ef76beeb79a97d57fd3ac073a9f95dad43ac657210d46393d0687c84914a153"
+    },
+    "/openwiki/testing/test-suites-and-architecture-gates.md": {
+      "pageVersion": "sha256:6703ecc5ed133d58771fa7bc0150ca5defb86ea767d1a22d9ec7609f3f7cbe96",
+      "completedBy": "pi",
+      "completedRunId": "39beefde-34a3-473e-b4be-ba83e0db4613",
+      "gitHead": "138f8d6f1a972ee3057f57b69155b09219434db2",
+      "sourceFingerprint": "sha256:8ef76beeb79a97d57fd3ac073a9f95dad43ac657210d46393d0687c84914a153"
+    },
+    "/openwiki/workflows/email-outbox-and-delivery.md": {
+      "pageVersion": "sha256:a8a4d516c5bc49ec5aed82ba0dd0a7ae94c5eaa943024338c087ed190f35e486",
+      "completedBy": "pi",
+      "completedRunId": "39beefde-34a3-473e-b4be-ba83e0db4613",
+      "gitHead": "138f8d6f1a972ee3057f57b69155b09219434db2",
+      "sourceFingerprint": "sha256:8ef76beeb79a97d57fd3ac073a9f95dad43ac657210d46393d0687c84914a153"
+    },
+    "/openwiki/workflows/task-kanban-lifecycle.md": {
+      "pageVersion": "sha256:8551b959deea4d872af1fa1081f0885b6788f6a98046b3934a73deb502fc6af4",
+      "completedBy": "pi",
+      "completedRunId": "39beefde-34a3-473e-b4be-ba83e0db4613",
+      "gitHead": "138f8d6f1a972ee3057f57b69155b09219434db2",
+      "sourceFingerprint": "sha256:8ef76beeb79a97d57fd3ac073a9f95dad43ac657210d46393d0687c84914a153"
+    }
+  }
+}

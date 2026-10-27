@@ -9,26 +9,23 @@
  */
 import { describe, expect, it, beforeEach } from "vitest";
 import type {
-  Task,
-  TaskInput,
-  TaskPatch,
-  TaskPage,
-  TaskState,
-  ListTasksQuery,
+ Task,
+ TaskInput,
+ TaskPatch,
+ TaskPage,
+ TaskState,
+ ListTasksQuery,
 } from "@crm/contract/task";
-import type {
-  TaskRepository,
-  TaskStateRepository,
-} from "@/domain/task/ports";
+import type { TaskRepository, TaskStateRepository } from "@/domain/task/ports";
 import {
-  makeListTasks,
-  makeGetTask,
-  makeCreateTask,
-  makeUpdateTask,
-  makeUpdateTaskState,
-  makeReorderTaskInColumn,
-  makeDeleteTask,
-  makeListTaskStates,
+ makeListTasks,
+ makeGetTask,
+ makeCreateTask,
+ makeUpdateTask,
+ makeUpdateTaskState,
+ makeReorderTaskInColumn,
+ makeDeleteTask,
+ makeListTaskStates,
 } from "@/application/task/use-cases";
 import type { Result } from "@/domain/shared/result";
 import type { DomainError } from "@/domain/shared/errors";
@@ -38,17 +35,17 @@ import type { DomainError } from "@/domain/shared/errors";
 /* ============================================================== */
 
 interface FakeState {
-  tasks: Map<string, Task>;
-  states: TaskState[];
-  listCalls: ListTasksQuery[];
-  createCalls: TaskInput[];
-  patchCalls: Array<{ id: string; patch: TaskPatch }>;
-  moveCalls: Array<{
-   id: string;
-   columnId: string;
-   toIndex: number;
-  }>;
-  removeCalls: string[];
+ tasks: Map<string, Task>;
+ states: TaskState[];
+ listCalls: ListTasksQuery[];
+ createCalls: TaskInput[];
+ patchCalls: Array<{ id: string; patch: TaskPatch }>;
+ moveCalls: Array<{
+  id: string;
+  columnId: string;
+  toIndex: number;
+ }>;
+ removeCalls: string[];
 }
 
 const uuid = () =>
@@ -142,10 +139,7 @@ function makeFakeTaskRepo(state: FakeState): TaskRepository {
 function makeFakeStateRepo(state: FakeState): TaskStateRepository {
  return {
   async list() {
-   return { ok: true, value: state.states } as Result<
-    TaskState[],
-    DomainError
-   >;
+   return { ok: true, value: state.states } as Result<TaskState[], DomainError>;
   },
  };
 }
@@ -389,9 +383,7 @@ describe("makeReorderTaskInColumn", () => {
   const reorder = makeReorderTaskInColumn(repo);
   const r = await reorder({ id: TID, columnId: SID, toIndex: 2 });
   expect(r.ok).toBe(true);
-  expect(state.moveCalls).toEqual([
-   { id: TID, columnId: SID, toIndex: 2 },
-  ]);
+  expect(state.moveCalls).toEqual([{ id: TID, columnId: SID, toIndex: 2 }]);
  });
 });
 

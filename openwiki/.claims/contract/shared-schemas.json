@@ -1,0 +1,144 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:5fcf27b42ea4854fc924838e4fd0c959fc10e446f7fa39fc04f5519426307cd4",
+  "claims": [
+    {
+      "id": "claim_35787f553d7e4c639e6d270a34617b66",
+      "statement": "@crm/contract es la fuente única de los esquemas compartidos entre backend y frontends: paquete ESM privado que publica el código fuente directamente, con subpath exports por dominio y una única dependencia declarada, zod.",
+      "evidence": [
+        {
+          "resource": "repo://packages/contract/package.json#L1-L27",
+          "version": "repo-lines-v1:sha256:44a9992e3e9dc11ac7505c66b5fb1b1286643aad43db2151bb49f847154ca7d1:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ZmIwOGZkYTFhY2I5NTdiNjExNmJkMzc4MTFhMWZlNDFhMDE2MTFjMDYzMWVkYmY3ODZkNjg4OWEyN2E1NWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkNWNkMmZiNGYzZGY4ODQ1MTUyNTViMzk1MjNmMmY4YjU0NzJiZWVhOWY1NjZmZmNhMjA0ZGI4MDI1NjEwNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhNzMwZmUwNjYzNTNmOTEzOWQ0NTExMjFlMmRkZTMyM2MzYzhhMTA0NGU1ODY0ZmExZTA1ODZjNjdhZTNlZDcifQ"
+        },
+        {
+          "resource": "repo://packages/contract/src/index.ts#L1-L17",
+          "version": "repo-lines-v1:sha256:6d18f29d69ea95197891c8c483b84849489766992690feb53273a63c5d0c20e7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA0ZjQxY2EzZDhlNzUyM2U4YWE3Y2I3YzA0MDE1NTc4ZDA0NWY5NThmMmJjNmYyMThlOGU1N2EwMjA0YzE2NWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e314c2f1d5364bffa04ce9aa957cb98a",
+      "statement": "Cada bounded context publica dos formas: la forma wire en snake_case con prefijo de dominio (task_id, task_tast_id) y la entidad en camelCase (id, taskStateId), con tipos distintos TaskWire y Task.",
+      "evidence": [
+        {
+          "resource": "repo://packages/contract/src/task/contracts.ts#L1-L11",
+          "version": "repo-lines-v1:sha256:6e1e8131369fcd5fc999ba31c8786192ae7dba282d76505a5d53fa75e4616848:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYxZjNkODAwNjcxOTRhYmI3NmE2NmYzZDg0ZGFiZGVhMjRiMTRiYThjOTRkMDc5MTc0YWMyYTc3YjM3NWRmMWYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM5Njk2NTcxYjA4OGQxNjA5MTNmYmYwMGM3OTZmYWJiNGIzOWQ0NTFjOTkwZGNlNmVhNjg0YzQyNGE4ZTQ2NmMifQ"
+        },
+        {
+          "resource": "repo://packages/contract/src/task/contracts.ts#L37-L59",
+          "version": "repo-lines-v1:sha256:8e80fbb676bcdb0c8d6250c4eca955249904868ef408c38f33015d7c541abb15:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYyM2NhNGNkMzkxNzRiMjUzMWE5ZTIzNTg3NzE0ZTA0YmI5ZGUxZmU3YWM1OTA1ODFkZjY0MDY1MWJiOWI3YzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhiMGY5MjcxYWU2Nzk4MjFiNmRhMGE2NjU3ZGIyYTY0ZDQxMDYyOGI3YWYxMzFhMDFhZjcwNjBlNDcyYWU5MDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM2MWIzYzY1Yjc3MjgxZGY3NzQwNzFkNTU2YjI1NjNjNmJlYjBhMTMwNGJjYzJmYTUyNDk3YzkzZGU3YjEwNDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgxZmNlMDYzNmQ2NDkxZTBhY2NkMGMzODE3NGE1MTkzZWNlMzE4ZTZiYzIwM2VhNDdiYzUwZWYxOTFjYWZiZTgifQ"
+        },
+        {
+          "resource": "repo://packages/contract/src/task/index.ts#L14-L40",
+          "version": "repo-lines-v1:sha256:20b9a5dd99d7b89ab9c2510f960229c0ba61d24e766a02e0c31f2e414e229807:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFjZmU1Nzc1NjAxNTgyYTM0ZDRhYzZjY2MwYTg4NzJkZGZkNDcyYzA5NzAyZGZmNzk3NzUyYjkxN2ZmODFjOGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMxMjU5OGY2YjNkYjM4YjYyOTkwYTUwMmQ5YTcxN2I5NmYyYzIzZWYxZmFjMzU3MjA2MTc4YWFhOTk4OGE5NDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRlYTIxYzdkMGIxZWYzYjNhYzBhZDk5YmMzZGI1Yzg1M2ZjMjM4MWNmNjM0MWNmN2RjMmRmN2JhMDMxOTc1ZGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVmOGU0ZTk0ZGYyNDAxYWVlYjFkNDg0MGI0ZWFjYzZlMTA0NzkzYWQ5MWFiNzE5YzI0MWI3YzVjMjMyMzE1NDYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_29bfa43788764cd386ca763708a36355",
+      "statement": "El contrato comparte un tipo Result<T, E> con ok/err y una fábrica ResultSchema que produce la unión discriminada equivalente en zod.",
+      "evidence": [
+        {
+          "resource": "repo://packages/contract/src/shared/result/index.ts#L3-L19",
+          "version": "repo-lines-v1:sha256:dea3ec4fe174977f7f662251b7f7401a80f4b064d64b99b033fe58adb0b9863c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhODc1NDRhZDkzNGE2MDE4NWFmNTY1YTQ5NDQ4NTQxZTcxYjcwZTUzNTI3YzQyZjhkYTU5ZjkzODI0Yzc0OGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEyOGIwY2MwNDVkNzUyNmQxY2RiMjI1OGRhMGExNmE0NWEwZDVhYTliNjRlOGQyMmFhMWU0YTQ5ZDc4NWVkZjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8086511b58d4443f9ab92123ce226a6c",
+      "statement": "Los errores de dominio tienen un enum cerrado de códigos (validation, unauthenticated, forbidden, not_found, conflict, rate_limited, internal, unknown) y un objeto DomainError con message y details opcionales.",
+      "evidence": [
+        {
+          "resource": "repo://packages/contract/src/shared/errors/index.ts#L3-L24",
+          "version": "repo-lines-v1:sha256:b74d56ca37fa8f8754b34c942d7147eda50bf1c969b0f0976d6b79968e7f328d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcyNjAxYjIxZjc2YmM5MzM0NWNjY2YwYjJhZjNmNGVlMGI3MGQ5MjUxYjlhMzc1ODkwNjBjYzdiOTdiYjYzZWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEyOGIwY2MwNDVkNzUyNmQxY2RiMjI1OGRhMGExNmE0NWEwZDVhYTliNjRlOGQyMmFhMWU0YTQ5ZDc4NWVkZjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b20b939cd106459b8a641e9faccc9253",
+      "statement": "La paginación del contrato define PageQuery con limit entre 1 y 200 y default 50, cursor y search opcionales, y Page(item) con items, nextCursor y total opcional.",
+      "evidence": [
+        {
+          "resource": "repo://packages/contract/src/shared/pagination/index.ts#L1-L15",
+          "version": "repo-lines-v1:sha256:302c4a3b167b7d3a6c2088fd7437d725fb5afb7c2437aa094405b8ec78c0b84b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgxNDUyODY0YjBkOTZlZmU4NjkxNmZmNzQ1YTBmNzdhYzcwYjMyNjU4NWMwZWFmNWMzNGY5ZTRhNGY2ZmJmNjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_436d6f72d91b4b75a728e032360311c1",
+      "statement": "Los identificadores usan marcas de tipo por entidad (UserId, SessionId, TaskId, TaskStateId, ClientId, ScheduleId, ScheduleItemId, TypeId, CategoryId, AccountId, AppId, CurrencyId, OtpRequestId, AttachmentId) que solo afectan al compilador.",
+      "evidence": [
+        {
+          "resource": "repo://packages/contract/src/shared/identifiers/index.ts#L20-L63",
+          "version": "repo-lines-v1:sha256:a4cebbfef5634aedda48dfb782251181fa50ab8f6a644453db74996b2f738f6b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExYzNjMTAwN2NjZjA3MDJjNzU4ZjdiMzI1ZTk4YmUyMmFkNTg0ZmYwYzMzZDI3MWE3NWEwMzRlNzZlYjFiZWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg0YzhmMzViMmE2ZWYxYjMzYzE0ZTcwNjk5NDFiNTI5NTE2ODQzNTU4MDAyMTFlZjkzNTQ3N2JmMzZmYmU0ZTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJiMzhiODBjZDRjYzYyYWNhNDdiNjdiZWY3Nzc2OWIxMzVlY2MzZWQyYjM1NWYxNmVlODdlZDRjOGM1OTM1YWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a9bd395d736e4a53a15664066f59a941",
+      "statement": "El router oRPC de tareas usa oc.prefix(\"/tasks\") y anida routers para states, clients, types y categories, con input y output declarados por procedure.",
+      "evidence": [
+        {
+          "resource": "repo://packages/contract/src/task/contracts.ts#L194-L233",
+          "version": "repo-lines-v1:sha256:fe108716cb4047d716087cddc6f17547b034f6d49f27780e516cd00dce84a4f3:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY2NDdjYmU5MzVkNzNhZTdjM2M2ZTJhODlmMjc3N2Q2MDY5ZTM0N2NhNjczZTNiODE0OTVjYmFkMTNiZWVjMTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwNjRmNWU5ZjE5NjBjNjBhYWIwMDZjYWFkMzFmYmU3NTliZDdmMjM4NTNmNDZhMmVkYzlhYTg0M2JiMGZiZTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg0MzQ3YTcwMzdjYmQxMTRlNGY0MGNjNjhkMzRkYjk2ZTNhODBhYjliYjUxYmMyYmY4ZTZjNTc2ZTQ4NGE5ZjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6eb2fce4d648445eb84be231e4e28f5c",
+      "statement": "El router de config es de solo lectura y expone listApps y listCurrencies, reflejando que en el MVP las apps y las monedas son lookups seedeados.",
+      "evidence": [
+        {
+          "resource": "repo://packages/contract/src/config/contracts.ts#L17-L26",
+          "version": "repo-lines-v1:sha256:ed03ec6142a86d43b46638136e40a96d28909d6a7d2893ae28f076dfedd9daef:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE0M2MwN2RhOTIwNTg1Y2RlYTFiN2E4NjRlZjVkMTY1MDk3NTAyZjdhM2YwMmI3NDk1NzI1MGFmNTdlNDkwZDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA5YzgzMTM2ZTMyN2VlZjMyN2Q3ZWQ1ZTdiMTBkZmYyMzA2YmI2YTA5NDViNmM0N2ZiMzRhMWNiYTAxODE3NGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYwZDQzNGUzYjg5YjY1ZWE2YTY1ZmM2MzBmNTM5NTU3MzQ3NGU3ZWQzNTM2ODlkY2NmZGUxN2QyMWE0MWQ0N2EifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6aaf5bae62054c57b3f34e5d2f33af52",
+      "statement": "El paquete legacy @crm/types reproduce los mismos esquemas y lo sigue importando el frontend congelado apps/web para construir su cliente RPC.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web/src/lib/api/rpc.ts#L10-L20",
+          "version": "repo-lines-v1:sha256:122de68bb5600f9c8a74de73b1455081fe1a711154bbd84a83b38bc3c9c4d37b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhhOThmMDkwNDU2ZDc1MGExM2FkOTUzNmIxZTQ1ODQ1ZTBiNjRlYTI5Mjg3MDQ5YjNmZjBiZDc3ZTA0MjFiZTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2MTliNTEyOTc0ZmY1ZGM2YzEyOWY3Y2IxNGI0Y2NkN2UzYTY5Y2JjNWJjZjFkZDUyMzQwYzdjZjFmNzUyMzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMyNTMzY2FlNzZmYmI4MTAwZDA3YWYyYWRhZjk4MmYzOGM0Yzc2NGU5MzljYjNmOGY3ZDk4NzNiYmEyNWEyMGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxYjJjYjVkY2E0ZTI2MDA5NjlmZGQyMTYzZjJjNjUwMGE0ZTRjODcxNjYxNDMxOGNlMThmNTVlNjY3N2YxMTUifQ"
+        },
+        {
+          "resource": "repo://packages/types/src/index.ts#L1-L11",
+          "version": "repo-lines-v1:sha256:59678347fe020ea11538fb3b124d50c84aee59b48c26ceee72d1ea1bca3e5a73:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRmZTljMmEwNjkwNzNmZDM3ZjJjMWEyMWM2YzQxMzQyNGFmOTJjMjIyODMyYWUwMzc4NmNiYTIwYmMyYzk4ZmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhmN2IzYWFlMTI4NzEwZGU4MGMzZjUwZTA3MWViOGU4MmMxOGQ5OGIzMmRiZjFmNDY5YTQ4ZGY3ZGY3MTRiYzQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_34b46c26c0b04e268dc2de18414a48f9",
+      "statement": "@crm/types fija la ruta y el método de cada procedure de forma explícita con .route({method, path}), mientras que @crm/contract usa los paths por defecto del router oRPC, por lo que ambos paquetes no son intercambiables sin adaptación.",
+      "evidence": [
+        {
+          "resource": "repo://packages/contract/src/task/contracts.ts#L194-L200",
+          "version": "repo-lines-v1:sha256:1380421dca596a293f623a4e7d84acd78653edee1db2ab50c61cec365e40051b:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjY0N2NiZTkzNWQ3M2FlN2MzYzZlMmE4OWYyNzc3ZDYwNjllMzQ3Y2E2NzNlM2I4MTQ5NWNiYWQxM2JlZWMxMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjM2N2Q2ZDI5Y2ZiYWVjNzA1NzRkY2JiYzhlZDhhZmMyYTZhMmMyMDk1N2ZkNjM5NmIwOTA0NDg3Y2Q4YTY1OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODQzNDdhNzAzN2NiZDExNGU0ZjQwY2M2OGQzNGRiOTZlM2E4MGFiOWJiNTFiYzJiZjhlNmM1NzZlNDg0YTlmNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDNmMDJlMmE0NDQwYjI0M2Q2ZmViNmJhMTk5ZTc1NWM3NDFlODA4Y2E5YjM1Zjk2NzgyY2EyZTEzMmMyMDk5ZiJ9"
+        },
+        {
+          "resource": "repo://packages/types/src/contracts/tasks.ts#L145-L166",
+          "version": "repo-lines-v1:sha256:e57acd3dadc0777c0a9b7e3377dadec5e7d2dd77b014177caff3655370b3fd03:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmOTQ2NDEwMzk3MzA4YjMzZDBlNDk2ODMwOWQ5MTI1MTEyNTdiZDMxZjcwZWM4YTE5MjgxMjZkMzZmNjUzZDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5N2U3YTFmYjFmMTg3YTgzMTFkZGQ4MzM4OWM2YjYyZTMxNDMyYzU1ZjA5NDQzOGJjYTFhYzY2OTE5OGU0NDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVjYWQ3ODRjNTZjMTI4ZTk5N2Y4YTNlNjRlZWZjNzFiZWY0YTY1ZjZjMDFjNTMzOTMwNzUzY2JhNGJiMThjOTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNkZTk1YmQ1OTM1NjdhZTVkNDNlYzVhYjRiNGJhYmIwYTlhYmMyZTFiMDc3MzUzOThmNGEwZWQ2YmExMWRkNjMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a5891d2e9af8483494f751e6f5466536",
+      "statement": "El contrato importa oc de @orpc/contract sin declarar esa dependencia en su package.json, por lo que hoy resuelve por el hoisting del workspace.",
+      "evidence": [
+        {
+          "resource": "repo://packages/contract/package.json#L25-L27",
+          "version": "repo-lines-v1:sha256:69537cc13ef34cbca38c894cf7eea937046614fe1368fc5e0401b8f6346033c1:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmEzYjQ2OWQ5ZTA5NzU3MjI0NjY2NzM0YzllZjdiMjU0ZDg4NTM0ZjVkNWJiNzA5ODk2MDgwNWM1NTNkYzMwNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGQ1Y2QyZmI0ZjNkZjg4NDUxNTI1NWIzOTUyM2YyZjhiNTQ3MmJlZWE5ZjU2NmZmY2EyMDRkYjgwMjU2MTA0MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDJiMGUyYTc1ZWFkYTZkYTc1ODg0MGFjMTQ0ZTNlNzE4MGNiZGRlNjQxODIxOTE1MzQ2ZjU0NTc5NTFhNzViZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWE3MzBmZTA2NjM1M2Y5MTM5ZDQ1MTEyMWUyZGRlMzIzYzNjOGExMDQ0ZTU4NjRmYTFlMDU4NmM2N2FlM2VkNyJ9"
+        },
+        {
+          "resource": "repo://packages/contract/src/task/contracts.ts#L9-L10",
+          "version": "repo-lines-v1:sha256:353429f50471ee75126dbe4f09039930520161a5fc2b28a95564dedbbc3a27fa:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2YwMDUyZmU5NzA0M2I3NTM4Yzk3NmM1ZDc0M2RiNWQ0MmE0Y2U3ZWNmODdhN2UxMjlkNGI2MjM4YjllMDFkMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODE0NTI4NjRiMGQ5NmVmZTg2OTE2ZmY3NDVhMGY3N2FjNzBiMzI2NTg1YzBlYWY1YzM0ZjllNGE0ZjZmYmY2MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTc5MzBmZTc2MTBjMWNhZGQ1Y2NlYzdiZGYxMmY1NzhmZjAzMzdlNGYzOTE5OGM5NGQ3ZDQ5MjU2NmRiOGQ3NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTQ3MDY3NmViYWI0ZjlkZGJiYTQ4ZWVmMjk3NGIwNzAwZTIxNDUxNmRmNzFiZThhMTA3NDAyMDA4YjI4MWQ5MCJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-27T02:48:33.191Z"
+  }
+}

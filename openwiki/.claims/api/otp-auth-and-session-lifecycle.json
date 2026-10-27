@@ -1,0 +1,166 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:4c7aeb9ca50f6727380465877c8e5d52f25b034a0931bb1f5102ba3646622522",
+  "claims": [
+    {
+      "id": "claim_9fc8d1e78e4c41ce81c662e657bce612",
+      "statement": "La solicitud de OTP aplica un rate limit de 3 envíos por email y hora; al superarlo lanza RateLimitedError y el handler responde 429 con el cuerpo {code: \"RATE_LIMITED\", message}.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/application/auth/constants.ts#L1-L2",
+          "version": "repo-lines-v1:sha256:c31870a79b46f730df717bcdbaf301bc1b6038c3606349134f9d3d42d7bf1c85:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjVhZDVlZGIxYmFiYmEyZDk5MWNkZjBhMGFjMDU0MDhkZDZiYzQ2YWJhNDY5ZDg2Y2M2MTNjYWM3NTFkOTkzYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2M5ZWVkNzAxMGIzMmJiYWFmZjk1M2U5MDFkMWNlNDk3Yjc4OTExMmFmNjgwNGEwYWU3MTk2YmFhY2NmYWMzZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTI2OWZmMTk0YWEzZjk4MTg3NGExZDI5Zjg5ZGZlYjM1N2ZmNTc0NTgwMmI0YjhkN2FiZDRmOTlkYzJlZDMzNyJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/application/auth/request-otp.ts#L40-L46",
+          "version": "repo-lines-v1:sha256:fe1c24df18ee9c6acc6717d5f6414cb39a7527bc41ee43020796faac897be667:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2QwODUyYjNlZWQwNTczMTVlZmZlNjk3NGJmYzI1YjYyZWUyZmUzOTY2ZTA2NWYzZTM3N2ExZGI5OTFkNmEwNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzRkYTE2OTlkZGVlN2JhYmRmMGQ3MDkzYWNlMTk1YzRjMmYwNWQ2M2JlY2EzMGY3ZTYzNDY3NTg1MTU0MTcyYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTM4OTg0YTc0OTc0YjMyMDhmZTVlYTQ1ZTk1MTgzZTAwNzAxMTVjYWVmMmVjYjlhYjUyYTQ5NGEyYTM5N2E3MSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/http/auth/auth-routes.ts#L40-L51",
+          "version": "repo-lines-v1:sha256:93db0dcbf0e97c0208c61a279f318b9b1d69d4c403d1d590395c7a443a02da5f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExZGY4N2E0NzMxNmM3MDhjNTUwMjA5OGU5YWY2YzQ0NTM0ZWI4MGJlYWRjZjYwNjMwMjhlZmNhODU5MzdhYmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVkZjY4MGU4OWNmNDNmNzQ5MjRhMjhlNTFjNzNjNzlmY2Y5MDk2M2EzOTE2Y2IwZGI1MWFkYTIzNWE1YTBmNGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkyMDQwZTA5NWE5NGUyYWRhNzRlNDIxZjM3MTg3NTFhOTFhODEwYmZkNjZmNDhmNGU5MzljN2I3NDgwZWI2NzAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f9922299d60d43378c960c6c26e5d13b",
+      "statement": "El código OTP se persiste en la tabla login con una vigencia de 10 minutos, contador de intentos y marca de consumo, con índice por email y fecha de creación.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/application/auth/constants.ts#L3-L3",
+          "version": "repo-lines-v1:sha256:c6b8dbb43926cae3c65730322e44076a62860607c51d275d338c4cbb09785d4d:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzZiOGRiYjQzOTI2Y2FlM2M2NTczMDMyMmU0NDA3NmE2Mjg2MDYwN2M1MWQyNzVkMzM4YzRjYmIwOTc4NWQ0ZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzZiOGRiYjQzOTI2Y2FlM2M2NTczMDMyMmU0NDA3NmE2Mjg2MDYwN2M1MWQyNzVkMzM4YzRjYmIwOTc4NWQ0ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjIsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzMxODcwYTc5YjQ2ZjczMGRmNzE3YmNkYmFmMzAxYmMxYjYwMzhjMzYwNjM0OTEzNGY5ZDNkNDJkN2JmMWM4NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjIsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2EwOGNmMWQ1OTJhNmZiODViYjczY2UyNWEzMTIyOWMwYjFhZDQ4NWMwZTgwYjEzNmVkYzliNzQxOTNjZTJjMiJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/application/auth/request-otp.ts#L48-L58",
+          "version": "repo-lines-v1:sha256:c5581d0c3a44555ecff2c4d2bbab1b7bebe2552fdf305ef1b3a50063cafa3805:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ4OTFhZGM0MzQ5MzVkZDNmZDQzMjZmNGYwZWUzZDFkYzU5NmEzNTVhNmVlMjE3YTc4NWFmZTI1ZDNmY2NmNmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyZDExY2FmNDNlOTdlZjM2OWU2YmVlZDFhMjY4YmQwNTgzOGYyOWI5ZGQyNTRiZjY5YmE2NDg4NDE0NzIzNGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwNmU0MDI2NmQwOGE3YjE5MzdjODgxMjljYmU0M2MxOGY4ZDc4NWRmZmU2YmQ0ODI3MGYzNzBmYTU5NTVlNTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFkOWNiMDdkYzY5NzgzYzI3ZWU3NjVkY2JmMDQwMDE2OTkwNjcyNGJmNTY2MTg3OWEzY2Q5NjExMDhiNjY2MjIifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/infrastructure/kysely/migrations/001_initial.ts#L72-L86",
+          "version": "repo-lines-v1:sha256:de0e80a83fd73f6a11fbb40247092108a421526401060127eb5fce418a64c199:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE3M2ZhMDI0MDM5ODU0Nzk0OWJmZjFjZjZkZWExNDFiMTU4YWMyOGQyNDFmYjBmYWIzMGQ2MjcwNTQ3MWRkMGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFlYTU0YWNjM2RhNTJiOTY1YWZjNzZhY2MzYjc4ZTIwYjcwZDAxZjY2NjQ1OTUwNjhiNmI4ODJkZDI2MmM2ZDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA4OGUyMmU2MWRiNzJiZGUxZWE5MGU2OGEzYmRjYzM0YmJiZWFkM2ZlOGNiZDNmZjk1NzkxNDcyMDhhMjg5MGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZjMDA3NDQyMjczYzAxZGM4ZDdjMzljMTBlNGFmMjQwNzk2NjRjOGUwNDFhYzdjZTFmNmQ3NzgzZDVlNWFhOTAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d5b4636d14634c9ba8596a56148b4ba0",
+      "statement": "La solicitud de OTP renderiza la plantilla y encola el email en email_sending con estado pending y remitente auth@crmhome.app, respondiendo {ok: true} sin revelar si el email existe.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/application/auth/request-otp.ts#L60-L73",
+          "version": "repo-lines-v1:sha256:30e294b736c792d56466a75736e87ec21604872b770fcbf3b8fe320310893e98:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJkNjE2Mzk5NGNiODVjYmFlMDhhNmU0M2E2NzMzNWE5ZjIzY2Q0MWRkOTlhMDY3NGI5MzFlYjQyZTRjNmI0YmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc4ZGI2Zjk1MzdjNzgxNTEzY2M3YmFmNDlkNTk3YzllYjVlMjFlYWE4ODFiOGYwMjY5ZDk3YmEyYTQzNTVjMjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU0ZjBiYjk4ZDk1NmQ2MzgzNDNlMGRmMjJkMWUyOGM4MmIxYzc0ZWUzOGU4OTVhOGFkODcwMTVmZjE0NWZjNGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRmNzM5YTA2YzFjYmIxMjQ0ZTMzNjNkMzhiY2Y5ZmE1MGNlODRmZWQzOTljMjE5M2EzYzdmMDhkNTk5MThiMmEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0d14f62ea8e84db0833df8ef9166e5ab",
+      "statement": "El código OTP se genera con crypto.randomInt(0, 1_000_000) formateado a seis dígitos conservando los ceros a la izquierda.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/infrastructure/crypto/otp-generator.ts#L12-L17",
+          "version": "repo-lines-v1:sha256:e386c7f61486b9427809b3a0fbedffc3d8efb4050331240a66dda94e170779d8:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmEyYTdiMjZhNjVlOGU2Zjc3M2ZkYjU1NDI0YzQ3MzU3Mzc1NzJkYzQ2MDliMjA0ZGQ1MGEzMjhiNDBkZmUzNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDJhMmNiMjVhMTIyYjQ0MjIxYTYyMzRlYzY2MGE3YjVmYjdmOWJkZTdiM2I5ZTJiM2M1NTlhMGQ5NmZhYzczOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjJmMjYyODIzZjhmZWFmMTM5ZDBiZDk5ZGU2YjFjZTUzYjQ1MjNiNmUyYTNmZGQzYmRjMmVmNTIwNDZkOTY2YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_739fef23f09442159dc103adb957f4ca",
+      "statement": "La verificación del OTP devuelve un verdict (invalid, expired o valid) en lugar de lanzar errores, y trata como invalid tanto la expiración como el agotamiento de los 5 intentos, incrementando el contador en cada fallo de comparación.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/application/auth/verify-otp.ts#L38-L59",
+          "version": "repo-lines-v1:sha256:1ceb59d073c5bea303c93f5d2de957ed25fbe0cf232e91dd0baffd2c9e1218cd:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliY2ZhNDY2NTYzM2NlNWNkNzIwYTA2MjM0ZmUzYThmNmM1NTA4OTg4NWFmNDc0ZWM4YjIwZTQxZWU2MGUzZmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFmY2FlZGE3NmNlMDg2NmFkNWRmMmI4ZmQxMWU4ODZjNzA1YTQ0MDc0MjBjNjAwMGE0MWJlMDE1NGU3YWZiNDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhmMmNmMGVjODFlNDhlZGE4MjU1ZThkM2FmYmJmMDgzM2Q4MmUzZTFiYzNlYTU4YTdkYTNkNTlkZDJiYzBhMTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5d3bc79f31a6472880a7a63bcc27e3f7",
+      "statement": "La comparación del código OTP es en tiempo constante: SecureComparator usa timingSafeEqual y devuelve false de inmediato cuando las longitudes difieren.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/infrastructure/crypto/secure-comparator.ts#L4-L16",
+          "version": "repo-lines-v1:sha256:5a2a49f265a6f703c03f24cd2a0a8f6f5cf008286bdc01254ae42126fd0ecc86:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA3MzdjM2IzYTRmMjUyZGE1NDNjZDBhNDUwYTNlYjNmMmY0MTZkOGUzZWEzYTdkYmYyNjkzOWUwZDlmMjEzNjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3MDY4ZmVlZjkxZDNkMjE0MzgwZGYyOGZmZTZhOTVlZDFjMzM1YTk5ZTNmNmMxMWU2YjA1MDExYzQ0NDY0ODIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_413f0941e971431ab744951a8bc70905",
+      "statement": "El alta de sesión es transaccional: en una única transacción se marca el login como consumido, se busca el usuario y se crea si no existe, y se inserta la sesión; un fallo no deja sesiones huérfanas.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/application/auth/verify-otp.ts#L64-L81",
+          "version": "repo-lines-v1:sha256:0a791459a22355dfb358174c1c47549d2c5abf8068b5214104e448708925dec6:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYyNzdiZTg2MmUyMmM5YTIxOGI4M2IxZDBmNzY4ZTg1MWZiZDI5NmQxYzRmYzE0N2FmNWYzNjJiYzMzNTczNWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyZDExY2FmNDNlOTdlZjM2OWU2YmVlZDFhMjY4YmQwNTgzOGYyOWI5ZGQyNTRiZjY5YmE2NDg4NDE0NzIzNGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYyZGU4MjQ2ODc5ODAxMjFiMWY0NWMwNjdlMDE1ZWY1YTQxNDk5Y2IzYzg5NGE0MTVhNjI2OGFmYTZkZWJjZjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU3Mjk3MWIxOTQzY2YxNDUwZTc5ZDIxNTAzNzZkNzlkMDYyMTQwNDU1YTEzZDQyNmZmZDZiYzZiZWFhY2ZkZDEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5b4344a31197499895114a3d5a2c28b9",
+      "statement": "El token de sesión se devuelve en claro una sola vez y solo se persiste su hash SHA-256; la verificación posterior recalcula el hash y lo compara con timingSafeEqual.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/application/auth/verify-otp.ts#L61-L62",
+          "version": "repo-lines-v1:sha256:ff37a225a237088367b7da0d9ef00f1e75f8cb09d213e7a7bebbfd1219eab5a7:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2JlZmUzYzQzZDE1NTgwMTc1NDc4ZDUyNjE3MjBlNzU0YTVjZWNhZTVhZjk0ODc2YTg3NDg2ZThjNjJkOTg3NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzRjZDFjZGZjMmUzZjE5YmEyOTYwODU4YTljMWFkMWNjM2FiYTExMjlmMzgwZWI3MjhhZTk0YmMxYjhjMjI1ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmUxNWIxMThlYmVkZWMyNTAwYzcwMWJkMGE3ZmZmMDVjMzc1YmZjOGFjYmVhZmQyMTRhMDdmNTMyMGI1NmRmYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGFjYmRkMTdhMTQyMDMwN2RhZTNhMTc4Mjk0Y2MzMTlkZjk4ZTg3OTdkOTdmOGY2ZDQ0NTk1ODQ0M2VmZmNhMSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/infrastructure/crypto/token-hasher.ts#L4-L21",
+          "version": "repo-lines-v1:sha256:aad86b9f93d5bf6c9a809faf4ffbfe8953aefbc063e6dffdbc8a185f876892c8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRlN2IyYTU2NjA5MjBhYzRkOGM2ZGY0OGVkYmNkMWU2MjcwNDRiODI1Mzk3ZTM2Nzc1MmU2OWVlOTI4ZmMwZjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlmNDIzOTBmMmNiZWM3NDQ3MjIyMTkyMjI2ZDk2ZWZiMzg5Y2E0MDAyODRhNjdmNzZiMjI3MmFjMTQ5MjJlMjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/infrastructure/kysely/session-repository.ts#L11-L22",
+          "version": "repo-lines-v1:sha256:105c8319bc7237f2023d7c08e8f6bd854556c8e1f6306fab0f91901b9189d51d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU3NGJkNTAzYTIxYjQ1ZjMwZmJjYWZkNGY1ZmUyYjQ4YWMyOThjYWZiYjkxNDJkNTBiOGU0NmQ5MmVmNjcyZmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI5YWM4Y2ZjODJiODBjODllMTRmYWZjYTQwY2E1NTc0NjUyYzg2NDhlNjE4ODhhZGVjMDA2ZDkyZDU4MWIxOWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhlYzkyZmQwMmM0NTNmZmIyMDY2YTA5MTMxZGFmYTNhNWIzNGEwYjU4OWJiODUxYWQ2MDI2MzM0MTU5Y2ZhNzEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e01dfe59a2b842e8b5a66f16c82c5088",
+      "statement": "La tabla session tiene un índice único parcial sobre sess_token_hash que solo cubre las sesiones no borradas lógicamente, de modo que un token no puede estar activo dos veces.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/infrastructure/kysely/migrations/001_initial.ts#L103-L105",
+          "version": "repo-lines-v1:sha256:07810929958d888a98b31b4bf3b452bddcf4243ee7fee856254f2c32ec2b0f20:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTczZmEwMjQwMzk4NTQ3OTQ5YmZmMWNmNmRlYTE0MWIxNThhYzI4ZDI0MWZiMGZhYjMwZDYyNzA1NDcxZGQwZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWVhNTRhY2MzZGE1MmI5NjVhZmM3NmFjYzNiNzhlMjBiNzBkMDFmNjY2NDU5NTA2OGI2Yjg4MmRkMjYyYzZkOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmRmM2NhYzQxNDA1Njc0ZmQxOWU2MzE0ZDE5MzJkNDhjZjIyNTQ2N2E2Y2Q4YzAzOGI0NDU5NGI4Y2I5OGRlYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWJkZjQ4YzVhNjY0MDUzNTkyYWQ5YTVkNGNlYjI3MmViZjZkZDU4M2M0NTFlNDYxOTcyYTgzZmUxNTU4MjRjYyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_277dddb850f44d0db69a4fc76080735e",
+      "statement": "La cookie de sesión se llama crm_session y se emite con httpOnly, sameSite lax, path /, maxAge de 30 días y secure salvo que SESSION_COOKIE_SECURE esté en false.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/http/auth/cookie.ts#L4-L29",
+          "version": "repo-lines-v1:sha256:0b17eb6c93551e352e1e44422405ec2f842ec116a9f23a216335df3efb404ff6:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk2NDYzYjJlNDZiODQ2ZmMwOTcxMjg2YjUzM2ExZjA1MWQwYjU3ODY4NmY0Mzg2MmExNjQ2MjE0NGJjYjEyMDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQyYmY3OGQ5ZjZkNDhkMDcyMjBhMDMyNDc5ZDUxZTg1MmJkMTIzN2VkZTJkY2ZiYTkxYmQ1YjIxZTUxMGU3YjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c1f731c3da2f417d99844ad9e243c3e7",
+      "statement": "GetSession rechaza las sesiones borradas o expiradas y renueva su expiración a 30 días cuando le quedan menos de 15; el handler reescribe la cookie en ese caso y responde 401 cuando no hay cookie o es inválida.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/application/auth/get-session.ts#L31-L55",
+          "version": "repo-lines-v1:sha256:7dca0535fdd9ad85442a945d071587f859bae7928b0857fe23d0e7c340ef1d87:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2MjNmOTA2ZjkwM2IyNTA5N2ZmYWMyYTI4NWE4NjBkNmQzNTM1MDU2Nzk2MWQ5YWVjM2M2ZDRkOTRhMDYxNDYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRmNDgxNjNmODc2MmM1MDA0OWJiOTVjMWE1Y2Y2OTNlZjgxMTA0MjNmMDZhYmU0MGFkNjI3Mzk5ZDRkOTNhODkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM0MjljYzQ0NTBhYjhlY2MzYWUwNzg5MzY1MjZiOTcyMmI4MTVjMmNhZDY1YjZkZWNhZDg0YjgyNWRiMDQ2OGIifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/http/auth/auth-routes.ts#L68-L86",
+          "version": "repo-lines-v1:sha256:f5eb4a8c0d2f3bce6a8a48b5e658d5459af13cc438d374857a325bee275baa2b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIyMjIzNmUzNDc2Njc0YjEzNzk5MGI4NmE2MmJiMWFmYjE3YTMzMWZkZTg1NmI2MTBhZWIwNzIwMTVkMTZhMTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkyMDQwZTA5NWE5NGUyYWRhNzRlNDIxZjM3MTg3NTFhOTFhODEwYmZkNjZmNDhmNGU5MzljN2I3NDgwZWI2NzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY0MTY0ZDUwMzEwMzM0MGJkMmYyNmM0OTU1MjAxYmY3MDdiNjExNTA5OGNjZGYyOWUyYTA1MzM3OWFlMjhiNzkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_965a65fff702440c8e57c8df989394d3",
+      "statement": "El logout marca la sesión con borrado lógico por hash y borra la cookie replicando sus atributos, de modo que el registro queda para trazabilidad pero deja de ser resoluble.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/application/auth/logout.ts#L22-L26",
+          "version": "repo-lines-v1:sha256:9c8fd114ebe567b4bfc25125139454ac322dc5ea694b6630fef21403803d864a:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjQ3NWJlNjlmNTAzODM3NTZiYmZhMmJjNjBmNTE1YTdhMGNjMDFiZGM4NTVhMjYwYjNhMmI4OGM0NDc5NzA3NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjRhMGI0YTRkYmRmMzBiMGI1YjhkNGY5ZDFkYTUyYjk2N2JiYjZhZTVkN2E2ZTk3NGQzZDljYzM2MGQxNTc5NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/http/auth/auth-routes.ts#L88-L97",
+          "version": "repo-lines-v1:sha256:718528d2ed3282ae2e2b6295bd41a07b5d037c7709349aaf9c0095c9338cf494:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg5OGE5NjFlOTM2MWY3NDNmOTRkMjA3YmQ2MDM5MDhkYTUwZTNlZDVjZDI4OGQ5ZDQ3ZWEzOGI1OWFhZmEzMjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkyMDQwZTA5NWE5NGUyYWRhNzRlNDIxZjM3MTg3NTFhOTFhODEwYmZkNjZmNDhmNGU5MzljN2I3NDgwZWI2NzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRmOTc2ZDU4ZjE2NzEwMGMxYjliZDIwMjc0ZDA5ZjAwYTUzNGMwOGZhZDc2NmZmNDE4ZDcxZTJjNTBlZTY0M2MifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/infrastructure/kysely/session-repository.ts#L45-L52",
+          "version": "repo-lines-v1:sha256:8ba82eb572efccdf446345841807758cc475165656eadabb5983a950694d8a72:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWM3NGQ4NGI5NjA2OTBmNjgwMTVhYThlMzVkZWUxMWZjOGJkZDNmMzUxMGI1OWVkMWRiZjhhOTdmNzYxYmE4OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGVjYjFmNGY4ZTRkOTc1ZTFmZDY2OWExYTdhMjVhMWM2NGE5ZDFhZWQ1YjcxNDVjMGU2ZGE3Mjg2MDUxODQxMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDlkMGUxNzM4OTM2MTNjYTBlZWNkOGQ0OWZjNDg3ZmMyMTQ0ZTBjNzZiOGViZTVlMjgzNzFlODJmYjBjNDg3NyJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-27T02:48:33.191Z"
+  }
+}

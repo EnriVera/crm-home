@@ -9,10 +9,7 @@ import { taskStateRepository } from "@/infrastructure/repositories";
  * (5 min) because states change rarely; the page that mutates a
  * state (TasksConfig) is responsible for invalidating this key.
  */
-export function useListTaskStates(): UseQueryReturnType<
- TaskState[],
- Error
-> {
+export function useListTaskStates(): UseQueryReturnType<TaskState[], Error> {
  const listTaskStates = makeListTaskStates(taskStateRepository);
 
  return useQuery({

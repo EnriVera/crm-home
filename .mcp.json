@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "reui": {
+      "type": "http",
+      "url": "https://mcp.reui.io"
+    },
+    "shadcn": {
+      "command": "npx",
+      "args": [
+        "shadcn@latest",
+        "mcp"
+      ]
+    },
+    "stately": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@statelyai/mcp"
+      ]
+    }
+  }
+}

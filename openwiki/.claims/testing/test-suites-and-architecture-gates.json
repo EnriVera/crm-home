@@ -1,0 +1,156 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:6703ecc5ed133d58771fa7bc0150ca5defb86ea767d1a22d9ec7609f3f7cbe96",
+  "claims": [
+    {
+      "id": "claim_a26b17d58b1a4cfb8c4d9bd1aebd55b0",
+      "statement": "Cada aplicación tiene su runner: bun test en apps/api y apps/web, y vitest run en apps/web-v2.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/package.json#L9-L9",
+          "version": "repo-lines-v1:sha256:c5b0000f3c7ca0c330417c814b35bef3b491cd20ce1e6322e7732c29f5d4ce50:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzViMDAwMGYzYzdjYTBjMzMwNDE3YzgxNGIzNWJlZjNiNDkxY2QyMGNlMWU2MzIyZTc3MzJjMjlmNWQ0Y2U1MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzViMDAwMGYzYzdjYTBjMzMwNDE3YzgxNGIzNWJlZjNiNDkxY2QyMGNlMWU2MzIyZTc3MzJjMjlmNWQ0Y2U1MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDdjOTM5ZDFlMDI5MDM2MDc3ZGQxZDBjMmQ2ODE1ODQ2MTI1ZGEzYTZmMzJmNDY0YzViMWJlZDZhNWNmYThmNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTc5NzljMmJjZjE4ZTA3MmMyMWEzYTllNzIzZDM0MDZjNGY0MDY1ZjllNjE1ZDA0YmQ5ODI0YzUzYzYxYmUxNiJ9"
+        },
+        {
+          "resource": "repo://apps/web-v2/package.json#L11-L11",
+          "version": "repo-lines-v1:sha256:241fc249efa71b0e7a97f7f4eb8b89494a59cb3f87d71be6aad63aa3ba5e3d3c:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjQxZmMyNDllZmE3MWIwZTdhOTdmN2Y0ZWI4Yjg5NDk0YTU5Y2IzZjg3ZDcxYmU2YWFkNjNhYTNiYTVlM2QzYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjQxZmMyNDllZmE3MWIwZTdhOTdmN2Y0ZWI4Yjg5NDk0YTU5Y2IzZjg3ZDcxYmU2YWFkNjNhYTNiYTVlM2QzYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDliZTc3NTEyYjU2YTUyZGEwMTM0ZDE0YWU3YjJmZjc4MDJlNDZiZjVkNmYxODg5NWQ3OTViZTFlOWNjZTE4YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGNmYzkyMWZiY2M1YTc0ZjFmYmUwZTg2YTY4YTA5MzNjOTU3YTU1MzYwOWY0MWU4MmU3MjY5YjEzYmE2NjJmYSJ9"
+        },
+        {
+          "resource": "repo://apps/web/package.json#L10-L10",
+          "version": "repo-lines-v1:sha256:c5b0000f3c7ca0c330417c814b35bef3b491cd20ce1e6322e7732c29f5d4ce50:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzViMDAwMGYzYzdjYTBjMzMwNDE3YzgxNGIzNWJlZjNiNDkxY2QyMGNlMWU2MzIyZTc3MzJjMjlmNWQ0Y2U1MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzViMDAwMGYzYzdjYTBjMzMwNDE3YzgxNGIzNWJlZjNiNDkxY2QyMGNlMWU2MzIyZTc3MzJjMjlmNWQ0Y2U1MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMWZlMjNkZDk3NGFmM2NlOGYxZWU0MWRkMmY0NDBiZTYwOTczMWNmNWRjNWZiNTI3MWE1MzMzNTIyMWYwN2YzYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzFkNjA4MmQ5YjRlZTVlZjQ4MmRiOWNmNDc1YTExMWI5MThmNjJhYzU5MTEyMGNhMWE1NTE3MmM1NzBmNTkxMiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_33c0f01194704797a9633e69688fd382",
+      "statement": "En turbo, las tareas test y typecheck dependen de ^build, de modo que un build roto de una dependencia bloquea la ejecución de los tests.",
+      "evidence": [
+        {
+          "resource": "repo://turbo.json#L12-L18",
+          "version": "repo-lines-v1:sha256:846d60224041410012e7d9c3d23ab9769b4c1c7e2a7cee1261cbd564571bd55c:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzgxZGJiZTM5NDc2MjY2M2VjYWZhNmIwMDc3OTI2MDc0MDU2ZmIxZTgzNDdhMDA4MmNkOTFiMTI1NDEzMWVkOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZWNmYTVhOGFmYWIzNmJlYWM0YzRlOWFjNWI0Yjk5Y2RhOTExODYzYjAwYTczZWVjZDI5MDUwZGUwY2VhNTNhZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjIsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGY3MzlhMDZjMWNiYjEyNDRlMzM2M2QzOGJjZjlmYTUwY2U4NGZlZDM5OWMyMTkzYTNjN2YwOGQ1OTkxOGIyYSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_27cd72cb64a0406893d81b466faf5321",
+      "statement": "La configuración del proyecto declara strict_tdd con una única excepción acotada al scaffold del monorepo, sin lógica de negocio.",
+      "evidence": [
+        {
+          "resource": "repo://openspec/config.yaml#L89-L101",
+          "version": "repo-lines-v1:sha256:9a49c41bb151f3082811a2075e537402380e2296de64a3c6e1c3aca8eff14ece:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlhZDExYTU3ZDFhZGI1MTllOWI0MzU4MWIzMjY4ZjQzZjhmN2U5ZTVjMWExOTFmMmYxNWNhZmQxY2I2M2I1MGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVkNDUyYTMxODljNTkxZTBkNzgwYWJkMTY3YmNiMmUzODc0MGM5ODljY2ZhZDE2NDRmZTViMmRkOTNiNGNkMjkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRjMzdlNGRmNDM0ZmM0Mzg3MDZkMzdiMjk3MjIyOTg2ZjkxOThiMmZhY2NlZDlkODRiOWE5YjIyNDQxMjFjNTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3YzcyOWFiOWU2MzQ4OTU1NjAwMjJjODFlZDA5OTU0MmRhNWFlZGFkNWY5MjcxN2FlZGQzZDg4NjE0YjcyMTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a44c372c2f584431a3c53b0ce394761d",
+      "statement": "Los casos de uso del backend se prueban contra dobles en memoria: repositorios InMemory de los seis puertos, un TransactionManager en memoria, una telemetría que captura spans, un reloj fijo, un generador de ids determinista y factories de filas, manteniendo interfaces idénticas a las del dominio.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/application/tasks/test-helpers.ts#L1-L40",
+          "version": "repo-lines-v1:sha256:e2f21201c422a05e4ccb40f7dfac5fd29450bd6a3b53f6fe8c70b5c3e0333b67:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI4MzI0NzgwMjA4ODIxOTg3ZGFlYWI4NmZmNzEyNDg3OTZiYTkzYmFhNjgxYWJlN2RjN2EyYzY1YjkyODhiZjUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_20f350397c8a4b6c91bfec93d5a0e96a",
+      "statement": "El test de creación de tareas fija las reglas de orden del kanban: orden por defecto al final de una columna vacía y max + KANBAN_DEFAULT_STEP cuando la columna ya tiene tareas.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/application/tasks/create-task.test.ts#L15-L50",
+          "version": "repo-lines-v1:sha256:bfad823376a263755895c770f5824646cbb6a6062c739b17f13c04ca88c564f8:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ1Yjg0MGFiYThkOWEyZDYyMzM5OTc0NTgyYTk1M2NjODVhN2ZkNGU5ZGNmNmZiNjMxZGRiMjM2NWFlZDExODIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRlNTljNGI5NDhlZDVkMjQwM2U2MTJhODgwZjVkYmEyYzJjZjYyYmI3NWZhMTQyZmI0NzZhY2YzZDI4OGYzN2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI5NGFmNzBlMTdlZDJiNDQzZGU4NWE0YjczNDBhZTg5YzJiZDkyNzdlZmU0M2E0ZjlhYTNhYWYxNThlMWI4YjEifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/application/tasks/create-task.test.ts#L52-L84",
+          "version": "repo-lines-v1:sha256:448a60fac8437eced9a50ad564656cdf95e09b54f1d5b25c8908f8752bb7e026:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxMzE4YzIzYTk2ZDk4MmE3M2Q5MTlmMzQwYmQ1ZDYxYjE5NWQyZWYwMWYzY2U3ZWVhYTcyYjg0ZmRiOWJjMmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQzMDRjOWUzYmM5ZTNmYzlhODliYWEwYzA3NDM2MTlkMjdmZDIzYTI3OTZkYzY1ZjU0MzViN2RmODI0Njc0NzkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYzMGM0YWI4MTQ4NDRkODM4YzJmOTk4NmFkMWMxZjFmMDQ3YjBiMTVmMmU2N2VjZGFiMWUyMDNhOWM0NDcyMTcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e1a53e52837e4fc19b475c917317cd35",
+      "statement": "Los tests de integración del backend se auto-excluyen con describe.skipIf cuando no hay base de datos, de modo que un CI sin TEST_DATABASE_URL los salta en silencio y pasa en verde sin validar el SQL.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/http/auth.integration.test.ts#L14-L14",
+          "version": "repo-lines-v1:sha256:28041ac599302455926b3bd8f6325100e07b8381642c5e4dbbda9f2302cf4083:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjgwNDFhYzU5OTMwMjQ1NTkyNmIzYmQ4ZjYzMjUxMDBlMDdiODM4MTY0MmM1ZTRkYmJkYTlmMjMwMmNmNDA4MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjgwNDFhYzU5OTMwMjQ1NTkyNmIzYmQ4ZjYzMjUxMDBlMDdiODM4MTY0MmM1ZTRkYmJkYTlmMjMwMmNmNDA4MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmEzOGVlOWNjNzNjOWYxZjJjOGY4YzU2ZDAwYmQwMGRlNWIwNzM2OWYxMmUwODBhYmJkNzljOGM0Mzc1NmMxNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTMxOGVlYzExM2M3MjhlYTFiNDllYjRlZGY5NzM5NmE4YTY1ZDI5M2EyYzIwYTgxMzlhM2UyNGQ4MDBkYmYzYyJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/http/tasks/tasks-routes.integration.test.ts#L20-L20",
+          "version": "repo-lines-v1:sha256:d251f9cce546c4a7ac8e1d9da8f2f15c0a2fb74af04b28cc01955ca90c0eedbd:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDI1MWY5Y2NlNTQ2YzRhN2FjOGUxZDlkYThmMmYxNWMwYTJmYjc0YWYwNGIyOGNjMDE5NTVjYTkwYzBlZWRiZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDI1MWY5Y2NlNTQ2YzRhN2FjOGUxZDlkYThmMmYxNWMwYTJmYjc0YWYwNGIyOGNjMDE5NTVjYTkwYzBlZWRiZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMWVkZmY3OTllNmMyZmZkMDU3OGM3OWJmZWMwMTE1MTc5ZTU5OTg3YWExNjdkYzI1M2Y4YzQ3NGMxZjQ4YjU0NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWE2YWNkYzFlZDk2ZWRmNGRlZGI3YmZkMmE0NDlhNTEwYTQwMjg2MDk0NmRkMTg5Mjc4YjUyMDM3YTA0Yjg0ZCJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/infrastructure/kysely/002_tasks.integration.test.ts#L87-L87",
+          "version": "repo-lines-v1:sha256:caeb834fc250e4667c79380fe3168ea6cb6ec3e29b670af3a0eb406db0a2efd8:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2FlYjgzNGZjMjUwZTQ2NjdjNzkzODBmZTMxNjhlYTZjYjZlYzNlMjliNjcwYWYzYTBlYjQwNmRiMGEyZWZkOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2FlYjgzNGZjMjUwZTQ2NjdjNzkzODBmZTMxNjhlYTZjYjZlYzNlMjliNjcwYWYzYTBlYjQwNmRiMGEyZWZkOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTMxYjQ5ZmI3NTZjNmMxNzhjYjZiOTE4ZWU3ZTJmMGI5YzMyMDY2ZjFkOTUzN2NkZTY2MGZjZWZmYmUwMjRmZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzdiOGM3ZDZlOTk2MmI0MThiNWM3YTk3Mzg0NTU2MDlmMjBiYjIyMGYwMjAzZmE0YzQ2MjZkNjVmYmNhYjlkMSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_8722d41f204843d2b21134ca006ae6c6",
+      "statement": "Dos tests del backend actúan como guardas de arquitectura y rompen el build si se violan las invariantes: la pureza de los puertos y la prohibición de cablear el stub de attachments.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/domain/ports/__attachment-not-in-composition.test.ts#L22-L37",
+          "version": "repo-lines-v1:sha256:30ac61c0dd50b53d898aa0527eedff7f3acbfb7e01d5022de8254c76249c39de:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU4NzgwMTQ4OTBlMjc4M2UxNWRkNGJkMjAxYzJlN2E3OTYxMTA1Y2M2NmMzMDYxMzZkYjEyMjQ0YjNmMjFiODkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM0NDEzZmU3Y2I0OTk5YTk1MDFmNDk3N2FiYmQ4NDBhZGNkOTdjYjNkMmEyMzc5MzU5YzVkMTNiZmQ5OTk4MTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/domain/ports/__no-external-imports.test.ts#L50-L70",
+          "version": "repo-lines-v1:sha256:e0f8451e666380d0af4401c124f8f2eead759b3950a5aaa68d51c742eb6cc130:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmYjBlNWJhMTViN2NlZGY3M2VkN2IyM2UzMzA5MTliNTVhOTA1ZDVmZDdlMzNmMzNkM2QxMjY5MzhjNmU5ZjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc2NWM0ZDViYmZkNjE0MWU5NWM2NWIwNGEwOWNmZTE1MGJiNzhlYWUyYThkZDFiYjhiN2FmMTc5NzBlOGExYWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8f76860b3839428296afe1de4edf043e",
+      "statement": "En el frontend activo la guarda equivalente vive en ESLint, con reglas de encapsulamiento de vendor y de purity de las capas domain y application.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web-v2/eslint.config.ts#L80-L149",
+          "version": "repo-lines-v1:sha256:73a81830e5d7b6d6e647a143a54e0093a23726440a33f4a1031268d7fe6d8087:eyJzZWxlY3RlZExpbmVDb3VudCI6NzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY4Y2EwNDM5YTcwZTg1MGQ4NjlhNTAzM2Q1MTQ1NTcwYWNhYzc5ODVlYTNhYzgyYjZkYTQ0YmUwZTQzOGJhZGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkNWNkMmZiNGYzZGY4ODQ1MTUyNTViMzk1MjNmMmY4YjU0NzJiZWVhOWY1NjZmZmNhMjA0ZGI4MDI1NjEwNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI0YzZmZDM1M2Q1MTg3ZjVjMWY3MzZjMjFjMGQ0YzYzZWUzOWMyODhmMDg3NmMzOTdkZGY2MTdhMDZjMzRiMzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIwMmQyYzBkNmRjNWU3NGQ5MmZhMTRiOTFkYmVhMjY0MDkwYmViMzVmZGI5MTg4ZDliMzQxMTgxZGNlOWY0Y2UifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_657c49018fa54e7ea0e64ea40f6b7264",
+      "statement": "Vitest corre en web-v2 con entorno happy-dom, globals activados e inclusion de tests/**/*.test.ts y src/**/*.test.ts.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web-v2/vitest.config.ts#L26-L30",
+          "version": "repo-lines-v1:sha256:2e32dfdeedb372f697a3eba052265fe99d1291931fd64632539a9f9ac965b8d6:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTkzNmRmN2E1YTNhYWYxODBjZmZkMWQ2NWM2NDZlZjZhZWEzNTJjYzI3Nzc0Njg2MTk5Y2Q4ZmIzZTg5OWM3YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGQ1Y2QyZmI0ZjNkZjg4NDUxNTI1NWIzOTUyM2YyZjhiNTQ3MmJlZWE5ZjU2NmZmY2EyMDRkYjgwMjU2MTA0MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTIxYzQxNTg3ZDFlZDUzNTlkMzNlODFhNjYzMTdmYmMyNWIyY2RmNjI3YTQyYzQ1OWZkNmY5NzViNGEyNGVmNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjZmNWI0MGIxNTg0NTdkMTc4NjRmMjE3OTA3ODZkZDVhMmVjZGI2NGI2NmE2NTFmNzg4ZDRlMjVjZDMzMDNkMiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_5183246a348248afb96fe01237d6405c",
+      "statement": "El frontend activo tiene solo seis archivos de test: casos de uso de tareas contra un fake en memoria, dos pruebas de política de dominio, el helper Result, el mapeo de errores oRPC y un test de contrato sin DOM.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web-v2/tests/component/tasks.test.ts#L1-L18",
+          "version": "repo-lines-v1:sha256:14f08f379c7613856324ac264839fd807411d3331e46b812f7016379144b78da:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MmE0MjkzODJiMmUxNDcxOGUwZTM3YjA1NzBhOGExNzAyOTkxZmNkODQ5OGNkODQwNjBhOGJmNGYwNTAxN2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU5ODkyOGQ0Mzc3ODg0NmVlOTM4ZjNhMWNjOGVhMmEzNDUxNzFmYWY1ZWI0YWQwYmYzZTYzMDExY2EyMzdhZGQifQ"
+        },
+        {
+          "resource": "repo://apps/web-v2/tests/unit/application/task/use-cases.test.ts#L1-L30",
+          "version": "repo-lines-v1:sha256:6070b28934fc64585175caa815da609d0e841efbc605ada992b050d0655fbc62:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjOTEyNmQxN2RkMjkxYjg0NzZiZWZlNTVjZmNmY2ZkNjAzZDQxNjk2YmZiZmMyZTg1NWQwNWU1OThiYmIzOTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE2MmM5ZGVlNmIwZjI3NTc0YTExNDRhZjYwNDUzZjVkOGUyM2RhM2FmM2E0ZWMzYmM4OTU5OWU1N2JlMzlmNWIifQ"
+        },
+        {
+          "resource": "repo://apps/web-v2/tests/unit/infrastructure/api/errors.test.ts#L1-L22",
+          "version": "repo-lines-v1:sha256:019f50c3fe8260ca159b69177784694eb409523d27a04bbe969a8025c06bb2b1:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFiOTUwNmIyMWY0ODNkYzk1ZGYyZjJiMzVmNzBjMGE0NDNiMDUzYTdiOTY0OWY3NzQ2N2U2ODhhMzMyMDA0MDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5ec3066b67864100b344180a002db72e",
+      "statement": "Las carpetas de pruebas e2e, integration y unit/ui del frontend activo están vacías, no hay configuración de Playwright y el glob src/**/*.test.ts no matchea ningún archivo.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web-v2/tests/unit/domain/result.test.ts#L1-L21",
+          "version": "repo-lines-v1:sha256:9046b75833b22d3c44b086cd5e5ff1a6497e0719826ee275d61559ad5e2fa013:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFiOTUwNmIyMWY0ODNkYzk1ZGYyZjJiMzVmNzBjMGE0NDNiMDUzYTdiOTY0OWY3NzQ2N2U2ODhhMzMyMDA0MDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI4OWMzMzhiNDljYmFmYjA1MjU1MGJkZTE5NjU2ZmJkMjg0M2NhZmMzMGJmZWZlZjAyNjQ0N2Y3ZDExMWQ4NmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ4MTdmYmI3M2M5MmIzNmQ1ZTQ4OTZmZjUxYzFiNThlZWMzMzBiYmU5NjFiYTA1ZmM2MjA1Zjg2N2VhMWJjZjYifQ"
+        },
+        {
+          "resource": "repo://apps/web-v2/vitest.config.ts#L26-L30",
+          "version": "repo-lines-v1:sha256:2e32dfdeedb372f697a3eba052265fe99d1291931fd64632539a9f9ac965b8d6:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTkzNmRmN2E1YTNhYWYxODBjZmZkMWQ2NWM2NDZlZjZhZWEzNTJjYzI3Nzc0Njg2MTk5Y2Q4ZmIzZTg5OWM3YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGQ1Y2QyZmI0ZjNkZjg4NDUxNTI1NWIzOTUyM2YyZjhiNTQ3MmJlZWE5ZjU2NmZmY2EyMDRkYjgwMjU2MTA0MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTIxYzQxNTg3ZDFlZDUzNTlkMzNlODFhNjYzMTdmYmMyNWIyY2RmNjI3YTQyYzQ1OWZkNmY5NzViNGEyNGVmNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjZmNWI0MGIxNTg0NTdkMTc4NjRmMjE3OTA3ODZkZDVhMmVjZGI2NGI2NmE2NTFmNzg4ZDRlMjVjZDMzMDNkMiJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-27T02:48:33.191Z"
+  }
+}

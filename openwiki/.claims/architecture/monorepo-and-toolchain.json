@@ -1,0 +1,140 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:7fd5661ad7b38b7a57f67717e48d922f84cd1b32326d6ee46fbaf19a61d69914",
+  "claims": [
+    {
+      "id": "claim_04408a505e634bc193688917db486b72",
+      "statement": "El repositorio es un monorepo privado con bun 1.4.0 fijado como packageManager, workspaces apps/*, packages/* y apps/web-v2, y un linker hoisted que produce un node_modules plano en la raíz.",
+      "evidence": [
+        {
+          "resource": "repo://bunfig.toml#L1-L2",
+          "version": "repo-lines-v1:sha256:d09eb18ffee6896a4b74523d80b1bcd642a6966974e20c30bac94027a31fc202:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDkwY2QxNTQ2NGY1NzJjNjdmNDI1YjFlNzc5N2NhOTI0NjRmYzM4MDg1OGQ3NmFhOGZhZDI0NWVjMzNjMGI5NyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzY3OTE1MzhkM2NkOWY5MTIzYzliYTAxNmI3YTI2MjY0YzJlMjk2OTBkYTE5ZDFjZDRiNzA3NGVlNzkwM2IwOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://package.json#L1-L18",
+          "version": "repo-lines-v1:sha256:3af71a78bda1be8b063849a47768c00bfaffc2e673154723c64d68b702eff20c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ZmIwOGZkYTFhY2I5NTdiNjExNmJkMzc4MTFhMWZlNDFhMDE2MTFjMDYzMWVkYmY3ODZkNjg4OWEyN2E1NWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNmZDg0Zjg1OGY3YjkzODlhNzUwNDZhMjVlZDFmZWU1YTQ0MDMwNjZkMzA1OGE4YWYyYTE1NjU4ZDFkZDIxMDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA0MjdhOTJmYWQ4MzY3NzlhMGQ5ZDNjMWJiZTMwOTU0Nzc1ZWMwNDU0OTE0MDUzMjI5ODRjNDVhMjhlZTg3YWIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1781463a95674b33ba637dbe11f6d610",
+      "statement": "El pipeline de turbo define cinco tareas: build cachea dist/** y .output/** y depende de ^build, dev no cachea y es persistente, test y typecheck dependen de ^build, y lint no tiene dependencias.",
+      "evidence": [
+        {
+          "resource": "repo://turbo.json#L1-L20",
+          "version": "repo-lines-v1:sha256:4859deda9e388fb2c5794b847c72d6518186e311af09afb6dcd65901bbb1a509:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ZmIwOGZkYTFhY2I5NTdiNjExNmJkMzc4MTFhMWZlNDFhMDE2MTFjMDYzMWVkYmY3ODZkNjg4OWEyN2E1NWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_05f175efe24741f1baa280e6f012c42d",
+      "statement": "El Makefile es la interfaz de alto nivel: delega dev, build y test en turbo, expone db-up y db-down para postgres, mail-up y mail-down para Mailpit, up y down para ambos, y help para listar targets.",
+      "evidence": [
+        {
+          "resource": "repo://Makefile#L10-L17",
+          "version": "repo-lines-v1:sha256:56b7a55bda5c59d47d509feee0b3bca5b7f1685b7f8f22090c69e8af6468ce78:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTI1OWE4YjI1MjgxNGFmNGUzNDQwM2QwMjI3NGJiOTI0YjJmZjI2ODk2NjcwZmNhOWFmMDQ5MmZmOGJhNDljNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZGU2OWZmMDJiMjAwOWM4YTg2ZmJlZmI5MTg0ZjBiMzgwNzAzNzNlNjE0MWM4NDQyNjc3YWU2MDJjOWVkZjlhMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTA2MzQ2MDI3OGFkZGYyMjcxMzJmY2M1YThiNmQ5YjZlYmYyMDBmMWI1YTA4ZDA3NDA1ZjVjYjBjYTQ3YjlhYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODU3NWE5ZGExN2M2NTk0NzUwNmIyMTRkN2YyZGEzNjNjZThiMjZmZWNmZGFlNzllMjNmMmYzOWJlMzIzNzA1NyJ9"
+        },
+        {
+          "resource": "repo://Makefile#L19-L40",
+          "version": "repo-lines-v1:sha256:23d6d4588c5d84b73b6082caa04f923bb5228c3b35eec7eca5362eae97a6c4d1:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZhMWI0MDJlNDM0MGM2YTkzYzdkNjg2OWJhYWYxODZmMmQ1OTE0MjcwYTY2NDNiNDAxNTdjOGQwMTZiNDI5MGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBmZjMzYjM3N2RhMzgzZjI3OGZhZjA0Njg1OTYzNTQ5MWZhMmE2NmZiZmM2NDMyMjY2NTI4NGRkNzRiNzA5NTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI4MTU4MGM5ZTkzNWM0Mzk3NmI3MjhkY2YxNTljZjQwMDkxMjA5YzlkYWU0MmRhYzc5NWZkYzk4Y2NmMDFlNjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA4MDA3ZjIwYWRhMTE2ZjNhMGMwZWRmODczZTRiODQyNjk1NzcxZGYxZDZhZDA4YTAwOTdiOTM1ZmJmMGFmNmEifQ"
+        },
+        {
+          "resource": "repo://Makefile#L42-L60",
+          "version": "repo-lines-v1:sha256:d35b60380aca1ccd08545cfe94a368ea08ec19ed7b5fb05c490ca827f8d9851f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVkNmRlMTk4Y2Y0NDUzZmM5ODNjZDI5NzBkYzU4MzBiOTMzMDZmODU5ZjQyMWQzMDgzYWM1YzYzMWUwNmEwMWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY4NmFlZjM2OWQyZDI3OGMzZGVkN2M4NDI4ZWJmYzBmNmJlMmJiY2VjMWIyMjhmNWMyODA3Y2ExMTgwNTZkYTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJiYTViZmY5MDExZjRjNjIyMDgxYjk2ZDY4MDVlYzEwNDEyMTkwMzNhOWNlODZhY2EyNjRhZWIyMDdhOTFkM2EiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_860c403b7f08476c99ff3a50a56809b2",
+      "statement": "El Makefile documenta un fallback para cuando turbo falla con el formato de bun.lock v2: ejecutar los mismos scripts con bun --filter o bun run dentro del paquete.",
+      "evidence": [
+        {
+          "resource": "repo://Makefile#L1-L6",
+          "version": "repo-lines-v1:sha256:d34afc51703a76f387e9043269d6b52de215e4cc3f523380ccb1eeeeb5d013bd:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTg0MmMxNjA3YzE0NTFlOWU3NWMxYTMyYWMzYzFhYWU2M2IyZGY5ODNlNDhjOWQwZGNlZGEzYTNhZTBiMmY1MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTIxYWFkNTIxYTVmYWZkMGE0NGZlYTAzMTA4MjYxMzE4YmRhNzE2NzExYTUzZjVmNGFiZmI0ZjYzZGYxZWUxMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTA2MzQ2MDI3OGFkZGYyMjcxMzJmY2M1YThiNmQ5YjZlYmYyMDBmMWI1YTA4ZDA3NDA1ZjVjYjBjYTQ3YjlhYSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_5e5d2e6c3a14474f9f711336fb6f8329",
+      "statement": "El único hook de git es el commit-msg de husky, que ejecuta commitlint con la configuración de Conventional Commits; no hay hook pre-commit.",
+      "evidence": [
+        {
+          "resource": "repo://.husky/commit-msg#L1-L1",
+          "version": "repo-lines-v1:sha256:b872f323e41e919776ba0bf28b8b6f94498769a7615bc31e1324f59c5a589354:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjg3MmYzMjNlNDFlOTE5Nzc2YmEwYmYyOGI4YjZmOTQ0OTg3NjlhNzYxNWJjMzFlMTMyNGY1OWM1YTU4OTM1NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjg3MmYzMjNlNDFlOTE5Nzc2YmEwYmYyOGI4YjZmOTQ0OTg3NjlhNzYxNWJjMzFlMTMyNGY1OWM1YTU4OTM1NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://commitlint.config.mjs#L1-L3",
+          "version": "repo-lines-v1:sha256:101001638e174a3b7e9b426ae05db040fa10d04c85d3b01924d9193be16ca27e:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzMyN2I2YzI2Y2NhMjgwNGIyNjZhNzdhMmE0ZjExNTU1MGQ5M2I2ZTJjMjcyMjgyYmIwYmNmNjQ5ZDVjYzMwMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWExZDFhNjMzOTAyMjljNzk4MzQ3ZTgzYTA0MDU0NDFjOTQwMDAzNTI4NGFkMTY4YzFiZjZjZGYxZDcwYTM3MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://openspec/config.yaml#L103-L110",
+          "version": "repo-lines-v1:sha256:2f95fa24264f68abe0ce15819a69b2089e41e20c384121adc61404d41b11c0a1:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjcyOGJlYmRiYTZlYjA4MGJkMmJlMjAwNGUyOWNhNWMzNjYwYWZiOTQ2NTMxMTE0NWNkYjI3NTY1NzUxNjAyOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOGExNTI3ODNkNmM5MWVjN2QyZmQzOWRiM2Y0Njk2ZWI1NzViMTZlZDQxMDdkYTMzYTEyOTg1NTQzZTRiNGY0ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGRkOTZhNGQ4MmVhNmMwOTI2ZDUyZmQ1ZTNhODFhOTU3MjQ5MjQ3NDdmMWMyODNjZmRlOGJlYzVhMzYxMWE0MyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzZkNzFkZDdhZTNlZmNmOGFkZjgxZGIyMWMwYjE1ZWZkNzhjMjdjZmU4M2Q3N2RmNDA1YWJkMTdhNTlhNjQzNSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_c8bcbc4812ec46f2b8d93c4de3d0a2fa",
+      "statement": "El PRD-v3 congela apps/web (Octane) a solo correcciones de bugs y lo elimina cuando apps/web-v2 supere un cutover gate de paridad de funcionalidad.",
+      "evidence": [
+        {
+          "resource": "repo://docs/PRD-v3.md#L3-L3",
+          "version": "repo-lines-v1:sha256:329d66e404bef2cd92eb08fb9aeed61c65e9dde8d558b46c810ce22d84037cd8:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzI5ZDY2ZTQwNGJlZjJjZDkyZWIwOGZiOWFlZWQ2MWM2NWU5ZGRlOGQ1NThiNDZjODEwY2UyMmQ4NDAzN2NkOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzI5ZDY2ZTQwNGJlZjJjZDkyZWIwOGZiOWFlZWQ2MWM2NWU5ZGRlOGQ1NThiNDZjODEwY2UyMmQ4NDAzN2NkOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjIsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGZiN2FkZmQwODU0MWQ3YzlmMzAxZTJlZjc1MDhkODg1MDAwYWYzYzU2M2Q1NDIyOTk3MWI2YjI5ZDUzOWQ2ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDk2MWNmOTViNTBiMTAyNjc3NTQzZTZkNjBlZDUwOThjZmMzZjAwZWQ2NmFhZmI4YzBjOTEwYTNhYmVjNGQxMyJ9"
+        },
+        {
+          "resource": "repo://docs/PRD-v3.md#L38-L38",
+          "version": "repo-lines-v1:sha256:f6604d5c83da197fcad812d0c9ad6f563aa223f0d8923efb987301309678ce99:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjY2MDRkNWM4M2RhMTk3ZmNhZDgxMmQwYzlhZDZmNTYzYWEyMjNmMGQ4OTIzZWZiOTg3MzAxMzA5Njc4Y2U5OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjY2MDRkNWM4M2RhMTk3ZmNhZDgxMmQwYzlhZDZmNTYzYWEyMjNmMGQ4OTIzZWZiOTg3MzAxMzA5Njc4Y2U5OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjI0MzRkM2VhNzI3Mzg5MWExNmFiOWM0YTBkMzRiMTU4OTJmMDFiODIyNGU3MDVmNDkzZDczNzU1OGM4YzJiNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDNkYTEyZGM0ZGFkODI4ODZmNDU0MjAwNTkwMzU2ZDhkZmFlNDRjMmM3YjU2Y2M0ZTFjZDU1NzdlNmNhOGU0ZCJ9"
+        },
+        {
+          "resource": "repo://docs/PRD-v3.md#L667-L670",
+          "version": "repo-lines-v1:sha256:976f1cc46bc168fd0dac3e74bd393a36686896dccf9460ce36d06e70c34c1497:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDQxNjhlZmZmNWEzNzcyY2Y3OTM2OGNmZmMxN2U1NjljMzExY2FjMzVhNGM0NDFmNDU2YzE5ZDZiNGM3ZmZjZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTBjZjcyNDdlMGM0NDY4ZGIwMGMzYTc4NjNjZTVmNWNlMzg4MjNiMGYxMTg3NzRjMjkzZjFiMjU2OTY3MGM1MiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZWU5MzM0YmM3ZGVmMjcyOWQwYTMzMWU1ZjU1ZDczYjQ2Y2YxMGJlNTAwYzU3ZGU5Y2I1NDE4YTIxNzdhZWVjMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2I5Nzg0YTkzYzY0MGYyNDhiNDg5ZDBhM2MzYjkzZTFjZDI4ZTkwYmIwOGM0Y2ZkMjNhYThjNTIzOWExNjhhYyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_073aba79eb6d4698b6265f8dfd05098d",
+      "statement": "La distinción entre los dos frontends es visible en el código: apps/web-v2 es la única aplicación que depende de @crm/contract, mientras que apps/web sigue importando el paquete legacy @crm/types.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web-v2/package.json#L17-L17",
+          "version": "repo-lines-v1:sha256:fd369b3bcc514c53238ac5b0f1bdbbe9ce87a8a7d955467b8b4ecb056124907b:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZmQzNjliM2JjYzUxNGM1MzIzOGFjNWIwZjFiZGJiZTljZTg3YThhN2Q5NTU0NjdiOGI0ZWNiMDU2MTI0OTA3YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmQzNjliM2JjYzUxNGM1MzIzOGFjNWIwZjFiZGJiZTljZTg3YThhN2Q5NTU0NjdiOGI0ZWNiMDU2MTI0OTA3YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjZiOGIwYzdmMTZjNThlNDliMDIwMDE4NWI5OWIyOTAyYWIzN2MxY2I0ZGY0NGYzMzI3OWQ4ODE5Y2IyNDViMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWJkNzg4YjU0ODQxYTM0Zjc2N2I3YzdjNDE0NjJiY2Y5N2JmMzU0M2M1MWFkMGVjZTY3NTY5N2Y4OWQ4NThiOSJ9"
+        },
+        {
+          "resource": "repo://apps/web/src/lib/api/rpc.ts#L14-L14",
+          "version": "repo-lines-v1:sha256:c8f2ce2bfae45d0b7f72aa752acac0fc62af342e0910fe9099f849abfa210e93:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzhmMmNlMmJmYWU0NWQwYjdmNzJhYTc1MmFjYWMwZmM2MmFmMzQyZTA5MTBmZTkwOTlmODQ5YWJmYTIxMGU5MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzhmMmNlMmJmYWU0NWQwYjdmNzJhYTc1MmFjYWMwZmM2MmFmMzQyZTA5MTBmZTkwOTlmODQ5YWJmYTIxMGU5MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjE2ZDI0ZTdkNDI5ZDY4YzI5ZjgzOTc1MThkOTUzNjhjYTgzNTAxNzU2OThlMjJkZGEyNWViM2Q3NTY4YmVhZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWI2M2MyZWU4YWNmMzM0ZmMwYTdmYjE2YzMwZTFlYWYzMzRkMGM2YWE1NTE1Y2ZjNDViNmVmZWQxY2ZhZDk2ZiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_3ea32a0448e74913bb5af4e3b34180e6",
+      "statement": "El PRD-v4 propone un tercer frontend Nuxt 4 (apps/web-v3) y congela los dos anteriores, pero ese frontend no está scaffoldeado: el workspace solo incluye api, web y web-v2.",
+      "evidence": [
+        {
+          "resource": "repo://docs/PRD-v4.md#L981-L985",
+          "version": "repo-lines-v1:sha256:973e985ce3c7f1564ba0388d6d0947140dddc1d3e04fa84142fdf106016c25c0:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2NlYjg1MzgxMDhmMjM3NDNmYWRiMjdkNDliMmY5MjkxNjA4MmIzZDU0NzdhODMwZTQwNzFhNjdkMzEyZTdjMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjJiNThiYzkwYjRjN2RhZTA3MDBjMDlkOWNlNzg4ODI4YjM2NzA0NTY3ZDYxMjFjNzM5N2M3Mjg2ZmQ3YTNhNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGZmMjI0ZDlhZTEyZGVlNmQ3ZDFhZGQyODU2ZjA2YTNkNzA2ZWRjYzk5NDljNDEzNWJmNjYyNzgxNWRhNmVlNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTdmYTBhMDIyYjIxNmEyNmFhODRmMDJkZmYyZWE4N2RiYWU0MmIxYWFiY2QzZTcyMTkwNTcwYzA5OGYwMTI1NCJ9"
+        },
+        {
+          "resource": "repo://package.json#L5-L9",
+          "version": "repo-lines-v1:sha256:ec853f9ae7a0828031298b8ce748bbbd1848a81aa76f78b1b26a5b1fe15608e6:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZmQ4NWVjNjEyZWQ2MDNiNWQxNmZhOTc2MzU2MDJjN2NmNTQzMTFkZDdiM2ViZGE4MjJkZjQyOTRmYzVjZjRlNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjUwNTA1NWMyNWIwZTRiYjNhYjAyZGEzZGJjYzQyYzRhNTdiZGNkM2E3MjA2NDM4OWMyZDMxNTNhODlhMWFjYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODk5YzA1NzkxMWVkYTYyZTc5N2U2NGY0OTRlZDkyZmU4NzVkNDgwMjQ2MzhmYjBkZTU4NmVjMjIxY2MyOWRiZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTA0ODU2MWJjMDY2ODdlMTEzN2UyOWI0MmFjZmNmNjc1ZDcwNDBiNWY5MWM2ZTI4OTU1N2IxNGZkOWEwY2I5NiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_cb6a74e769db471fb8aff553c4e954e7",
+      "statement": "Los paquetes compartidos son @crm/contract (subpath exports por dominio, dependencia única de zod), @crm/email (plantillas compiladas con el plugin de Octane y tipos escritos a mano) y @crm/types (paquete legacy en retirada).",
+      "evidence": [
+        {
+          "resource": "repo://packages/contract/package.json#L1-L27",
+          "version": "repo-lines-v1:sha256:44a9992e3e9dc11ac7505c66b5fb1b1286643aad43db2151bb49f847154ca7d1:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ZmIwOGZkYTFhY2I5NTdiNjExNmJkMzc4MTFhMWZlNDFhMDE2MTFjMDYzMWVkYmY3ODZkNjg4OWEyN2E1NWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkNWNkMmZiNGYzZGY4ODQ1MTUyNTViMzk1MjNmMmY4YjU0NzJiZWVhOWY1NjZmZmNhMjA0ZGI4MDI1NjEwNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhNzMwZmUwNjYzNTNmOTEzOWQ0NTExMjFlMmRkZTMyM2MzYzhhMTA0NGU1ODY0ZmExZTA1ODZjNjdhZTNlZDcifQ"
+        },
+        {
+          "resource": "repo://packages/email/package.json#L1-L27",
+          "version": "repo-lines-v1:sha256:f3bdf2ccef5d237ab97d01c3cb9df27a0b2f5af2f9e6dcdee958a1862c9e80f1:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ZmIwOGZkYTFhY2I5NTdiNjExNmJkMzc4MTFhMWZlNDFhMDE2MTFjMDYzMWVkYmY3ODZkNjg4OWEyN2E1NWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-27T02:48:33.191Z"
+  }
+}

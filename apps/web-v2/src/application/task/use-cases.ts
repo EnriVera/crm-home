@@ -43,8 +43,7 @@ import { domainError, type DomainError } from "@/domain/shared/errors";
 
 /** A use case that takes a list query should reject unknown fields
  *  so a typo in the page code does not silently pass through. */
-const listTasksQuerySchema: z.ZodType<ListTasksQuery> =
- ListTasksQuery.strict();
+const listTasksQuerySchema: z.ZodType<ListTasksQuery> = ListTasksQuery.strict();
 
 const taskIdSchema = uuidSchema;
 
@@ -58,9 +57,7 @@ const taskPatchSchema: z.ZodType<TaskPatch> = TaskPatch;
 
 export const makeListTasks =
  (repo: TaskRepository) =>
- async (
-  rawQuery: unknown,
- ): Promise<Result<TaskPage, DomainError>> => {
+ async (rawQuery: unknown): Promise<Result<TaskPage, DomainError>> => {
   const parsed = listTasksQuerySchema.safeParse(rawQuery);
   if (!parsed.success) {
    return err(
@@ -171,9 +168,12 @@ export const makeUpdateTaskState =
   if (!stateParse.success) {
    return err(domainError("validation", "Invalid task state id."));
   }
-  return repo.patch(idParse.data as Task["id"], {
-   taskStateId: stateParse.data as Task["taskStateId"],
-  } as TaskPatch);
+  return repo.patch(
+   idParse.data as Task["id"],
+   {
+    taskStateId: stateParse.data as Task["taskStateId"],
+   } as TaskPatch,
+  );
  };
 
 /* ============================================================== */
@@ -225,8 +225,8 @@ export const makeDeleteTask =
 /* ============================================================== */
 
 export const makeListTaskStates =
- (repo: TaskStateRepository) =>
- (): Promise<Result<TaskState[], DomainError>> => repo.list();
+ (repo: TaskStateRepository) => (): Promise<Result<TaskState[], DomainError>> =>
+  repo.list();
 
 /* ============================================================== */
 /*  Form listers (EditTaskDrawer cascade)                          */

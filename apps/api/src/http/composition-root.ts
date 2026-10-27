@@ -128,19 +128,16 @@ export function createCompositionRoot(
   // so the preflight (OPTIONS) must accept POST + the standard headers.
   // For production, replace the explicit origins with a vetted allowlist.
   const devCors = {
-   origin: [
-    "http://localhost:5173",
-    "http://localhost:5174",
-   ],
-   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-   credentials: true,
-   allowedHeaders: ["Content-Type", "Authorization"],
+    origin: ["http://localhost:5173", "http://localhost:5174"],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
   };
   app.use(
-   defineEventHandler(async (event) => {
-    const corsResponse = await handleCors(event, devCors);
-    if (corsResponse) return corsResponse;
-   }),
+    defineEventHandler(async (event) => {
+      const corsResponse = await handleCors(event, devCors);
+      if (corsResponse) return corsResponse;
+    }),
   );
 
   app.get("/health", createHealthRoute(getHealth));

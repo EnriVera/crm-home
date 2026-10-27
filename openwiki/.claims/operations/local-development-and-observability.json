@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:09c85005dd37074367f23720ea53f1701102d379b4beeea8a0ae71fedfe5501c",
+  "claims": [
+    {
+      "id": "claim_2debebaf8c9141118492d0536ba359f0",
+      "statement": "El stack local se define en docker compose con postgres 17-alpine en el puerto 5432 (base crm_home, volumen persistente y healthcheck con pg_isready) y Mailpit con SMTP en 1025 y UI en 8025.",
+      "evidence": [
+        {
+          "resource": "repo://docker-compose.yml#L1-L40",
+          "version": "repo-lines-v1:sha256:9e32ea072cea48d6283b23e3d67554a52fe6c5340198ed9757af48e3b0218cf1:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhNzNmY2NkYzk5ZWE4MzU5NjdjN2RlZTdlZmJlZDFmM2NhODcyNjBkOTI5MzE4NTBmZGQ2NmRhOGNiMTJmMWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM5YzY0NTQ5YjQzMGE1MmExNTcwYTRhYzQ2ZjJkMmEzYjBiMzI2M2M2ZTNkMGVjOTRkYzE0MDUzYjE2MDA2NjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e446b3e0c71041119f3ed73bb703c75f",
+      "statement": "La imagen de Mailpit está pineada por digest para que el contrato sea reproducible, y su configuración de autenticación permisiva está acotada explícitamente a dev local.",
+      "evidence": [
+        {
+          "resource": "repo://docker-compose.yml#L19-L32",
+          "version": "repo-lines-v1:sha256:b8fddd41c3868a88e2e4615bc3ad8170d734312611e137350f4e9f188b2aaa9e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM3MGRkYWQwNDFiNWFmYjg4MGM1MDllNDgwMWRlZDAwNWJlZGU0NzBmOTY5YTQ4MjZkNzczMjY0YmVhOGRjNjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY5ZWE5YWIxY2E1NTI2OTNiNjk1NDY0M2Q2NmQ1MTI4YTkxM2VjMWFhMDg4ODZhOGNlNmZiNzFjMWYzYmY3MTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFhNWNkZmUxZWFmMzE1ZjU1NWE0MWFkY2NhZjg1ZTI5MGExNTcwNTNiNjY5MzBjODk2Y2I2YmZiZGY0ZjY2ZTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg3MWNjODFiMjI5YjYxZDQ0ZDU0OTkxY2E3ZGYwYTcxMzhmMzNjNTA0OGQyYmNlYmRlNTlhODljNjlmZWM4OWEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6c9721832367488abe554f3f31343486",
+      "statement": "El .env.example documenta seis variables: DATABASE_URL, OTEL_EXPORTER_OTLP_ENDPOINT, API_PORT, WEB_PORT, SMTP_URL y WEB_V2_PORT con WEB_V2_ENABLED.",
+      "evidence": [
+        {
+          "resource": "repo://.env.example#L1-L16",
+          "version": "repo-lines-v1:sha256:a30cb41623bdfec7e732fe4ce0621c471889c09a729e9bae81b230427cd6231a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyMGE3MDRlNDNlZDZkOGRmODZiNjA4NjkxM2FjYzkwYjFlYzZkYmM1NzEzMTY5Mzg1OTQzOWMyNzhhYzBkMjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBkNDExZTNlY2IyYzAzMTRmYjY3NzkzMzVlM2NlYjY2NGE3OTAwODJmNmNjNzkzYThmYzI0NTJjMWJiNWExMjkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6e140bb210ce43ad872eba0eed1523de",
+      "statement": "El código usa variables que no están documentadas en .env.example: TEST_DATABASE_URL, SESSION_COOKIE_SECURE, EMAIL_DRAIN_LOOP_ENABLED y EMAIL_DRAIN_INTERVAL_MS.",
+      "evidence": [
+        {
+          "resource": "repo://.env.example#L1-L16",
+          "version": "repo-lines-v1:sha256:a30cb41623bdfec7e732fe4ce0621c471889c09a729e9bae81b230427cd6231a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyMGE3MDRlNDNlZDZkOGRmODZiNjA4NjkxM2FjYzkwYjFlYzZkYmM1NzEzMTY5Mzg1OTQzOWMyNzhhYzBkMjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBkNDExZTNlY2IyYzAzMTRmYjY3NzkzMzVlM2NlYjY2NGE3OTAwODJmNmNjNzkzYThmYzI0NTJjMWJiNWExMjkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/http/composition-root.ts#L93-L103",
+          "version": "repo-lines-v1:sha256:21a8a72ffcdaa6649328cb1044fa33f6b2df3fdf0bc33ee38b4cec104b770e6d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxYTVmZTdmYjY2NzEzYTcxZTA3NzE3NjdkNTRlZGMzMGRkZDE0ZjJlYWNkNWY2MjEzOGEwNjhmZWZiZGJkZDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVhYWZmMDUzZmNhN2U2MDgzZmMxZmZlODU3NmNmZTA3ZjU0NjA2OGExMGZjYzBjMWRiNzRkZTY1NjNlZTE2MjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY2YzcxZDRhZTU1ZmI0YjMyMTM3N2YyZmUwYjY0MGNiNTVhZTRjODQ3ZDFmZjlmNTU5Yjk1N2ZhNzQwZTE5MzYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_cbaeb55f53e34ce38cb1d6ecfb45f396",
+      "statement": "Las migraciones no se aplican al arrancar: se ejecutan a mano con bun run db:migrate, el runner usa el Migrator de Kysely con FileMigrationProvider, informa cada resultado, destruye el pool y sale con código 1 ante error; sin DATABASE_URL falla de entrada.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/package.json#L11-L11",
+          "version": "repo-lines-v1:sha256:372f586f202f623ea4a5a2f2bee2d7a4e38ccd791e90adf9da21afc633452418:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzcyZjU4NmYyMDJmNjIzZWE0YTVhMmYyYmVlMmQ3YTRlMzhjY2Q3OTFlOTBhZGY5ZGEyMWFmYzYzMzQ1MjQxOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzcyZjU4NmYyMDJmNjIzZWE0YTVhMmYyYmVlMmQ3YTRlMzhjY2Q3OTFlOTBhZGY5ZGEyMWFmYzYzMzQ1MjQxOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjliMGRiNWU0NTg0MTFmNmE2ZTk3YThkMDRlMzFhZjRhNjQzZTU1NGE3OTE0OWQ0YzNlYTkzNTcyMzhmNGQ1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTc3YTVmZDQ2MjBhMTk4NDQ0ZWUyZDJmNDJjMzY4MzljMzJkMDgzOTE1ZjkwZGM4ZTA2ZGRlNzI5OThmYmJjNyJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/infrastructure/kysely/migrate.ts#L26-L43",
+          "version": "repo-lines-v1:sha256:32698f0c12029b6f66abdd2420e52a3aef4aa681ac7688588f3a9d55cbd60cfa:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRlM2QwODI5NDY0YjNhZjg0YzIxOWQxMTc5ZWQ2NjE3MmZiMmJkYjBlMjkzZWJmMmY3YjJhNjRkMTlkZjczODkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdjNDM4MWRhNDhlM2NiYzJkNGQxNzU0MzBkMGZjNjQyN2JlZTQ4ZGU1MjY3OWI2NDE3N2M4ZGM3ZGUzNWY0ZGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI4Y2I2OWU4MWUxZTRlODI0MWM0NmY2OTJhZWQ5ZWRhYjgxMGY4Y2FkOWU2ODM4NThlZjRlY2Q4NDNjOTI2N2QifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/infrastructure/kysely/migrate.ts#L5-L24",
+          "version": "repo-lines-v1:sha256:7abc2cdf54b4bbb4ad920bf73c0d9ea05d32fe56352ac97a4544a0de45279a17:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgzODNhMDA0ZTg2NjcyMjM3ZjE3ZjYxMzU1YmZkNjhiYzg1ODgxODg3NTlkZjM4NGRlNzk2NDFjYjYyODcxMjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhYjJlYmRlNWI4MDBhN2RhMzVlNTZkNzIyMTQyMGEzMjc3NzM0MDg0MWE4YzZiZjAwM2QyOGJkMzhhOWI1NzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEwYTE4YmZkYzU2ZGVhZWZkMjBiNzg1MmU2OGUyZDM5NDM5OWQ3YTQwMTIxYmFmZDQ1NmJkOGM5ODc0ZGE2YmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5YzNkOTRkNTNjNmNmNGMwYzJmMzgxZjAxMmE4ZTQ5YjYzZDVkNWZkZjI4MzBjNzU3ZmNiMjdmZTIxNTU5MjMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_89c17269cfd54c9da19b151f60ea0134",
+      "statement": "Sin OTEL_EXPORTER_OTLP_ENDPOINT la telemetría degrada a NoopTelemetry y el SDK de OpenTelemetry no se inicializa; la degradación es un comportamiento documentado y no un fallo.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/infrastructure/otel/create-telemetry.ts#L11-L19",
+          "version": "repo-lines-v1:sha256:3dd68fbf689e42f17f824d327b651670b5760ca95e3d681c7db66d63ebf86ad1:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmY3OWU1ODdjMmQyNjNlMWE1MWNmMTk0ZTZmYTJhZGJjYzRjY2U5NTBmMDA0MjQyZTVhOGI3OGU2Y2Y3OWQ2MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTcwZDc4NDZkYjZmNGMxNmNmOTM0Yjk3MjkxZGQwNjliM2M1Y2JkYmZjYTk0NGUwMjQ4NGFkNWI5NjhlMDUzMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/infrastructure/otel/noop-telemetry.ts#L13-L23",
+          "version": "repo-lines-v1:sha256:314d8b879d5a84f4a4a470da6bd22e9d276be04f9e459294f24ce6ffb5e81c52:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZmMTBmZGMzYjE1YjZiYTU2MDcyOTUwYzVhMWM0ZGZkNTE3YThhYWM2MjcwNDY3OWJkNDAwMmU5Nzg3YWFjZTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY4NmFiOTRkM2RjMjU3MmY3YjdmYWUxNWE3YjIwYzdjOWM2MGY3NzMwYzA5OTBlMTBjZjY0MjcwMzBkMzkxYWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b43a3dd7df4d4d6694a3e66c48c9b9aa",
+      "statement": "El adapter de OpenTelemetry es el único archivo que importa el SDK, levanta un NodeSDK con service.name @crm/api y exporta trazas OTLP HTTP al endpoint con el sufijo /v1/traces.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/infrastructure/otel/otel-telemetry.ts#L1-L10",
+          "version": "repo-lines-v1:sha256:38da0623cad2f8a22da7a10b796bd0e68778f9cb5e06198d709237428ade6ebf:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyYmRhMzZjOTEwZmZlMzEzMzUxYTVjOTU1YmEyOWQwNDMxMTcwZDUxYWVkNTEzZGQzZGI1Y2ZkYzlmN2I2ZGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU3ZTcwOTU5MTFiYmQ0NTU2ZDE4ZjAxY2E3ZDIzMGMwMmFhNWUwZWE1ODdkYjYzYjY0NzQzZjg1ZjAwZjc5ZTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZTQyZWIzYzdmODQ0ZjFjODQ4ZWJlZjkxYzc3M2IzMWZhZDk0NTQzM2NiNWQ3YzcwNzFiZTJmNDU4NzUyYjMifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/infrastructure/otel/otel-telemetry.ts#L30-L56",
+          "version": "repo-lines-v1:sha256:0b42ed0934ce54a516b8c568cb98c6c5dde51f95c87b02b1f582c79d13619969:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4Yzc5ZWNkMmJmODU3ZDQ0NDg5ODNjNThmNTc0ZmE1ZjAyNzViYTQ0NzIzZGM5MDkwYmU1ZGNjNzg4MjNlY2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiNTgwZTk2NGY4M2E0NzNmNDNkNDQzODQ2Mjk0OWQ2OGI1NjAwZmRhNzg3ZjE2Mzc0NWQwMGRlODljYmYzNmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_85c3856596df4446bf6b990b3a36d1a9",
+      "statement": "El puerto Telemetry del dominio es mínimo: startSpan, shutdown y un handle con setAttribute, recordException y end; las métricas quedan para un change posterior de telemetría.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/domain/ports/telemetry.ts#L1-L14",
+          "version": "repo-lines-v1:sha256:d41529fca929015187172a517ca76c37880c22a49b0f37f3e005ea8950556c03:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmYzFlYTIxNWVlYjNiOTgzNTIyMmMzNjUzNTkwZjFiNTUwZWQ1ZGU2MTMzYjk1MjRlNmYzMmYwMGZhN2YxMzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_43b68332956e45ad832ef7fcf6d4846d",
+      "statement": "Los spans existentes son http.health y task.move, y este último restringe sus atributos a una allowlist sin PII (id de tarea, estado de origen y destino, resultado y si hubo rebalanceo).",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/application/health/get-health.ts#L17-L28",
+          "version": "repo-lines-v1:sha256:5e8f3b16e661de7a9a013c6e661b2f2f34e971f4b8afd79a966724e39ef92ef7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI2ZjM0ZWU5ZjdiZDk4NzQwNzNlZDc5NTAzMWIzN2U4MGY4ZDMzZmMzM2M4NjIyZDI4YjE2YzUxZmVlZjQ3M2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVkMDA4ZjY4OGIxMTE5NmVjMzdlM2QyNjA5MTMyYWYwNTgxMjI1MDY2Yzg2YjljMjczNWIxZGRkNDdhYWE1MjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/application/tasks/move-task.ts#L40-L45",
+          "version": "repo-lines-v1:sha256:7ca8daba1d6aad0690599f90342a8773a9547cdee0b5af35fec12a9894a50ab1:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2MzODg5NDI4ZTNjYTBkODUyNDllNGJkYzA5M2VkMTg3MGMwYTdlMDc5YzZkOGRjYzJjOTcyMWY2MWI2YjY4YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjFiMGQwN2UzY2E3MjMxOWYxOGUyODg4Y2U3ZWNmY2E4ZTE4ZTAxYTE2ZTcyNTVhODBmNzUwOTFiNjk5YWViMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGY4MjA4NTQ2NzIzYjFmOGVlMzg5NGFkMWM3YzM1NWUwMjlmZGM2MDQ0ODY2OGJjNjVmNDIwNWU2OGYyMDBmZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODhjMGIzMzZiNzYxYTUwYjkwN2YwNTBiZjQ4ZWRmMGM3NTY4Mzg4MWQxNDRiYmJlNjdmM2ExZGIxNjU0ZTFiNyJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/application/tasks/move-task.ts#L57-L63",
+          "version": "repo-lines-v1:sha256:654180c41e9e415bfbfa18b76df3bafa68695de1063ff6d9a60ee9024d0391ca:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2UyZTQ5Y2Y5ZTkzYmFjZDliOTlkNjU5YzdiZjVmMjUwY2Q1NTU3ODBjMWU2ODk4MDcwOTZkYjFiMWRhYTRjZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzE3YWYxMTAxYzk3YjdjMmY1MjU0MDc4MmU2MzRjYzQ0NDBmMGU5NzAzNDFlNTJmOTc1MjMxMWQ3OGI3ZDdkMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDAxOGQxNDQwYjNiOTE3Mzg0Yzk1ZjY3NWZhNjMwOGQzMzRiNmU5OGI4NWU0OWQwMzAwZWIxYzBhMzQ2ZjRjOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzBkM2UwNzI2NWZlMTZjNGJkMTg1MDc0NTUzMzA1NjQ2YjZiMzZiODc0Y2MxZjliMDkzY2NkNmE3MTM0MmRlZCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_7312fd323a03451d8277244114d9f2ef",
+      "statement": "El control de commits se apoya en el hook commit-msg de husky, que ejecuta commitlint con la configuración de Conventional Commits.",
+      "evidence": [
+        {
+          "resource": "repo://.husky/commit-msg#L1-L1",
+          "version": "repo-lines-v1:sha256:b872f323e41e919776ba0bf28b8b6f94498769a7615bc31e1324f59c5a589354:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjg3MmYzMjNlNDFlOTE5Nzc2YmEwYmYyOGI4YjZmOTQ0OTg3NjlhNzYxNWJjMzFlMTMyNGY1OWM1YTU4OTM1NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjg3MmYzMjNlNDFlOTE5Nzc2YmEwYmYyOGI4YjZmOTQ0OTg3NjlhNzYxNWJjMzFlMTMyNGY1OWM1YTU4OTM1NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://commitlint.config.mjs#L1-L3",
+          "version": "repo-lines-v1:sha256:101001638e174a3b7e9b426ae05db040fa10d04c85d3b01924d9193be16ca27e:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzMyN2I2YzI2Y2NhMjgwNGIyNjZhNzdhMmE0ZjExNTU1MGQ5M2I2ZTJjMjcyMjgyYmIwYmNmNjQ5ZDVjYzMwMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWExZDFhNjMzOTAyMjljNzk4MzQ3ZTgzYTA0MDU0NDFjOTQwMDAzNTI4NGFkMTY4YzFiZjZjZGYxZDcwYTM3MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-27T02:48:33.191Z"
+  }
+}

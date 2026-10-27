@@ -1,14 +1,5 @@
-import {
- computed,
- watch,
- type MaybeRefOrGetter,
- type Ref,
- toValue,
-} from "vue";
-import {
- useQuery,
- type UseQueryReturnType,
-} from "@/shared/vendor/tanstack";
+import { computed, watch, type MaybeRefOrGetter, type Ref, toValue } from "vue";
+import { useQuery, type UseQueryReturnType } from "@/shared/vendor/tanstack";
 import type {
  TypeForForm,
  CategoryForForm,
@@ -93,12 +84,7 @@ export function useCategoriesByType(
  const resolved = computed(() => toValue(params));
 
  return useQuery({
-  queryKey: computed(() => [
-   "tasks",
-   "form",
-   "categories",
-   resolved.value,
-  ]),
+  queryKey: computed(() => ["tasks", "form", "categories", resolved.value]),
   queryFn: async () => {
    const p = resolved.value;
    if (!p) return [] as CategoryForForm[];
@@ -112,7 +98,9 @@ export function useCategoriesByType(
    return result.value;
   },
   enabled: computed(
-   () => resolved.value !== null && uuidSchema.safeParse(resolved.value.type_id).success,
+   () =>
+    resolved.value !== null &&
+    uuidSchema.safeParse(resolved.value.type_id).success,
   ),
   staleTime: 60_000,
  });

@@ -18,5 +18,4 @@ import {
 export const authRepository = createOrpcAuthRepository();
 export const taskRepository = createOrpcTaskRepository();
 export const taskStateRepository = createOrpcTaskStateRepository();
-export const taskFormListersRepository =
- createOrpcTaskFormListersRepository();
+export const taskFormListersRepository = createOrpcTaskFormListersRepository();

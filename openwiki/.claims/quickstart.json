@@ -1,0 +1,150 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:c941fa2164d5c0471ef8f100aa659b99a7457f67781d048feaa57bc4bdfdb8ef",
+  "claims": [
+    {
+      "id": "claim_1309fa1b9a514561a4ffb8c73fbfa915",
+      "statement": "CRM-Home es una app web multi-usuario para freelancers que unifica tareas, time tracking y finanzas sobre un mismo modelo de datos, dirigida al freelance que hoy fragmenta su trabajo entre Trello, Toggl y Excel.",
+      "evidence": [
+        {
+          "resource": "repo://PRODUCT.md#L13-L26",
+          "version": "repo-lines-v1:sha256:908242203486c0d9fc50ec2fefb54e675b6c9f9139e45faaf028f5f650781aea:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU2NjU2ZmVhOTdmMGFkM2VlOTg2NzMxMTBiM2EwMWM5NTRiMWMyYTc4ZjVmZDUyNWYxODM5MTcyYWI3ZmYyYWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhmNWU0NzIyYjdjZTZlZTAwZTE3MWQ1NDExZDU5NGQ0ZDUyNGEzZjhjOTJjNzg5OTE5MDQzNTZhMzA0ODM3MzIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ5Mzg5OTY0NmUxZmU3ODRlNDU5YWVhNDFhZDZlZWZhMzczZTlhNzg5NGRjMDgzNmRiNmYzOGQ5ODc1MTU0YmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRlMWJmN2FhZWVkOGZiMGJmODIwZWVjMGJlY2VmYmQ0NzkwOTUxZDgzOWU4YjMyMDIzMmRmOWVhMTI2NzgyZjcifQ"
+        },
+        {
+          "resource": "repo://README.md#L1-L9",
+          "version": "repo-lines-v1:sha256:6bbfaa52893732e45bdfc56ea85b26b3a6e70e68779219c03fce59904c49cd0d:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDI4YjhlMDM0NTJiOTY5ZWU2M2ZlNDQ0MmNiNmEzYTAwMDcyZjhlYjhlZDQ5ZjcxMTk3MDk1YjA2YzVjZDQ3NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiN2Q5NDdlN2I4MjQ1ZTliMzk5MWYzZjM1OWFlZDBmNjViNTViNmFlYmNmZDYxMDVhYTczNTk1NjkwNmM4Y2JlOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDhiZmNjZThjZjdlOWJiMzM5MDAzYzQwNTk4NzkwZTJhOGQzNzYxODE5OTRiODMzZWI5ZTc1NjA4NzZjY2M0MyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_8b81a1e02e2b49f094987ae36f33890f",
+      "statement": "El producto tiene tres fases (MVP, finanzas completas y reportes avanzados) y no-goals explícitos como app móvil, conversión de monedas, facturación electrónica y colaboración entre usuarios.",
+      "evidence": [
+        {
+          "resource": "repo://PRODUCT.md#L28-L45",
+          "version": "repo-lines-v1:sha256:e9b79296d3fada370039d680458fa3f34e7825dfbe09630d8ff8f11e5d5170e9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI3MjlmODJiZGQ3YjQ2ZjViMmY2OWEwYjUwZTg5MzE0YjIzMzQ1N2ViMTFmNmQ3MThhOTdjYzA4NGFjMmUxYTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJiOTFkNDRlZGJlYTIyZWFhMzhjYzJjNTc2NDNlMzJkY2IyYWJkOTZmZDQ1Zjg2NmE5YWQ4OGI2OWMzZjQ5ZTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNlYTdiMjIxM2E0Y2VkMzA2ZDUwZmZjNWYwMTBlYmNhZGZjYmQwZjMyNzI2NjliYWRhZWY3ZTAwOTE4ZTUyMDEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e0f805caa0014854ade5c0fb4398a1c0",
+      "statement": "La fuente de verdad del producto es docs/PRD-v2.md, según declara el README y la configuración de OpenSpec.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L1-L4",
+          "version": "repo-lines-v1:sha256:bac7b0c94c9ec0e20059fe279f749c9f8ccdcdf5cf45197f15bb6421cfbf24c3:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDI4YjhlMDM0NTJiOTY5ZWU2M2ZlNDQ0MmNiNmEzYTAwMDcyZjhlYjhlZDQ5ZjcxMTk3MDk1YjA2YzVjZDQ3NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMmQ2MzZiYTNlOThlMmIwMjllMzYzODlmMGFmYWU1MjIwMjhhNGNlYjZiNDA3MTE3ZWEyNWQ4ZWQyMDc5NjA5YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZmRlM2VkNTg3NTdiMWNlNTlhNmRiZmRiY2QzOTg3MDMxM2FjMjQ0MmExZmM4NzZiMjNlNGU5MjcwM2VlNDk0NCJ9"
+        },
+        {
+          "resource": "repo://openspec/config.yaml#L16-L18",
+          "version": "repo-lines-v1:sha256:d25c72754db0b6de6f8e8146c40cf29561b93353395733914e3a5148d1828ff7:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTI5NWFhNzNlOTVjNzY2OTE3YzQxNmEzOWVjMmNhZDNmMDkzYThkMzk0YjJmYTI3OGJlZTBhNGRiZDRhODRhZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDMzNDBlMzhkZTI2MDBkYjI2ZTlmMGY0NjhhMTM3MzAwNTViYmFiMWEwY2FmMTA0OTBiNjY1YzY1YTMyNzEzMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNWJlMGNkZWFkOTI1OTgzYTk3Y2JlOTdmZjcwMGVjOWMzZDIyZmE5MmZhMWIyOGI3NWYyYzhhNTZlODdkMzc0NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzE1OTEyY2Y0OWUxZThiOGMxYWE1NGRhNDZlYzg5MzkzNjc5ZDgyZmM3OWM3ZTBiZjJiYjkxYjNiM2Y1ZmYyMCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_018841296d69417394e2ed5a887995dc",
+      "statement": "El arranque local documentado en el README es bun install, copiar .env.example, make db-up y bun run dev.",
+      "evidence": [
+        {
+          "resource": "repo://Makefile#L19-L27",
+          "version": "repo-lines-v1:sha256:cd237d7eae51b507dd5d33c98cdb8cdabb82fafd3fe334f2bd7ef897489c8e37:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNmExYjQwMmU0MzQwYzZhOTNjN2Q2ODY5YmFhZjE4NmYyZDU5MTQyNzBhNjY0M2I0MDE1N2M4ZDAxNmI0MjkwYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGMzNzA5ZDhiZTNkNmU5NTYyNjAzMzdmNjk5NmU0MDA2YTQzY2Y4NTk1YjVmMWNkZTliY2U2YmYxOWM4ZjI0NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjgxNTgwYzllOTM1YzQzOTc2YjcyOGRjZjE1OWNmNDAwOTEyMDljOWRhZTQyZGFjNzk1ZmRjOThjY2YwMWU2MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzU4ODg2MDE1NjM3ODBhMDZmMWYyN2Y1NmIxZmZmOWNhZTY4N2U1ZDgyY2I3ZDRiMmI5MjFkNTdhNDQ5MGJmZiJ9"
+        },
+        {
+          "resource": "repo://README.md#L11-L18",
+          "version": "repo-lines-v1:sha256:69614492ad2b172183949413d82ac92a3513e6a5bcd4f0f6ba5dd9670eea3fb8:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTBiMDE5MTZmZTNiYzM2M2FlODhjOWU3ODJmNzk0NmQ5YmU5ZWNhNWE5MGM0ZjE1NjAxN2UzODUwNDQxYjQ3MiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDdjMDZjNTYxZDVjMzI3MzQzNjg1MjY4YTQ2YjMzOTFmMzk5OGVlZTg5MGQyYmU1MWYwZDIxY2M0YTUzYWU2ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzA2NTUzYjgyMmNlMGJlZmE1ODIyOWMxYjdlYzRiZjUwMzQwMzY4M2ZmMzc3NzIzZTFiYTE4NjM3M2M5YTM2MyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmRiM2MzYTAzNmE5OTE0NzI0OTU4MTQ1MzA5NTc5NTBkNzVhZTZkNTAxYTNmMDIwYTRjMzkzZDUwMDZlM2M1MCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_31e7c9f647c143c0ad7170e2e9159b62",
+      "statement": "Las migraciones son un paso manual que el README no menciona: se ejecutan con bun run db:migrate dentro de apps/api y fallan de entrada sin DATABASE_URL.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L11-L18",
+          "version": "repo-lines-v1:sha256:69614492ad2b172183949413d82ac92a3513e6a5bcd4f0f6ba5dd9670eea3fb8:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTBiMDE5MTZmZTNiYzM2M2FlODhjOWU3ODJmNzk0NmQ5YmU5ZWNhNWE5MGM0ZjE1NjAxN2UzODUwNDQxYjQ3MiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDdjMDZjNTYxZDVjMzI3MzQzNjg1MjY4YTQ2YjMzOTFmMzk5OGVlZTg5MGQyYmU1MWYwZDIxY2M0YTUzYWU2ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzA2NTUzYjgyMmNlMGJlZmE1ODIyOWMxYjdlYzRiZjUwMzQwMzY4M2ZmMzc3NzIzZTFiYTE4NjM3M2M5YTM2MyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmRiM2MzYTAzNmE5OTE0NzI0OTU4MTQ1MzA5NTc5NTBkNzVhZTZkNTAxYTNmMDIwYTRjMzkzZDUwMDZlM2M1MCJ9"
+        },
+        {
+          "resource": "repo://apps/api/package.json#L11-L11",
+          "version": "repo-lines-v1:sha256:372f586f202f623ea4a5a2f2bee2d7a4e38ccd791e90adf9da21afc633452418:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzcyZjU4NmYyMDJmNjIzZWE0YTVhMmYyYmVlMmQ3YTRlMzhjY2Q3OTFlOTBhZGY5ZGEyMWFmYzYzMzQ1MjQxOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzcyZjU4NmYyMDJmNjIzZWE0YTVhMmYyYmVlMmQ3YTRlMzhjY2Q3OTFlOTBhZGY5ZGEyMWFmYzYzMzQ1MjQxOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjliMGRiNWU0NTg0MTFmNmE2ZTk3YThkMDRlMzFhZjRhNjQzZTU1NGE3OTE0OWQ0YzNlYTkzNTcyMzhmNGQ1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTc3YTVmZDQ2MjBhMTk4NDQ0ZWUyZDJmNDJjMzY4MzljMzJkMDgzOTE1ZjkwZGM4ZTA2ZGRlNzI5OThmYmJjNyJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/infrastructure/kysely/migrate.ts#L5-L10",
+          "version": "repo-lines-v1:sha256:dddb34f5c810f40a59ca740fb0ee53ae5dcacfa35753a3ab587e747cc3aea465:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODM4M2EwMDRlODY2NzIyMzdmMTdmNjEzNTViZmQ2OGJjODU4ODE4ODc1OWRmMzg0ZGU3OTY0MWNiNjI4NzEyNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTBhMThiZmRjNTZkZWFlZmQyMGI3ODUyZTY4ZTJkMzk0Mzk5ZDdhNDAxMjFiYWZkNDU2YmQ4Yzk4NzRkYTZiZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTNjODc3ZDk0ZDliMjhkM2M1N2MyMmU3OTQyYTE1ODNjMzYzMTY5YzAyNWZiZjI3ZTQ3ZTJjYTA4NTRmNWU1NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_c08f32b4fd76429f947050a629a9af97",
+      "statement": "Sin DATABASE_URL la API arranca en modo degradado, expone solo GET /health y responde 503 en todo /rpc/**.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/http/composition-root.ts#L145-L146",
+          "version": "repo-lines-v1:sha256:b5cff07326d805f71db4e54235e895fc7b33cfa4ba2854967f78a7b1fcf83191:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTI1OTY4NDYyZWU1Nzk0ZWQ5MDI4YTg3MDFkMzIwMGVlNDMyOGRhN2I4NjNlMzc1MTY4M2M0MjI3MmU0ZGU3ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWUwM2EwZmMyZDJmM2ExMDYyNTZjODMwNzMyNmMyZTJjNWFjNzU4NGE0YTMzZGI3YmVkMTRiMTA5NjhmOGM2YSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjIyYzYwMTk3NmY4YjhkOGRlYzMyMjRjNzhhOGE4OThlODZlNmRhNDYxNTg0MWU4ZWIzYWMwOWEzMTYwZThlMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGYwM2I4NmZhZGZiNTEwMjE0YzYzYjQwOTY1NmVkNTRiYTg2M2IwMDBmYTUzZjViMTE2MjAwOTkxNDcwODgwMyJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/http/composition-root.ts#L333-L344",
+          "version": "repo-lines-v1:sha256:1e628f2443c3b77580620c46aae1f4fafa7344ceb6d1b50af9df15090652aa16:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ3MmJlZTA3ZDk4YzUxMWNmYjliNWE3MjljOWNiNTI5NGQ0OTNmMWFmYzU5MjE2ODQ0YmIzNDlmZTZmMWFmODkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhkZDNkYjExODcyZGI3Y2Y5MDU1MzdkMWUyMTE4Y2M3NzA5MmZmMjFjMjliZDJkYTM1Mzg5MzBkYjYzMDBmZGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQyOGE3YTk5ZWFjOWFmMmUwNmYxNmFjYjE1N2ZkNDU4ZmIyNTdiZDBiMTFmOTdkZmM0MzE5OTYwOWFlMjUwZjUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2e2f0ff4c5574b699abdfff0a0dd5713",
+      "statement": "Sin SMTP_URL el email sale por el adapter de consola, que imprime el mensaje completo incluido el código OTP, aunque estén seteadas las variables discretas de SMTP.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/infrastructure/email/console-email-sender.ts#L3-L14",
+          "version": "repo-lines-v1:sha256:4d751410e206e5a36644c62f94b4ec955b5a3359c7c90a00898619831d775df8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU4OGQyZmEwMDJhZGUwMjE5OGZmZjM0ODEyYjVlM2M3OTZlNGNjZTQyZmEwOTljNTJjNmY3ODA5M2M4ZjZmZTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBhNmFjMzYxNzBkZjMxNDVlZjYwZmRjYzExY2JlMjRmZDFlMDJiMWUxNDg2YWE5MGMxMjAyMWE3NzZiY2UyMmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/infrastructure/email/create-email-sender.ts#L31-L53",
+          "version": "repo-lines-v1:sha256:1620131d2b6870fc84536704b0704abbe02f10f8d3510684fefb19dc40bed609:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU2NTg0MjUxMzA2YTA2OGIyNTM5YzJmODc5YjhjMWMwNTZjNDA2ZGNhN2I3ODJjMDA3MDUxYzFlNmI1ZDdkZTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_bd509e0de29a4375baf4c30ba57a9e2e",
+      "statement": "Si turbo falla con el formato de bun.lock v2, el fallback documentado es ejecutar los scripts con bun --filter o bun run dentro del paquete.",
+      "evidence": [
+        {
+          "resource": "repo://Makefile#L1-L6",
+          "version": "repo-lines-v1:sha256:d34afc51703a76f387e9043269d6b52de215e4cc3f523380ccb1eeeeb5d013bd:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTg0MmMxNjA3YzE0NTFlOWU3NWMxYTMyYWMzYzFhYWU2M2IyZGY5ODNlNDhjOWQwZGNlZGEzYTNhZTBiMmY1MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTIxYWFkNTIxYTVmYWZkMGE0NGZlYTAzMTA4MjYxMzE4YmRhNzE2NzExYTUzZjVmNGFiZmI0ZjYzZGYxZWUxMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTA2MzQ2MDI3OGFkZGYyMjcxMzJmY2M1YThiNmQ5YjZlYmYyMDBmMWI1YTA4ZDA3NDA1ZjVjYjBjYTQ3YjlhYSJ9"
+        },
+        {
+          "resource": "repo://README.md#L39-L56",
+          "version": "repo-lines-v1:sha256:682d8af52f6b67d254469cc72cfb0c5792f1c9ace608ad6390ea9aff69a564e9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ3MmFhZTZiZTE5ZDMxNDVlNjNiZjY0MTEzNDQ2MjgwYzMwMWFjNDZkMTQ1NjYwNjk1NWY2MGFiN2Y1ODQ4ZTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ3YzA2YzU2MWQ1YzMyNzM0MzY4NTI2OGE0NmIzMzkxZjM5OThlZWU4OTBkMmJlNTFmMGQyMWNjNGE1M2FlNmQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYzMzY5ZTMyOTViNTQyODQ5MzdjMzI5Y2U5MjBjOGYxMDAzMTY5YzE0NzczMzJmOGY0M2I0MDc5NWM4ZGVkMmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRlNWJmOTE1MzMwM2ZiZjgxZjAxMmYzY2ZhYWE2YjI1ODg1YTZlYjZhNGU4OGMyMGVjYTBmNTBmNGJhODE5YzcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a0d35ab9d5e34812ae29f4103ed8bbc8",
+      "statement": "Además del arranque principal, el repositorio ofrece el frontend Vue con bun run dev:v2 y Mailpit con make mail-up para inspeccionar los emails.",
+      "evidence": [
+        {
+          "resource": "repo://Makefile#L32-L40",
+          "version": "repo-lines-v1:sha256:68eae9e0d114dde68a3fcfcefbe0cff00046d08f10e5002f23ff670e450466cb:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTA1ODI0OWYxYzYyZTZhMWM1YzMzZmQ1MzI3MDk0N2FiOGE0ZTU3ODgyZWQ2MjkxZTNlYmM0MTQ3ZDI2NTUwMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGZmMzNiMzc3ZGEzODNmMjc4ZmFmMDQ2ODU5NjM1NDkxZmEyYTY2ZmJmYzY0MzIyNjY1Mjg0ZGQ3NGI3MDk1MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmRhZTNkMDdjNWM1YzhmOWYwNTEzZjZmZGFjODgzMjRmNmIwN2M2MWJiOTMwYmU3YmNiOGFmNGFiMDI5MjY2ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDgwMDdmMjBhZGExMTZmM2EwYzBlZGY4NzNlNGI4NDI2OTU3NzFkZjFkNmFkMDhhMDA5N2I5MzVmYmYwYWY2YSJ9"
+        },
+        {
+          "resource": "repo://package.json#L10-L18",
+          "version": "repo-lines-v1:sha256:d896fdb698f3c8a75f9e71d773f0f0c736adffa04a39059c5c673ccade1ab32e:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTY0ZDhjMDczNDI5ODkzMTAxNTc2ZDg4ZDk5MTI3ZTg5ZDY4OTFkM2IxN2U4OWRmMDJlYzlhZTcwNzA1ZDhiZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2ZkODRmODU4ZjdiOTM4OWE3NTA0NmEyNWVkMWZlZTVhNDQwMzA2NmQzMDU4YThhZjJhMTU2NThkMWRkMjEwOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODI1MzVkN2I2NmFiNTk0YjdlYTdlOGNhMGM2YjUzMTllNWE3OTNiZGVhMDExN2Q5NTA3MTM2YTc2YzdiOWJhNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDQyN2E5MmZhZDgzNjc3OWEwZDlkM2MxYmJlMzA5NTQ3NzVlYzA0NTQ5MTQwNTMyMjk4NGM0NWEyOGVlODdhYiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_ef04fee63e74485599e1a6a37a2984a6",
+      "statement": "La rama de desarrollo activa es develop y los commits siguen Conventional Commits, validados por el hook commit-msg de husky.",
+      "evidence": [
+        {
+          "resource": "repo://.husky/commit-msg#L1-L1",
+          "version": "repo-lines-v1:sha256:b872f323e41e919776ba0bf28b8b6f94498769a7615bc31e1324f59c5a589354:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjg3MmYzMjNlNDFlOTE5Nzc2YmEwYmYyOGI4YjZmOTQ0OTg3NjlhNzYxNWJjMzFlMTMyNGY1OWM1YTU4OTM1NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjg3MmYzMjNlNDFlOTE5Nzc2YmEwYmYyOGI4YjZmOTQ0OTg3NjlhNzYxNWJjMzFlMTMyNGY1OWM1YTU4OTM1NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://openspec/config.yaml#L103-L111",
+          "version": "repo-lines-v1:sha256:da14ee56b8b8bb0d73faf5500baa5ff08ac77c51c233ddd5a36be1b5be10f117:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjcyOGJlYmRiYTZlYjA4MGJkMmJlMjAwNGUyOWNhNWMzNjYwYWZiOTQ2NTMxMTE0NWNkYjI3NTY1NzUxNjAyOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGRkOTZhNGQ4MmVhNmMwOTI2ZDUyZmQ1ZTNhODFhOTU3MjQ5MjQ3NDdmMWMyODNjZmRlOGJlYzVhMzYxMWE0MyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTJhZGZiYzRiYzBjNjA4NGExNjM4ZWRkMzc4ZDU0YWQ2Y2NkNjg3Y2Q4NWUyYTc4NzdlNjZlMWQyZGYxZTJiOCJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-27T02:48:33.191Z"
+  }
+}

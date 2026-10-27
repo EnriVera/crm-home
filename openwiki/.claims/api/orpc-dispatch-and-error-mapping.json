@@ -1,0 +1,160 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:1eb483cd136905473e40748bcae189c09e654f73c71b1404dfe634a4bc6eaa50",
+  "claims": [
+    {
+      "id": "claim_00fcaabee0e04b7689e4a26ab1d66d5f",
+      "statement": "El backend no delega el dispatch en el RPCHandler de @orpc/server: createRpcHandler indexa las procedures a mano en un Map con clave \"METHOD /path\", por un problema documentado de matching de paths del RPCHandler.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/http/router.ts#L516-L519",
+          "version": "repo-lines-v1:sha256:8746a7c1486696287979811073ae22b729cf5f9f7f544c63862efcb61f10622e:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjU2OTc5MjNkYmIyNGI1OTczM2FhZGJhNmVkNjdmYmFhYmViMTc5N2ZlZmYwNGNhZjY2YzdjNDYwZGQzNjk1MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDYxOTAyOGQ5YTEyMDg1NjAzM2YyYTU1MDcwOGFjOGZhNTBiM2NlODFiNzkzOTI1NTcyNGJkYzJhOGFjODIyZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjdlMGFkZmRhNjE2ZDI3N2JlNjBmNDIxMGNkNTQ3Y2RkMThmMWY3NWNhNmNiZmE3MzcxZDIxNzkxMjg3MmIwYyJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/http/router.ts#L99-L118",
+          "version": "repo-lines-v1:sha256:34eeb123b432f24e0c044ea6b75fc15741b6bcf614a6bb6d2b4998b72d894c84:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk2OGE0OTY1MjJiMmY4Mzk5ZDg3NWI0NTk1MjU5MTA2MzIwZjRiNDNmYWYyMzgyMWI3OTkwODY3MWM4ZjhhZGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVkYjY1YTBiNGZmNmIwMGVmNDVkMzk5Njg5NjE5ZGI0ZjUwOWExYzliYzFhMGNlZTZhNTk5M2QwZDZmMzYyNTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI5MjIzNzRhYWIyM2U4YzBjOWE5MDA5NzZkODY4MzFhNWVmMzk0NjQ5Yzg2NjEwMWFlZTI3MTg2ZTY5ODc5YzgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8c5d35671dfc4687b86d847660604789",
+      "statement": "Los procedures de auth, tasks, clients, incomes, expenses, transfers, schedules, types y config se declaran en un array ProcedureEntry y se resuelven con una búsqueda exacta de clave \"METHOD /path\", sin normalización de grafía.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/http/router.ts#L259-L514",
+          "version": "repo-lines-v1:sha256:57287a8346cbafda9d02ef58c69a258dae459b0d96c4334fffd7864de37ef794:eyJzZWxlY3RlZExpbmVDb3VudCI6MjU2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI5MzQ3MzNlYTljNjhlOTg4NGM0M2FjMzIzNzZhNTY0MzY0MjY3NjQyZWE0NTIwZjU4ZjUzOTg5Nzc3ZTEyODljIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIwNDAxOTBhMzA1OGQ5YjFlNzZiM2M1NTM3ZTcyN2I1YmMzNmRiMDU1NGI4NzFlNTBkYmI4ZGM5NWI4Njk4MjYwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI1ZGNhNDQwNTFlNjU0Zjk1MjhlYjE4ZGI1YjQ3MjQwYTNkMDA0OTZhZDg3MGE1YTVlMzllOGEyMWVjOTU4YzlmIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI5ODc3Zjk4YWEwM2MyYTRlMzQyY2UwNjQxZGFhYmI4NjQ0NmNhY2I3OWFlMDgyNjU1YjU3ZjhhMjU5MDMyNDAyIn0"
+        },
+        {
+          "resource": "repo://apps/api/src/http/router.ts#L576-L580",
+          "version": "repo-lines-v1:sha256:d1d795e50766c54dfe58a6b7faa80a818699eeac06d1d73ae81b396298432118:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2U2NDZiMjBmODE0OTA4ZGE4NDU2N2JiZmEzZjJiOWE3ZGQwMDM0ZDcyODczYzEyZmMyMzNiMDc3YTRlNTM1ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWE5MDM3MTk2ODZmMThhMWUzNjA4ZmI5Njg5Mjc5N2U2YWVlNDI5Nzc1NzY1ZWQ1ZjIwMDRhMjFhNTkwY2RjZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzIyYzczOWM3MTA3MDRmYjA3YzZkYzBmY2Y3OTRiYzgwNzY1YjRiNjJjNzkwMDY5ZTc4ZGU3OTUwZTk0MTllMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzU2NTU3ZWEwMDk1MWZmNDQwNjQ3ZjRhMGUwODdlZDEwMWM2YmRlNzBlNjE5ZjQwODAwNzc5NmU4YTFlMDJkNCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_4dca583424ed4f2da2ffa65ec7518e19",
+      "statement": "El envelope de transporte oRPC v1.15 es simétrico: el input se desenvuelve desde rawBody.json y la respuesta exitosa se devuelve como {json: output} con HTTP 200.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/http/router.ts#L593-L602",
+          "version": "repo-lines-v1:sha256:2b9d0f9951b4208de85ce7f175f1407a9ef2a99a90bd2ccc9eae77fc8384472f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA2OWE4ODQwZjg2OThhNWZiNzQyN2M0ZGQ0NDBmMDQxZWI0M2JlM2FlY2MxNWJlNDdjOWY3NDMxMjJjYjZhOTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYxNzY2MDIwNjU0ZTVjZmRmNWRkNmY4OWUzZTQ3YmQ2OTM1YWNmZTAzMWZhMzBlZDMyNWUwMDYwN2FhMjM3MTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ2MmFhYTE2NGQ3MjA2MjJiNTE2MTYwMGRjYTFjZTQwZGNiY2FmMzY2ZDMyYjJjM2I0MjA3NzE1MTEzYTc3NTIifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/http/router.ts#L649-L652",
+          "version": "repo-lines-v1:sha256:8f6721df2a4c328d472887e2cbfd3a9258c650b15ee0f1c60cde90bb85e0c45f:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjk0M2NhNjMxZjUxYjJjNmQ2NjFlNzE0ZDM4YzBhZDJlZGYyMGE2MzQwMWQzMTU1ZDdiYmFjYjRlMWZlZmI2OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjJkMTFjYWY0M2U5N2VmMzY5ZTZiZWVkMWEyNjhiZDA1ODM4ZjI5YjlkZDI1NGJmNjliYTY0ODg0MTQ3MjM0YSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGExZjRhNWRjOTZjMDhmM2Q5NDI0OWM2M2QxNDM1NDk5M2E2ZWY5MDBkMTQ0ZDNhNDhjMzUxY2UxN2RlZTg0MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTIwNDBlMDk1YTk0ZTJhZGE3NGU0MjFmMzcxODc1MWE5MWE4MTBiZmQ2NmY0OGY0ZTkzOWM3Yjc0ODBlYjY3MCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_112fdc5497914c1b84630aa7028e9e73",
+      "statement": "Los errores del router usan el envelope {defined: true, code, data, message, status}; la bandera defined es la señal que el codec oRPC usa para no interpretar el body de error como una respuesta válida.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/http/router.ts#L610-L631",
+          "version": "repo-lines-v1:sha256:572ea3fdf5329ab396f0a99a97ebb50fbb74bdb133f56e2dc6e91e6eb73a830d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg0MTI5Mzc0MjdlMjE1MzNmNDgxYjZlYmE5NThjZGEwNjAzYzRlODdiNjVkZjE5NDcyM2YyYjMzODRhMGJmZTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM1NDI4ODMzYzJmM2MxZDk1MjhjM2I1NGVmOWQxYmNhMjRjZjQzOTBmYjVhZmEzYTMwYjhkYzA5NGIwOWZiNjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU1YWEzOTVkN2NmYTY0ZTRmNTcwMTAwM2Q0Mzg1NDNhMTcxMTA4OTdjNTNkNTFiMmYzZjk4YWVjOTA1NGRiYTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA5NjAwY2VmZGM4ZWZiNTNkOWQ4NGI3NWQxZjUwNTJjNmVjYWZkZGIwZDNkMjYyYWMzMzVhZjQ4MDY4ZThhMmEifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/http/router.ts#L633-L640",
+          "version": "repo-lines-v1:sha256:4d8365ad5f1117ce795e1c462e87a54c71844daa78a2cb4d71877595c8679004:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTRiNjIxODU5YzhlNjA2MTI5OTBiNzEyYWNhZDM1ZGI4MGY0MjRjNDljMDI0OWY5NDdiZmIxZGIwM2Y1NzBkMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWU2NzNhYmQ0NTdhOTdlZWExN2E2MDA2MmViMGZhZWE2YmRmMDk0ODY4Y2M2YjhmOGMwZWJkYTJmNjFlZDQyZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDliZDJlMDYyOWE2NTJmYzkzMzliOGExN2JjZTJmN2NmMGY5OGRkZDgwNjVmNDU1ZmYxNmZlYTBmN2UwOTI4YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2ZhN2Y0MDgxZGUzNTVjMzkyYjBjMWQ5NmMxN2JjNDQxODdkOWU5OWZlMzMxYWI3YWVhYjc2Y2FlNzU2ODlmYyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_b13a6a827eaf42a7a148f14314c82bba",
+      "statement": "Una procedure inexistente devuelve 404 con cuerpo de texto plano, fuera del envelope JSON de error.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/http/router.ts#L582-L586",
+          "version": "repo-lines-v1:sha256:f230fa24d86adf48c0c18db68bedf576d764a8df0aed79c360a5ebbed5f032b1:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTkyNDZjMzVhMDhhMzc4YTQ3Yjk5ODg0NjQ2MTQwODI2NmYxZTI0NDE2OTgyZmFmYzk2YTIzNDhiZjNiMzllYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzIzYzc5MTkzNDRiN2EwM2JmMzY4NTllODMxOGQ3ZGE5MzJmNzU0NmQyNDYzYzg2OGRkNGQyYmRhOWYzNmYxZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGVhMTIyOGFhMzVhZWRjMWE0ZGE2NDRlYTI2NDg4M2Y3MzdlZWIzYWNlYWQ1ZmE3OTM0MTQ2NzUxM2E1YTBmMSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_d8ab3662e9144c0e8ce4d1a2d1c63452",
+      "statement": "El bridge construye un H3Event híbrido que comparte node.req y node.res con el evento base de nitro, de modo que las cookies escritas por los handlers llegan a la respuesta real, y reenvía la cookie original al req híbrido porque h3 v2 lee las cookies desde event.req.headers.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/http/orpc-bridge.ts#L139-L211",
+          "version": "repo-lines-v1:sha256:fdc0f7aab3a4b9f2b2ca096cee46d1b6ef06c972b1bf24c8bdb8ec4cb8f4aae3:eyJzZWxlY3RlZExpbmVDb3VudCI6NzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk0ZjY1NzgxMmI5OWUwYWVmYTc1YWQzMGExMDZiOTgxMzk4MDQ1ODMwMGRhYzAwNWE3ZjM2MThhOTM2OTExZDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MmE0MjkzODJiMmUxNDcxOGUwZTM3YjA1NzBhOGExNzAyOTkxZmNkODQ5OGNkODQwNjBhOGJmNGYwNTAxN2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU3N2E2OGQ5YzFkNmE5Nzk2OTlmMDVhOWZiYmY4MjJhZmZlZGI0MWM2Yjc1MTg0YzQ5NDllYTBjMmMwMmM0YmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYwYWYyYmFkZDc1ZDE0YTdkYmY3ZDIzNTkyYjgyMWVhYjMyYjJlYjMzZTI4MmY0YTQyZDQzNTk0Y2M2ZjhmMmQifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/http/orpc-bridge.ts#L167-L203",
+          "version": "repo-lines-v1:sha256:e665aca84b2650afb5e535df7b0d5d78f14f7edeec4b275ff9b848450d39f1c7:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1NjdjMmUxY2Q1MDBlNmE1NzUyZWU3MGY3OTJiYmFhN2JmNDA0NTY0MWI4ZjIwMGQzZDVkYWI2NTRlN2NhMjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwYzAzODUwZGRjNDgwZDhjMjRkMjQxYmM2YzQ0Y2Y5MzE5NTI1YTlmNTBiZDg1MDQ2OTlhZWUzZjhjYTBkOTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk0ODRiZmY4OTUyZmViOGJhYTc3ZTU0NzNiMmU2M2JhZDlmOTU3MGRjMTRlN2QxMzgxOTQ2YTY1MDRiOGFiZDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3OTI5ZTkxZTBmOTljM2U4MjVkZTY5YjQzNWZiNjQ4NGQxYjBhMWRmMmY0NjU2MWFiZjFhMjlmMDQxODhiODgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_be21e86e2e30472c89937bf419fe2619",
+      "statement": "invokeH3HandlerAndParse normaliza la salida del handler: devuelve tal cual un objeto plano, parsea el JSON de una Response 2xx, convierte una Response 4xx/5xx en BridgeHttpError y convierte una 2xx no-JSON en error 500 con el cuerpo crudo.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/http/orpc-bridge.ts#L288-L314",
+          "version": "repo-lines-v1:sha256:d92e0be38b7c0dadb04ff078a568321f84adf8f8316be372507cbe60d99a22b3:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNkMDA5ZmRkNDMxM2YzNjZkNTZjNmEwMDI5OWJjMWEzNjZjNWI0ZGM2YjcxZTUyYzk4ZTQ4YmM3NjMxMDc3NGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg3OWE2MDU5YTk5NGViYWU0MzI5Y2VkNDA4ODQxYzEyNjJkYzliMWIyNjc0N2I2ZGE5NTE1Mzk4MjQzZDM1MDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYyZjAzY2IwOGYyZWMyNmJkNjNlNTZhZTA3MWJiYmNmOTBlYjQ1ZDZmYzI2OTVlODNjNjc5ZTk5ZTAxMTM2NjQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3e90bf771c444d19af82a3bda669efaf",
+      "statement": "mapTaskErrorToStatus traduce los errores de dominio a códigos HTTP —404 para TaskNotFound y TaskStateNotFound, 409 para InvalidKanbanOrder e InvalidStateTransition, 401 para Unauthorized, 400 para otros TaskDomainError y 500 INTERNAL_ERROR para errores desconocidos— y es el mapper compartido por todos los módulos de routes.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/application/tasks/errors.ts#L10-L53",
+          "version": "repo-lines-v1:sha256:ff89fb8e3fc1e37a556a4a5479e96d5372b059cfc2702a5c71e60d63a753b7c2:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE5MGRiMWFhZWMyN2E3MmJlMTNhZTkyOGQxMGNmMGVmZTU1ZTg5MjJjNTEzNDk5MjhhOTYyOTJkYjc5ZmU3ZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE1NGQyODMzOWZjOGE0MjQ1ZGM3ZmFjN2I4MmM3Y2E1ZWFiYTBhNTcwMWJjNWVkYTRjNGUxZTVmNzE1MTI0YTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/http/tasks/error-mapping.ts#L29-L70",
+          "version": "repo-lines-v1:sha256:f09fbdaafcc6663995fa29887bd878ba477d3e8145f0561a3df1dfe0825b95a4:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwMzNjMDgwM2Q0ZTU5ZWQ1YjM1YmQ2N2YyYjczOWIyYjEwM2VjYjhkNzg2ZTkzMWE4NWFkZmIxNDdkMTk4YmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU0ZmMxOGVjNzlkZTdhZjIyYTgwMDBhOWI0YzRlYTExMmJlMjM5ZTY4ZmYyNTMzNjVlZDhjMGI1M2Y4OWViZDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e580e28f0ec14d63960af69bae3bdd4e",
+      "statement": "BridgeHttpError mapea el status HTTP a códigos oRPC discriminados (400→BAD_REQUEST, 401→UNAUTHORIZED, 403→FORBIDDEN, 404→NOT_FOUND, 409→CONFLICT, 429→RATE_LIMITED, 500→INTERNAL_SERVER_ERROR), dando prioridad al code que trae el body y cayendo en INTERNAL_SERVER_ERROR para statuses sin mapeo.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/http/orpc-bridge.ts#L213-L221",
+          "version": "repo-lines-v1:sha256:0e4608cd9b65549478d801dcfdfdb4d3c040c82b79ca1f5d7e93517eb58db8e3:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGM0Yzc2NGI3MWNkYjM4NGVlOGNkZTc3MzRhODc4NTdkODk2NDk5ZWY5MjUxOGQyMDU0NDI1YTY3OWEzNWQxZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWExZDFhNjMzOTAyMjljNzk4MzQ3ZTgzYTA0MDU0NDFjOTQwMDAzNTI4NGFkMTY4YzFiZjZjZGYxZDcwYTM3MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGM3YmFiZGY4MTYyMjM0YTg5ODIwNjU2ZWE1ODAzZThmNjg2YjMwMTlkZWVkNzM1NTNmYzY4ODA4ZDNhMmY0ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTQxOGI2MTMyNDk1OTBlNzI4MDQxM2MwOWExZWJjMTI0ZjgyNjIwOGQyOTBmZGIxZjZlODhkNTc4MDZmNWVlYiJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/http/orpc-bridge.ts#L249-L267",
+          "version": "repo-lines-v1:sha256:2fe4f4448371979f4eddf728e2e0f42c0c67f8cf5b6762a631381858bc6a11cf:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRmMWM3ZTgzNTc4OTZmOGM5OWEyMDllNTRmMmQyZWM3YWFkY2U2YTE4MzU3OGI1NTNjMWU5ODRiMDFlMDdmNWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk2ZjU5YzBlNjc4ZTU4NmQzYTFhOWVhZjhkMTI2YzZiYjY1MzA4NjY5ZjNiZTQyMjJjM2M4MTA2ODk5ZjE2MDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUyNDc1ZmQzM2NkMzE1ZWVmNjVmYzQ1NTI4OTMxNzUzZDE4YmNjZTllOTE1MmVjMjhmMTYzMDFkYWRiYWYyOTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRhMWVjYzcxZGU5MWZiYzc3MWIxNzczMmE3NTc2YTJkZDFiMzY5YjE1YWYyOTFlZmMxNWU3NTc5MWFmZTk5MjkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4fffa223a76b488fb8d9b44de911221e",
+      "statement": "El router resuelve el userId una sola vez por request a partir de la cookie crm_session y lo inyecta como header x-user-id; los handlers autenticados lo validan con readUserId, que lanza Unauthorized (401) cuando el header no está.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/http/router.ts#L667-L682",
+          "version": "repo-lines-v1:sha256:f45b5c27b2dd024acfcdde6d59a1189d3d1539563d08cdef52ab5e19fa183712:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNlNjc3MTI4ZTk0OWQ1YjQyNDA1Y2VkNmZlZjdkY2VhNjRjYzlkZDQ5OGE5OTkxMTU5ZDc0ZTdjOWIyMWQ3MzQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFjYjczY2E2MTgyZmM4ZDU0MmIyNWFmMzYzZDlkNjk3YmQ2OWM1YWUzOWIyNmE0OGE3ZGU4YjQ1NmNkZDQ4ZWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc4YjJkOTJhOTllNzgyNmJiZjE2NjI5YzE2MTA3M2EyOGIyMjE4ODRhMjAyYjY1OTYwOTAzNzA0NTlmYmE0OGIifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/http/router.ts#L694-L712",
+          "version": "repo-lines-v1:sha256:22fc4d6c16b6705fecec9734c3788132dd05e06de204e820ba953a23a68467b2:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYzMzMwNzQzMTk0MDViOWYwMzg4ZTM0ZjM3ZDNlMWU2MDhhN2IzNGI1ZDE1NGVlMGY2OTIzZTk1MTFiYjY5NDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRiZTVhMDkwOGU1YmYxNzQzZWNjMzU5ZGUwY2Y1NTNjNDQ3ZmVkYzg4ZTA4ZjQ0NTE0YTBiZWViMjBjMzg4ZmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/http/tasks/tasks-routes.ts#L82-L88",
+          "version": "repo-lines-v1:sha256:967df3a07b1d54070e34b1cb267f90d610c4810a64cfce1e382b6b73cf91cecc:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNmZmYTg5NmEzNjJmMzM4YWZhNzFjYzZiMjdlODZkNjUyY2FkNDllZDE1YjRjOTM2ZTY2NmIwYTFmMTczNGUzMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYWY5Y2Q0NTIzZjQ4ZmEyMDQ4YmJjYWQ4YzAzOWIzOTM0NWIzYTEwNGNjOTYzNjc3N2FmZjIzNzk3ZDA3YTRhMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDY5YWMyMTJlYzIxZjY0Mzc5ZDBkYWUzOWQ4ZTRmYjY4OTFhNjA2ODdlZWU3ZmZiZDA0ZWNkNDQ5MjQxOTJlMyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_9aec4705befc42aebafa9a6385c28f53",
+      "statement": "Solo los bounded contexts de auth y tasks consumen los esquemas zod de @crm/contract; clients, types, incomes, expenses, transfers y schedules siguen definiendo sus propios esquemas zod locales.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/http/auth/auth-routes.ts#L21-L28",
+          "version": "repo-lines-v1:sha256:dce1ba440fd41c060882b96a215364ac44fccea4246a8f45ab80a87fdedd70c4:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWFmMjJjZjA3MzI1OTJjMjQ3MTQxY2JlNjFlZmExMTAxMjYxMmY1YTMxMjJiOWFmOWJiYWY1MmY1NzI0ZDE5NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTcyYTQyOTM4MmIyZTE0NzE4ZTBlMzdiMDU3MGE4YTE3MDI5OTFmY2Q4NDk4Y2Q4NDA2MGE4YmY0ZjA1MDE3YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjkxYzU0YzZhMDFiYzNlY2Q1M2JjMjE4Mjk5ZTlhYTg2MTZkY2FiZjI1MDYxMDFjMThmMTVhNmFkMGM4MDQ5NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjU4YmM0MWIyYmYzMGI2NjNhZjM4YzYwNGE2MjIwZDEyZDQ3YjQyZTRiMzJjYTQxOTZiMDZjMTlhZTZiZGI4NyJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/http/clients/clients-routes.ts#L34-L59",
+          "version": "repo-lines-v1:sha256:6812928a958ba033253abacc70d5af445ac8a46b5814da189fdc0b5a002e1604:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImViYmMxZTcwMzRiMzU3ZGU5ZDQ2YjQ0ODUwNjhiNWNkZTYxMWNhMTZjNGFhMzExNzc2MWU5YWJhZjc1OTkxMDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZhMjJjNDUwMzk3OTA1YjJmOGZmNDg1YzZlZGJlOGUxNDA5YzU1MTJlNTcyNzEwNDI2ZjFiMmU4OTcxYzY5ZWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJlMzZhMzU0NTE5OWRiYWI1NWI3MGU4MjUxOTlhYzIxNDdjNzM5YTM1MzA1OTFlNWQ1MTQ4ZjNjYjM1MDcwMDgifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-27T02:48:33.191Z"
+  }
+}

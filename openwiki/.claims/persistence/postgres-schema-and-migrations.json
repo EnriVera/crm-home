@@ -1,0 +1,158 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:07aff4e802ac28627c1e84ce1f0584046c22156d34b4b73111af6474ff928c54",
+  "claims": [
+    {
+      "id": "claim_3103e3a6f3a04ea9b523f5729a260147",
+      "statement": "La persistencia usa siete migraciones Kysely aplicadas por el Migrator con FileMigrationProvider; son idempotentes (IF NOT EXISTS) y su down es destructivo respetando el orden inverso de claves foráneas.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/infrastructure/kysely/migrate.ts#L5-L24",
+          "version": "repo-lines-v1:sha256:7abc2cdf54b4bbb4ad920bf73c0d9ea05d32fe56352ac97a4544a0de45279a17:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgzODNhMDA0ZTg2NjcyMjM3ZjE3ZjYxMzU1YmZkNjhiYzg1ODgxODg3NTlkZjM4NGRlNzk2NDFjYjYyODcxMjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhYjJlYmRlNWI4MDBhN2RhMzVlNTZkNzIyMTQyMGEzMjc3NzM0MDg0MWE4YzZiZjAwM2QyOGJkMzhhOWI1NzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEwYTE4YmZkYzU2ZGVhZWZkMjBiNzg1MmU2OGUyZDM5NDM5OWQ3YTQwMTIxYmFmZDQ1NmJkOGM5ODc0ZGE2YmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5YzNkOTRkNTNjNmNmNGMwYzJmMzgxZjAxMmE4ZTQ5YjYzZDVkNWZkZjI4MzBjNzU3ZmNiMjdmZTIxNTU5MjMifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/infrastructure/kysely/migrations/001_initial.ts#L175-L188",
+          "version": "repo-lines-v1:sha256:00c534b31f8358ce974b3893952544c40a12004a6306b606a34007f628c31b14:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBkMmJhZDRlZDhjNTU4MzIwNDQzNDk2MzYyMjVhYzc4M2I3NmZiZjk2YmE2ZWNjYWJiYzQ1YjliMmJlZGUyNmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFlNjIyNGRlNjY4ZTdhMDhkYjI3MTdkOWI4MTIxNjM1YzBhMTIxZGViMTYwZTViYzRhYjMxZDM2MjFhNWU5YzkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/infrastructure/kysely/migrations/002_tasks.ts#L3-L15",
+          "version": "repo-lines-v1:sha256:82937a7bc3606e04cad33b146c66f8a8d272a6d40020a6933ee1690b0d2259a4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MmE0MjkzODJiMmUxNDcxOGUwZTM3YjA1NzBhOGExNzAyOTkxZmNkODQ5OGNkODQwNjBhOGJmNGYwNTAxN2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiZmQzNjI2MWYzMDQ1MjNhMjE5MTM5MmE5OGUxMmVjMDM4ODg4MjMwNWRkYzA5Y2YxMTkzYWRlYTZiYjY0N2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI5ZWE5NTI2ODZmYWYyYTJhNTk2OTQ4OWRkM2FkMTkzMzNjYzE0ZjRkNDViM2JkZTkzZjBhYjM1Y2ZhZGVmN2IifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4615a0a244dd42d6b0c6881c53639f60",
+      "statement": "El esquema sigue convenciones uniformes: prefijos de cuatro letras por módulo en columnas y tablas, borrado lógico con *_deleted_at, timestamps TIMESTAMPTZ y clave foránea al usuario en cada tabla de datos.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/infrastructure/kysely/migrations/002_tasks.ts#L3-L15",
+          "version": "repo-lines-v1:sha256:82937a7bc3606e04cad33b146c66f8a8d272a6d40020a6933ee1690b0d2259a4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MmE0MjkzODJiMmUxNDcxOGUwZTM3YjA1NzBhOGExNzAyOTkxZmNkODQ5OGNkODQwNjBhOGJmNGYwNTAxN2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiZmQzNjI2MWYzMDQ1MjNhMjE5MTM5MmE5OGUxMmVjMDM4ODg4MjMwNWRkYzA5Y2YxMTkzYWRlYTZiYjY0N2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI5ZWE5NTI2ODZmYWYyYTJhNTk2OTQ4OWRkM2FkMTkzMzNjYzE0ZjRkNDViM2JkZTkzZjBhYjM1Y2ZhZGVmN2IifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/infrastructure/kysely/migrations/003_incomes.ts#L3-L15",
+          "version": "repo-lines-v1:sha256:b8b979c37c4160bb519024180f4ff4e2d41727523cbceb0c367949bcffb51ee5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MmE0MjkzODJiMmUxNDcxOGUwZTM3YjA1NzBhOGExNzAyOTkxZmNkODQ5OGNkODQwNjBhOGJmNGYwNTAxN2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiZmQzNjI2MWYzMDQ1MjNhMjE5MTM5MmE5OGUxMmVjMDM4ODg4MjMwNWRkYzA5Y2YxMTkzYWRlYTZiYjY0N2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdiY2Q4YzE1NWZlNmM4NGE0YWMzMGZlMTMxYzIyNjQ2NGFmZDk2M2JiZTI3ZTdmMTJhODA2NjdlZDU1ZTgyYjUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_156d4d26af564526bedbbdc58061e9e8",
+      "statement": "La migración inicial crea las tablas de auth y soporte (user, login, session, email_sending) junto con los lookups globales y sus seeds: la app Core y la moneda Peso argentino con dos decimales.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/infrastructure/kysely/migrations/001_initial.ts#L12-L173",
+          "version": "repo-lines-v1:sha256:a8b7d807a38de5a91b8733ef1567bcc06c7e29a225606a515c47b34c0de12c76:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYyLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIzZGUwNjQ3MWU5NjczODJmYjVkOWRkZDA2MTMwZjRjNWQ3NjlhZjRkNDhmZDUzZTYxYzA1YjFhYzk3MTIwZDA3IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI1OWQwNmJlOTU3MDc3MTViMmZlMjU3Mjg3YmQzMjMzODQ5ZDc2ZDUyNDYzN2I0YTcwZmVmNDNmMjEzOGI4N2Q5IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJiN2JhNTVhZWIyMzcyNGIxNmY4MDliNTlhMDk5ZWUyMTBjMTM5MDM1MzMwZGVjM2MwMzk4NDI1YTU3NmUzOWI0In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_b4bf207200014f03bdd389b578af8c5e",
+      "statement": "La tabla session tiene un índice único parcial sobre sess_token_hash que solo cubre las sesiones no borradas, de modo que un token no puede estar activo dos veces.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/infrastructure/kysely/migrations/001_initial.ts#L103-L105",
+          "version": "repo-lines-v1:sha256:07810929958d888a98b31b4bf3b452bddcf4243ee7fee856254f2c32ec2b0f20:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTczZmEwMjQwMzk4NTQ3OTQ5YmZmMWNmNmRlYTE0MWIxNThhYzI4ZDI0MWZiMGZhYjMwZDYyNzA1NDcxZGQwZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWVhNTRhY2MzZGE1MmI5NjVhZmM3NmFjYzNiNzhlMjBiNzBkMDFmNjY2NDU5NTA2OGI2Yjg4MmRkMjYyYzZkOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmRmM2NhYzQxNDA1Njc0ZmQxOWU2MzE0ZDE5MzJkNDhjZjIyNTQ2N2E2Y2Q4YzAzOGI0NDU5NGI4Y2I5OGRlYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWJkZjQ4YzVhNjY0MDUzNTkyYWQ5YTVkNGNlYjI3MmViZjZkZDU4M2M0NTFlNDYxOTcyYTgzZmUxNTU4MjRjYyJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/infrastructure/kysely/migrations/001_initial.ts#L127-L136",
+          "version": "repo-lines-v1:sha256:5ff8fe7433f853e6c51bcbdbe3f5ee00528eb4c05a0b1d929ee268c5a13ba904:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjNWVlNTY5MzZjNGY2MjUwYjRlOGVhYzljYTE2MTBmMGI1ZjQxZjJmYTQ5NTRmM2Y0ODZhYzcyYmYxNzk5NDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFlYTU0YWNjM2RhNTJiOTY1YWZjNzZhY2MzYjc4ZTIwYjcwZDAxZjY2NjQ1OTUwNjhiNmI4ODJkZDI2MmM2ZDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBkNTdhMzVmNmZhMDNkNzc4NmVlMmE3NTM1ODA5NzdjMzMxMzIyZWVmOGIxNGRmMDkwMGQ0NjE3ZDMwNjdiOGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE4MzlmOTM2NjRlNWZjNzFlYTk5Mzc0MzkyNTIxYjAxYjRiZGZhNDg2YTI0MTU3OWQwNTM4M2Y1MWU2YThlNDgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e566e2f5efab4e02abfadb2a23a35c5c",
+      "statement": "La tabla task guarda el orden de columna en DOUBLE PRECISION para permitir intercalaciones por punto medio, y tiene un índice por usuario, estado y orden que es el patrón de lectura del kanban.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/infrastructure/kysely/migrations/002_tasks.ts#L70-L95",
+          "version": "repo-lines-v1:sha256:900accb532b62a135ba58a60ce536ac0093781e9e83f500c91b18ecda0f80264:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJiMDA1NzZhOWZiMDZkZDgxMTlhMGM4YTAxMDAxMDdlYTE3NmEyNDJkYmNhMDc2NTk0MDQ2NzM4MDU1YTUxZTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFlYTU0YWNjM2RhNTJiOTY1YWZjNzZhY2MzYjc4ZTIwYjcwZDAxZjY2NjQ1OTUwNjhiNmI4ODJkZDI2MmM2ZDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiMzI4NzQ4ZGUzNjQ3Y2I5NDZhMTk2ODQ5M2EzMWJhYjU5Mjg3MTQ2NmYzNjU2ZWU0NzA1OWFmNmQ3MTRhYWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE1NmIzNmQyZDhhMTI5Y2IxZDE4YWI3NDdlMDRkOGNmMzZiZjg0NDU3OWZmN2IwOTgzMDIwYTZkZmEyMzJjMmEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_54e99b51636243f59c5382d28f06ab2c",
+      "statement": "Los importes se guardan como NUMERIC(19,4) con la restricción CHECK de ser mayor que cero, y los índices de ingresos son parciales por usuario, fecha y cuenta.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/infrastructure/kysely/migrations/003_incomes.ts#L17-L46",
+          "version": "repo-lines-v1:sha256:a4354d8c8a5078f1a5dadb55bc54c3f340e4715ba6e9551ca35aa7b3bc6c016d:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJiMDA1NzZhOWZiMDZkZDgxMTlhMGM4YTAxMDAxMDdlYTE3NmEyNDJkYmNhMDc2NTk0MDQ2NzM4MDU1YTUxZTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFlYTU0YWNjM2RhNTJiOTY1YWZjNzZhY2MzYjc4ZTIwYjcwZDAxZjY2NjQ1OTUwNjhiNmI4ODJkZDI2MmM2ZDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhkMDZhNDI5YTQzOWE4YzE1NDEzN2RlNWVlMzc4Njg5ZDVhNzJlMzYxMGY0MDYyMDRhMzI3NTM4ZGM4MTk0YTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAwZDIyYjI1NjM5NmExNGYzNTNiOTVhMjE1MmQwNWQxMGQ0N2ZkZWU5OTliNGU2YWJhOWIxMTBiOWMxOWZjYTIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_756cfea2930543819680918eda9773cc",
+      "statement": "La tabla type_categories_client usa UNIQUE NULLS NOT DISTINCT sobre usuario, tipo, categoría y cliente, donde un cliente nulo significa una asociación global.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/infrastructure/kysely/migrations/002_tasks.ts#L37-L51",
+          "version": "repo-lines-v1:sha256:c3cb60701767d439d935e09b9a1fae4e2442878d1e0d76d8a62dcc158f67ace6:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJlN2RhMzRjODgwNjYyYzFmOWQwN2M3OWVmOTBhNjZlYmUyOGE0YTAzYmJlYWQwNGM2ZTMyN2EzOWUxMmFhMjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFlYTU0YWNjM2RhNTJiOTY1YWZjNzZhY2MzYjc4ZTIwYjcwZDAxZjY2NjQ1OTUwNjhiNmI4ODJkZDI2MmM2ZDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUzYzI2MjZkYjNhMzAxODc4OTBhYTlkYjJiZTU3NjlmMWMzNzBiNDBlNDA3NTJjMjJjYWJhZDJmZjliN2EwMWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU3MDA2ODg4ZWJmYzkwZWQ4NzQxM2E1NGZiMDZmNzEwMzVjZTM2NTllNjdmYWM1ZGZlNTc3Njg0ZDEwYzM3N2YifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ecde17050e4c4afda071819cbfc920ee",
+      "statement": "La migración 007 convierte type_module en un array type_modules con backfill y un CHECK que exige pertenencia al conjunto cerrado tasks, incomes, expenses y schedules, donde el array vacío significa aplica a todos los módulos.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/infrastructure/kysely/migrations/007_types_multi_module.ts#L1-L34",
+          "version": "repo-lines-v1:sha256:a77f4ce0d15fc3da4bada5b5f766514d37deadb074ddcf1d3e18f4dceb18c0a6:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwNjFiOGFlZjFmMGMxYjdjODhkNWYzMDhhZThiOTQ5MDAyYzlmNjUzYjg5NjhjYzU5MDA2OGI4MjBiNDEzM2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFlYTU0YWNjM2RhNTJiOTY1YWZjNzZhY2MzYjc4ZTIwYjcwZDAxZjY2NjQ1OTUwNjhiNmI4ODJkZDI2MmM2ZDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM0YTZiNjZiN2MzMTVmYjc1NWU0MzE3NmNkZmQ0MWI3YmE0NzNmMjNmZjAxODMyNTQyNDlmMjVkMjlhODQwYTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4aa229794d9246909baf3c8790bd97b7",
+      "statement": "createDatabase construye un Kysely con PostgresDialect y un Pool de pg por connectionString, sin dimensionar el pool, de modo que rigen los defaults de la librería.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/infrastructure/kysely/database.ts#L247-L259",
+          "version": "repo-lines-v1:sha256:93fa1d75b50a0a25dc544d9171ceeed70c61c9cd2681c89a45a5de6ae2c51b75:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxZjJiZGMyNzA5YjIwNGIyNTdjYzI5ZmVhZTM1MDkyYTUwMTgzMDg3ZWYwYTAwMTQ3MWZmZmJhZmM0MDY5NDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQxY2VjY2YzZTJhNTdmMzFmMmZmMDg1NzljMWQzZWYzNWY1MTNhOWQyN2I2ZWQxMTgwYTZhYTQyYWU0MjBhZmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2fa36f6479754bef99c1883dbf3d9f46",
+      "statement": "El mapeo de filas vive en un módulo dedicado que traduce nombres snake_case de columna a entidades de dominio en camelCase, dejando los adapters como SQL delgado.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/infrastructure/kysely/_mappers.ts#L66-L81",
+          "version": "repo-lines-v1:sha256:68d02bbfbc5f760c2c73e0f206a2ada608c163adaf7c3a153bc511a4ec8c3cb3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVjYWM2NWYyNTZhY2VlMTc3OGU1MDUyZWUyNjM5ZDgwZTk0MjE4ODc2MTZhNTczOWE0MWZmOGJlZTkyNmIwNWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg3MGIxMjkyZjVjMTUyY2QxYWI1ZmUxMTZiNmI5MWRhMTk3NmFiZTZiZDEyZTg2Y2U1ZTRiYmFlYTQ2MDFiZTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZkYzIzNGM2M2YwN2I5N2Q0OGMwN2MyZDk3YzA0YmNiMWVjOTA2ZjUwOTM1YjRkNmFmMDk2NzVkYzY1NTBkODIifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/infrastructure/kysely/_mappers.ts#L85-L100",
+          "version": "repo-lines-v1:sha256:80fb6cbc33d3a4ecfbcca0bb75894acd5c329dc196ec449a473ada4eb664cb53:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMwNTZiNjJiYmExYjRhODk1OTJiNTE3NWEwMjBmNWQ2Y2IxOTM3YWRiMGEzYjI5NTIzMTFkZjE3M2JlODgyM2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJhMTdmNzU4MWE5NDI4ZTAxYjBiNTQ3NDc4MWViNWM3ZDY0MDg5MDZmODQ1MzkwNzhlMDU0M2VjODZmZGM2N2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZkYzIzNGM2M2YwN2I5N2Q0OGMwN2MyZDk3YzA0YmNiMWVjOTA2ZjUwOTM1YjRkNmFmMDk2NzVkYzY1NTBkODIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcwMzdiNDAxMGNiNzljMDQxNTMxYzU0ODA4OTcxM2I5MGU3YTgxOGUxM2RmM2YxZTdmNmRjY2NlMTE0MmJiN2IifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2df24b39bd694cadab203cc62e485624",
+      "statement": "Los adapters resuelven la transacción opcional con el patrón (trx as Database) ?? this.db, de modo que un caso de uso puede propagar una transacción a varios repositorios sin que el dominio conozca Kysely.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/domain/ports/transaction-manager.ts#L1-L5",
+          "version": "repo-lines-v1:sha256:acabf22ea9638feb7c5688ae666f056358fb87a9ecbfccfbba290b14176699b8:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNGEyN2VkNjI4MTdjNGI2NmQ3MmNhMGYzNDIxYWZjNjM1YTUwNzE2YTBhNjg2MDEzMTZhYzdkZWU0NzllNTVlYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/infrastructure/kysely/session-repository.ts#L67-L71",
+          "version": "repo-lines-v1:sha256:e029585bdd74b64e30574d5c4d9b3ec7932acbc1efc137f786828c83c93d1b7b:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTc3ZDFhYWQyMzk4OWI1MmFjNTc0MGQzYWUxNzgxZTE1YTJlMWE3Yzk4ZGYxZTA5NWE4ODJjYWRlNGIxNTM1OCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTFhYzViZDg3YWViYjNjOWI1MWNhOWQ3NDMxNjhmMmY3MzZiODk0MjYzOTFkN2I2ZGVjZGY4OTBlZGNkMzhiMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTg1NTQ2MGI3YzBiYTIzZjNlNTIzNmRkZjlhZDEyNzVlNTgxZDhkYmRiZDg2N2ExNzgyYzQ4NWUxNDFkNGQwOCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_342e7d93f3a0493c832b54a4086428f7",
+      "statement": "Las migraciones se aplican de forma manual con bun run db:migrate, nunca al arrancar el backend, y el runner falla de entrada sin DATABASE_URL.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/package.json#L11-L11",
+          "version": "repo-lines-v1:sha256:372f586f202f623ea4a5a2f2bee2d7a4e38ccd791e90adf9da21afc633452418:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzcyZjU4NmYyMDJmNjIzZWE0YTVhMmYyYmVlMmQ3YTRlMzhjY2Q3OTFlOTBhZGY5ZGEyMWFmYzYzMzQ1MjQxOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzcyZjU4NmYyMDJmNjIzZWE0YTVhMmYyYmVlMmQ3YTRlMzhjY2Q3OTFlOTBhZGY5ZGEyMWFmYzYzMzQ1MjQxOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjliMGRiNWU0NTg0MTFmNmE2ZTk3YThkMDRlMzFhZjRhNjQzZTU1NGE3OTE0OWQ0YzNlYTkzNTcyMzhmNGQ1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTc3YTVmZDQ2MjBhMTk4NDQ0ZWUyZDJmNDJjMzY4MzljMzJkMDgzOTE1ZjkwZGM4ZTA2ZGRlNzI5OThmYmJjNyJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/infrastructure/kysely/migrate.ts#L5-L10",
+          "version": "repo-lines-v1:sha256:dddb34f5c810f40a59ca740fb0ee53ae5dcacfa35753a3ab587e747cc3aea465:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODM4M2EwMDRlODY2NzIyMzdmMTdmNjEzNTViZmQ2OGJjODU4ODE4ODc1OWRmMzg0ZGU3OTY0MWNiNjI4NzEyNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTBhMThiZmRjNTZkZWFlZmQyMGI3ODUyZTY4ZTJkMzk0Mzk5ZDdhNDAxMjFiYWZkNDU2YmQ4Yzk4NzRkYTZiZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTNjODc3ZDk0ZDliMjhkM2M1N2MyMmU3OTQyYTE1ODNjMzYzMTY5YzAyNWZiZjI3ZTQ3ZTJjYTA4NTRmNWU1NSJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-27T02:48:33.191Z"
+  }
+}

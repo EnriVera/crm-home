@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:8207fc80df89f9fdf0756ea28e8a2ef048b537f17d91bd03c60c490370166b0f",
+  "claims": [
+    {
+      "id": "claim_ded47ffaf5b34592ab1e2ed14e1e580e",
+      "statement": "Nitro sirve la API con un único handler catch-all que apunta al composition root, y el módulo exporta un fromWebHandler(createAppFetch()) que devuelve un fetch handler puro reutilizable en dev, build y tests.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/nitro.config.ts#L5-L8",
+          "version": "repo-lines-v1:sha256:86adb65979683450cc30a2f19b0a92725b39083cd57d88867c47c22c382603ee:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODA4OTg0NWYwMDRiYjQxYTExYWJjMzk5N2M5ZTAwOTUwNDllMTJlNjIxYzQyNWRmODA1NGYwZjliNWYyZjNjMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTg0YWIxNzE5MTU3ZmIzMWMwNDU4ZGJhYzk2MjhlYzBiMjU2MDhmNDBhMmMyNjdjMzA1YzY0MjgzMTBlOTYxNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzhhOTg5OGM5MGYzNDhlNzIwNDkzNzBkMDZhMWIwZjM3OWMyMTg2MzU5ZWFhZjFhMmUxNTVhZTllMjcxZGRkMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjYxZWJlMTQ0MWQzMzQyNmMyNGEzZDkwMTkwNjVlNjBmNDcxMjBkMGYyOTMzMTkwYThlMTU1NGY5MDQ5ZmYwYyJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/http/composition-root.ts#L350-L361",
+          "version": "repo-lines-v1:sha256:c172dbfceae5315ec2484a0a1ca2b39441ab2b26202fc3ed5f5c473a839c06f4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImViY2E5NjlhMDcyNGRjYzIwNDM3MWI5MGMzOTIzMTdjMzIwZDg1YmVkMWE4NmM1MGYxOGM5Y2ZiYzQ0MGQ4OTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM3YzBmZmJkNTQwY2I4YzIyNzQ1ZGIwM2Y4Mjg5ZmE2ZDJlYWY3NjlmNjNmZmRhMGEyMDc3OGRmNzNlYzlkMDYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFkZTc0YjMwMWE3ODQwNGM3YjQ4ODFmMTk2OTgwYTZmOGZlMDQ3ZTg0ODRiMDg3ZTEwNDk1N2M3ZDNlOTI5NjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM2ZWMyNTRlM2E3YWU1NmI2MzhkNTIzNTFiNTgxNzhjODA4ZWNkNWUxNDJiMjQwNThiMjc5ZjMwZmZmMGI4NjAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_03fb7be9a24c471e94f84f3ae9e609a4",
+      "statement": "El composition root declara explícitamente las variables de entorno que usa: DATABASE_URL, TEST_DATABASE_URL, SESSION_COOKIE_SECURE, las de SMTP y el endpoint OTLP heredado de TelemetryEnv.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/http/composition-root.ts#L93-L107",
+          "version": "repo-lines-v1:sha256:49fb06fd8887bcf94ca603372a35e55d2ab09ffb090be11b26e85e3204c7af07:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxYTVmZTdmYjY2NzEzYTcxZTA3NzE3NjdkNTRlZGMzMGRkZDE0ZjJlYWNkNWY2MjEzOGEwNjhmZWZiZGJkZDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVhYWZmMDUzZmNhN2U2MDgzZmMxZmZlODU3NmNmZTA3ZjU0NjA2OGExMGZjYzBjMWRiNzRkZTY1NjNlZTE2MjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2NWJkYjc5NzIwZDBkMTc3MTI5YzBiMzdhNDgzZWFmMGE4NjIyNmM4ZjYzYTNlMzE3YzFiYmNiZjBmZTNhZjIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9da402d373dc427a86281f8ec71a8e17",
+      "statement": "El CORS de desarrollo fija orígenes explícitos (localhost:5173 y localhost:5174) con credentials true en lugar de comodín, porque el cliente oRPC envía la cookie de sesión; el código anota que producción exige una allowlist verificada.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/http/composition-root.ts#L121-L142",
+          "version": "repo-lines-v1:sha256:49214ee36a19e046c983e244cd11d7b90984c9a4ea3ef3f2aaf39e67f55a21b8:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhZmQwNzcyNTFmMzYzZmIxYzAzMGI0ZjEzNWY4NWFjYTlkNjFlNGM2MDdiNDU4YmMxMTkyOGExOTU4OTdhMjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY2YWIwMDUzNWYzZjY1NTM0ZmY1YzkxY2NjZWJiMjU2YTExNjNkNzY1ZmU0ZTFhZWZiMzU1MGYzZjNjYzlmZjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY2ZDNlNGZiMjNiYWE3NTY4YTlkMmMwMzcyNDY5MWU1NTcwZDQ0MDU1YWM2YzIzNmEzYWJmMTY2ZTlhNjdiZTMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_64770189275f41428bb430fd95ef464c",
+      "statement": "GET /health es una ruta h3 nativa que delega en el caso de uso GetHealth y devuelve status ok con timestamp ISO 8601 dentro de un span http.health.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/application/health/get-health.ts#L17-L28",
+          "version": "repo-lines-v1:sha256:5e8f3b16e661de7a9a013c6e661b2f2f34e971f4b8afd79a966724e39ef92ef7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI2ZjM0ZWU5ZjdiZDk4NzQwNzNlZDc5NTAzMWIzN2U4MGY4ZDMzZmMzM2M4NjIyZDI4YjE2YzUxZmVlZjQ3M2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVkMDA4ZjY4OGIxMTE5NmVjMzdlM2QyNjA5MTMyYWYwNTgxMjI1MDY2Yzg2YjljMjczNWIxZGRkNDdhYWE1MjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/http/composition-root.ts#L143-L143",
+          "version": "repo-lines-v1:sha256:ff9181d7300b2db88e37eb0efefd98fe907fce6d0094dd2523907dc999f88986:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZmY5MTgxZDczMDBiMmRiODhlMzdlYjBlZmVmZDk4ZmU5MDdmY2U2ZDAwOTRkZDI1MjM5MDdkYzk5OWY4ODk4NiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmY5MTgxZDczMDBiMmRiODhlMzdlYjBlZmVmZDk4ZmU5MDdmY2U2ZDAwOTRkZDI1MjM5MDdkYzk5OWY4ODk4NiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDEzYTg0ZDhkNmMyNTRkYTM4YzhhODc1MjRlOGI4YWZjZjBiNTc0Y2Y5OGE3MGVmYTE3ZGQ1MTE4MzY5OTYwYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjg3NGQ1ZWViMWY3MmYwMmE1Zjg3ZWMzYTE4ZjA1OTFlZDc2Nzk1YzllNDFmMjgxNjViMGQ0NWFiYmEwMWFmOSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/http/routes.ts#L4-L8",
+          "version": "repo-lines-v1:sha256:b639429c42401b2f3c6a636717481f2be0350fbad3a5949bc47e87429caf7464:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDg0NzZjZjAyY2U3MzlmY2Q1NzhiOTI2NWI2MzVhNjU0NGM0NmM2ZTk3ZWM4NWFkYmU3ZjU4MDY4NWUwYjdjNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGFjZGQwZjg4Y2RlMWRmZTQzYjgwNTAwNzY0MDZjNjRhMGVkYjZjYmVmMTFiZGFjMDc3YjNhZTJlNzRjZjNiOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_81652d1bd34742a2aa09d9a46b4338d7",
+      "statement": "El adapter de health es trivial y no toca PostgreSQL, de modo que el endpoint responde 200 aunque la base de datos no esté levantada.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/infrastructure/health/static-health-repository.ts#L6-L12",
+          "version": "repo-lines-v1:sha256:88298522ab5e741c06333ab8ddb76a4d711142ffb20199c60f90aa7f597ed657:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTJjODUwN2RjMjFiM2NmZmNiZTNkMTExNDczMjY1MjBlZmI2ZjcwMmIzYTJkZjA5Nzc2OWEzYTc3ZDI5ZWM1NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGVlNTMwNzI1YmVlZTM4NzRlNTcwNDZjNzIxNmUxMzYwZmU1MWVhM2RmZjE4MDNlM2I4NTIzMDU0NTQxMTNkMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_10e48448bfd44e83894a916a9a2a00e6",
+      "statement": "Sin DATABASE_URL ni TEST_DATABASE_URL la app igual arranca: no crea repositorios ni casos de uso, expone solo GET /health y responde 503 con el mensaje Database not configured en todo /rpc/**.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/http/composition-root.ts#L145-L146",
+          "version": "repo-lines-v1:sha256:b5cff07326d805f71db4e54235e895fc7b33cfa4ba2854967f78a7b1fcf83191:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTI1OTY4NDYyZWU1Nzk0ZWQ5MDI4YTg3MDFkMzIwMGVlNDMyOGRhN2I4NjNlMzc1MTY4M2M0MjI3MmU0ZGU3ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWUwM2EwZmMyZDJmM2ExMDYyNTZjODMwNzMyNmMyZTJjNWFjNzU4NGE0YTMzZGI3YmVkMTRiMTA5NjhmOGM2YSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjIyYzYwMTk3NmY4YjhkOGRlYzMyMjRjNzhhOGE4OThlODZlNmRhNDYxNTg0MWU4ZWIzYWMwOWEzMTYwZThlMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGYwM2I4NmZhZGZiNTEwMjE0YzYzYjQwOTY1NmVkNTRiYTg2M2IwMDBmYTUzZjViMTE2MjAwOTkxNDcwODgwMyJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/http/composition-root.ts#L333-L344",
+          "version": "repo-lines-v1:sha256:1e628f2443c3b77580620c46aae1f4fafa7344ceb6d1b50af9df15090652aa16:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ3MmJlZTA3ZDk4YzUxMWNmYjliNWE3MjljOWNiNTI5NGQ0OTNmMWFmYzU5MjE2ODQ0YmIzNDlmZTZmMWFmODkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhkZDNkYjExODcyZGI3Y2Y5MDU1MzdkMWUyMTE4Y2M3NzA5MmZmMjFjMjliZDJkYTM1Mzg5MzBkYjYzMDBmZGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQyOGE3YTk5ZWFjOWFmMmUwNmYxNmFjYjE1N2ZkNDU4ZmIyNTdiZDBiMTFmOTdkZmM0MzE5OTYwOWFlMjUwZjUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_16a6325714ff4c23af5ce995adfb4e79",
+      "statement": "Con base de datos configurada el composition root crea el pool, los repositorios, el TransactionManager, los generadores de ids, OTP, hashing y comparación segura, el reloj del sistema, el renderer de plantillas y una instancia de cada caso de uso, y recién ahí arma el router.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/http/composition-root.ts#L146-L283",
+          "version": "repo-lines-v1:sha256:8ea0f43a8c66849bc2dc55cc3cd4c120ff4a55db8b97574d2d278903ec84abac:eyJzZWxlY3RlZExpbmVDb3VudCI6MTM4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI5ZTAzYTBmYzJkMmYzYTEwNjI1NmM4MzA3MzI2YzJlMmM1YWM3NTg0YTRhMzNkYjdiZWQxNGIxMDk2OGY4YzZhIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIwMWJhNDcxOWM4MGI2ZmU5MTFiMDkxYTdjMDUxMjRiNjRlZWVjZTk2NGUwOWMwNThlZjhmOTgwNWRhY2E1NDZiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI2NmQzZTRmYjIzYmFhNzU2OGE5ZDJjMDM3MjQ2OTFlNTU3MGQ0NDA1NWFjNmMyMzZhM2FiZjE2NmU5YTY3YmUzIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI5NTYxYTkxMzdiNDJmZTU3NWExNmI3ZDRmMGViZGNlZjczYjNmNzU3NjU4YzEyNjk0ZmJmYTcwZTUwMDY4NDQ2In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_a4e1aaf40e904560ad96a657fa3996ea",
+      "statement": "El proceso arranca un bucle de drenaje de emails en proceso cuando existe DATABASE_URL y EMAIL_DRAIN_LOOP_ENABLED no es false, con un intervalo configurable de 60 s por defecto y un tick inmediato al boot.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/http/composition-root.ts#L363-L427",
+          "version": "repo-lines-v1:sha256:a5613d63bb036a971fbf02db5084aeb52ec71f45f1fab253ab97911baa673da9:eyJzZWxlY3RlZExpbmVDb3VudCI6NjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQzNjY1OGMxODU2NzAzZDBjNjUyY2Y2NGQ3MDgzZmMzN2UwMGIwMDQyMDc1ZDg5Yzc5NzlhNzgyN2U0MzAzZWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_fd56325d87214d75946b124e0ef38760",
+      "statement": "Nitro declara además una tarea programada email-sending que drena la cola email_sending y se ejecuta cada minuto con la expresión cron */1 * * * *.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/nitro.config.ts#L9-L17",
+          "version": "repo-lines-v1:sha256:e1d612fba3dd36fb5e56703b3cba19d4bc908a643bd3f73189a46f93011d03a6:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDhmMmUyYjExZTM2ZmFkYjFiMWI5Njg2YjEwOTAwYTlkMzRlZTZkZGZkNWM3ZjA5N2MzNmY3MmZmNjNlOWZmYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGQ1Y2QyZmI0ZjNkZjg4NDUxNTI1NWIzOTUyM2YyZjhiNTQ3MmJlZWE5ZjU2NmZmY2EyMDRkYjgwMjU2MTA0MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOWYxZWEyZmMyZjRlMzE3NzcwYWFiZDY3ZTY2ZDUxZGYxMjE1NjE3ZmMzZjcwZDUwYmU1MzQ1NTk5NGIyYTVjNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjZmNWI0MGIxNTg0NTdkMTc4NjRmMjE3OTA3ODZkZDVhMmVjZGI2NGI2NmE2NTFmNzg4ZDRlMjVjZDMzMDNkMiJ9"
+        },
+        {
+          "resource": "repo://apps/api/tasks/email-sending.ts#L10-L48",
+          "version": "repo-lines-v1:sha256:3f3483a2f0d206d92a162ff78efdedb97532b31fb5a02d4646d99ae52e6c03ca:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJlZDY1ZjU0MTkwYjE0M2MyZDc3ZDhkMWNhYzhhMzE5MjNmN2U4M2NhNzliZTUyNDZhNmRlNDg3MjVmMjQ0NjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ4OTBiY2I3YzE3N2VlNzk2YjUzMjk4OTUyNmI0MjMwNGViYTY5ZGYxYmNhNDc0MmQ5M2VhYzNkZmJlMWE5NWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-27T02:48:33.191Z"
+  }
+}

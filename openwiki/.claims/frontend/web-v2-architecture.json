@@ -1,0 +1,176 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:f60f5ded7ffb79957532c4a5f227a66d2937935419b750b961b3b50c9458aed0",
+  "claims": [
+    {
+      "id": "claim_0c154c87bc3243608fed1f65b6ac3538",
+      "statement": "El bootstrap de web-v2 instala Pinia antes que cualquier otro plugin y ejecuta bootAuth() antes de montar la app, de modo que la guarda del router encuentre el estado de sesión ya hidratado.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web-v2/src/app/boot.ts#L28-L45",
+          "version": "repo-lines-v1:sha256:285c17b7b909255379207d32f1d57b992cb2b86fe8a9e5d34fd8fcdad2ce8f51:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA3MzVhZWQyYzNlMmNjMTI5MzdmMGYwMjU0NTEyYjU5ZTA1Y2M3Yzk0YjkxMTMwMTkzZjYwNGE1OWE3Njk0NGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBmOTg4ODZkYzM4MzFiYmY1YWFjZWYxYjI4MGY0YzA4MzU4NjBmM2U3YzFiNGVkZWIxNWEwYjQyMWUzYjUyYzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/web-v2/src/app/main.ts#L19-L38",
+          "version": "repo-lines-v1:sha256:1f78bf018a21d2ecfdafa519b56caee4be1ee6d1cf228dc5735bd84297136fbc:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJlNzk4ZjI2M2ViZWYxYmU3YzBhOTRmZTQ3NTBhNTVhOTZmM2JiNjRmNjRlOTZjMjM2NTMxNjNhYTdiZDcyNTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUyYWQ1ZTc2YTQ1ODI3OTE3MTVjNGRhMzNlYmEzNzg3ZTc4MmVhNTJkMmNiM2EzYTAzMmJjM2JlNmJjYzcyMmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRkZWFjMTQ2ZTM2MWIxM2RkOGE4YmQzYzhkMGM2ZGJlNzJlZjQzYjdiYWZiZjkwOGNkYTA0NTI2NGVlYTY0MmIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7012670ea54e49ebb2a2de4db9ec24a0",
+      "statement": "bootAuth es single-flight: memoiza la promesa del boot para que varios componentes que piden sesión no disparen llamadas concurrentes a getSession.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web-v2/src/app/boot.ts#L28-L45",
+          "version": "repo-lines-v1:sha256:285c17b7b909255379207d32f1d57b992cb2b86fe8a9e5d34fd8fcdad2ce8f51:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA3MzVhZWQyYzNlMmNjMTI5MzdmMGYwMjU0NTEyYjU5ZTA1Y2M3Yzk0YjkxMTMwMTkzZjYwNGE1OWE3Njk0NGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBmOTg4ODZkYzM4MzFiYmY1YWFjZWYxYjI4MGY0YzA4MzU4NjBmM2U3YzFiNGVkZWIxNWEwYjQyMWUzYjUyYzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_319b7ba50d5444f482f5b9aa4fa99383",
+      "statement": "El QueryClient del frontend se configura con retry 1, sin refetchOnWindowFocus y con staleTime de 30 segundos.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web-v2/src/app/main.ts#L9-L17",
+          "version": "repo-lines-v1:sha256:5b80bce5605be1364a1787118932cc15025566ad7d373efc73ccf49186739879:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTEzNGUwMWZkOWJjNDA5Nzk0YzVhNTg4NDcxZWZiZDM1YWExNjc2Y2IwN2FhMjUzNzkwNDhmMWExNzJmMjg5YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjZmNWI0MGIxNTg0NTdkMTc4NjRmMjE3OTA3ODZkZDVhMmVjZGI2NGI2NmE2NTFmNzg4ZDRlMjVjZDMzMDNkMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGZjMjM4YWQ4Mjk5NDM0YjEzNmUwZTBkMjMxYTQ5NTMyNmQyMjhkYTJhNDcyZGEwODA1MWFkNWRlMjQ0NTcwNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTExYjFhMmM1ODUzZGNiMzA0ZTdhYjNjNWM1NTUzMTJmNjY4NmYwMWZmNDM1YjAxYzAyOGRlNzU4NzU1ZGM4OSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_5636a8e68cb645d7a6de15475ec5ab9b",
+      "statement": "El lint del frontend aplica vendor encapsulation: los paquetes de terceros solo pueden importarse dentro de src/shared/vendor y el resto de src recibe un error que exige crear un wrapper.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web-v2/eslint.config.ts#L80-L103",
+          "version": "repo-lines-v1:sha256:5601c7bb7ee6acf390d617519c87aa29369b3fa629247f1f3a60ca004e1ae483:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY4Y2EwNDM5YTcwZTg1MGQ4NjlhNTAzM2Q1MTQ1NTcwYWNhYzc5ODVlYTNhYzgyYjZkYTQ0YmUwZTQzOGJhZGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkNWNkMmZiNGYzZGY4ODQ1MTUyNTViMzk1MjNmMmY4YjU0NzJiZWVhOWY1NjZmZmNhMjA0ZGI4MDI1NjEwNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI0YzZmZDM1M2Q1MTg3ZjVjMWY3MzZjMjFjMGQ0YzYzZWUzOWMyODhmMDg3NmMzOTdkZGY2MTdhMDZjMzRiMzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdiNjkzNjkxMTFhNDUyYWI4MWFhYzdmYzMzYmRhYjYyNTJhYThlY2NmOTVkMDYxY2IyMGJkN2M3YjI3ZGY5ZGMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2765e872b50e43b79b84ace1df91c130",
+      "statement": "El lint también aplica purity a domain/ y application/: no pueden depender de terceros, de xstate ni de effect.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web-v2/eslint.config.ts#L104-L149",
+          "version": "repo-lines-v1:sha256:576dd8e96dc5350df734b40647bc4a014d548d2f9672d8d53094e8b02d6fa04f:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZlZjcwYjlkZTgxZjkzYTU4NmQ4YzNmYzUzMDUyNTc4YmMxZmUzZDg1OGE5ZDY2NGIzYTcyNThiYzZmZDRiZWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkNWNkMmZiNGYzZGY4ODQ1MTUyNTViMzk1MjNmMmY4YjU0NzJiZWVhOWY1NjZmZmNhMjA0ZGI4MDI1NjEwNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg1YzBlNGUxZDNkYjA1NDAzYTRlMTg4Y2NhYzk4YTRiZmVkOTI4OTE3YmQ4OTMxMDg3ZTQyODZjNjEwOWI0YTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIwMmQyYzBkNmRjNWU3NGQ5MmZhMTRiOTFkYmVhMjY0MDkwYmViMzVmZGI5MTg4ZDliMzQxMTgxZGNlOWY0Y2UifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ef11c0997e12476fb31e691c24af0b40",
+      "statement": "El router usa historial de navegador con el árbol de rutas generado por el plugin de Vite y preload por intención, lo que habilita refresh, atrás/adelante y deep links.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web-v2/src/router/index.ts#L19-L28",
+          "version": "repo-lines-v1:sha256:9e65509989eb2e8b23340b2d233c12d1b497a9c1e94b2bde1abc51cfdcac261d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIyZDE2YTM2NzA2MzVkNjhmNzhkOWVlMzNlYjc2MWJlZTFhNTQ3Zjc0ZTgzZjAxYmQ0Nzg1YzczOTkwM2RhOGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk2ZDZmZThhODExYzg3OTFlMGUwODhmNzQwZWVlZTk0YjViMmU3NzUyYmZhZDdkYzdhYTRlOTZkMmM2YzgwZGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_007ea9d20e4e43e1add20d8100180bac",
+      "statement": "La guarda del grupo (authed) guarda el destino en un store de redirect en lugar de la URL y solo acepta paths relativos, evitando open-redirect.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web-v2/src/router/routes/(authed)/route.tsx#L13-L31",
+          "version": "repo-lines-v1:sha256:1dbf9cef2ee648793c9f21acb1f1acffa9746faca5274baf91e90c6d2718e531:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5YzZiOGQyY2NmM2Q4MThhMTcwYzA1NmJiYjRhYWUzMDNjNTVlNjAyZGJlMmM0ZmI4YzdiOWZlN2MyNmI0MDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkNWNkMmZiNGYzZGY4ODQ1MTUyNTViMzk1MjNmMmY4YjU0NzJiZWVhOWY1NjZmZmNhMjA0ZGI4MDI1NjEwNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3MGUzYTlhMDkzN2MxM2MyNWI5MmI5NGI4ZjJjMTBjMjBhODk5YWEyNzYzZDhkYzYzODUzOTIxZTJlZTAxMGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_398057036a674fb4bdb86a6c0ff2fd4d",
+      "statement": "El store de autenticación es un espejo en memoria de la sesión del servidor y expone isBooted e isAuthenticated además del reset.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web-v2/src/stores/auth.ts#L1-L45",
+          "version": "repo-lines-v1:sha256:8ed517ca856c0d36cde42cea09d2bd202c57eb6473a2be61f324b5523610b677:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBmZjZhNGE4NDU0NjAzNTkzZjNjYWVlNmNkMGE2ODM4OTJmOWM5NGZmY2ViNzA3Y2U1NWI2ODdmYTI1NDgwMWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8628b92e67284362a7772a8b163837ab",
+      "statement": "El único archivo que importa @orpc/client es el wrapper del vendor: crea un RPCLink con VITE_API_URL más /rpc y un fetch que siempre envía credentials include para que viaje la cookie de sesión.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web-v2/src/shared/vendor/orpc/client.ts#L1-L27",
+          "version": "repo-lines-v1:sha256:6f09d8037d2828248995aa06d72f0cb7e903df2f16e99f4a84578efcb5729644:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmYmNhNmZmOTg4OWUyOTVhMzUzYjhjMGFiOWI4MTVkNWVhMTA3NWI0ODYwNGJkYWQ2MDBkZmVjOWQ0M2U3ODUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM3Nzc0NDQ1NGRiNzcyMmJmOGM3YjFkODkyZTFjYWMzNjc3YzY2M2NkZGQ4NGVjNDExN2ViYWE0MzkxMjBkMmQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f4244e1611f44e8986914d760a9824ad",
+      "statement": "El cliente oRPC del frontend está tipado de forma genérica porque el backend todavía no expone el tipo de su router.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web-v2/src/shared/vendor/orpc/client.ts#L26-L29",
+          "version": "repo-lines-v1:sha256:434e6146e1b7ce03a0f5a93640640aa1eae768883de1b19eee1408804b29023b:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzZjZTFiMWM4MmEzNjIzMTIwMjU3YjJkMDQ5MDBlZmNlOTVhNTRhZGY5ODA2ZGYxZmEzZTM0ZDVlNWY4NDIzOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTM4OTlmOGZlMzA4NDhhMDA1MWYwYjI3ZjRlNDA1YjUyMjZkZGU5ZTQ5YzAxOWIwYzUzYjBkN2Y4YzFhMWM1YSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzQ2MzAxN2ZiYjA1OTY1NGEzNjE1MTg3NjU4OTgzMWZlYWFmOGRmZjg3NzI0ZjM3YjcwNmMxYzg3OTA1ZmRhMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_8b1f5801c6c5464499979c047183df4f",
+      "statement": "El acceso a datos del frontend activo se resuelve con composables propios basados en TanStack Query, no con los helpers useOrpcQuery y useOrpcMutation del vendor, que no tienen consumidores.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web-v2/src/shared/composables/use-list-tasks.ts#L20-L42",
+          "version": "repo-lines-v1:sha256:3852ef3f04e9a74d25b23051a29f1ff52b3c61e08f9635561d594683c43a6044:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZmZjlkZThhNzdiMTRjZDlhZjkzMWY0MmZlOGI0NzZkOTE2MDA5OWZjNWMyNTJhYjE0YjRmOWYzYTdmYjA4ZDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNmNWI4M2FlMWRjZGE2MDc5ZTZhZWZhNjYzYzgwODI5MzY3OTI3ZmE2ZTQ2MGI4NmFlZjA1NTc4NzllOGZmNGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE2MTVjYTRiNDdhNmEzZjQ2YjJkZDY3YzI2ZmUxZDM1NTYzYjU4YWIyMmM4MTRhZTRmMWM0NjI5YmU4NDY1MmIifQ"
+        },
+        {
+          "resource": "repo://apps/web-v2/src/shared/vendor/orpc/query.ts#L27-L63",
+          "version": "repo-lines-v1:sha256:b34d95140fa5f5f9664355db92d6a3120d6d835d88c3398d07590f49cf756653:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZhMjIzNWJhZmI5Nzk0NTE1MDMxNTNkNTNhMjFmY2M2NTBhODAyMTE0ZDA2YTllNjBlYTdhNjQyNDY1ZDRiMGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRiMTk2NzE0NTQzY2NhZGYxYWJlOWQzOTgzNDRjY2M1YTA5ODFjZjFmZWQwMDIyMGMzYmYyYzQxYTVhMjg3MGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM2MDRmNTA2M2MwZmU2ZTc5OWRmMWE0ZjFiMGVmMDlkNzk5YzUwOThkZDM3NWVhY2MwYmYzNGM0ZjQxMTMyMTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a96aaea3161a4a2eb0cd234eff03d713",
+      "statement": "Los formularios validan con vee-validate y toTypedSchema sobre los esquemas zod de @crm/contract, siempre a través del wrapper del vendor.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web-v2/src/shared/vendor/forms/index.ts#L1-L6",
+          "version": "repo-lines-v1:sha256:3a943c772c481a14d54c8c976540bc67bb2d615a66b1e1e47573e1e39c339d92:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWFmMjJjZjA3MzI1OTJjMjQ3MTQxY2JlNjFlZmExMTAxMjYxMmY1YTMxMjJiOWFmOWJiYWY1MmY1NzI0ZDE5NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWFjNDZmM2YyZGY4NjRiMmQ1YWRjM2RhNjJlMWMzOTgyY2YwNThjZWMzNzRjNWI2NjJmMzlkMTM4OTM3ZjNhYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://apps/web-v2/src/ui/molecules/edit-task-drawer/EditTaskDrawer.vue#L79-L89",
+          "version": "repo-lines-v1:sha256:ee8d7a2a529b7406ecab56972e7979cf2d60cabedc4f2f0fb9160d03654eb14f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUwNWY1NjU2M2E5NWQ4MGNmMWNiN2Q5MzgwNmYwMjkyNjVjMTRhNTkyY2QzODM3NzgyNmUxMzNhOWU5YzY1MWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE1N2M5YjI0MWFkZmVhNjgxNmM0NGU4MDYxNmFmZWVlMjhkNWQ3Nzc3MjMzOGM2MzlhMmVkMGYyODM4M2JmNTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFhYjZkNDEwOWRlY2IwNTEwODc1MDJmMjViNDFmMWQxOTc5MWVmYjA2OGYyMzZkMjFjNGI2ZWE4ODU4MGYwNTcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_dd0115cc74414d9aab79203c705ee78b",
+      "statement": "Las primitivas de interfaz del frontend provienen de la librería Zag (dialog, sheet, popover, dropdown y pin-input para el código OTP).",
+      "evidence": [
+        {
+          "resource": "repo://apps/web-v2/src/shared/vendor/zag/index.ts#L26-L28",
+          "version": "repo-lines-v1:sha256:b8c9a39e3162782e648201920a653524ad1599f96757830380b0f49526668cf8:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjAwMzA2ZGEyODUzMjgzNTk5ZTFlYzdlNjYyMzAxMTFkMWE4NzQ4MGRjMmU0MTdiNjgzMDdlOTI1YzYwOTRiMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWEzMjFmZDk3MTcwZjllNmNiNzc2NGU0YmE3NTE5NDQwMmYyMjdiNTY4Y2ZjNWRhYjI3ODBhNjI0OWFhOTJkOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2VmODVkNzFlZTBjOTc5ZmE2MzAzMDlkNGYzOTk0YjAyMDE5N2QxNDQ1MDIwYjVlYjNmYjZjZDBhMGYyZjdjYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_54a8195210504272919fd2ce16dbddc0",
+      "statement": "El frontend activo todavía no cubre varios dominios del backend: faltan las rutas de ingresos, gastos y transferencias y el detalle de tarea, y las capas de dominio y aplicación de client, config, finance y schedule están vacías.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web-v2/src/router/routeTree.gen.ts#L28-L99",
+          "version": "repo-lines-v1:sha256:8aa558fec4f98f30c00c89552e77ad4c0244dd159b407c9b3f47f9f2f5c68dde:eyJzZWxlY3RlZExpbmVDb3VudCI6NzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4MTc2ZjdjMWFlZGJjNzNhMjcxOTYyMmRmMjMzM2Y1NDliNzc4ZjMyNDAxYzlhNWYyZDY3ZDYyM2QxMjEyNDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ0MjkyNGEzZjQ2N2I0NDM0ODZhNjc4YjRmNDJlZGFlNjA2Y2NmY2U0MDBjZGIxODZmMDBhY2VkZmI2ZmUyMDUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU3NzdhY2VjNTdlYTcyZDkzNTFiNzBmMzIxZWFjMTg3MjQzMmQ4ZGFlOWIwMjBjNjc1ZWJiYTUyNWJjMmY2NzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk0YmFmOWRjZjFjYmE0YjVjNjVhMjRhMGI2YTgzNGI3MGYwNzgyMmJlZmEyNTUxMzc4NzdjNzVhNmNhMWMzYTEifQ"
+        },
+        {
+          "resource": "repo://apps/web/src/lib/nav/routes.ts#L6-L17",
+          "version": "repo-lines-v1:sha256:e0fe3bbc39ff8562ad85b0ebbab7addf3ab435e50b4cca65b52a88258c0f30d1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQzN2FkMWVlMWUzOTM4ZTZlZmQ2MGY1MGY3MGJjMmY3NDQxNDQ2NjIxMzdhNzE5MjQ2MTk4MmM2ZGNmZGMyNjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg5YWMxYWFjZmJjOWIyNzJkOWFkNDZkYWU3NTk1OTc0MDM2MWMxZWJiN2E0OGY1ZDRjZTJiMWZjNGEzNzFjZWYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFkY2Y4Nzg0NDI2MDQzYjU0NTg1ODczZGYyYWIyNGUwZTBiNDBjYjQwMDFlOTZiYzYwYWM5MTYzNmNiMTNiMWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9757cab997ea4f739ff8d219cb768228",
+      "statement": "El build de web-v2 usa alias por capa (@domain, @application, @infrastructure, @ui, @shared, @router, @stores) y el plugin de TanStack Router con división automática de código, sirviendo en el puerto 5174.",
+      "evidence": [
+        {
+          "resource": "repo://apps/web-v2/vite.config.ts#L7-L39",
+          "version": "repo-lines-v1:sha256:551ad937943ba87beab87ec21b3cb2ff2858bf0ac3e034148c204b5f672e2c4f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIyY2VjYjE0NGE0NmY1ZGNmMTJhNjE2OWZjZWVkNzY5NWU4Mjk0YjA5MGRlNzZmMzY2MWNkZDAyNDkzMDAxNDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk2NGQ4YzA3MzQyOTg5MzEwMTU3NmQ4OGQ5OTEyN2U4OWQ2ODkxZDNiMTdlODlkZjAyZWM5YWU3MDcwNWQ4YmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRkMTc5OTUwYzNiMmQ0MDU3MzIxNDZlMDlmNmU2NDA0ZmU1NDI5Njg5M2ZmMzcyZGY2YzU3MTUzZjY2OTQ1NWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYyZGZlMjc5YjBlZTdjM2RiMDJjYjdmMTVlYTQyOTRiNDMwMDE2OTAxZjQwNDk1OTgxOWVmYmIwODI5YTM0YzQifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-27T02:48:33.191Z"
+  }
+}

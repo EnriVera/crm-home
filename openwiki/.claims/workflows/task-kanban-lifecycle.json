@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:8551b959deea4d872af1fa1081f0885b6788f6a98046b3934a73deb502fc6af4",
+  "claims": [
+    {
+      "id": "claim_1a2e97dcf2244fe3a8f49dd95b1a79b4",
+      "statement": "El orden del kanban se mantiene con huecos decimales: el paso por defecto es 1024 y el rebalanceo se dispara cuando el hueco entre vecinos cae por debajo de 1e-6.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/application/tasks/constants.ts#L1-L14",
+          "version": "repo-lines-v1:sha256:c425c2e330866819606f6565e0e72fca320e8c6286f6810119498879e4e10dcc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkMjBmNDkwZjNiMjE1Nzg2OTY0OWUwZmQ4NzZiYmFjMDk2OTdiMzQ2NDZhNGNjZGM2NTY4NzIwODc4NWUyZDciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2a944518d1dd4349a85cb2b97fa7a366",
+      "statement": "CreateTask valida que la columna exista y pertenezca al usuario y coloca siempre la tarea al final de la columna, con orden 1024 si está vacía o max + 1024 si no.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/application/tasks/create-task.ts#L26-L77",
+          "version": "repo-lines-v1:sha256:5f932f39ce0aae8e7928714f89c5db9945ab751b911558ae368a33522422a4d5:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI5ZmMwNjNmZGY5YWVjZmMzODY4ODhlMWQ1MmU2NTQzNzliMWM1MTUzNzIxY2E4NWE3MzRhYzIxNjI0MTVmYmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7a91158c48dc402f896c801cf4084c8c",
+      "statement": "MoveTask calcula la posición según los vecinos enviados: punto medio con prev y next, prepend con min/2 si solo llega next, y append con max + 1024 si no llegan vecinos, leyendo la columna destino ya sin la tarea movida.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/application/tasks/move-task.ts#L78-L119",
+          "version": "repo-lines-v1:sha256:cea7746b87c800741b6b6e8eec76903a1ab3921dd97217c6f83ac9df09ee1719:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjMyN2QyMjI3NTZkM2I4MzE4NWI5OTU4YTE4NTBlMGU4MWEyZDI0ZDM1OGNjMzcyYTViMzE5ODhjZTViYzQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFlNzVjNzBkOTQ2MzYyNWUxMDc5ZmQ4ZmM4ZWU2MmFkMmU5MmM0MmJlYWFiZmQ4NWI3OGQ4ZTBhNDk3OWI5NGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE1YTAxZjJlMDM0OGM1MDYzZjNhZTU0NzE4ZjI3NmZmZjYwODFlYmQ1ZGI5ZmUxYjY2N2MxNDFhZTFiMzEzMGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAxYzFmMzVmMWJhZDM0MzViNmMxNjc3N2IyM2VhMDZhNWVmMTFlOGM4NDE2OGUwZjk3MDQ2ODkxZjE3MmQ1NmMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a80484ce3a4345089ceda59fd24d3912",
+      "statement": "Los helpers del kanban son funciones puras sin dependencias: el punto medio es (prev + next) / 2 y el rebalanceo reasigna órdenes a múltiplos de 1024 preservando el orden relativo de la columna.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/application/tasks/move-task.helpers.ts#L18-L52",
+          "version": "repo-lines-v1:sha256:a153b3beafb7461c705b953bb451d77354217273771e97c50adc79b53bec0d68:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAyNmIyNDBlMjJmNjMyZDc1OTUzNmQ1NmZiMDc4MGFjMTk2NzcyZTAxYzdjOTU3ZjY5YWU2ZTVjMzMwMTZiNDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUwNmUxYjZiNTUyMjQ2MDZmMmUxY2Q2ZDFhZTg3MWMzYzNiYzYyOGRjYWFlYWYwNDQxODA0ZjM0YjAxMjFhNDUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ba788cf9a40c47929dd0fa0fa587ad6c",
+      "statement": "El rebalanceo reescribe únicamente los órdenes de las otras tareas de la columna y la tarea movida conserva su punto medio, todo dentro de la misma transacción.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/application/tasks/move-task.ts#L121-L135",
+          "version": "repo-lines-v1:sha256:d88d5d6f8dcd9050a5837fb3b048c1b37e066645f8caae7eb3451c9d9dec7bbf:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNiYjE0NzgxN2Q1ZGI4MzhkY2ZlNmIxMDA0YjM0M2NlY2E5NWFkYmRhMTI5MzQyMTdhMzE3MDAyZjU1YjY1NjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE1YTAxZjJlMDM0OGM1MDYzZjNhZTU0NzE4ZjI3NmZmZjYwODFlYmQ1ZGI5ZmUxYjY2N2MxNDFhZTFiMzEzMGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZkNjA2NTNhOTEyN2E3MTVjZWJkYWNmZTA2NzE3ZGQ4YjMxNDczODQyZGVlY2NhYmFlNzBlNzY0Nzk2MTg3MTgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1eb92c351347463b9d6f03a4878c9b2b",
+      "statement": "Un vecino que no está en la columna destino produce InvalidKanbanOrder, que se traduce a 409, mientras que una tarea inexistente produce TaskNotFound con 404.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/application/tasks/errors.ts#L10-L44",
+          "version": "repo-lines-v1:sha256:55184345a123647cdd0bcca7993c3e8147c74876a2cc72ceb368f2c8cf24dbe4:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE5MGRiMWFhZWMyN2E3MmJlMTNhZTkyOGQxMGNmMGVmZTU1ZTg5MjJjNTEzNDk5MjhhOTYyOTJkYjc5ZmU3ZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE1NGQyODMzOWZjOGE0MjQ1ZGM3ZmFjN2I4MmM3Y2E1ZWFiYTBhNTcwMWJjNWVkYTRjNGUxZTVmNzE1MTI0YTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3YWJmZDYyMjJlODE4OTU0OTk3YjUyZWM3NzM0ZThkNDk5YjE4MGU1M2MyYWFhYTlmYzNjOTIyMzI2ZjExMDcifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/application/tasks/move-task.ts#L84-L95",
+          "version": "repo-lines-v1:sha256:f1141d6296f335b0ff17a88208d542c554a5edb333f28712c08c872394c9e974:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwMzQ4N2I4OGVlNzIxZmZjNjExOWZlN2U4MmVkNDg4ZDQ0ZDJhNmVmYjA2NGE3OWI2OTU0NzA0OGQyMzZhOTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg4MDA1ZDU3MTA2YTM2MmViMDAwZGFmM2RhNDY3NGM4MmI1MThmZjVhMmUyZjY3ZWU4ZTc1N2EzMzNjMmFmNjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI1MDcxZGFlYzdjM2U5NjZhNDZlYjc4NTMyNTdjN2E4NGJjMmI3YzUxMjMzNjcwNDhkYThlZmJhZjNlNTUxYjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM4Y2Y0M2FmNTQwZTA0MmYxZTk4MmMwYjU1M2Q4ZTVjYTFlZGJhZTk0MTIxZTNmMjFhM2U3ZWU4ZmFhYjhlZTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8fb68bccd73c4cc0a27a0bc873afe9a3",
+      "statement": "El reordenamiento de columnas exige que el conjunto de ids enviado cubra exactamente las columnas activas del usuario; un reorden parcial se rechaza con Unauthorized.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/application/tasks/reorder-task-states.ts#L15-L47",
+          "version": "repo-lines-v1:sha256:1b7d553aa6d6984e6358fcb02a3cf69119e464ca6b2c9408c01eedbc78ac01ba:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdlYzg5MDczMTc0YjUyMDRjNmJiYmZhZjE1NWRkZTZjNTJjY2MyOGI2ZmMzMGUxMjhlMGY0NmEwNjg2MjZhM2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJmMWRmNzI3YTBjODU3ZmQ4YzU3ZDUzMTE4YWMwOGQxMGJhNzM3ZmZiZmJiOTY4MTA5YTcyZDU4NjZlMzlhNzAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4eaabf7f25244fb6a74f750f31cc00ff",
+      "statement": "El reordenamiento se hace en una transacción con una técnica de dos pasadas: primero asigna órdenes negativos únicos y después los órdenes finales, para no violar la restricción UNIQUE de usuario y orden.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/application/tasks/reorder-task-states.ts#L49-L67",
+          "version": "repo-lines-v1:sha256:4d025429f1fdd18de848d3e087f0edaaabe6d55d044ec35ff4aa03d7dfcf2b9d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdlMmU0OWNmOWU5M2JhY2Q5Yjk5ZDY1OWM3YmY1ZjI1MGNkNTU1NzgwYzFlNjg5ODA3MDk2ZGIxYjFkYWE0Y2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyZDExY2FmNDNlOTdlZjM2OWU2YmVlZDFhMjY4YmQwNTgzOGYyOWI5ZGQyNTRiZjY5YmE2NDg4NDE0NzIzNGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA0YjlhMGIxNmI5OTEwYmFhNWQwYTRkY2FmZjhhNjBjNDI5NjMzYmYyYWUzY2JhY2M4MjAyOTA3NTgwZDEwY2EiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRmNzM5YTA2YzFjYmIxMjQ0ZTMzNjNkMzhiY2Y5ZmE1MGNlODRmZWQzOTljMjE5M2EzYzdmMDhkNTk5MThiMmEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_419d40e6a0da480c94f11348354cef45",
+      "statement": "El puerto y el adapter exponen deferConstraints con SET CONSTRAINTS ALL DEFERRED, pero el caso de uso de reordenamiento no lo invoca porque prefiere la técnica de dos pasadas.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/domain/ports/task-state-repository.ts#L10-L20",
+          "version": "repo-lines-v1:sha256:bddaa25e1099c10806bae18ff602c43437fdcd7367a45be477b5eee532b60969:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE4ODlkNzAwM2YwYThkOGZkNzYzOTlhNDkyMWJkNzNmOGY1YmNkNTNkYTNlNDNmODVmMDU2ZjA4NmZiMTdkYTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMzMTA3MWM0ZGUyNTQxYzJmMGM1ZDZiOGQ0N2RmNGQwZWZkMWM1NWJkNzMzNjA3MWU5ZmQ0MWQwYTgyYjJmNjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/infrastructure/kysely/task-state-repository.ts#L92-L98",
+          "version": "repo-lines-v1:sha256:d2037fa2ef7adf73061eef972d41c144bc595abb1933edc2cdd9d25c2ca29ab3:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzBkMWNlOTNhMDkzZDBmN2I0ZjE5YTAyMjZkOGQ4NmQxNjM0YzUzM2M3MjliYzk5ODYzYjEwZmYxYjg3ZWUxMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2RjYTNmMmRlNjYyNzkwMjBmNDE3MGQzNzhlNDUxN2I1MWU5Yjk3ZGQ1M2E5N2YyZGY3OTEzZDhjNGE4YTEzNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTFhYzViZDg3YWViYjNjOWI1MWNhOWQ3NDMxNjhmMmY3MzZiODk0MjYzOTFkN2I2ZGVjZGY4OTBlZGNkMzhiMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODU5YmIzZGZjYjI2MDgyMTBkM2ZmYzdkNzQwNTcwZjJmYWExMzMzMjM1M2QyYTcwMGZlZjBiYWRjMTgzMWJjMCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_8ee9ac9d156745e098f414b6fc6e43aa",
+      "statement": "El filtrado por texto de ListTasks se hace en memoria sobre las filas ya traídas, aunque el docblock del caso de uso afirme que el adapter aplica ILIKE sobre el título.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/application/tasks/list-tasks.ts#L13-L29",
+          "version": "repo-lines-v1:sha256:acfc1c1f244f7e83aa1c6d5d02a9b03400c518d34542ddb995d1b1432307b399:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ1NzJmNWQ1M2I4ZDczMTBhNDM3NjRhYTgzN2M0YjM3MGIzZTAxZGQxNDkxY2M3ZDc3YjdmZGJmYmVkMmU5NjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI1MGJiNWUxZjBhODY1N2EyMzhjOWE2ZTI4MDg1ZDg2ZTEzMjg3ZjRkMjBiYjBlM2NkMjAzMTA1MTljYWE4YmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a50de1bd392f4c278538ca6589a6b6d3",
+      "statement": "El dominio no implementa una máquina de estados para las tareas: InvalidStateTransition está definido y mapeado a 409, pero ningún caso de uso lo lanza porque el estado es una clave foránea libre.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/application/tasks/errors.ts#L37-L44",
+          "version": "repo-lines-v1:sha256:bcd5f0841dcc5d1ead83a680083469659534263dd42f31b5ef601a01b539c6cd:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTdhYTBjYmQwNGYxYWY0YzU4OWJiMjBiMTAzYWU4MDk3ZDkzMTNkYThjYWYxZTk3OWRlNjAyYWI3Yzc4MWE4NyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmI1ODBlOTY0ZjgzYTQ3M2Y0M2Q0NDM4NDYyOTQ5ZDY4YjU2MDBmZGE3ODdmMTYzNzQ1ZDAwZGU4OWNiZjM2YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzdhYmZkNjIyMmU4MTg5NTQ5OTdiNTJlYzc3MzRlOGQ0OTliMTgwZTUzYzJhYWFhOWZjM2M5MjIzMjZmMTEwNyJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/http/tasks/error-mapping.ts#L48-L53",
+          "version": "repo-lines-v1:sha256:0d3f540161eb1fbda15c4df80643282853eb393eb5eb565c7cee7a7fe1615759:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzdkNjRlOTEyYTUwYzdiYmM1Y2UxMGMyZDA3NzY5Yzc0NTQ4NGFlOWNhOWMyOTQyOTMzYzEwYWIyZWQxNDYxNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzA1ZWUwMjFmMDkwNDQ2YzE2YzU1Mzk1N2FiNjliYjQ1ZWEyZTZmYjM4ZTk5MjE2M2RkNWQ2ZDgxNGNjN2I4NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTUzNDMyM2YyNGEwMDRiM2E3YTlmNzE0YTc3YzljMjU2NWI1ODlhNDJjYzE3ZjZjMDg3OGE1Y2Y5OWZkYTJjMyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_34ccc7cf7d9640b491633bf59e264543",
+      "statement": "El puerto TaskRepository expone nueve operaciones, incluidas moveTask, rebalanceColumn y persistOrders, y todas aceptan una transacción opcional.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/domain/ports/task-repository.ts#L23-L40",
+          "version": "repo-lines-v1:sha256:971516520e1bec1b96b56ca55cf1ed37919a185e3d123c9a2cab6c22d799762e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFlYTM3NDUxOWU0ZGRhZjc1MjA4NTg2NmZjNDIxMjA3OTA0YWYxMjRlNGY2YzVkZjE1ZDgxMzY3MGIyNDg5NjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI4YmE4YWEzNGMzNzQ0NGMzMThjZTA4MWY5MDQ4OWYzOTM0MTUxNWMwMDA5MTMwNjk5MWU4Y2U3Yjc0NGUyNTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-27T02:48:33.191Z"
+  }
+}

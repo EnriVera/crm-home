@@ -1,7 +1,7 @@
 import type {
- TaskRepository,
- TaskStateRepository,
- TaskFormListersRepository,
+  TaskRepository,
+  TaskStateRepository,
+  TaskFormListersRepository,
 } from "@/domain/task/ports";
 import { err, ok } from "@/domain/shared/result";
 import { mapOrpcError } from "../errors";
@@ -135,58 +135,58 @@ const TASK_FORM_LISTERS_PROCEDURES = {
 } as const;
 
 export const createOrpcTaskFormListersRepository =
- (): TaskFormListersRepository => {
-  // SAFETY: NestedClient — same bridge-deferred typing as above.
-  const callPath = async (
-   parts: readonly string[],
-   input: unknown,
-  ): Promise<unknown> => {
-   const map = orpcClient as unknown as Record<string, unknown>;
-   const fn = parts.reduce<unknown>(
-    (acc, p) => (acc as Record<string, unknown>)[p],
-    map,
-   );
-   if (typeof fn !== "function") {
-    throw new Error(
-     `orpc procedure ${parts.join(".")} not registered in client`,
-    );
-   }
-   return (fn as (i: unknown) => Promise<unknown>)(input);
-  };
+  (): TaskFormListersRepository => {
+    // SAFETY: NestedClient — same bridge-deferred typing as above.
+    const callPath = async (
+      parts: readonly string[],
+      input: unknown,
+    ): Promise<unknown> => {
+      const map = orpcClient as unknown as Record<string, unknown>;
+      const fn = parts.reduce<unknown>(
+        (acc, p) => (acc as Record<string, unknown>)[p],
+        map,
+      );
+      if (typeof fn !== "function") {
+        throw new Error(
+          `orpc procedure ${parts.join(".")} not registered in client`,
+        );
+      }
+      return (fn as (i: unknown) => Promise<unknown>)(input);
+    };
 
-  return {
-   async listTypesForForm(input) {
-    try {
-     const res = await callPath(
-      TASK_FORM_LISTERS_PROCEDURES.listTypesForForm,
-      input,
-     );
-     return ok(res as never);
-    } catch (e) {
-     return err(mapOrpcError(e));
-    }
-   },
-   async listCategoriesByType(input) {
-    try {
-     const res = await callPath(
-      TASK_FORM_LISTERS_PROCEDURES.listCategoriesByType,
-      input,
-     );
-     return ok(res as never);
-    } catch (e) {
-     return err(mapOrpcError(e));
-    }
-   },
-   async searchClients(input) {
-    try {
-     const res = await callPath(
-      TASK_FORM_LISTERS_PROCEDURES.searchClients,
-      input,
-     );
-     return ok(res as never);
-    } catch (e) {
-     return err(mapOrpcError(e));
-    }
-   },
+    return {
+      async listTypesForForm(input) {
+        try {
+          const res = await callPath(
+            TASK_FORM_LISTERS_PROCEDURES.listTypesForForm,
+            input,
+          );
+          return ok(res as never);
+        } catch (e) {
+          return err(mapOrpcError(e));
+        }
+      },
+      async listCategoriesByType(input) {
+        try {
+          const res = await callPath(
+            TASK_FORM_LISTERS_PROCEDURES.listCategoriesByType,
+            input,
+          );
+          return ok(res as never);
+        } catch (e) {
+          return err(mapOrpcError(e));
+        }
+      },
+      async searchClients(input) {
+        try {
+          const res = await callPath(
+            TASK_FORM_LISTERS_PROCEDURES.searchClients,
+            input,
+          );
+          return ok(res as never);
+        } catch (e) {
+          return err(mapOrpcError(e));
+        }
+      },
+    };
   };
- };

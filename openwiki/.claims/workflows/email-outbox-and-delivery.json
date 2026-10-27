@@ -1,0 +1,158 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:a8a4d516c5bc49ec5aed82ba0dd0a7ae94c5eaa943024338c087ed190f35e486",
+  "claims": [
+    {
+      "id": "claim_625caea2bdc6448daefe63f29d9d4853",
+      "statement": "El envío de email sigue un patrón outbox: la transacción de negocio escribe una fila pending en email_sending con remitente auth@crmhome.app y referencia al login, y el envío ocurre después en un proceso aparte.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/application/auth/request-otp.ts#L60-L73",
+          "version": "repo-lines-v1:sha256:30e294b736c792d56466a75736e87ec21604872b770fcbf3b8fe320310893e98:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJkNjE2Mzk5NGNiODVjYmFlMDhhNmU0M2E2NzMzNWE5ZjIzY2Q0MWRkOTlhMDY3NGI5MzFlYjQyZTRjNmI0YmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc4ZGI2Zjk1MzdjNzgxNTEzY2M3YmFmNDlkNTk3YzllYjVlMjFlYWE4ODFiOGYwMjY5ZDk3YmEyYTQzNTVjMjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU0ZjBiYjk4ZDk1NmQ2MzgzNDNlMGRmMjJkMWUyOGM4MmIxYzc0ZWUzOGU4OTVhOGFkODcwMTVmZjE0NWZjNGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRmNzM5YTA2YzFjYmIxMjQ0ZTMzNjNkMzhiY2Y5ZmE1MGNlODRmZWQzOTljMjE5M2EzYzdmMDhkNTk5MThiMmEifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/infrastructure/kysely/email-sending-repository.ts#L11-L25",
+          "version": "repo-lines-v1:sha256:7c68a963b7a58dc9a25630ad1bf6d3d2d7ccb81cd146feb58456c6c0f4316b89:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRlYTg5ZWYzZDdjNzgwMjhlMzlkNmM1NjRiMDExYTdjNjJiOGUxZWM1M2IyMDQ5OTcxNmNjZjRiYzE2MTlmOTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdkNDZmOTJhNzdjZjkwM2EzZGI2YWYyYWExMmU5NDAyODhkZWJjNzllMmJmMGNkMmNlYzI2YTU2MTdhYTExYjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZlYmZmZDQwMTRjMTI3YmZkMjhiMWRiNmU1MmZhY2FiOTUyNTRkMGI0MjE4MmFiZDhiZWM1N2IyNmE0MDIxMTgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e84f8ea5831244e9b7de038068228570",
+      "statement": "La plantilla de OTP vive en el paquete @crm/email: renderOtp renderiza el componente tsrx con el motor de Octane y devuelve asunto, HTML y texto plano, cuyo texto recuerda que el código expira en 10 minutos.",
+      "evidence": [
+        {
+          "resource": "repo://packages/email/src/otp-email.ts#L1-L29",
+          "version": "repo-lines-v1:sha256:f901fb942dcca055fc59d5e462930ac1e6e535119465b94174e888600cc55eac:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU4MjI0ZDY5ZmE0NTNiNjkzZWZmMTY2NDVmMjQ1NGRlMTcxMjliOWRjOTE3MWFkYmUyMjhmMGI2YjFlZjUwMDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_aba35911b2534f668494c8a9b7c01119",
+      "statement": "El selector de sender activa el adapter SMTP solo cuando SMTP_URL tiene valor no vacío; las variables discretas de SMTP se leen pero no activan SMTP y quedan reservadas para una iteración futura.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/infrastructure/email/create-email-sender.ts#L31-L53",
+          "version": "repo-lines-v1:sha256:1620131d2b6870fc84536704b0704abbe02f10f8d3510684fefb19dc40bed609:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU2NTg0MjUxMzA2YTA2OGIyNTM5YzJmODc5YjhjMWMwNTZjNDA2ZGNhN2I3ODJjMDA3MDUxYzFlNmI1ZDdkZTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6c83ea671cf44fdb93f1f58713483292",
+      "statement": "El sender activo se expone con un discriminador kind que permite a callers y tests saber si hay SMTP o consola sin importar la implementación concreta.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/infrastructure/email/create-email-sender.ts#L20-L27",
+          "version": "repo-lines-v1:sha256:b0d6f0d8e9854363dc9bf4ea385a826aab8bcd6904b35242b52f2d2a4f2d54ee:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWFmMjJjZjA3MzI1OTJjMjQ3MTQxY2JlNjFlZmExMTAxMjYxMmY1YTMxMjJiOWFmOWJiYWY1MmY1NzI0ZDE5NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDgxOWU2ZTZhNDJkZmZmYWU1YWYzNzhlOTQ4ZTU5Zjk5NDQ3YmJhNDNkOWU0NGEyOGMyM2FlMjhjYjY3MjAxOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTY1ODQyNTEzMDZhMDY4YjI1MzljMmY4NzliOGMxYzA1NmM0MDZkY2E3Yjc4MmMwMDcwNTFjMWU2YjVkN2RlMSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_942fc89fe56b4365a395f5b25db713b7",
+      "statement": "parseSmtpUrl valida la URL de SMTP: exige protocolo smtp o smtps, usa puerto 587 por defecto y 465 para smtps, valida el rango de puertos y toma las credenciales del userinfo; una URL inválida lanza en la construcción del adapter.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/infrastructure/email/parse-smtp-url.ts#L11-L50",
+          "version": "repo-lines-v1:sha256:46a1daeb69f53c3debdf340abc31956f11a00336f96550af957da10aaa39af15:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM1MmEzNDZkMjU3NmVlODhmZTcxYjgwNGUxNjQwNjczZGMzOTUzZTFiZDI5ODQyMTgwZTM2MDM4MWJiMzY3OTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZiNzg3M2E3MTk3OTY2ZmI5ZmQ3Y2I2NjJjZWZjODVkZjY2OWNiMzA1MzQ4YTE3MjRjMThmZjU4M2JhMWU2ODMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkyMDQwZTA5NWE5NGUyYWRhNzRlNDIxZjM3MTg3NTFhOTFhODEwYmZkNjZmNDhmNGU5MzljN2I3NDgwZWI2NzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e644b40e22c84019b8ff048ccb4e4c36",
+      "statement": "El drenador marca los mensajes enviados como sent, deja en pending los que fallan con un error retryable y marca failed los no retryables o desconocidos.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/infrastructure/email/drain-email-sending.ts#L30-L83",
+          "version": "repo-lines-v1:sha256:86650679e4693e794b65470b7304c6335306edd714600057cc435657c5c0df78:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkyMDQwZTA5NWE5NGUyYWRhNzRlNDIxZjM3MTg3NTFhOTFhODEwYmZkNjZmNDhmNGU5MzljN2I3NDgwZWI2NzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJiNGNiZmUyZTNkNjhjZTZkNzg0YzIxOGNiMTVlMWRhMGRkMjA0MTVmNDVjNGJlMGIxMTI1OWFmMDM3NDdkNjgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_686f14a1ca7f4154b2db16ba7f934335",
+      "statement": "La clasificación de errores retryable la hace el adapter SMTP: los códigos de transporte conocidos y las respuestas 4xx se consideran transitorios, mientras que las 5xx se consideran permanentes.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/infrastructure/email/smtp-email-sender.ts#L119-L137",
+          "version": "repo-lines-v1:sha256:4dbd7216b4e3d40007545f227bacd9d37c004a16b311f72a39ebe9f8bc914686:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMWRlOTBjMjlmYzc2OTViYmM2YWUwMDZiZGVlNzk1YzUyNzc1ODRhYzM5NTUyYjc4YjkzYWU4ODlmZGVhODIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYxYzVkMWFhMGJhYmIzNjAzZmZjYzUyMTY4ZjBhMmVhNzEyZTI1YTc2MjA3YzkyZTE1ZTliODFjYzkxODYzMTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJkMGYyZDNhM2FhZGEyNzU4NjQ1NzhkMGE0MzkxNTYzOGQ1NDNmZWNhMmM5NDg1OGRiOTQxMjExZTg2Y2VmMmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/infrastructure/email/smtp-email-sender.ts#L43-L50",
+          "version": "repo-lines-v1:sha256:32b19a4fc4327a245ca60b9963dc8fb961c29530f6ad550ff4ca123d28499bf8:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDFjZmE1ZjY3NGJhMjhiZDM2OGEwMjYzMDIzNzEzNDAzMmI1M2IxYWVmOTI0NzE4NGIyNDYxZGFjM2E1ZDAwNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTVlMjZjZDkyMzY2ZjYwZDhlZDkyZDAyMzlmMDdmZWY3NGNhYzE0YWE2OWFkZGY5YzJjYzBkMTFlYjAwYTQ2MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjVjMjgxNzAwOWI1OTU1ZTE3M2JiYjY5OTNkMzI0Y2E3ZTBmMTU3YTEzZjEzMmIwYzViNTViNTEwY2IyMDI1ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzFkMmRjNjcwOWQ4YTYyOThiN2MzYzZiNjE4Y2I5YTVjOTRlZWNmM2UxYTc5OWZkNzBmZTljN2Q3NjVhN2RmZiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_a02dfe242d644b2aa05c2c22ec189e93",
+      "statement": "El transporter SMTP usa pool con dos conexiones y cincuenta mensajes, con timeouts de cinco segundos para conectar y saludar y diez segundos de socket.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/infrastructure/email/smtp-email-sender.ts#L99-L117",
+          "version": "repo-lines-v1:sha256:4625102d9c3da801ec928d4e8f58ccf42f5dae93ad9d6e60bfd41536bbc17778:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBlMDBlNWU3NDM3ZjM2ZTA3NTY2OTg2OTQxMDQ2ZmNmODFhNWQzNDljZDJkZjYwZDExMWM0MGI1NmY1NGU5Y2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkyMDQwZTA5NWE5NGUyYWRhNzRlNDIxZjM3MTg3NTFhOTFhODEwYmZkNjZmNDhmNGU5MzljN2I3NDgwZWI2NzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhY2QwYzM1NTRjMDZkY2U3NThjYzIxNDQ1NDlhN2EwMzk1NTczMjZkMzdkMjc2NmQzMWM0YWM4YTRhOWM1MWYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_99533a0709c34ff3a7fc0cafa787ca55",
+      "statement": "findPending no reclama filas: es un SELECT por status pending ordenado por fecha de creación, sin bloqueo de fila ni marca de tomado, por lo que dos drenadores pueden enviar el mismo mensaje.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/infrastructure/kysely/email-sending-repository.ts#L27-L48",
+          "version": "repo-lines-v1:sha256:6b4d57ee54340de0b7789d018d82451f6b185cd10ca0213ca481d7dd7a54dea0:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUxZDc2Y2ZmYTczMWMyNmRlZjQ1YjEzZTE1YWMzNDMxMzhhZDY4YjliNmMwMmRjN2MwNjljOTc2MGUwZWJjOGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkxYWM1YmQ4N2FlYmIzYzliNTFjYTlkNzQzMTY4ZjJmNzM2Yjg5NDI2MzkxZDdiNmRlY2RmODkwZWRjZDM4YjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjllZTYyYjc3OTg2YTQ0YTUyNDVhMzU3NzhlMTZiZTk3MmFmMTExZjk4MzM0YzZhOTQ4ZjNlOGRiZWRjMzA5OGQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_30520ca81df5480e97c70aea441a18cb",
+      "statement": "Conviven dos drenadores sobre la misma cola: la tarea de nitro programada cada minuto y un bucle en proceso en el composition root, pensado para que en desarrollo los emails se envíen sin intervención manual.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/nitro.config.ts#L9-L17",
+          "version": "repo-lines-v1:sha256:e1d612fba3dd36fb5e56703b3cba19d4bc908a643bd3f73189a46f93011d03a6:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDhmMmUyYjExZTM2ZmFkYjFiMWI5Njg2YjEwOTAwYTlkMzRlZTZkZGZkNWM3ZjA5N2MzNmY3MmZmNjNlOWZmYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGQ1Y2QyZmI0ZjNkZjg4NDUxNTI1NWIzOTUyM2YyZjhiNTQ3MmJlZWE5ZjU2NmZmY2EyMDRkYjgwMjU2MTA0MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOWYxZWEyZmMyZjRlMzE3NzcwYWFiZDY3ZTY2ZDUxZGYxMjE1NjE3ZmMzZjcwZDUwYmU1MzQ1NTk5NGIyYTVjNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjZmNWI0MGIxNTg0NTdkMTc4NjRmMjE3OTA3ODZkZDVhMmVjZGI2NGI2NmE2NTFmNzg4ZDRlMjVjZDMzMDNkMiJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/http/composition-root.ts#L363-L427",
+          "version": "repo-lines-v1:sha256:a5613d63bb036a971fbf02db5084aeb52ec71f45f1fab253ab97911baa673da9:eyJzZWxlY3RlZExpbmVDb3VudCI6NjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQzNjY1OGMxODU2NzAzZDBjNjUyY2Y2NGQ3MDgzZmMzN2UwMGIwMDQyMDc1ZDg5Yzc5NzlhNzgyN2U0MzAzZWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/api/tasks/email-sending.ts#L10-L48",
+          "version": "repo-lines-v1:sha256:3f3483a2f0d206d92a162ff78efdedb97532b31fb5a02d4646d99ae52e6c03ca:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJlZDY1ZjU0MTkwYjE0M2MyZDc3ZDhkMWNhYzhhMzE5MjNmN2U4M2NhNzliZTUyNDZhNmRlNDg3MjVmMjQ0NjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ4OTBiY2I3YzE3N2VlNzk2YjUzMjk4OTUyNmI0MjMwNGViYTY5ZGYxYmNhNDc0MmQ5M2VhYzNkZmJlMWE5NWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7899f57cf3084192a88845e4710e26fb",
+      "statement": "Un fallo retryable deja la fila en pending sin contador de intentos ni backoff, porque el puerto del outbox no modela próximo intento: el reintento depende solo del paso del tiempo.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/domain/ports/email-sending-repository.ts#L3-L22",
+          "version": "repo-lines-v1:sha256:0bda17437ea5de59f55e492132564dcf8f151184d17823e7f30964aca5ac26f4:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE5YjlkNjgyMGM2NmQ1ZDJiMDU1NzJiZjA1ZjQyYjMyNzk3NTBlNmVmZTVmMzFlZDk2MTAzNjdhZTMzNjkyOGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3ZmNlMzMwZTVkZGU3NjFmZjM2YmMxZDIyYmE2OTAwZTIxMjkzODE2MGVlZTgwMmFiOGE1ZjQ0YTg4NWFmMjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/infrastructure/email/drain-email-sending.ts#L64-L73",
+          "version": "repo-lines-v1:sha256:13d07305ab45376e92863d192c80accdf7362742616b5e96d8420e99f03ec133:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA4ZGI3NDYwODE4MmNiN2NhNGQ5ZmJhNDlhMzk0OTlhN2YzOTA3YjRlYTAzM2IxNDkyYWQ1Y2YwYmVlZWVjZWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliNjJmNjBkODU5MGE1NzljZjQ2ZjhkNjczNzhjNGM1NzJiOTYyY2VjY2RiOTBjN2E1ZjdiNDJiOTYwNzgyYTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEzYTIxNTA5MWFlMThlY2NkNzM3ZjNkMTE1OTQ5MWExODJlZjQ5ZTkwOTFkYzUxYTllMjA0MzEwODZlYjA4MDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUxNjFjOTdmYWE5MTQzN2M4ZTJhNDdiNGVjNGJhNDY1M2NmYWM0NTg0NWNkOGQ1OWVmZmEzOWViNWFmMGVmMmMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1720c6052e0f4636bbb2411b1a672812",
+      "statement": "El drenador solo registra el id del mensaje y el nombre del error, nunca destinatario, asunto ni cuerpo, mientras que el adapter de consola imprime el mensaje completo incluido el código OTP y es el adapter por defecto sin SMTP_URL.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/infrastructure/email/console-email-sender.ts#L3-L14",
+          "version": "repo-lines-v1:sha256:4d751410e206e5a36644c62f94b4ec955b5a3359c7c90a00898619831d775df8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU4OGQyZmEwMDJhZGUwMjE5OGZmZjM0ODEyYjVlM2M3OTZlNGNjZTQyZmEwOTljNTJjNmY3ODA5M2M4ZjZmZTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBhNmFjMzYxNzBkZjMxNDVlZjYwZmRjYzExY2JlMjRmZDFlMDJiMWUxNDg2YWE5MGMxMjAyMWE3NzZiY2UyMmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/infrastructure/email/drain-email-sending.ts#L23-L27",
+          "version": "repo-lines-v1:sha256:923d8b682335e0b10564a41f9d223e509eea557e198bba968bf34ed6d01aefea:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTdmNDY0MmUxODY3N2I1NWM2ZDFiN2UyZGZiMmEzOWI5ZjBmNDcyNzY3OTVhYzFjYmViZjQ0MWE4M2NkOTg4NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDJhMmNiMjVhMTIyYjQ0MjIxYTYyMzRlYzY2MGE3YjVmYjdmOWJkZTdiM2I5ZTJiM2M1NTlhMGQ5NmZhYzczOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNhM2FlMWYxMjdiOTRiYjcyOTZjZDJjMGNkMzY1ZjU4MDNmZGFkZDBjNWM0NDI2ZmUxMjdkOGZjYmQ5YjQ2NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzc5MjllOTFlMGY5OWMzZTgyNWRlNjliNDM1ZmI2NDg0ZDFiMGExZGYyZjQ2NTYxYWJmMWEyOWYwNDE4OGI4OCJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/infrastructure/email/drain-email-sending.ts#L68-L81",
+          "version": "repo-lines-v1:sha256:ad01a1725c3ab1796bc17624467f9ff76caae06362d76476e91839f41c991ba9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJkZDNjOTI1ZDIwZTU5YjYzOGQ5MGI0MDhlY2FmMGM4MjAyZjkxYzdmZDI5OTJmYjgxNzJjZWE1YzBmM2QyYTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxN2FmMTEwMWM5N2I3YzJmNTI1NDA3ODJlNjM0Y2M0NDQwZjBlOTcwMzQxZTUyZjk3NTIzMTFkNzhiN2Q3ZDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg5NjIzOGZlM2FmYjYyODU0MTBlYzA5NTQ5YjFkMTQyNjFmMzQ0MDQ3ZGEyMjhkZjg2OGIyNTJiNzZmMzJiNTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk3ZDg2MzJlNTRlOTI5OGFiYjk1ODcyN2UyZDUxNDA4YWJhZjEzNjYwMzUzNzkxMDE0MGFiZjY1YjMwYWI2MTMifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-27T02:48:33.191Z"
+  }
+}

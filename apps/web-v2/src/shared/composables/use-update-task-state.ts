@@ -86,10 +86,7 @@ class DomainErrorToError extends Error {
  * patch is a best-effort visual feedback; the onSettled invalidation
  * is what actually reconciles with the server.
  */
-function applyMove(
- page: TaskPage,
- input: UpdateTaskStateInput,
-): TaskPage {
+function applyMove(page: TaskPage, input: UpdateTaskStateInput): TaskPage {
  const items = page.items;
  const moving = items.find((t) => t.id === input.id);
  if (!moving) return page;
@@ -103,10 +100,6 @@ function applyMove(
  const insertAt = Math.min(Math.max(input.toIndex, 0), without.length);
  return {
   ...page,
-  items: [
-   ...without.slice(0, insertAt),
-   moved,
-   ...without.slice(insertAt),
-  ],
+  items: [...without.slice(0, insertAt), moved, ...without.slice(insertAt)],
  };
 }

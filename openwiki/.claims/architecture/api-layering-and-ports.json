@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:5fb366460bc7df28ebfd4c814d1b2512c81cdde239e76b43feed745cb26195f4",
+  "claims": [
+    {
+      "id": "claim_b056b4afb2b546109dd2bd65cafff1fe",
+      "statement": "La regla de ports & adapters está declarada en la configuración del proyecto: el dominio no importa kysely, h3, nitro ni SDKs externos, y además rigen el aislamiento multi-usuario, los saldos calculados y el uso del websocket solo para invalidación.",
+      "evidence": [
+        {
+          "resource": "repo://openspec/config.yaml#L76-L88",
+          "version": "repo-lines-v1:sha256:f70ff358d886ad7f450cde3a37f8c9f2abd8d2b9325b03f8fcd1ddf6e83468d8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUyNWRhNGFkMTExNjZlM2RiMzFiNGRlY2Q4ZGY4OTYxOWMyYmI1ZWI3NzRhZWJmYzcwMmNjYzc3NWU4NDg2MDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ2MjA5OTlkOTg4ZmRkMjUzZWQ0NGI1N2JjYjI2YTVmOTVjMjY4NmI5NWNlODcxMDVjYTAyZjM0MWIxYjI1Y2MiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJlYTI2NDU2MzM2ZWJkYWJhN2RiOTg0MDY0OTI0NjQ1Yzg1ZWIzNWFiZTI5YmRkNTE1ZjY4ODBlNjg3MGNkOGMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7c42879411cf4c6ea3af535ddc09dc69",
+      "statement": "Los puertos son interfaces puras que aceptan una transacción opcional en todos sus métodos y declaran su propio tipo de dominio en el mismo archivo.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/domain/ports/task-repository.ts#L23-L40",
+          "version": "repo-lines-v1:sha256:971516520e1bec1b96b56ca55cf1ed37919a185e3d123c9a2cab6c22d799762e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFlYTM3NDUxOWU0ZGRhZjc1MjA4NTg2NmZjNDIxMjA3OTA0YWYxMjRlNGY2YzVkZjE1ZDgxMzY3MGIyNDg5NjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI4YmE4YWEzNGMzNzQ0NGMzMThjZTA4MWY5MDQ4OWYzOTM0MTUxNWMwMDA5MTMwNjk5MWU4Y2U3Yjc0NGUyNTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6440d589ea0a4bb288d1a4886b25266b",
+      "statement": "La transacción es un token opaco en el dominio (type Transaction = {}) y solo los adapters de infraestructura la concretan, resuelriendo (trx as Database) ?? this.db.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/domain/ports/transaction-manager.ts#L1-L5",
+          "version": "repo-lines-v1:sha256:acabf22ea9638feb7c5688ae666f056358fb87a9ecbfccfbba290b14176699b8:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNGEyN2VkNjI4MTdjNGI2NmQ3MmNhMGYzNDIxYWZjNjM1YTUwNzE2YTBhNjg2MDEzMTZhYzdkZWU0NzllNTVlYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/domain/ports/transaction.ts#L1-L7",
+          "version": "repo-lines-v1:sha256:f09a9299977e4192e04a6820cc533485f9455da1ec326fd650b107146d88950a:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWFmMjJjZjA3MzI1OTJjMjQ3MTQxY2JlNjFlZmExMTAxMjYxMmY1YTMxMjJiOWFmOWJiYWY1MmY1NzI0ZDE5NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2VjMDEzOGJmZGI3ZTNiMzQ2NmVhZDRlNmI1MTkxNzIwNmQ3NDZkOTVkODcwZDMwM2NkMmQyYmZjMzQ0YzYwMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/infrastructure/kysely/session-repository.ts#L67-L71",
+          "version": "repo-lines-v1:sha256:e029585bdd74b64e30574d5c4d9b3ec7932acbc1efc137f786828c83c93d1b7b:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTc3ZDFhYWQyMzk4OWI1MmFjNTc0MGQzYWUxNzgxZTE1YTJlMWE3Yzk4ZGYxZTA5NWE4ODJjYWRlNGIxNTM1OCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTFhYzViZDg3YWViYjNjOWI1MWNhOWQ3NDMxNjhmMmY3MzZiODk0MjYzOTFkN2I2ZGVjZGY4OTBlZGNkMzhiMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTg1NTQ2MGI3YzBiYTIzZjNlNTIzNmRkZjlhZDEyNzVlNTgxZDhkYmRiZDg2N2ExNzgyYzQ4NWUxNDFkNGQwOCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_a4b179d995404731975ff2eb7a8cceda",
+      "statement": "Los casos de uso son clases con inyección de puertos y un método execute(input) que devuelve un resultado plano o lanza errores de dominio tipados, cada uno con un code estable como TASK_NOT_FOUND o RATE_LIMITED.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/application/auth/errors.ts#L1-L8",
+          "version": "repo-lines-v1:sha256:92c905a7800f0190315a63ba7c5e4d31034ce56284196539092989b9a268fa03:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGY1MzkxY2Y5ZmZjZTc4ODA4ODM4ZDRmMWRmYzQ3YTJjMjZlYzhjMzFmYWM3M2Q3MzFkOWJhMjkwZjNmODFlMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/application/auth/request-otp.ts#L33-L74",
+          "version": "repo-lines-v1:sha256:824e4fa305e9bf78c3876fed0cd077c24db43b59f8941b21c17cd4964fb6ba02:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRmMjU0NzQ5M2IwNDE0NzRhMDE2ZWY0N2Q5MDFjNTkxZmE2NTVhZDg0ODE2YWExNDIzNjIyNDE3MTJhNjcxYTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM0MjY2ODQ0ZjI2YmY3ZDAwYmVjZTJlMDY4MGYxMjg1MzEzYmZlZDVlMjU3ODdlYmYxOGJhNjY3YjdmYjJkYTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/application/tasks/errors.ts#L10-L53",
+          "version": "repo-lines-v1:sha256:ff89fb8e3fc1e37a556a4a5479e96d5372b059cfc2702a5c71e60d63a753b7c2:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE5MGRiMWFhZWMyN2E3MmJlMTNhZTkyOGQxMGNmMGVmZTU1ZTg5MjJjNTEzNDk5MjhhOTYyOTJkYjc5ZmU3ZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE1NGQyODMzOWZjOGE0MjQ1ZGM3ZmFjN2I4MmM3Y2E1ZWFiYTBhNTcwMWJjNWVkYTRjNGUxZTVmNzE1MTI0YTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b1bb41f544a5443d98cbd330a257640f",
+      "statement": "El contrato de los puertos declara el aislamiento multi-usuario: todas las operaciones filtran por userId y el repositorio siempre excluye los registros con borrado lógico.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/domain/ports/income-repository.ts#L1-L23",
+          "version": "repo-lines-v1:sha256:02e72a8a13ea463dfb98da3cbb297b87ac823a67b1b2875f5515bf0c5c45083c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVkODc5Mzk0NWRkOTE3MjViNGUyZDlkNWQxODZkNTk5NjZhNjk5NjUzMTBhOWFhMzIyODI3ZGQ1MzMxMDVhNWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdiMjA3NmM3ZDU2NDdjYTE5NmExOGM4ZWViZWZhOTA4ZGEyODE3NmVmYTc4M2MyZDc1OTRjNzcwNzhhYTFiOGYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_aa13495888824084b3bff3602b1238d6",
+      "statement": "Los adapters implementan el aislamiento: la consulta de ingresos filtra por inco_user_id e inco_deleted_at IS NULL, y la de tareas por task_user_id con orden por task_kanban_order.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/infrastructure/kysely/income-repository.ts#L36-L40",
+          "version": "repo-lines-v1:sha256:f628401bf7ba9dc35b04e62f1ab5a6d61c646e305ad3538c86b9b1c78abf35e1:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTU3NTljYmFiNjU2NTI2ODM3MWY4ZTU3ZmVkNjIxYmFmMjk3ZWNkMmNjNmRlODdkMzE5YmU3MWY4ODk5YTM2ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjhkM2Q1NzRmNjE5YWY1MmRiZTczOTM2Y2E5ZGVmY2U4ZjE3NDE5ZGNhNGJlMGMwN2M0YTg2NzYzNGU2MGM3ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDk2NGI4ZDVmM2NhMGJkMTFkMjgyYmMwZjNmMmY3NTEwYjFkMTY3NjJiZmY3ZmU2ZDJjYWQ1MDEzMGMyNGIyNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjg0ZWUzODgxNjY3MDVhY2YwMDMwZWExNDg4NmI3ZTQ1MDIxZWUyYTg2YzAzOGJkYmQ3NDRlNTFmY2Q5Y2RhZiJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/infrastructure/kysely/task-repository.ts#L24-L33",
+          "version": "repo-lines-v1:sha256:0659f2eafe5c01c4e967e5605d5e39aeecf367b2b7a6701c750d7e546ad86cdc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhmZjhjYTU3MGE3OGYwZWYxODFjMmE1ZDlkNzAyMzJjYmM0ZTE3YTcxNGU4MWI5OWQ5ZWM2MGViNDAzN2U3MTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUzYjg4MWZkZmMwNTAzNzY0YTM2N2RjNzI2MzUwY2MzOTBkNTA4YTJhMzI5M2I1MzdmYzQ0MGNjYzZlYWEzY2EiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUzM2ZkMDA2MzA1YTMwZGRlM2JjZWRmNGM4ZjYyNzdiNjM0MWUxOGJlYjMzMjI3OTBkYmQ4NDhhOWQzODdjMjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY0NGI1MTFlM2Q0NzBiYjRiMTE5Y2IxM2I0NGM0OTc2Yjg1YmZjODVhODZjYjA2ZWEzMDllYmUxODdkNTgyNTYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_74bb65a7f219413eaf65358d41e4d505",
+      "statement": "El guarda de pureza de puertos falla si un puerto importa kysely, h3, nitro, pg o nodemailer, aunque hoy solo escanea una lista explícita de seis archivos de puerto.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/domain/ports/__no-external-imports.test.ts#L15-L48",
+          "version": "repo-lines-v1:sha256:dbb4cd8588a7ab7a57fbcd02bec363dd9d752ea0517410fd9e55ec61557c87f4:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRiZWQyMWI1MTkyMDdkMTQ5YjA2NjQzZmY3ZTcyMGM4MTQ1M2M5MGQwZmM5MGNjMWIzNzhmOWM4Nzg0NzY0YTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRkNDI0YTU4YWFmZGMzOTJhOWI0NjkwMmI2NDEyNDJiYzljZDQ0NWM5MjhiMmQ5OTZiZDM1OWI4Nzc3ZDA4NTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdkMjZhZWUwOGQwOTFkNDYxOWRiNTMxNWUyOGEwZTE3MTlhMDMzOThjYjlkNjNlY2Q5YmY4ZjEzYWZmOGEwMjkifQ"
+        },
+        {
+          "resource": "repo://apps/api/src/domain/ports/__no-external-imports.test.ts#L50-L70",
+          "version": "repo-lines-v1:sha256:e0f8451e666380d0af4401c124f8f2eead759b3950a5aaa68d51c742eb6cc130:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmYjBlNWJhMTViN2NlZGY3M2VkN2IyM2UzMzA5MTliNTVhOTA1ZDVmZDdlMzNmMzNkM2QxMjY5MzhjNmU5ZjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc2NWM0ZDViYmZkNjE0MWU5NWM2NWIwNGEwOWNmZTE1MGJiNzhlYWUyYThkZDFiYjhiN2FmMTc5NzBlOGExYWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b3dedc8ec812466ca69415a0e71e3ae9",
+      "statement": "El guarda de la fase MVP falla si el composition root menciona attachment-repository, porque ese puerto es un stub que no debe cablearse.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/src/domain/ports/__attachment-not-in-composition.test.ts#L14-L37",
+          "version": "repo-lines-v1:sha256:8c3f7df439422157f93d1253b7ad59bf39132e446835cc65ec42d14ea01e6b38:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRhYjlkMWQ0ODJiNWJlYzI2NTllOTBmZGMwZThhNTg3MWZhODc5OTRlOGM5Zjc5NGY4NGZiNThhMGFlOTIwZGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVjMjZhOWNlYjRmNmViNWQxNmQzZGQ4MzBkMTI4NDY0NmZmYjliZmYyZDhmODM2MjRlMmIyMmQzN2E5Yjg1Y2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2b0e526a48844f38bc6729d70b8165a0",
+      "statement": "La configuración del proyecto declara el runner bun test con strict_tdd habilitado y una única excepción acotada al scaffold del monorepo, que no contiene lógica de negocio.",
+      "evidence": [
+        {
+          "resource": "repo://openspec/config.yaml#L89-L101",
+          "version": "repo-lines-v1:sha256:9a49c41bb151f3082811a2075e537402380e2296de64a3c6e1c3aca8eff14ece:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlhZDExYTU3ZDFhZGI1MTllOWI0MzU4MWIzMjY4ZjQzZjhmN2U5ZTVjMWExOTFmMmYxNWNhZmQxY2I2M2I1MGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVkNDUyYTMxODljNTkxZTBkNzgwYWJkMTY3YmNiMmUzODc0MGM5ODljY2ZhZDE2NDRmZTViMmRkOTNiNGNkMjkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRjMzdlNGRmNDM0ZmM0Mzg3MDZkMzdiMjk3MjIyOTg2ZjkxOThiMmZhY2NlZDlkODRiOWE5YjIyNDQxMjFjNTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3YzcyOWFiOWU2MzQ4OTU1NjAwMjJjODFlZDA5OTU0MmRhNWFlZGFkNWY5MjcxN2FlZGQzZDg4NjE0YjcyMTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_302e60d547bc4a45bbaf8b7f029e439f",
+      "statement": "Effect es una dependencia declarada del paquete API pero no se usa en el dominio, la aplicación ni la persistencia: el único import del repositorio está en un test de humo de infraestructura.",
+      "evidence": [
+        {
+          "resource": "repo://apps/api/package.json#L24-L24",
+          "version": "repo-lines-v1:sha256:988dee50f3f49221654d92261e4e1f89b3ccfd66e946c9b78158194adfb62662:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTg4ZGVlNTBmM2Y0OTIyMTY1NGQ5MjI2MWU0ZTFmODliM2NjZmQ2NmU5NDZjOWI3ODE1ODE5NGFkZmI2MjY2MiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTg4ZGVlNTBmM2Y0OTIyMTY1NGQ5MjI2MWU0ZTFmODliM2NjZmQ2NmU5NDZjOWI3ODE1ODE5NGFkZmI2MjY2MiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMWFlMmFiM2QyODNiMGVkMDM1NDNhZmIxNzBhMjgwMGZmYzEyMDQ3MTAzMzJjMmM1NGUzNWJlNjhiOGYzODU2MiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzc2ODdkZmYzZDIzY2QwZDgyNGE0YzY1OTg5ODUxZjFlYTA2MGI5NjU1MWRmZmI5MmY0OWIxODZkYTlhMjMxOSJ9"
+        },
+        {
+          "resource": "repo://apps/api/src/infrastructure/effect.smoke.test.ts#L1-L8",
+          "version": "repo-lines-v1:sha256:b4b7abfeff5018670437aedbf6b25f6f4ee8e544ab11eff6612590379ccd29e1:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDM5YmVkZmZhODZjZTBkMzFlZjMzODFmMGUxZmRiMmZhYjE0MzBjNTU3N2E3YjM5NDhiYzAwOTY1YTI2YjVjZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjZmNWI0MGIxNTg0NTdkMTc4NjRmMjE3OTA3ODZkZDVhMmVjZGI2NGI2NmE2NTFmNzg4ZDRlMjVjZDMzMDNkMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-27T02:48:33.191Z"
+  }
+}

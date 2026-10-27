@@ -16,10 +16,10 @@ import { createFileRoute, redirect } from "@tanstack/vue-router";
 import { useAuthStore } from "@/stores/auth";
 
 export const Route = createFileRoute("/login")({
-  beforeLoad: () => {
-    const auth = useAuthStore();
-    if (auth.isBooted && auth.isAuthenticated) {
-      throw redirect({ to: "/dashboard" });
-    }
-  },
+   beforeLoad: () => {
+      const auth = useAuthStore();
+      if (auth.isBooted && auth.isAuthenticated) {
+         throw redirect({ to: "/dashboard" });
+      }
+   },
 });
