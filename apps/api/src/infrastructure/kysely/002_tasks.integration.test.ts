@@ -235,8 +235,8 @@ describe.skipIf(!databaseUrl)("002_tasks migration (integration)", () => {
     );
     await sql`INSERT INTO task_state (tast_id, tast_user_id, tast_name, tast_order)
               VALUES (${tastId}, ${userId}, 'Pendiente', 0)`.execute(unknownDb);
-    await sql`INSERT INTO types (type_id, type_user_id, type_name, type_module)
-              VALUES (${typeId}, ${userId}, 'Task', 'tasks')`.execute(
+    await sql`INSERT INTO types (type_id, type_user_id, type_name, type_modules)
+              VALUES (${typeId}, ${userId}, 'Task', '{tasks}')`.execute(
       unknownDb,
     );
     await sql`INSERT INTO categories (cate_id, cate_user_id, cate_name, cate_type_id)
@@ -265,5 +265,12 @@ describe.skipIf(!databaseUrl)("002_tasks migration (integration)", () => {
     expect(tables).not.toContain("attachments");
     expect(tables).not.toContain("client");
     expect(tables).not.toContain("type_categories_client");
+
+    // Este test dejó la base sin las tablas del 002 (hace `down` de verdad).
+    // Los tests de integración de los demás archivos usan la MISMA base y
+    // necesitan esas tablas: sin restaurarlas fallan con "relation does not
+    // exist". Se restauran acá (y no en un afterAll) porque el afterAll de
+    // este archivo destruye la conexión antes.
+    await up(unknownDb);
   });
 });

@@ -37,8 +37,8 @@ describe.skipIf(!databaseUrl)(
         db,
       );
       const typeId = crypto.randomUUID();
-      await sql`INSERT INTO types (type_id, type_user_id, type_name, type_module)
-                VALUES (${typeId}, ${userId}, 'Task', 'tasks')`.execute(db);
+      await sql`INSERT INTO types (type_id, type_user_id, type_name, type_modules)
+                VALUES (${typeId}, ${userId}, 'Task', '{tasks}')`.execute(db);
       const state1 = crypto.randomUUID();
       const state2 = crypto.randomUUID();
       await sql`INSERT INTO task_state (tast_id, tast_user_id, tast_name, tast_order)

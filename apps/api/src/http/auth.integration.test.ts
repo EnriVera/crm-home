@@ -35,26 +35,26 @@ describe.skipIf(!databaseUrl)("auth HTTP endpoints (integration)", () => {
   test("requestOtp devuelve 200 y encola email", async () => {
     const email = `http-${Date.now()}@example.com`;
     const response = await handler(
-      new Request("http://localhost/rpc/auth/request-otp", {
+      new Request("http://localhost/rpc/auth/requestOtp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ json: { email } }),
       }),
     );
 
     expect(response.status).toBe(200);
-    const body = (await response.json()) as { ok: true };
-    expect(body.ok).toBe(true);
+    const body = (await response.json()) as { json: { ok: boolean } };
+    expect(body.json.ok).toBe(true);
   });
 
   test("4.º envío de requestOtp devuelve 429", async () => {
     const email = `rate-http-${Date.now()}@example.com`;
     const makeRequest = () =>
       handler(
-        new Request("http://localhost/rpc/auth/request-otp", {
+        new Request("http://localhost/rpc/auth/requestOtp", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email }),
+          body: JSON.stringify({ json: { email } }),
         }),
       );
 
@@ -69,25 +69,25 @@ describe.skipIf(!databaseUrl)("auth HTTP endpoints (integration)", () => {
   test("verifyOtp con código 041283 devuelve valid y setea cookie httpOnly", async () => {
     const email = `verify-${Date.now()}@example.com`;
     const otpResponse = await handler(
-      new Request("http://localhost/rpc/auth/request-otp", {
+      new Request("http://localhost/rpc/auth/requestOtp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ json: { email } }),
       }),
     );
     expect(otpResponse.status).toBe(200);
 
     const response = await handler(
-      new Request("http://localhost/rpc/auth/verify-otp", {
+      new Request("http://localhost/rpc/auth/verifyOtp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, code: "041283" }),
+        body: JSON.stringify({ json: { email, code: "041283" } }),
       }),
     );
 
     expect(response.status).toBe(200);
-    const body = (await response.json()) as { verdict: string };
-    expect(body.verdict).toBe("valid");
+    const body = (await response.json()) as { json: { verdict: string } };
+    expect(body.json.verdict).toBe("valid");
 
     const setCookie = response.headers.get("Set-Cookie");
     expect(setCookie).toBeDefined();
@@ -99,23 +99,27 @@ describe.skipIf(!databaseUrl)("auth HTTP endpoints (integration)", () => {
 
   test("session devuelve 401 sin cookie y 200 con cookie", async () => {
     const noCookieResponse = await handler(
-      new Request("http://localhost/rpc/auth/session"),
+      new Request("http://localhost/rpc/auth/session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ json: undefined }),
+      }),
     );
     expect(noCookieResponse.status).toBe(401);
 
     const email = `session-${Date.now()}@example.com`;
     await handler(
-      new Request("http://localhost/rpc/auth/request-otp", {
+      new Request("http://localhost/rpc/auth/requestOtp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ json: { email } }),
       }),
     );
     const verifyResponse = await handler(
-      new Request("http://localhost/rpc/auth/verify-otp", {
+      new Request("http://localhost/rpc/auth/verifyOtp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, code: "041283" }),
+        body: JSON.stringify({ json: { email, code: "041283" } }),
       }),
     );
     const setCookie = verifyResponse.headers.get("Set-Cookie") ?? "";
@@ -125,30 +129,32 @@ describe.skipIf(!databaseUrl)("auth HTTP endpoints (integration)", () => {
 
     const withCookieResponse = await handler(
       new Request("http://localhost/rpc/auth/session", {
-        headers: { Cookie: cookie },
+        method: "POST",
+        headers: { "Content-Type": "application/json", Cookie: cookie },
+        body: JSON.stringify({ json: undefined }),
       }),
     );
     expect(withCookieResponse.status).toBe(200);
     const body = (await withCookieResponse.json()) as {
-      user: { email: string };
+      json: { user: { email: string } };
     };
-    expect(body.user.email).toBe(email);
+    expect(body.json.user.email).toBe(email);
   });
 
   test("logout borra la cookie y deja session en 401", async () => {
     const email = `logout-${Date.now()}@example.com`;
     await handler(
-      new Request("http://localhost/rpc/auth/request-otp", {
+      new Request("http://localhost/rpc/auth/requestOtp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ json: { email } }),
       }),
     );
     const verifyResponse = await handler(
-      new Request("http://localhost/rpc/auth/verify-otp", {
+      new Request("http://localhost/rpc/auth/verifyOtp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, code: "041283" }),
+        body: JSON.stringify({ json: { email, code: "041283" } }),
       }),
     );
     const setCookie = verifyResponse.headers.get("Set-Cookie") ?? "";
@@ -158,7 +164,8 @@ describe.skipIf(!databaseUrl)("auth HTTP endpoints (integration)", () => {
     const logoutResponse = await handler(
       new Request("http://localhost/rpc/auth/logout", {
         method: "POST",
-        headers: { Cookie: cookie },
+        headers: { "Content-Type": "application/json", Cookie: cookie },
+        body: JSON.stringify({ json: undefined }),
       }),
     );
     expect(logoutResponse.status).toBe(200);
@@ -168,7 +175,9 @@ describe.skipIf(!databaseUrl)("auth HTTP endpoints (integration)", () => {
 
     const sessionResponse = await handler(
       new Request("http://localhost/rpc/auth/session", {
-        headers: { Cookie: cookie },
+        method: "POST",
+        headers: { "Content-Type": "application/json", Cookie: cookie },
+        body: JSON.stringify({ json: undefined }),
       }),
     );
     expect(sessionResponse.status).toBe(401);

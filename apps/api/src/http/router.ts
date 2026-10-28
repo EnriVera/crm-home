@@ -708,5 +708,10 @@ function withRequestHeader(
   return {
     ...event,
     req: clonedReq,
+    // `res` es un getter del prototype de H3Event, no una propiedad propia:
+    // el spread de arriba lo pierde y `event.res` queda undefined. h3 v2
+    // escribe las cookies ahí (`deleteCookie` → `event.res.headers`), así que
+    // sin esto `auth.logout` reventaba con "Cannot read properties of null".
+    res: event.res,
   } as H3Event;
 }

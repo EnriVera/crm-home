@@ -44,8 +44,8 @@ describe.skipIf(!databaseUrl)("KyselyTaskRepository (integration)", () => {
   ): Promise<{ typeId: string; cateId: string }> {
     const typeId = crypto.randomUUID();
     const cateId = crypto.randomUUID();
-    await sql`INSERT INTO types (type_id, type_user_id, type_name, type_module)
-              VALUES (${typeId}, ${userId}, 'Task', 'tasks')`.execute(db);
+    await sql`INSERT INTO types (type_id, type_user_id, type_name, type_modules)
+              VALUES (${typeId}, ${userId}, 'Task', '{tasks}')`.execute(db);
     await sql`INSERT INTO categories (cate_id, cate_user_id, cate_name, cate_type_id)
               VALUES (${cateId}, ${userId}, 'General', ${typeId})`.execute(db);
     return { typeId, cateId };
