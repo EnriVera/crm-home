@@ -469,6 +469,58 @@ apps/web-v3/
 
 **Dirección de dependencias (machine-enforced, igual que PRD-v3 §5.1):** `domain/` no importa nada de Nuxt/Vue/orpc; `application/` solo `domain/`; `infrastructure/` puede `domain/`, `application/`, vendors orpc/tanstack; `ui/` es el tope; `shared/vendor/<tool>/` solo `<tool>` + validación. Regla adicional v4: los auto-imports de Nuxt están **desactivados** para `node_modules` fuera de vendor (config `imports` con allowlist) — un componente que quiera Zag/TanStack/etc. debe importar el wrapper.
 
+### 11.5 Contrato de motion, estados y bans (consolidado de PRD-DESIGN §8-§10)
+
+Consolidado normativo para web-v3. PRD-DESIGN sigue siendo la fuente histórica; esta sección la vuelve exigible en el gate §18. Principio rector: **animaciones simples que comunican estado y dirigen la atención**, nunca decorativas ni coreografiadas. CSS transitions + `<Transition>` de Vue; ninguna librería de motion en v1. Todo respeta `prefers-reduced-motion` (se reduce a cambios instantáneos).
+
+**Motion (12 momentos, duraciones y easings fijos):**
+
+| # | Momento | Animación | Duración / easing |
+| --- | --- | --- | --- |
+| 1 | Entrada de página (cambio de ruta) | Fade 8→100% + `translateY(4px)→0` | 180ms ease-out |
+| 2 | Entrada de lista (primer render) | Stagger: fade + `translateY(6px)→0`, ~30ms de separación, máx. 8 items | 200ms ease-out por item |
+| 3 | Hover de card | Border → `primary-300` + `translateY(-1px)` | 150ms ease-out |
+| 4 | Press de botón | `scale(1→0.97)` y vuelta | 100ms ease-out |
+| 5 | Drag de card kanban | Lift (sombra funcional + ring + scale 1.02); columna destino tintada | 150ms al levantar; en vivo durante drag |
+| 6 | Drop en kanban | Card se asienta (scale 1.02→1); FLIP suave en las demás | 200ms cubic-bezier(0.2, 0.8, 0.2, 1) |
+| 7 | Apertura/cierre de drawer | Slide desde la derecha; overlay fade | 250ms cubic-bezier(0.32, 0.72, 0, 1) |
+| 8 | Timer corriendo | Dígitos `tabular-nums` (tick por segundo, sin animación); pulso suave del borde (opacity 0.6→1, loop 2s) solo mientras corre | 2s ease-in-out infinite |
+| 9 | Skeletons de carga | Shimmer: barras `surface-2` con barrido de luz sutil | 1.4s linear infinite |
+| 10 | Toast de éxito/error | Slide-up + fade desde abajo-centro | 250ms ease-out |
+| 11 | Toggle de tema | Crossfade de superficies | 200ms linear |
+| 12 | Mensajes inline de form (éxito/error) | Fade + `translateY(-2px)` | 150ms ease-out |
+
+Los únicos loops permanentes permitidos: el pulso del timer activo (8) y el shimmer de skeletons (9). Todo lo demás vive y muere en <300ms. Prohibido: parallax, scroll-jacking, animaciones de carga de página largas, confetti, rebotes elásticos, loops decorativos fuera del timer.
+
+**Matriz de estados (empty / loading / error por sección):**
+
+| Sección | Empty | Loading | Error |
+| --- | --- | --- | --- |
+| `/login` | — | Botón en estado loading ("Enviando…") | Inline en el form (no toast) |
+| `/login-verification` | — | Shimmer de los 6 boxes del OTP | Inline + reenviar código |
+| `/dashboard` | Timer: CTA "Iniciar tu primer timer"; Tareas: CTA "Crear tu primera tarea". Ícono del módulo en círculo `primary-50`, título 18px 600, texto `text-2`, un CTA | Skeleton de card de timer + 3 columnas de contadores | Panel "Algo salió mal" con retry |
+| `/tasks` | Ícono `CheckSquare` en círculo tintado + "Todavía no tenés tareas" + CTA | Skeleton de board/cards | Retry + mensaje inline |
+| `/tasks` kanban | Columnas con placeholder vacío por columna ("Arrastrá una tarea acá" en dash) | Skeleton por columna | Retry |
+| `/schedules` | CTA "Iniciá tu primer timer" + hint del autocomplete | Skeleton de barra + lista | Retry |
+| `/clients`, `/config` tabs | Ícono del módulo + CTA "Nuevo…" | Skeleton de lista/grilla | Retry |
+| Legales | — | — | 404 / mensaje estático |
+
+Reglas globales de estado: nunca una pantalla en blanco; skeletons en la forma exacta del contenido final (sin spinners en el primer paint de una ruta, PRD-v3 §8.4); errores transitorios por toast, errores bloqueantes inline.
+
+**Bans (qué NO hacer, gate §18):**
+
+- No hex, fuente, radio ni sombra fuera de `tokens.css`.
+- No verde decorativo ni en elementos inactivos (regla §11.3).
+- No más de una acción primaria por pantalla.
+- No sombras decorativas; solo elevación funcional (drag, popover, drawer).
+- No bordes puntiagudos en componentes nuevos: todo entra por la escala de radios §11.3.
+- No íconos `fill` en navegación ni mezclar sets de íconos.
+- No modales como primera opción: drawer o inline primero.
+- No animaciones decorativas ni loops fuera del pulso del timer (§11.5 motion).
+- No display fonts, gradientes decorativos ni glassmorphism.
+- No texto verde pequeño `#16a34a` sobre fondo claro (rompe AA): usar `primary-700`.
+- No componentes entregados sin estados default/hover/focus/active/disabled/loading/error.
+
 ## 12. Routing en archivo único (requirement v4)
 
 ### 12.1 Configuración
@@ -1026,6 +1078,7 @@ Coverage: 80% líneas en `domain/` + `application/`; 70% en `ui/organisms/`.
 | --- | --- |
 | SSR/hybrid (D-v4-1) | SPA elegido; re-evaluar en Fase 3 si hay requisito SEO/first-paint. `routeRules` es la ruta de migración. |
 | Tabs de Config: el catálogo muestra 5 (Perfil, Estados, Tipos, Categorías, Cuentas); PRD-v2 §8.7 define 8 (+ apps, monedas, adjuntos) | Decisión: implementar los 8 del PRD-v2; los 3 extra usan el mismo patrón pill-tab. El catálogo se considera parcial. |
+| Contratos de motion/estados/bans de PRD-DESIGN §8-§10 no estaban en v4 (I-04) | Resuelto: consolidados como §11.5 normativo (12 momentos de motion con duraciones fijas, matriz empty/loading/error por sección, bans). PRD-DESIGN queda como fuente histórica; §11.5 es la referencia exigible en el gate §18. |
 | Mock "Nueva tarea" incluye "Estado inicial" y "Fecha límite" | `task_due_date` (nullable) se agrega al schema (§13) en v1 para sostener los read models (§8.3 "vence", §8.4 kanban) y la paridad visual con el catálogo; el drawer de creación **no** lo expone en v1 (PRD-v2 §8.3: siempre nace `Pendiente`) — lo cargan seeds/datos; las tareas sin fecha no muestran nada. El "Estado inicial" sigue fuera: siempre `Pendiente`. |
 | Mock de cliente incluye País/Rubro/Notas; BD solo soporta name/email/phone/atta/acco | Decisión v1: campos name/email/phone (+avatar como `clie_atta_id` Fase 2). País/Rubro/Notas quedan fuera hasta migración de schema. |
 | Mock de ingreso/egreso omite Tipo (obligatorio en BD, PRD-v2 §8.6) | Decisión: el drawer incluye Tipo (select) aunque el mock no lo dibuje; es requisito de BD. |
