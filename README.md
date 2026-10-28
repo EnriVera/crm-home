@@ -17,6 +17,20 @@ make db-up           # postgres:17-alpine healthy en localhost:5432
 bun run dev          # turbo run dev → api (3000) + web (5173)
 ```
 
+### Backend + SPA de Nuxt
+
+Para trabajar en `apps/web-v3` hacen falta los dos procesos a la vez: el API en
+`:3000` y el SPA en `:5175`.
+
+```bash
+make up              # postgres + mailpit (infra que ambos necesitan)
+make dev-v3          # api (3000) + web-v3 (5175), salida etiquetada por paquete
+```
+
+`make dev-v3` es `turbo run dev --filter=@crm/api --filter=@crm/web-v3`: ambos
+servidores quedan en la misma terminal, con la salida de cada uno prefijada
+(`@crm/api:dev:` / `@crm/web-v3:dev:`). Ctrl-C los baja juntos.
+
 ## Estructura del monorepo
 
 - `apps/api` (`@crm/api`) — nitro + h3 + orpc + kysely, clean architecture
@@ -35,6 +49,16 @@ bun run dev          # turbo run dev → api (3000) + web (5173)
 | `bun run test` | `turbo run test` |
 | `bun run lint` | `turbo run lint` |
 | `bun run typecheck` | `turbo run typecheck` |
+
+## Targets del Makefile
+
+| Target | Qué hace |
+| --- | --- |
+| `make dev` | `turbo run dev` (todos los dev servers) |
+| `make dev-v3` | api (`:3000`) + web-v3 (`:5175`) a la vez |
+| `make build` / `make test` | igual que `bun run build` / `bun run test` |
+| `make up` / `make down` | postgres + mailpit |
+| `make db-up` / `make mail-up` | solo postgres / solo mailpit |
 
 ## Fallback sin turbo (`bun --filter`)
 
