@@ -20,6 +20,19 @@ export default defineNuxtConfig({
 
   vite: {
     plugins: [tailwindcss()],
+    // The vendor wrappers are imported by lazy routes (the dashboard pulls
+    // @orpc/client, the login layout pulls vue-sonner). Without pre-bundling,
+    // Vite discovers them at runtime, re-optimizes and reloads the app
+    // mid-mount: the boot then fails with "withDirectives can only be used
+    // inside render functions" and "Cannot read properties of null".
+    optimizeDeps: {
+      include: [
+        "@orpc/client",
+        "@orpc/client/fetch",
+        "@phosphor-icons/vue",
+        "vue-sonner",
+      ],
+    },
   },
 
   imports: {

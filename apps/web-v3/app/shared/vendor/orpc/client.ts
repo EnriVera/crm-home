@@ -3,11 +3,12 @@
  *
  * PRD-v4 §10.3 makes app/shared/vendor/ the single door to third-party
  * libraries, so the transport lives here and every consumer goes through the
- * narrow `callAuth` surface instead of the raw client.
+ * narrow `callAuth` / `callTasks` surface instead of the raw client.
  */
 import { createORPCClient, type NestedClient } from "@orpc/client";
 import { RPCLink } from "@orpc/client/fetch";
 import type { SessionUser } from "@crm/contract/auth";
+import type { TaskStateWire, TaskWire } from "@crm/contract/task";
 
 /** The auth procedures this app talks to (PRD-v4 §11.1). */
 export type AuthProcedure = "requestOtp" | "verifyOtp" | "session" | "logout";
@@ -28,6 +29,20 @@ export interface AuthProcedureMap {
   logout: {
     input: undefined;
     output: { ok: true };
+  };
+}
+
+/** The task procedures this app talks to (PRD-v4 §8.4). */
+export type TaskProcedure = "list" | "states.list";
+
+export interface TaskProcedureMap {
+  list: {
+    input: { search?: string };
+    output: TaskWire[];
+  };
+  "states.list": {
+    input: undefined;
+    output: TaskStateWire[];
   };
 }
 
@@ -54,26 +69,52 @@ const client = createORPCClient(link) as unknown as NestedClient<
 >;
 
 /**
- * Calls one auth procedure. The backend exposes the auth context under the
- * `auth` segment of the orpc router, so the walk is fixed to that prefix
- * instead of accepting an arbitrary path.
+ * Walks the orpc client down a fixed path and calls the procedure found
+ * there. The path is always a literal segment list, never user input: the
+ * procedure name is the only variable part and it comes from a closed union.
  */
-export async function callAuth<P extends AuthProcedure>(
-  procedure: P,
-  input: AuthProcedureMap[P]["input"],
-): Promise<AuthProcedureMap[P]["output"]> {
-  const fn = (["auth", procedure] as const).reduce<unknown>(
-    (acc, segment) => (acc as Record<string, unknown>)[segment],
+function callProcedure<Output>(
+  segments: readonly string[],
+  input: unknown,
+): Promise<Output> {
+  const fn = segments.reduce<unknown>(
+    (acc, segment) => (acc as Record<string, unknown> | undefined)?.[segment],
     client as unknown as Record<string, unknown>,
   );
 
   if (typeof fn !== "function") {
     throw new Error(
-      `orpc procedure auth.${procedure} is not registered in the client`,
+      `orpc procedure ${segments.join(".")} is not registered in the client`,
     );
   }
 
-  return (fn as (value: unknown) => Promise<AuthProcedureMap[P]["output"]>)(
+  return (fn as (value: unknown) => Promise<Output>)(input);
+}
+
+/**
+ * Calls one auth procedure. The backend exposes the auth context under the
+ * `auth` segment of the orpc router, so the walk is fixed to that prefix
+ * instead of accepting an arbitrary path.
+ */
+export function callAuth<P extends AuthProcedure>(
+  procedure: P,
+  input: AuthProcedureMap[P]["input"],
+): Promise<AuthProcedureMap[P]["output"]> {
+  return callProcedure<AuthProcedureMap[P]["output"]>(
+    ["auth", procedure],
     input,
   );
+}
+
+/**
+ * Calls one task procedure. The backend exposes the task context under the
+ * `tasks` segment, with the state columns nested under `tasks.states`.
+ */
+export function callTasks<P extends TaskProcedure>(
+  procedure: P,
+  input: TaskProcedureMap[P]["input"],
+): Promise<TaskProcedureMap[P]["output"]> {
+  const segments =
+    procedure === "states.list" ? ["tasks", "states", "list"] : ["tasks", procedure];
+  return callProcedure<TaskProcedureMap[P]["output"]>(segments, input);
 }
