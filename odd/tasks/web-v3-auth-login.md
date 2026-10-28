@@ -25,27 +25,45 @@ Workflow: LayerFS (`./lf fork odd-web-v3-auth-login` → implementar → land �
 
 ## No-goals
 
-- Dashboard ni ninguna otra pantalla; sesión persistida (la session cookie viaja
-  por orpc credentials include, el store auth se hidrata en feature posterior);
-  "olvidé mi email" / logout.
+- Dashboard ni ninguna otra pantalla; logout y "olvidé mi email".
 
-## Estado (pausa 2026-10-28)
+## Estado (cerrado 2026-10-28)
 
-**Bloqueo previo RESUELTO**: el scaffold renderizaba en blanco — con `pages:false`
-Nuxt 4.6 ignora router.options y no registra RouterView. Fix (commit `8aabe0f`,
-ship a Store `fix-routing-runtime`): `pages:true` + `router.options.ts` con
-`routes` como función. Verificado en runtime (rutas + RouterView en el bundle
-cliente, shell 200). Store-main y disco convergidos.
+**Feature ENTREGADO y verificado en runtime.** Commits: `baca63b`
+(feat, app web-v3) + `625eb58` (fix deps). Store `main` y disco convergidos.
 
-**Auth feature**: worker ya autoró TODO en staging
-(`.odd-staging/web-v3-auth-login/apps/web-v3/`, 15 archivos: orpc client, OtpInput
-nativo, infra auth, composable use-auth, plugin auth restore, views login +
-login-verification reales, i18n auth.*, 2 tests nuevos). **PENDIENTE: replay +
-land** mañana (`fs apply odd-web-v3-auth-login` con los paths bajo `/apps/web-v3/`,
-luego `lf land`).
+**Replay + land**: el branch `odd-web-v3-auth-login` se forkeó ANTES del fix de
+routing, así que su base estaba stale (router.options.ts y nuxt.config.ts viejos).
+Se re-baseó sobre el `main` sincronizado (branch `odd-web-v3-auth-login-v2`) y se
+landeó con `lf land` — 24 archivos, 0 omitidos.
 
-**Pendiente menor**: typecheck tira un trace `ERR_PACKAGE_PATH_NOT_EXPORTED` de
-@vue/language-core (exit 0, ruido no fatal); revisar mañana. PRD §12/§18 aún
-dicen `pages:false` — corregir el mecanismo documentado (pages module enabled +
-routes como función). El advisory de LSP sobre routes.ts/middleware son falsos
-positivos (vue-tsc exit 0).
+**Tres bloqueos reales encontrados al verificar (build ≠ runtime)**:
+
+1. **Store `main` stale**: faltaba el pase de prettier (`1e8da44`) y `i18n/`. Como
+   `lf land` compara el disco contra `main` antes de escribir, todo se saltaba por
+   "local edits". Se sincronizó con un branch `sync-web-v3` + `lf ship`.
+2. **Dos instancias de Vue/pinia**: `apps/web-v3` declaraba `vue`/`pinia` con `^`,
+   así que bun le instaló copias propias (3.5.44 / 4.1.0) junto a las de la raíz
+   (3.5.43 / 4.0.3). Los tests de OtpInput fallaban con "withDirectives can only
+   be used inside render functions". Fix: pins exactos en ambos frontends +
+   `resolutions` de `@vue/*` en el root package.json.
+3. **`useRoute()` congelado**: la app renderiza por `<RouterView />` (§12.3), no
+   por `<NuxtPage />`, así que Nuxt nunca sincroniza `nuxtApp._route` y el query
+   que lee login-verification quedaba vacío → la vista rebotaba a /login.
+   Fix: `app/plugins/route-sync.ts` sincroniza en `router.afterEach`.
+   Además, el plugin de restore debe pasar `nuxtApp.$pinia` explícito: fuera del
+   setup de un componente `useStore()` cae al active instance de pinia, que
+   @pinia/nuxt limpia tras el render.
+
+**Verificación (no solo build)**: flujo completo contra la API real (Postgres +
+Mailpit): login → requestOtp (200) → OTP leído de la DB → verifyOtp (verdict
+`valid` + cookie httpOnly) → session (user) → dashboard. Recarga mantiene sesión;
+`/tasks` sin sesión redirige a `/login?redirect=/tasks`; el redirect se preserva
+al volver del login; OTP incorrecto → error inline y casillas limpiadas; build de
+producción servido y verificado en navegador (200 + app montada).
+
+**PRD actualizado**: §12.1 y §12.3 ya no dicen `pages: false` — documentan el
+mecanismo real (pages module on + routes como función + sync de `_route`).
+
+**Descartado**: el trace `ERR_PACKAGE_PATH_NOT_EXPORTED` de @vue/language-core
+ya no aparece (venía de la duplicación de @vue/*).

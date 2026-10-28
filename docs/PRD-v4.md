@@ -16,7 +16,7 @@
 | --- | --- | --- |
 | Frontend framework | Vue 3.5 + Vite 8 SPA | **Nuxt 4** (Vue 3.5 + Nitro dev/build layer) |
 | Rendering mode | SPA (Vite) | **SPA (`ssr: false`)** — Decision D-v4-1 (§11.2) |
-| Routing | TanStack Router, file-based under `src/router/routes/` | **vue-router with a single route table file** — `pages: false`, no file-based routes (§12). Requirement fijada por el dueño de producto. |
+| Routing | TanStack Router, file-based under `src/router/routes/` | **vue-router with a single route table file** — no file-based routes; the pages module stays on because Nuxt 4.6 needs it to consume `router.options.ts` (§12). Requirement fijada por el dueño de producto. |
 | Route guards | `require-session.ts` guards | Nuxt route middleware (`app/middleware/`) reading route `meta` (§12.4) |
 | App state | Pinia (manual install) | Pinia vía `@pinia/nuxt` (mismo contrato de stores) |
 | i18n | `vue-i18n` manual | `@nuxtjs/i18n` (encapsulated igual en `shared/vendor/i18n/`) |
@@ -318,7 +318,7 @@ Monolito-monorepo (turborepo). Backend clean architecture + ports & adapters; fr
 | Framework | **Nuxt 4** (Vue 3.5+) | Composition API + `<script setup lang="ts">` only. |
 | Language | **TypeScript 5.9** (strict) | `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`. |
 | Rendering | **SPA (`ssr: false`)** | Decisión D-v4-1 (§11.2). |
-| Routing | **vue-router, tabla única en archivo** | `pages: false`; `app/router/routes.ts` (§12). |
+| Routing | **vue-router, tabla única en archivo** | `app/router/routes.ts` (§12); pages module on, `router.options.ts` exposes the table as a function. |
 | Package manager | **bun 1.4** | Lockfile committed. |
 | Styling | **Tailwind CSS v4** (`@tailwindcss/vite`) | Tokens en `app/assets/css/tokens.css` (§11.3). |
 | Headless primitives | **Zag.js v1.44** + shadcn-vue styling tokens | Igual que web-v2; preset `components.json` heredado (luma/zinc/green/roboto/phosphor/large/solid/bold). |
@@ -530,9 +530,28 @@ Reglas globales de estado: nunca una pantalla en blanco; skeletons en la forma e
 ```ts
 export default defineNuxtConfig({
   ssr: false,
-  pages: false,          // ← ninguna ruta por carpeta
+  // El pages MODULE queda habilitado: es lo que consume
+  // app/router.options.ts y registra RouterView + el middleware de rutas.
+  // Con `pages: false` Nuxt 4.6 corta en isPagesEnabled() (dist/index.mjs:2120),
+  // ignora router.options por completo (.nuxt/router.options.mjs queda vacío)
+  // y la app queda sin rutas ni RouterView.
+  // No existe carpeta app/pages/, así que el escaneo de archivos da cero
+  // rutas y la tabla sigue viniendo solo de router.options.ts (§12.6 intacto).
+  pages: true,
   // ...
 })
+```
+
+`app/router.options.ts` expone la tabla como **función**, no como array:
+Nuxt 4.6 llama `routerOptions.routes(routesEscaneadas)` y usa el valor
+devuelto (`nuxt/dist/pages/runtime/plugins/router.js:39`); un array plano
+lanza en runtime.
+
+```ts
+export default {
+  routes: (_scanned) => routes,
+  scrollBehavior: () => ({ top: 0 }),
+}
 ```
 
 ### 12.2 Tabla de rutas (`app/router/routes.ts`)
@@ -580,7 +599,11 @@ export default <RouterOptions>{
 
 ### 12.3 Layouts por meta
 
-Los layouts viven en `app/layouts/` (`auth.vue`, `legal.vue`, `default.vue` = AppShell) y se seleccionan con `meta.layout` en cada fila de la tabla. `default.vue` renderiza sidebar + topbar + `<RouterView />`. Con `pages: false` no existe el pages module: `<NuxtPage />` no tiene páginas que resolver — el patrón de custom router documentado por Nuxt usa `<RouterView />` en el layout.
+Los layouts viven en `app/layouts/` (`auth.vue`, `legal.vue`, `default.vue` = AppShell) y se seleccionan con `meta.layout` en cada fila de la tabla. `default.vue` renderiza sidebar + topbar + `<RouterView />`. `<NuxtPage />` no se usa: la app renderiza por `<RouterView />` dentro del layout (el patrón de custom router documentado por Nuxt), y `app.vue` elige el layout a partir de `meta.layout`.
+
+Como `<NuxtPage />` no resuelve, `<NuxtLayout />` tampoco interviene y el pages module avisa por consola (`NUXT_E4007` / `NUXT_E4011`): son warnings esperados de este diseño, no errores.
+
+**Consecuencia operativa**: `nuxtApp._route` solo se sincroniza cuando `<NuxtPage />` resuelve, así que en este diseño hay que sincronizarlo a mano tras cada navegación — `app/plugins/route-sync.ts` lo hace en `router.afterEach`. Sin ese plugin, `useRoute()` queda congelado en el primer render: la selección de layout y los query params que leen las vistas de login serían stale.
 
 ### 12.4 Guards como middleware de ruta
 
@@ -1095,7 +1118,7 @@ Coverage: 80% líneas en `domain/` + `application/`; 70% en `ui/organisms/`.
 - [ ] `apps/web-v3` corre junto a `apps/web` y `apps/web-v2` en `develop` (puertos 5173/5174/5175) y pasa el E2E suite en CI.
 - [ ] Todo PRD-v2 §8 acceptance criterion pasa en `web-v3` (E2E, no manual).
 - [ ] El dev CORS del backend acepta por default los tres origins de desarrollo (5173/5174/5175) y el override por `WEB_ORIGINS` está cubierto por test (regresión del allowlist).
-- [ ] Las rutas existen **solo** en `app/router/routes.ts` (`pages: false`, sin carpeta `pages/`); el test §12.6 lo verifica.
+- [ ] Las rutas existen **solo** en `app/router/routes.ts` (sin carpeta `pages/`); el test §12.6 lo verifica.
 - [ ] Paridad visual con las 23 imágenes del catálogo — 14 pantallas de página + 9 drawers `lateral-derecho-*.png`, cada una diffada exactamente una vez (screenshot diff en CI).
 - [ ] `app/shared/vendor/` es el único lugar con imports de librerías UI de terceros (lint-enforced).
 - [ ] `domain/` tiene cero imports de Nuxt/Vue/orpc/TanStack (lint-enforced).
