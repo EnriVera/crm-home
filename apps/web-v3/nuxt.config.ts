@@ -1,4 +1,4 @@
-import tailwindcss from '@tailwindcss/vite'
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineNuxtConfig({
   // PRD-v4 §11.2 (D-v4-1): the product lives behind a login, so the app is a SPA.
@@ -6,11 +6,11 @@ export default defineNuxtConfig({
   // PRD-v4 §12: every route lives in app/router/routes.ts, never in a pages/ folder.
   pages: false,
 
-  compatibilityDate: '2025-07-15',
+  compatibilityDate: "2025-07-15",
 
-  modules: ['@pinia/nuxt', '@nuxtjs/i18n'],
+  modules: ["@pinia/nuxt", "@nuxtjs/i18n"],
 
-  css: ['~/assets/css/tokens.css', '~/assets/css/main.css'],
+  css: ["~/assets/css/tokens.css", "~/assets/css/main.css"],
 
   vite: {
     plugins: [tailwindcss()],
@@ -18,7 +18,7 @@ export default defineNuxtConfig({
 
   imports: {
     // Auto-imports stay inside the app; the modules below add their own presets.
-    dirs: ['composables', 'utils', 'shared/composables'],
+    dirs: ["composables", "utils", "shared/composables"],
     // Third-party libraries never enter through auto-imports: each one has a
     // wrapper in app/shared/vendor. The machine-enforced guard is the eslint
     // rule in eslint.config.ts (PRD-v4 §11.4/§18); Nuxt's imports config has
@@ -35,8 +35,8 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: 'CRM-HOME',
-      htmlAttrs: { lang: 'es' },
+      title: "CRM-HOME",
+      htmlAttrs: { lang: "es" },
     },
   },
 
@@ -44,11 +44,11 @@ export default defineNuxtConfig({
     // Spanish-only v1: messages inline in i18n/i18n.config.ts. File-based
     // lazy locales cross a Vite JSON virtual module that chokes on the space
     // in the repo path, so the scaffold inlines them.
-    locales: [{ code: 'es' }],
-    defaultLocale: 'es',
-    strategy: 'no_prefix',
+    locales: [{ code: "es" }],
+    defaultLocale: "es",
+    strategy: "no_prefix",
     // The translation-directive optimizer breaks locale bundles in this
     // stack (module's own v9 warning); off until v10 removes the feature.
     bundle: { optimizeTranslationDirective: false },
   },
-})
+});
