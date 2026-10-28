@@ -17,6 +17,17 @@
     "typecheck": "turbo run typecheck",
     "dev:v2": "turbo run dev --filter=@crm/web-v2"
   },
+  "resolutions": {
+    "@vue/runtime-dom": "3.5.44",
+    "@vue/runtime-core": "3.5.44",
+    "@vue/reactivity": "3.5.44",
+    "@vue/compiler-dom": "3.5.44",
+    "@vue/compiler-core": "3.5.44",
+    "@vue/compiler-sfc": "3.5.44",
+    "@vue/compiler-ssr": "3.5.44",
+    "@vue/shared": "3.5.44",
+    "@vue/server-renderer": "3.5.44"
+  },
   "devDependencies": {
     "@commitlint/cli": "^20.5.3",
     "@commitlint/config-conventional": "^20.5.3",
