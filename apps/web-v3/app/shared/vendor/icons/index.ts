@@ -1,9 +1,13 @@
 export {
   PhArrowsLeftRight,
+  PhCheck,
   PhCheckSquare,
   PhClock,
+  PhEnvelope,
   PhGear,
+  PhInfo,
   PhMoon,
+  PhShieldCheck,
   PhSlidersHorizontal,
   PhSquaresFour,
   PhSun,

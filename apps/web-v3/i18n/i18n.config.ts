@@ -23,6 +23,39 @@ export default defineI18nConfig(() => ({
         privacy: "Privacidad",
         cookies: "Cookies",
       },
+      auth: {
+        title: "Iniciar sesión",
+        subtitle: "Entrá a tu estudio con tu email.",
+        emailLabel: "Email",
+        // The placeholder cannot hold an "@": the vue-i18n tokenizer reads it
+        // as the start of a linked message and rejects the message.
+        emailPlaceholder: "nombre en estudio.com",
+        hint: "Sin contraseña: te enviamos un código por email",
+        sendCode: "Enviar código",
+        sending: "Enviando…",
+        verify: "Verificar",
+        verifyTitle: "Verificación en dos pasos",
+        otpSubtitle: "Ingresá el código de 6 dígitos que enviamos a {email}.",
+        otpWrong: "Código incorrecto, revisalo e intentá de nuevo",
+        otpExpired: "El código venció, pedí uno nuevo",
+        resend: "Reenviar código ({seconds})",
+        resendReady: "Reenviar código",
+        backToLogin: "Volver al inicio de sesión",
+        errors: {
+          invalidEmail: "Ingresá un email válido",
+          otpInvalid: "No pudimos verificar el código",
+          rateLimited: "Esperá un momento antes de pedir otro código",
+          unknown: "Algo salió mal, intentá de nuevo",
+        },
+      },
+      brand: {
+        headline: "Tu estudio, en orden.",
+        subtitle:
+          "Un solo lugar para tus tareas, tu tiempo y tus finanzas.",
+        task: "Tareas con tipos, estados y fechas límite",
+        timer: "Timer libre o ligado a una tarea, con historial diario",
+        finance: "Clientes, ingresos, gastos y transferencias",
+      },
       scaffold: {
         placeholder: "En construcción",
       },
