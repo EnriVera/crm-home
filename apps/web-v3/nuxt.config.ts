@@ -35,6 +35,13 @@ export default defineNuxtConfig({
     enabled: true,
   },
 
+  // Telemetría de Nuxt apagada a nivel proyecto. Sin esto, el módulo
+  // @nuxt/telemetry pide consent interactivo por stdin la primera vez
+  // (consola.prompt) y el arranque queda colgado en ese paso: el navegador
+  // muestra "setting up @nuxt/telemetry · step 2/7" sin avanzar. Con una
+  // terminal sin TTY el prompt nunca se responde y el dev server no levanta.
+  telemetry: false,
+
   typescript: {
     strict: true,
   },
