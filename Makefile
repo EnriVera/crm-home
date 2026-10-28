@@ -17,7 +17,13 @@ dev: ## Arranca los dev servers (turbo run dev)
 # Backend + SPA de Nuxt a la vez: el API en 3000 y el SPA en 5175, con la
 # salida de cada uno etiquetada por turbo. Requiere la infra (make up) para
 # que el API pueda hablar con Postgres.
+#
+# El preflight libera los puertos: un dev server que quedó vivo de una sesión
+# anterior hace fallar el arranque con EADDRINUSE (y Nuxt abre un prompt
+# interactivo que cuelga a turbo). Solo mata procesos que sean dev servers de
+# este repo; si el puerto lo tiene otra cosa, avisa y sigue.
 dev-v3: ## Arranca el backend (:3000) y el SPA de Nuxt (:5175) a la vez
+	@tools/free-dev-ports.sh 3000 5175
 	$(TURBO) run dev --filter=@crm/api --filter=@crm/web-v3
 
 build: ## Compila todos los paquetes (turbo run build)
