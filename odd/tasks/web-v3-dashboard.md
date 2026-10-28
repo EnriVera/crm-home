@@ -49,6 +49,54 @@ Workflow: LayerFS (`./lf fork odd-web-v3-dashboard` → implementar → land →
 - **`/tasks`, `/schedules`, `/clients`, `/config`**: son features propios.
 - **Migración de backend**: §15.1 permite un único cambio (CORS, ya hecho).
 
-## Estado
+## Estado (cerrado 2026-10-28)
 
-_(pendiente)_
+**Entregado**: commit `265a7f0` (feat). Store `main` y disco convergidos.
+
+**Verificación (runtime, API real con Postgres)**: login por OTP → sesión →
+`/dashboard` carga con `tasks/list` 200 y `tasks/states/list` 200. Con 6 tareas
+creadas por API muestra los contadores correctos (Pendiente 1 / En progreso 2 /
+Completado 3), "6 tareas en total" y las 5 más recientes ordenadas por
+actualización con su estado. Con un usuario sin tareas: estado vacío con los dos
+CTA y "0 tareas en total". Sin sesión, el guard redirige a
+`/login?redirect=/dashboard`. Cero errores de consola.
+
+**Tres cosas que aparecieron al verificar (build ≠ runtime)**:
+
+1. **El path del wrapper orpc**: al generalizar `callAuth` a `callTasks` el
+   `reduce` dejó de incluir el procedure en el path, y las llamadas iban a
+   `/rpc/auth` en vez de `/rpc/auth/requestOtp` — un 404 silencioso. Ahora el
+   path está cubierto por `tests/unit/orpc-client.test.ts`.
+2. **Vite re-optimiza en runtime**: la primera ruta lazy que carga
+   `@orpc/client` dispara el descubrimiento de dependencias, Vite re-optimiza y
+   recarga la app a mitad del montaje → el boot muere con "withDirectives can
+   only be used inside render functions". Fix: `vite.optimizeDeps.include` de
+   los paquetes de `app/shared/vendor/`.
+3. El `reduce` del walk truena con `TypeError` en vez del error claro cuando el
+   procedure no existe; ahora es tolerante y dice qué falta.
+
+**Brechas de la API confirmadas contra el schema real** (no inferidas):
+
+- `schedule` en la DB **no es** el módulo Schedule de PRD-v2 §8.4: es reglas
+  recurrentes de dinero (`sche_name`, `sche_acco_id`, `sche_amount`,
+  `sche_frequency`, `sche_next_run_date`). **No existe `schedule_items`**, ni
+  endpoint de timer, ni websocket/heartbeat en `apps/api`. PRD-v2 §11 define un
+  par `schedule`/`schedule_items` completamente distinto. La colisión de nombre
+  requiere decisión (ver abajo).
+- `task` **no tiene columna de fecha**: `task_due_date` aparece en PRD-v2 §13 y
+  PRD-v4 asume fechas en las filas, pero ninguna migración la crea.
+
+**Decisiones de producto tomadas (2026-10-28)**: la card del timer renderiza el
+CTA vacío; no se tocan stat cards de ingresos ni "Actividad reciente" (Fase 2 y
+sin fuente de datos).
+
+**Pendiente para la próxima**:
+
+- `/tasks` (kanban + drawer + drag & drop) es el siguiente feature grande: es
+  lo que el dashboard ya cuenta.
+- **Logout** (PRD-v2 §8.1) y **tema persistido en la cuenta**
+  (`auth.updateTheme` existe en la API; el store de tema solo usa localStorage)
+  son slices chicos y cerrados que cierran criterios de aceptación.
+- **Desambiguar `schedule`**: renombrar el módulo existente a "reglas
+  recurrentes" y planear el timer aparte, o mantenerlo y documentar que el
+  Schedule del PRD no entra en este corte.
