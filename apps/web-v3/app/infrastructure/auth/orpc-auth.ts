@@ -109,3 +109,34 @@ export async function fetchSession(): Promise<SessionUser | null> {
 
   return response.user ?? null;
 }
+
+/**
+ * Saves the theme preference in the user's account (PRD-v2 §8.7).
+ *
+ * The account is the source of truth for the theme: the local copy in the
+ * theme store is only a cache for the moment before the session is known.
+ */
+export async function updateUserTheme(
+  setting: "light" | "dark" | "system",
+): Promise<SessionUser> {
+  try {
+    const response = await callAuth("updateTheme", { setting });
+    return response.user;
+  } catch (error) {
+    throw toAuthCallError(error);
+  }
+}
+
+/**
+ * Ends the session.
+ *
+ * The API invalidates the session server-side (soft delete) and clears the
+ * cookie, so the token cannot be reused afterwards (PRD-v2 §8.1).
+ */
+export async function logout(): Promise<void> {
+  try {
+    await callAuth("logout", undefined);
+  } catch (error) {
+    throw toAuthCallError(error);
+  }
+}

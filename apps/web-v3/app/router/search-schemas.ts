@@ -5,9 +5,11 @@ import { z } from "zod";
  * Every field is optional so a bare route always parses.
  */
 export const configSearchSchema = z.object({
- tab: z
-  .enum(["perfil", "estados", "tipos", "categorias", "cuentas"])
-  .optional(),
+  // Los tabs que /config implementa contra la API actual (PRD-v4 §8.8).
+  // Categorías y cuentas no tienen endpoints: entran cuando la API los tenga.
+  tab: z
+    .enum(["perfil", "estados", "tipos", "apps", "monedas"])
+    .optional(),
 });
 
 export const tasksSearchSchema = z.object({

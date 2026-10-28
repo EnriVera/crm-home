@@ -74,6 +74,80 @@ export default defineI18nConfig(() => ({
         timer: "Timer libre o ligado a una tarea, con historial diario",
         finance: "Clientes, ingresos, gastos y transferencias",
       },
+      config: {
+        title: "Configuración",
+        loadError: "No pudimos cargar tu configuración.",
+        themeError: "No pudimos guardar tu preferencia de tema.",
+        tabs: {
+          ariaLabel: "Secciones de configuración",
+          perfil: "Perfil",
+          perfilSubtitle: "Tu perfil, la apariencia del sistema y tu sesión",
+          estados: "Estados de tarea",
+          estadosSubtitle: "Estados de las columnas del tablero de tareas",
+          tipos: "Tipos",
+          tiposSubtitle: "Tipos de trabajo para clasificar tus tareas",
+          apps: "Aplicaciones",
+          appsSubtitle: "Los módulos de la aplicación",
+          monedas: "Monedas",
+          monedasSubtitle: "Las monedas disponibles para tus cuentas",
+        },
+        profile: {
+          title: "Información personal",
+          subtitle: "Estos datos vienen de tu cuenta",
+          name: "Nombre completo",
+          email: "Email",
+        },
+        appearance: {
+          title: "Apariencia",
+          subtitle: "Elegí cómo querés ver la interfaz",
+        },
+        theme: {
+          light: "Claro",
+          dark: "Oscuro",
+          system: "Sistema",
+        },
+        session: {
+          title: "Sesión",
+          subtitle: "Sesión activa en este dispositivo",
+          logout: "Cerrar sesión",
+        },
+        types: {
+          search: "Buscar tipos…",
+          namePlaceholder: "Nombre del tipo",
+          add: "Agregar tipo",
+          save: "Guardar",
+          rename: "Renombrar tipo",
+          renamePrompt: "Nuevo nombre del tipo",
+          delete: "Eliminar",
+          info:
+            "Los tipos agrupan tus tareas por área de trabajo y se muestran como etiquetas.",
+        },
+        states: {
+          add: "Agregar estado",
+          save: "Guardar",
+          namePlaceholder: "Nombre del estado",
+          rename: "Renombrar estado",
+          renamePrompt: "Nuevo nombre del estado",
+          delete: "Eliminar",
+          info:
+            "Los estados nuevos aparecen automáticamente como columnas en el tablero de tareas.",
+        },
+        apps: {
+          info:
+            "Las aplicaciones son los módulos del producto y no se editan desde tu cuenta.",
+        },
+        monedas: {
+          decimals: "decimales",
+          info:
+            "Las monedas son globales y se usan para calcular el saldo de tus cuentas.",
+        },
+        modules: {
+          tasks: "Tareas",
+          incomes: "Ingresos",
+          expenses: "Gastos",
+          schedules: "Schedule",
+        },
+      },
       scaffold: {
         placeholder: "En construcción",
       },
