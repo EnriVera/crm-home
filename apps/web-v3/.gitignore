@@ -1,0 +1,7 @@
+.nuxt/
+.output/
+dist/
+coverage/
+test-results/
+playwright-report/
+.vitest/

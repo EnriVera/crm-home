@@ -70,11 +70,12 @@ function maybeReExec() {
   }
   const needRoot = cmd === "init" || foreign;
   if (!needRoot) return;
+  const sudoArgs = ["-E"];
+  // SUDO_ASKPASS set (askpass helper): non-interactive hosts (agent shells
+  // without a TTY) authenticate via `sudo -A` instead of a password prompt.
+  if (process.env.SUDO_ASKPASS) sudoArgs.push("-A");
   const script = fileURLToPath(import.meta.url);
-  const res = spawnSync(
-    "sudo",
-    ["-E", process.execPath, script, ...process.argv.slice(2)],
-    {
+  const res = spawnSync("sudo", [...sudoArgs, process.execPath, script, ...process.argv.slice(2)], {
       stdio: "inherit",
       env: process.env,
     },

@@ -24,3 +24,6 @@ dist/
 .playwright-cli/
 .codegraph/
 tools/layerfs/lf.env
+
+# ODD staging for LayerFS replay (never committed)
+.odd-staging/

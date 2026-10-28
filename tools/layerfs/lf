@@ -16,6 +16,10 @@ case "${1:-}" in
     if [ "$(id -u)" != "0" ] && [ "${LF_NO_SUDO:-}" != "1" ]; then
       # reading 0 bytes still opens the file: EACCES → root-owned Store → sudo
       if ! head -c 0 "${LAYERFS_STORE_PATH:-}" >/dev/null 2>&1; then
+        # SUDO_ASKPASS set: agent shells without a TTY authenticate via sudo -A
+        if [ -n "${SUDO_ASKPASS:-}" ]; then
+          exec sudo -E -A node "$CLI" "$@"
+        fi
         exec sudo -E node "$CLI" "$@"
       fi
     fi

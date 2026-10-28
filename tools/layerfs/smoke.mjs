@@ -34,9 +34,11 @@ try {
 }
 if (process.geteuid() !== 0 && process.env.LF_NO_SUDO !== "1" && needsRoot) {
   const script = fileURLToPath(import.meta.url);
+  // SUDO_ASKPASS: agent shells without a TTY authenticate via `sudo -A`.
+  const sudoArgs = process.env.SUDO_ASKPASS ? ["-E", "-A"] : ["-E"];
   const res = spawnSync(
     "sudo",
-    ["-E", process.execPath, script, ...process.argv.slice(2)],
+    [...sudoArgs, process.execPath, script, ...process.argv.slice(2)],
     { stdio: "inherit", env: process.env },
   );
   process.exit(res.status ?? 1);
