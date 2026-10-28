@@ -1,4 +1,5 @@
 export * from "./types-contracts.js";
+export * from "./categories-contracts.js";
 
 import { z } from "zod";
 import {

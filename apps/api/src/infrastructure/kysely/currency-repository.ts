@@ -1,3 +1,4 @@
+import { sql } from "kysely";
 import type {
   Currency,
   CurrencyRepository,
@@ -16,6 +17,24 @@ export class KyselyCurrencyRepository implements CurrencyRepository {
       .orderBy("curr_name", "asc")
       .execute();
     return rows.map(this.mapRow);
+  }
+
+  async insert(params: {
+    name: string;
+    symbol: string;
+    decimals: number;
+  }): Promise<Currency> {
+    const row = await this.db
+      .insertInto("currency")
+      .values({
+        curr_id: sql<string>`gen_random_uuid()`,
+        curr_name: params.name,
+        curr_symbol: params.symbol,
+        curr_decimals: params.decimals,
+      })
+      .returning(["curr_id", "curr_name", "curr_symbol", "curr_decimals"])
+      .executeTakeFirstOrThrow();
+    return this.mapRow(row);
   }
 
   private resolve(trx?: Transaction): Database {

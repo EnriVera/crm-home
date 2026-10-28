@@ -1,18 +1,26 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from "vue";
 import type { ThemePreference, TypeModule } from "~/domain/config/entities";
+import { categoryTypeName } from "~/domain/config/entities";
 import { useConfig } from "~/shared/composables/use-config";
 import { useRouteSearch } from "~/shared/composables/use-route-search";
 import type { SearchParams } from "~/router/search-schemas";
 import { useAuthStore } from "~/stores/auth";
 import { useThemeStore } from "~/stores/theme";
+import BaseView from "~/ui/organisms/base-view.vue";
+import ConfigCategoryDrawer from "~/ui/organisms/config-drawers/config-category-drawer.vue";
+import ConfigCurrencyDrawer from "~/ui/organisms/config-drawers/config-currency-drawer.vue";
+import ConfigStateDrawer from "~/ui/organisms/config-drawers/config-state-drawer.vue";
+import ConfigTypeDrawer from "~/ui/organisms/config-drawers/config-type-drawer.vue";
+import ConfigCard from "~/ui/molecules/config-card.vue";
 import {
   PhCheck,
   PhGear,
   PhInfo,
-  PhMagnifyingGlass,
   PhMoon,
+  PhPencilSimple,
   PhPlus,
+  PhSignOut,
   PhSun,
   PhTrash,
 } from "~/shared/vendor/icons";
@@ -24,10 +32,14 @@ const { params, set } = useRouteSearch("config");
 const {
   types,
   states,
+  categories,
   apps,
   currencies,
   search,
   visibleTypes,
+  visibleCategories,
+  visibleStates,
+  visibleCurrencies,
   orderedStates,
   isLoading,
   error,
@@ -38,6 +50,10 @@ const {
   addState,
   editState,
   deleteState,
+  addCategory,
+  editCategory,
+  deleteCategory,
+  addCurrency,
   setTheme,
   logout,
 } = useConfig();
@@ -52,6 +68,7 @@ const tabs: Tab[] = [
   { id: "perfil", label: t("config.tabs.perfil"), subtitle: t("config.tabs.perfilSubtitle") },
   { id: "estados", label: t("config.tabs.estados"), subtitle: t("config.tabs.estadosSubtitle") },
   { id: "tipos", label: t("config.tabs.tipos"), subtitle: t("config.tabs.tiposSubtitle") },
+  { id: "categorias", label: t("config.tabs.categorias"), subtitle: t("config.tabs.categoriasSubtitle") },
   { id: "apps", label: t("config.tabs.apps"), subtitle: t("config.tabs.appsSubtitle") },
   { id: "monedas", label: t("config.tabs.monedas"), subtitle: t("config.tabs.monedasSubtitle") },
 ];
@@ -62,18 +79,111 @@ const activeTabMeta = computed(
   () => tabs.find((tab) => tab.id === activeTab.value) ?? tabs[0]!,
 );
 
-/** The form state of the "new type" / "new state" inline card. */
-const newTypeName = ref("");
-const newTypeModules = ref<TypeModule[]>(["tasks"]);
-const newStateName = ref("");
-const saving = ref(false);
+/** The tabs that list records through BaseView. */
+const LIST_TABS = ["estados", "tipos", "categorias", "monedas"] as const;
 
-const TYPE_MODULE_OPTIONS: { id: TypeModule; label: string }[] = [
-  { id: "tasks", label: t("config.modules.tasks") },
-  { id: "incomes", label: t("config.modules.incomes") },
-  { id: "expenses", label: t("config.modules.expenses") },
-  { id: "schedules", label: t("config.modules.schedules") },
-];
+const drawerOpen = computed(
+  () =>
+    (LIST_TABS as readonly string[]).includes(activeTab.value) &&
+    (params.value.drawer === "new" || params.value.edit !== undefined),
+);
+
+const editingType = computed(
+  () => types.value.find((type) => type.id === params.value.edit) ?? null,
+);
+const editingState = computed(
+  () => states.value.find((state) => state.id === params.value.edit) ?? null,
+);
+const editingCategory = computed(
+  () =>
+    categories.value.find((category) => category.id === params.value.edit) ??
+    null,
+);
+
+const saving = ref(false);
+const drawerError = ref<string | null>(null);
+
+function openCreate(tab: (typeof LIST_TABS)[number]) {
+  drawerError.value = null;
+  void set({ tab, drawer: "new", edit: "" });
+}
+
+function openEdit(tab: (typeof LIST_TABS)[number], id: string) {
+  drawerError.value = null;
+  void set({ tab, edit: id, drawer: "" });
+}
+
+function closeDrawer() {
+  return set({ drawer: "", edit: "" });
+}
+
+async function submitType(values: { name: string; modules: TypeModule[] }) {
+  drawerError.value = null;
+  saving.value = true;
+  try {
+    if (editingType.value) {
+      await editType({ id: editingType.value.id, ...values });
+    } else {
+      await addType(values);
+    }
+    await closeDrawer();
+  } catch {
+    drawerError.value = "config.drawer.saveError";
+  } finally {
+    saving.value = false;
+  }
+}
+
+async function submitState(values: { name: string; position: number }) {
+  drawerError.value = null;
+  saving.value = true;
+  try {
+    if (editingState.value) {
+      await editState({ id: editingState.value.id, name: values.name });
+    } else {
+      await addState({ name: values.name, position: values.position });
+    }
+    await closeDrawer();
+  } catch {
+    drawerError.value = "config.drawer.saveError";
+  } finally {
+    saving.value = false;
+  }
+}
+
+async function submitCategory(values: { name: string; typeId: string }) {
+  drawerError.value = null;
+  saving.value = true;
+  try {
+    if (editingCategory.value) {
+      await editCategory({ id: editingCategory.value.id, ...values });
+    } else {
+      await addCategory(values);
+    }
+    await closeDrawer();
+  } catch {
+    drawerError.value = "config.drawer.saveError";
+  } finally {
+    saving.value = false;
+  }
+}
+
+async function submitCurrency(values: {
+  name: string;
+  symbol: string;
+  decimals: number;
+}) {
+  drawerError.value = null;
+  saving.value = true;
+  try {
+    await addCurrency(values);
+    await closeDrawer();
+  } catch {
+    drawerError.value = "config.drawer.saveError";
+  } finally {
+    saving.value = false;
+  }
+}
 
 const themeOptions: { id: ThemePreference; label: string; icon: string }[] = [
   { id: "light", label: t("config.theme.light"), icon: "sun" },
@@ -87,6 +197,12 @@ const initials = computed(() => {
   return letters.map((part) => part[0]?.toUpperCase() ?? "").join("") || "?";
 });
 
+/** Module ids of a type, translated, for the card subtitle. */
+function modulesLabel(modules: readonly string[]): string {
+  if (modules.length === 0) return t("config.drawer.modulesEmpty");
+  return modules.map((module) => t(`config.modules.${module}`)).join(" · ");
+}
+
 onMounted(() => {
   void load(activeTab.value);
 });
@@ -97,53 +213,6 @@ watch(activeTab, (tab) => {
 
 function selectTab(id: Tab["id"]) {
   void set({ tab: id });
-}
-
-async function submitNewType() {
-  const name = newTypeName.value.trim();
-  if (!name) return;
-  saving.value = true;
-  try {
-    await addType({ name, modules: newTypeModules.value });
-    newTypeName.value = "";
-    newTypeModules.value = ["tasks"];
-  } finally {
-    saving.value = false;
-  }
-}
-
-async function submitNewState() {
-  const name = newStateName.value.trim();
-  if (!name) return;
-  saving.value = true;
-  try {
-    await addState({ name });
-    newStateName.value = "";
-  } finally {
-    saving.value = false;
-  }
-}
-
-async function renameType(id: string, current: string) {
-  const name = window.prompt(t("config.types.renamePrompt"), current);
-  if (name === null) return;
-  const trimmed = name.trim();
-  if (!trimmed || trimmed === current) return;
-  await editType({ id, name: trimmed });
-}
-
-async function renameState(id: string, current: string) {
-  const name = window.prompt(t("config.states.renamePrompt"), current);
-  if (name === null) return;
-  const trimmed = name.trim();
-  if (!trimmed || trimmed === current) return;
-  await editState({ id, name: trimmed });
-}
-
-function toggleModule(module: TypeModule) {
-  newTypeModules.value = newTypeModules.value.includes(module)
-    ? newTypeModules.value.filter((entry) => entry !== module)
-    : [...newTypeModules.value, module];
 }
 </script>
 
@@ -156,19 +225,19 @@ function toggleModule(module: TypeModule) {
       <p class="mt-1 text-sm text-text-2">{{ activeTabMeta.subtitle }}</p>
     </header>
 
-    <!-- Tab bar: the tabs live in the URL (PRD-v4 §12.5). -->
+    <!-- Tab bar: full-width pill segmented, active in green tint (PRD §8.8). -->
     <nav
-      class="mt-5 flex flex-wrap gap-1 rounded-lg bg-surface-2 p-1"
+      class="mt-5 flex flex-wrap gap-1 rounded-full bg-surface-2 p-1"
       :aria-label="t('config.tabs.ariaLabel')"
     >
       <button
         v-for="tab in tabs"
         :key="tab.id"
         type="button"
-        class="rounded-md px-4 py-2 text-sm transition-colors"
+        class="flex-1 whitespace-nowrap rounded-full px-3 py-2 text-sm transition-colors"
         :class="
           activeTab === tab.id
-            ? 'bg-surface font-medium text-accent shadow-sm'
+            ? 'bg-primary-50 font-medium text-primary-700'
             : 'text-text-2 hover:text-text'
         "
         :aria-current="activeTab === tab.id ? 'page' : undefined"
@@ -279,93 +348,70 @@ function toggleModule(module: TypeModule) {
 
     <!-- ── Tipos ──────────────────────────────────────────────── -->
     <div v-else-if="activeTab === 'tipos'" class="mt-6" data-testid="config-tipos">
-      <label class="relative block max-w-sm">
-        <span class="sr-only">{{ t("config.types.search") }}</span>
-        <PhMagnifyingGlass
-          :size="16"
-          class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-2"
-        />
-        <input
-          v-model="search"
-          type="search"
-          :placeholder="t('config.types.search')"
-          class="h-10 w-full rounded-md border border-border bg-surface pl-9 pr-3 text-sm text-text outline-none transition-colors placeholder:text-text-2 focus:border-accent"
-        />
-      </label>
-
-      <div
-        class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
-        data-testid="config-types-grid"
+      <BaseView
+        id="config-tipos"
+        v-model:search="search"
+        :loading="isLoading"
+        :search-placeholder="t('config.types.search')"
       >
-        <article
-          v-for="type in visibleTypes"
-          :key="type.id"
-          class="rounded-lg border border-border bg-surface p-5"
-        >
-          <div class="flex items-start justify-between gap-2">
-            <div class="min-w-0">
-              <p class="truncate text-sm font-medium text-text">{{ type.name }}</p>
-              <p class="mt-1 text-xs text-text-2">
-                {{ type.modules.join(" · ") }}
-              </p>
-            </div>
+        <template #grid>
+          <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <ConfigCard
+              v-for="type in visibleTypes"
+              :key="type.id"
+              :name="type.name"
+              :subtitle="modulesLabel(type.modules)"
+              :edit-label="t('config.drawer.editType')"
+              :delete-label="t('config.types.delete')"
+              @edit="openEdit('tipos', type.id)"
+              @remove="deleteType(type.id)"
+            />
             <button
               type="button"
-              class="rounded p-1 text-text-2 transition-colors hover:bg-surface-2 hover:text-text"
-              :aria-label="t('config.types.rename')"
-              @click="renameType(type.id, type.name)"
+              class="flex min-h-24 flex-col items-center justify-center gap-1 rounded-[var(--radius)] border border-dashed border-border p-5 text-text-2 transition-colors hover:border-primary-300 hover:text-text"
+              data-testid="config-add-type"
+              @click="openCreate('tipos')"
             >
-              <PhDotsThree :size="16" weight="bold" />
+              <PhPlus :size="20" weight="regular" />
+              <span class="text-sm">{{ t("config.types.add") }}</span>
             </button>
           </div>
-          <button
-            type="button"
-            class="mt-3 inline-flex items-center gap-1 text-xs text-text-2 transition-colors hover:text-error"
-            :aria-label="t('config.types.delete')"
-            @click="deleteType(type.id)"
-          >
-            <PhTrash :size="14" weight="regular" />
-            {{ t("config.types.delete") }}
-          </button>
-        </article>
-
-        <form
-          class="flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border p-5 text-center"
-          @submit.prevent="submitNewType"
-        >
-          <PhPlus :size="20" weight="regular" class="text-text-2" />
-          <p class="text-sm text-text-2">{{ t("config.types.add") }}</p>
-          <input
-            v-model="newTypeName"
-            type="text"
-            :placeholder="t('config.types.namePlaceholder')"
-            class="h-9 w-full rounded-md border border-border bg-surface px-3 text-sm text-text outline-none focus:border-accent"
-          />
-          <div class="flex flex-wrap justify-center gap-2">
-            <button
-              v-for="option in TYPE_MODULE_OPTIONS"
-              :key="option.id"
-              type="button"
-              class="rounded-full border px-2 py-0.5 text-xs transition-colors"
-              :class="
-                newTypeModules.includes(option.id)
-                  ? 'border-accent bg-primary-50 text-primary-700'
-                  : 'border-border text-text-2'
-              "
-              @click="toggleModule(option.id)"
+        </template>
+        <template #list>
+          <ul class="divide-y divide-border rounded-[var(--radius)] border border-border bg-surface">
+            <li
+              v-for="type in visibleTypes"
+              :key="type.id"
+              class="flex items-center justify-between gap-3 px-4 py-3"
             >
-              {{ option.label }}
-            </button>
-          </div>
-          <button
-            type="submit"
-            :disabled="saving"
-            class="rounded bg-accent px-3 py-1.5 text-xs font-semibold text-accent-fg transition-colors hover:bg-accent-hover disabled:opacity-60"
-          >
-            {{ t("config.types.save") }}
-          </button>
-        </form>
-      </div>
+              <div class="min-w-0">
+                <p class="truncate text-sm font-medium text-text">{{ type.name }}</p>
+                <p class="truncate text-xs text-text-2">
+                  {{ modulesLabel(type.modules) }}
+                </p>
+              </div>
+              <div class="flex shrink-0 gap-1">
+                <button
+                  type="button"
+                  class="rounded p-1 text-text-2 transition-colors hover:bg-surface-2 hover:text-text"
+                  :aria-label="t('config.drawer.editType')"
+                  @click="openEdit('tipos', type.id)"
+                >
+                  <PhPencilSimple :size="15" weight="regular" />
+                </button>
+                <button
+                  type="button"
+                  class="rounded p-1 text-text-2 transition-colors hover:bg-surface-2 hover:text-error"
+                  :aria-label="t('config.types.delete')"
+                  @click="deleteType(type.id)"
+                >
+                  <PhTrash :size="15" weight="regular" />
+                </button>
+              </div>
+            </li>
+          </ul>
+        </template>
+      </BaseView>
 
       <p
         class="mt-6 flex items-start gap-2 rounded-lg bg-primary-50 px-4 py-3 text-sm text-primary-700"
@@ -381,64 +427,158 @@ function toggleModule(module: TypeModule) {
       class="mt-6"
       data-testid="config-estados"
     >
-      <div
-        class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
-        data-testid="config-states-grid"
+      <BaseView
+        id="config-estados"
+        v-model:search="search"
+        :loading="isLoading"
+        :search-placeholder="t('config.states.search')"
       >
-        <article
-          v-for="state in orderedStates"
-          :key="state.id"
-          class="rounded-lg border border-border bg-surface p-5"
-        >
-          <div class="flex items-start justify-between gap-2">
-            <p class="truncate text-sm font-medium text-text">{{ state.name }}</p>
+        <template #grid>
+          <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <ConfigCard
+              v-for="(state, index) in visibleStates"
+              :key="state.id"
+              :name="state.name"
+              :subtitle="t('config.states.position', { n: index + 1 })"
+              :edit-label="t('config.drawer.editState')"
+              :delete-label="t('config.states.delete')"
+              @edit="openEdit('estados', state.id)"
+              @remove="deleteState(state.id)"
+            />
             <button
               type="button"
-              class="rounded p-1 text-text-2 transition-colors hover:bg-surface-2 hover:text-text"
-              :aria-label="t('config.states.rename')"
-              @click="renameState(state.id, state.name)"
+              class="flex min-h-24 flex-col items-center justify-center gap-1 rounded-[var(--radius)] border border-dashed border-border p-5 text-text-2 transition-colors hover:border-primary-300 hover:text-text"
+              data-testid="config-add-state"
+              @click="openCreate('estados')"
             >
-              <PhDotsThree :size="16" weight="bold" />
+              <PhPlus :size="20" weight="regular" />
+              <span class="text-sm">{{ t("config.states.add") }}</span>
             </button>
           </div>
-          <button
-            type="button"
-            class="mt-3 inline-flex items-center gap-1 text-xs text-text-2 transition-colors hover:text-error"
-            :aria-label="t('config.states.delete')"
-            @click="deleteState(state.id)"
-          >
-            <PhTrash :size="14" weight="regular" />
-            {{ t("config.states.delete") }}
-          </button>
-        </article>
-
-        <form
-          class="flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border p-5 text-center"
-          @submit.prevent="submitNewState"
-        >
-          <PhPlus :size="20" weight="regular" class="text-text-2" />
-          <p class="text-sm text-text-2">{{ t("config.states.add") }}</p>
-          <input
-            v-model="newStateName"
-            type="text"
-            :placeholder="t('config.states.namePlaceholder')"
-            class="h-9 w-full rounded-md border border-border bg-surface px-3 text-sm text-text outline-none focus:border-accent"
-          />
-          <button
-            type="submit"
-            :disabled="saving"
-            class="rounded bg-accent px-3 py-1.5 text-xs font-semibold text-accent-fg transition-colors hover:bg-accent-hover disabled:opacity-60"
-          >
-            {{ t("config.states.save") }}
-          </button>
-        </form>
-      </div>
+        </template>
+        <template #list>
+          <ul class="divide-y divide-border rounded-[var(--radius)] border border-border bg-surface">
+            <li
+              v-for="(state, index) in visibleStates"
+              :key="state.id"
+              class="flex items-center justify-between gap-3 px-4 py-3"
+            >
+              <div class="min-w-0">
+                <p class="truncate text-sm font-medium text-text">{{ state.name }}</p>
+                <p class="truncate text-xs text-text-2">
+                  {{ t("config.states.position", { n: index + 1 }) }}
+                </p>
+              </div>
+              <div class="flex shrink-0 gap-1">
+                <button
+                  type="button"
+                  class="rounded p-1 text-text-2 transition-colors hover:bg-surface-2 hover:text-text"
+                  :aria-label="t('config.drawer.editState')"
+                  @click="openEdit('estados', state.id)"
+                >
+                  <PhPencilSimple :size="15" weight="regular" />
+                </button>
+                <button
+                  type="button"
+                  class="rounded p-1 text-text-2 transition-colors hover:bg-surface-2 hover:text-error"
+                  :aria-label="t('config.states.delete')"
+                  @click="deleteState(state.id)"
+                >
+                  <PhTrash :size="15" weight="regular" />
+                </button>
+              </div>
+            </li>
+          </ul>
+        </template>
+      </BaseView>
 
       <p
         class="mt-6 flex items-start gap-2 rounded-lg bg-primary-50 px-4 py-3 text-sm text-primary-700"
       >
         <PhInfo :size="16" weight="bold" class="mt-0.5 shrink-0" />
         <span>{{ t("config.states.info") }}</span>
+      </p>
+    </div>
+
+    <!-- ── Categorías ─────────────────────────────────────────── -->
+    <div
+      v-else-if="activeTab === 'categorias'"
+      class="mt-6"
+      data-testid="config-categorias"
+    >
+      <BaseView
+        id="config-categorias"
+        v-model:search="search"
+        :loading="isLoading"
+        :search-placeholder="t('config.categorias.search')"
+      >
+        <template #grid>
+          <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <ConfigCard
+              v-for="category in visibleCategories"
+              :key="category.id"
+              :name="category.name"
+              :subtitle="
+                categoryTypeName(category, types) ??
+                t('config.drawer.type')
+              "
+              :edit-label="t('config.drawer.editCategory')"
+              :delete-label="t('config.categorias.delete')"
+              @edit="openEdit('categorias', category.id)"
+              @remove="deleteCategory(category.id)"
+            />
+            <button
+              type="button"
+              class="flex min-h-24 flex-col items-center justify-center gap-1 rounded-[var(--radius)] border border-dashed border-border p-5 text-text-2 transition-colors hover:border-primary-300 hover:text-text"
+              data-testid="config-add-category"
+              @click="openCreate('categorias')"
+            >
+              <PhPlus :size="20" weight="regular" />
+              <span class="text-sm">{{ t("config.categorias.add") }}</span>
+            </button>
+          </div>
+        </template>
+        <template #list>
+          <ul class="divide-y divide-border rounded-[var(--radius)] border border-border bg-surface">
+            <li
+              v-for="category in visibleCategories"
+              :key="category.id"
+              class="flex items-center justify-between gap-3 px-4 py-3"
+            >
+              <div class="min-w-0">
+                <p class="truncate text-sm font-medium text-text">{{ category.name }}</p>
+                <p class="truncate text-xs text-text-2">
+                  {{ categoryTypeName(category, types) ?? t("config.drawer.type") }}
+                </p>
+              </div>
+              <div class="flex shrink-0 gap-1">
+                <button
+                  type="button"
+                  class="rounded p-1 text-text-2 transition-colors hover:bg-surface-2 hover:text-text"
+                  :aria-label="t('config.drawer.editCategory')"
+                  @click="openEdit('categorias', category.id)"
+                >
+                  <PhPencilSimple :size="15" weight="regular" />
+                </button>
+                <button
+                  type="button"
+                  class="rounded p-1 text-text-2 transition-colors hover:bg-surface-2 hover:text-error"
+                  :aria-label="t('config.categorias.delete')"
+                  @click="deleteCategory(category.id)"
+                >
+                  <PhTrash :size="15" weight="regular" />
+                </button>
+              </div>
+            </li>
+          </ul>
+        </template>
+      </BaseView>
+
+      <p
+        class="mt-6 flex items-start gap-2 rounded-lg bg-primary-50 px-4 py-3 text-sm text-primary-700"
+      >
+        <PhInfo :size="16" weight="bold" class="mt-0.5 shrink-0" />
+        <span>{{ t("config.categorias.info") }}</span>
       </p>
     </div>
 
@@ -473,24 +613,51 @@ function toggleModule(module: TypeModule) {
       class="mt-6"
       data-testid="config-monedas"
     >
-      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <article
-          v-for="currency in currencies"
-          :key="currency.id"
-          class="rounded-lg border border-border bg-surface p-5"
-        >
-          <span
-            class="grid size-9 place-items-center rounded-full bg-primary-50 text-sm font-semibold text-primary-700"
-            aria-hidden="true"
-          >
-            {{ currency.symbol }}
-          </span>
-          <p class="mt-3 text-sm font-medium text-text">{{ currency.name }}</p>
-          <p class="mt-1 text-xs text-text-2">
-            {{ currency.decimals }} {{ t("config.monedas.decimals") }}
-          </p>
-        </article>
-      </div>
+      <BaseView
+        id="config-monedas"
+        v-model:search="search"
+        :loading="isLoading"
+        :search-placeholder="t('config.monedas.search')"
+      >
+        <template #grid>
+          <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <ConfigCard
+              v-for="currency in visibleCurrencies"
+              :key="currency.id"
+              :name="currency.name"
+              :subtitle="`${currency.decimals} ${t('config.monedas.decimals')}`"
+              edit-label=""
+              delete-label=""
+            />
+            <button
+              type="button"
+              class="flex min-h-24 flex-col items-center justify-center gap-1 rounded-[var(--radius)] border border-dashed border-border p-5 text-text-2 transition-colors hover:border-primary-300 hover:text-text"
+              data-testid="config-add-currency"
+              @click="openCreate('monedas')"
+            >
+              <PhPlus :size="20" weight="regular" />
+              <span class="text-sm">{{ t("config.monedas.add") }}</span>
+            </button>
+          </div>
+        </template>
+        <template #list>
+          <ul class="divide-y divide-border rounded-[var(--radius)] border border-border bg-surface">
+            <li
+              v-for="currency in visibleCurrencies"
+              :key="currency.id"
+              class="flex items-center justify-between gap-3 px-4 py-3"
+            >
+              <div class="min-w-0">
+                <p class="truncate text-sm font-medium text-text">{{ currency.name }}</p>
+                <p class="truncate text-xs text-text-2">
+                  {{ currency.decimals }} {{ t("config.monedas.decimals") }}
+                </p>
+              </div>
+            </li>
+          </ul>
+        </template>
+      </BaseView>
+
       <p
         class="mt-6 flex items-start gap-2 rounded-lg bg-primary-50 px-4 py-3 text-sm text-primary-700"
       >
@@ -499,8 +666,39 @@ function toggleModule(module: TypeModule) {
       </p>
     </div>
 
-    <p v-if="isLoading" class="mt-4 text-sm text-text-2">
-      {{ t("common.loading") }}
-    </p>
+    <!-- ── Drawers: creation/edition lives in the URL (PRD §9.1). ── -->
+    <ConfigTypeDrawer
+      :open="drawerOpen && activeTab === 'tipos'"
+      :initial="editingType"
+      :submitting="saving"
+      :error="drawerError"
+      @close="closeDrawer"
+      @submit="submitType"
+    />
+    <ConfigStateDrawer
+      :open="drawerOpen && activeTab === 'estados'"
+      :initial="editingState"
+      :states="orderedStates"
+      :submitting="saving"
+      :error="drawerError"
+      @close="closeDrawer"
+      @submit="submitState"
+    />
+    <ConfigCategoryDrawer
+      :open="drawerOpen && activeTab === 'categorias'"
+      :initial="editingCategory"
+      :types="types"
+      :submitting="saving"
+      :error="drawerError"
+      @close="closeDrawer"
+      @submit="submitCategory"
+    />
+    <ConfigCurrencyDrawer
+      :open="drawerOpen && activeTab === 'monedas'"
+      :submitting="saving"
+      :error="drawerError"
+      @close="closeDrawer"
+      @submit="submitCurrency"
+    />
   </section>
 </template>

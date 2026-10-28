@@ -5,11 +5,14 @@ import { z } from "zod";
  * Every field is optional so a bare route always parses.
  */
 export const configSearchSchema = z.object({
-  // Los tabs que /config implementa contra la API actual (PRD-v4 §8.8).
-  // Categorías y cuentas no tienen endpoints: entran cuando la API los tenga.
+  // Los tabs que /config implementa contra la API (PRD-v4 §8.8).
   tab: z
-    .enum(["perfil", "estados", "tipos", "apps", "monedas"])
+    .enum(["perfil", "estados", "tipos", "categorias", "apps", "monedas"])
     .optional(),
+  // El drawer de creación/edición vive en la URL (PRD-v4 §9.1):
+  // `?tab=tipos&drawer=new` para crear, `?tab=tipos&edit=<id>` para editar.
+  drawer: z.string().min(1).optional(),
+  edit: z.string().min(1).optional(),
 });
 
 export const tasksSearchSchema = z.object({

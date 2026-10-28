@@ -55,6 +55,15 @@
   --radius-xl: 1.25rem; /* contenedores destacados */
   --radius-full: 9999px; /* pills, avatares, botones primarios */
 
+  /* Elevación funcional (PRD-v4 §11.5 bans): solo drag/popover/drawer */
+  --shadow-elevation: 0 8px 24px rgb(0 0 0 / 0.08);
+
+  /* Motion (PRD-v4 §11.5 momentos fijos) */
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+  --duration-drawer: 250ms;
+  --duration-hover: 150ms;
+
   /* Type: Roboto, escala ratio ~1.125 */
   --font-family: "Roboto", system-ui, sans-serif;
 }
@@ -71,4 +80,5 @@
   --color-accent-fg: var(--color-zinc-950);
   --color-error: #f87171;
   --color-warning: #fbbf24;
+  --shadow-elevation: 0 8px 24px rgb(0 0 0 / 0.4);
 }

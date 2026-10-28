@@ -72,8 +72,13 @@ export type ConfigProcedure =
   | "states.update"
   | "states.remove"
   | "states.reorder"
+  | "categories.list"
+  | "categories.create"
+  | "categories.update"
+  | "categories.remove"
   | "listApps"
-  | "listCurrencies";
+  | "listCurrencies"
+  | "createCurrency";
 
 /** The wire shape of a type, as the API returns it. */
 export interface TypeWire {
@@ -102,6 +107,14 @@ export interface CurrencyWire {
   name: string;
   symbol: string;
   decimals: number;
+}
+
+/** The wire shape of a category, as the API returns it. */
+export interface CategoryWire {
+  cate_id: string;
+  cate_name: string;
+  cate_type_id: string;
+  cate_created_at: string;
 }
 
 export interface ConfigProcedureMap {
@@ -141,6 +154,22 @@ export interface ConfigProcedureMap {
     input: { tast_id: string; tast_order: number }[];
     output: { ok: true };
   };
+  "categories.list": {
+    input: { search?: string; typeId?: string | null; limit?: number };
+    output: CategoryWire[];
+  };
+  "categories.create": {
+    input: { cate_name: string; cate_type_id: string };
+    output: CategoryWire;
+  };
+  "categories.update": {
+    input: { cate_id: string; cate_name?: string; cate_type_id?: string };
+    output: CategoryWire;
+  };
+  "categories.remove": {
+    input: { cate_id: string };
+    output: { ok: true };
+  };
   listApps: {
     input: undefined;
     output: AppWire[];
@@ -148,6 +177,10 @@ export interface ConfigProcedureMap {
   listCurrencies: {
     input: undefined;
     output: CurrencyWire[];
+  };
+  createCurrency: {
+    input: { name: string; symbol: string; decimals: number };
+    output: CurrencyWire;
   };
 }
 
@@ -249,6 +282,11 @@ const CONFIG_PROCEDURE_PATHS: Record<ConfigProcedure, readonly string[]> = {
   "states.update": ["tasks", "states", "update"],
   "states.remove": ["tasks", "states", "remove"],
   "states.reorder": ["tasks", "states", "reorder"],
+  "categories.list": ["categories", "list"],
+  "categories.create": ["categories", "create"],
+  "categories.update": ["categories", "update"],
+  "categories.remove": ["categories", "remove"],
   listApps: ["config", "listApps"],
   listCurrencies: ["config", "listCurrencies"],
+  createCurrency: ["config", "createCurrency"],
 };

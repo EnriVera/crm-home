@@ -71,6 +71,7 @@ import {
   type SchedulesRouteDependencies,
 } from "./schedules/schedules-routes";
 import {
+  createCreateCurrencyHandler,
   createListAppsHandler,
   createListCurrenciesHandler,
   type ConfigRouteDependencies,
@@ -82,6 +83,13 @@ import {
   createUpdateTypeHandler,
   type TypesRouteDependencies,
 } from "./types/types-routes";
+import {
+  createCreateCategoryHandler,
+  createListCategoriesHandler,
+  createRemoveCategoryHandler,
+  createUpdateCategoryHandler,
+  type CategoriesRouteDependencies,
+} from "./categories/categories-routes";
 
 export interface RouterDependencies
   extends AuthRouteDependencies,
@@ -92,7 +100,8 @@ export interface RouterDependencies
     TransfersRouteDependencies,
     SchedulesRouteDependencies,
     ConfigRouteDependencies,
-    TypesRouteDependencies {
+    TypesRouteDependencies,
+    CategoriesRouteDependencies {
   getHealth: GetHealth;
   listClientsHandler: ReturnType<typeof createListClientsHandler>;
 }
@@ -206,11 +215,17 @@ export function createRpcHandler(
 
   const listAppsH3 = asBridgeHandler(createListAppsHandler(deps));
   const listCurrenciesH3 = asBridgeHandler(createListCurrenciesHandler(deps));
+  const createCurrencyH3 = asBridgeHandler(createCreateCurrencyHandler(deps));
 
   const listTypesH3 = asBridgeHandler(createListTypesHandler(deps));
   const createTypeH3 = asBridgeHandler(createCreateTypeHandler(deps));
   const updateTypeH3 = asBridgeHandler(createUpdateTypeHandler(deps));
   const removeTypeH3 = asBridgeHandler(createRemoveTypeHandler(deps));
+
+  const listCategoriesH3 = asBridgeHandler(createListCategoriesHandler(deps));
+  const createCategoryH3 = asBridgeHandler(createCreateCategoryHandler(deps));
+  const updateCategoryH3 = asBridgeHandler(createUpdateCategoryHandler(deps));
+  const removeCategoryH3 = asBridgeHandler(createRemoveCategoryHandler(deps));
 
   const typesForFormH3 = createListTypesForFormHandler(deps);
   const categoriesByTypeH3 = createListCategoriesByTypeHandler(deps);
@@ -493,6 +508,11 @@ export function createRpcHandler(
     },
     {
       method: "POST",
+      path: "/config/createCurrency",
+      run: wrapPost(createCurrencyH3, "/config/createCurrency"),
+    },
+    {
+      method: "POST",
       path: "/types/list",
       run: wrapPost(listTypesH3, "/types/list"),
     },
@@ -510,6 +530,26 @@ export function createRpcHandler(
       method: "POST",
       path: "/types/remove",
       run: wrapPost(removeTypeH3, "/types/remove"),
+    },
+    {
+      method: "POST",
+      path: "/categories/list",
+      run: wrapPost(listCategoriesH3, "/categories/list"),
+    },
+    {
+      method: "POST",
+      path: "/categories/create",
+      run: wrapPost(createCategoryH3, "/categories/create"),
+    },
+    {
+      method: "POST",
+      path: "/categories/update",
+      run: wrapPost(updateCategoryH3, "/categories/update"),
+    },
+    {
+      method: "POST",
+      path: "/categories/remove",
+      run: wrapPost(removeCategoryH3, "/categories/remove"),
     },
   ];
 

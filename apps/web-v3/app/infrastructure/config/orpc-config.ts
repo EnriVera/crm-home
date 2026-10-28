@@ -8,6 +8,7 @@
  */
 import type {
   AppModule,
+  Category,
   Currency,
   TaskState,
   TaskType,
@@ -16,6 +17,7 @@ import type {
 import {
   callConfig,
   type AppWire,
+  type CategoryWire,
   type CurrencyWire,
   type TaskStateConfigWire,
   type TypeWire,
@@ -35,6 +37,15 @@ function toState(wire: TaskStateConfigWire): TaskState {
     id: wire.tast_id,
     name: wire.tast_name,
     order: wire.tast_order,
+  };
+}
+
+function toCategory(wire: CategoryWire): Category {
+  return {
+    id: wire.cate_id,
+    name: wire.cate_name,
+    typeId: wire.cate_type_id,
+    createdAt: new Date(wire.cate_created_at),
   };
 }
 
@@ -143,8 +154,59 @@ export async function listApps(): Promise<AppModule[]> {
   return wire.map(toApp);
 }
 
-/** The currencies (global table, read-only in the MVP). */
+/** The currencies (global table). */
 export async function listCurrencies(): Promise<Currency[]> {
   const wire = await callConfig("listCurrencies", undefined);
   return wire.map(toCurrency);
+}
+
+/** Creates a currency in the global table (visible to every user). */
+export async function createCurrency(input: {
+  name: string;
+  symbol: string;
+  decimals: number;
+}): Promise<Currency> {
+  const wire = await callConfig("createCurrency", input);
+  return toCurrency(wire);
+}
+
+/** Every category of the user, filtered by search/type. */
+export async function listCategories(input?: {
+  search?: string;
+  typeId?: string | null;
+}): Promise<Category[]> {
+  const wire = await callConfig("categories.list", {
+    search: input?.search ?? "",
+    typeId: input?.typeId ?? null,
+    limit: 100,
+  });
+  return wire.map(toCategory);
+}
+
+export async function createCategory(input: {
+  name: string;
+  typeId: string;
+}): Promise<Category> {
+  const wire = await callConfig("categories.create", {
+    cate_name: input.name,
+    cate_type_id: input.typeId,
+  });
+  return toCategory(wire);
+}
+
+export async function updateCategory(input: {
+  id: string;
+  name?: string;
+  typeId?: string;
+}): Promise<Category> {
+  const wire = await callConfig("categories.update", {
+    cate_id: input.id,
+    ...(input.name !== undefined ? { cate_name: input.name } : {}),
+    ...(input.typeId !== undefined ? { cate_type_id: input.typeId } : {}),
+  });
+  return toCategory(wire);
+}
+
+export async function removeCategory(id: string): Promise<void> {
+  await callConfig("categories.remove", { cate_id: id });
 }

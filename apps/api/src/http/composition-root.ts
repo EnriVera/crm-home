@@ -30,10 +30,15 @@ import { UpdateTransfer } from "../application/transfers/update-transfer";
 import { RemoveTransfer } from "../application/transfers/remove-transfer";
 import { ListApps } from "../application/config/list-apps";
 import { ListCurrencies } from "../application/config/list-currencies";
+import { CreateCurrency } from "../application/config/create-currency";
 import { ListTypes } from "../application/types/list-types";
 import { CreateType } from "../application/types/create-type";
 import { UpdateType } from "../application/types/update-type";
 import { RemoveType } from "../application/types/remove-type";
+import { ListCategories } from "../application/categories/list-categories";
+import { CreateCategory } from "../application/categories/create-category";
+import { UpdateCategory } from "../application/categories/update-category";
+import { RemoveCategory } from "../application/categories/remove-category";
 import { ListSchedules } from "../application/schedules/list-schedules";
 import { CreateSchedule } from "../application/schedules/create-schedule";
 import { UpdateSchedule } from "../application/schedules/update-schedule";
@@ -63,6 +68,7 @@ import { KyselyTransferRepository } from "../infrastructure/kysely/transfer-repo
 import { KyselyAppRepository } from "../infrastructure/kysely/app-repository";
 import { KyselyCurrencyRepository } from "../infrastructure/kysely/currency-repository";
 import { KyselyTypeRepository } from "../infrastructure/kysely/type-repository";
+import { KyselyCategoryRepository } from "../infrastructure/kysely/category-repository";
 import { KyselyScheduleRepository } from "../infrastructure/kysely/schedule-repository";
 import { KyselyEmailSendingRepository } from "../infrastructure/kysely/email-sending-repository";
 import { KyselyLoginRepository } from "../infrastructure/kysely/login-repository";
@@ -262,6 +268,7 @@ export function createCompositionRoot(
     const appRepository = new KyselyAppRepository(db);
     const currencyRepository = new KyselyCurrencyRepository(db);
     const typeRepository = new KyselyTypeRepository(db);
+    const categoryRepository = new KyselyCategoryRepository(db);
     const listExpenses = new ListExpenses({ expenseRepository });
     const createExpenseUseCase = new CreateExpense({ expenseRepository });
     const updateExpenseUseCase = new UpdateExpense({ expenseRepository });
@@ -276,10 +283,21 @@ export function createCompositionRoot(
     const removeScheduleUseCase = new RemoveSchedule({ scheduleRepository });
     const listApps = new ListApps({ appRepository });
     const listCurrencies = new ListCurrencies({ currencyRepository });
+    const createCurrency = new CreateCurrency({ currencyRepository });
     const listTypes = new ListTypes({ typeRepository });
     const createType = new CreateType({ typeRepository });
     const updateType = new UpdateType({ typeRepository });
     const removeType = new RemoveType({ typeRepository });
+    const listCategories = new ListCategories({ categoryRepository });
+    const createCategory = new CreateCategory({
+      categoryRepository,
+      typeRepository,
+    });
+    const updateCategory = new UpdateCategory({
+      categoryRepository,
+      typeRepository,
+    });
+    const removeCategory = new RemoveCategory({ categoryRepository });
     const listClientsForSelector = new ListClientsForSelector({
       clientLookupRepository,
     });
@@ -334,10 +352,15 @@ export function createCompositionRoot(
       listCategoriesByType,
       listApps,
       listCurrencies,
+      createCurrency,
       listTypes,
       createType,
       updateType,
       removeType,
+      listCategories,
+      createCategory,
+      updateCategory,
+      removeCategory,
     });
     app.all("/rpc/**", (event) => rpcHandler(event));
   } else {

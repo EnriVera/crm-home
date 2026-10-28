@@ -110,3 +110,17 @@
     animation: none;
   }
 }
+
+/* PRD-v4 §11.5: todo respeta prefers-reduced-motion (se reduce a cambios
+   instantáneos). Guard global para las transiciones de UI (drawer, hover,
+   stagger); los loops con keyframe se apagan por componente como el
+   shimmer de arriba. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

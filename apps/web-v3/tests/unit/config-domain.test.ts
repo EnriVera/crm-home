@@ -109,3 +109,65 @@ describe("taskCountByType", () => {
     expect(counts.get("t3")).toBeUndefined();
   });
 });
+
+describe("filterStates / filterCurrencies / filterCategories", () => {
+  it("filters states by name, case-insensitive", async () => {
+    const { filterStates } = await import("~/domain/config/entities");
+    const states = [
+      { id: "s1", name: "Pendiente", order: 1 },
+      { id: "s2", name: "En progreso", order: 2 },
+    ];
+    expect(filterStates(states, "pen")).toHaveLength(1);
+    expect(filterStates(states, "PROGRESO")).toHaveLength(1);
+    expect(filterStates(states, "  ")).toHaveLength(2);
+    expect(filterStates(states, "zzz")).toHaveLength(0);
+  });
+
+  it("filters currencies by name or symbol", async () => {
+    const { filterCurrencies } = await import("~/domain/config/entities");
+    const currencies = [
+      { id: "c1", name: "Peso argentino", symbol: "$", decimals: 2 },
+      { id: "c2", name: "Dólar estadounidense", symbol: "US$", decimals: 2 },
+    ];
+    expect(filterCurrencies(currencies, "dólar")).toHaveLength(1);
+    expect(filterCurrencies(currencies, "us$")).toHaveLength(1);
+    expect(filterCurrencies(currencies, "")).toHaveLength(2);
+  });
+
+  it("filters categories by name", async () => {
+    const { filterCategories } = await import("~/domain/config/entities");
+    const categories = [
+      { id: "k1", name: "Web", typeId: "t1", createdAt: new Date() },
+      { id: "k2", name: "Branding", typeId: "t1", createdAt: new Date() },
+    ];
+    expect(filterCategories(categories, "brand")).toHaveLength(1);
+    expect(filterCategories(categories, "")).toHaveLength(2);
+  });
+});
+
+describe("categoryTypeName", () => {
+  it("resolves the parent type name", async () => {
+    const { categoryTypeName } = await import("~/domain/config/entities");
+    const types = [
+      { id: "t1", name: "Diseño", modules: ["tasks"] as const, createdAt: new Date() },
+    ];
+    const category = {
+      id: "k1",
+      name: "Web",
+      typeId: "t1",
+      createdAt: new Date(),
+    };
+    expect(categoryTypeName(category, types)).toBe("Diseño");
+  });
+
+  it("returns null when the type is not loaded", async () => {
+    const { categoryTypeName } = await import("~/domain/config/entities");
+    const category = {
+      id: "k1",
+      name: "Web",
+      typeId: "missing",
+      createdAt: new Date(),
+    };
+    expect(categoryTypeName(category, [])).toBeNull();
+  });
+});

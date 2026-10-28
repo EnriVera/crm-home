@@ -34,6 +34,19 @@ export interface TaskState {
   order: number;
 }
 
+/**
+ * A category of a task type (PRD-v2 §8.7, tab `categorías`).
+ *
+ * A category always belongs to a type (`categories.cate_type_id` NOT NULL):
+ * the type is its grouping, not an optional tag.
+ */
+export interface Category {
+  id: string;
+  name: string;
+  typeId: string;
+  createdAt: Date;
+}
+
 /** An application module (global, read-only in the MVP). */
 export interface AppModule {
   id: string;
@@ -83,6 +96,60 @@ export function filterTypes(
   const needle = search.trim().toLowerCase();
   if (!needle) return types;
   return types.filter((type) => type.name.toLowerCase().includes(needle));
+}
+
+/**
+ * The categories that match a search term.
+ *
+ * Local filter for the same reason as `filterTypes`: the list is small and
+ * the search box is instant.
+ */
+export function filterCategories(
+  categories: Category[],
+  search: string,
+): Category[] {
+  const needle = search.trim().toLowerCase();
+  if (!needle) return categories;
+  return categories.filter((category) =>
+    category.name.toLowerCase().includes(needle),
+  );
+}
+
+/** The states whose name matches a search term. */
+export function filterStates(
+  states: TaskState[],
+  search: string,
+): TaskState[] {
+  const needle = search.trim().toLowerCase();
+  if (!needle) return states;
+  return states.filter((state) => state.name.toLowerCase().includes(needle));
+}
+
+/** The currencies whose name or symbol matches a search term. */
+export function filterCurrencies(
+  currencies: Currency[],
+  search: string,
+): Currency[] {
+  const needle = search.trim().toLowerCase();
+  if (!needle) return currencies;
+  return currencies.filter(
+    (currency) =>
+      currency.name.toLowerCase().includes(needle) ||
+      currency.symbol.toLowerCase().includes(needle),
+  );
+}
+
+/**
+ * The name of the type a category belongs to, for display.
+ *
+ * Returns null when the type is not loaded (the categories tab loads both,
+ * so this only happens mid-flight).
+ */
+export function categoryTypeName(
+  category: Category,
+  types: TaskType[],
+): string | null {
+  return types.find((type) => type.id === category.typeId)?.name ?? null;
 }
 
 /**

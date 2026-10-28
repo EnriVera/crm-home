@@ -3,6 +3,7 @@ export type {
   AppWire,
   AuthProcedure,
   AuthProcedureMap,
+  CategoryWire,
   ConfigProcedure,
   ConfigProcedureMap,
   CurrencyWire,

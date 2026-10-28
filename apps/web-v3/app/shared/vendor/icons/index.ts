@@ -7,8 +7,10 @@ export {
   PhEnvelope,
   PhGear,
   PhInfo,
+  PhList,
   PhMagnifyingGlass,
   PhMoon,
+  PhPencilSimple,
   PhPlus,
   PhShieldCheck,
   PhSignOut,
@@ -20,4 +22,5 @@ export {
   PhTrendUp,
   PhUser,
   PhUsers,
+  PhX,
 } from '@phosphor-icons/vue'
