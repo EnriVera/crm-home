@@ -44,6 +44,7 @@ export default defineI18nConfig(() => ({
         timerIdle: "No hay ningún timer corriendo.",
         timerCta: "Iniciá tu primer timer",
         stats: {
+          ariaLabel: "Resumen del mes",
           income: "Ingresos del mes",
           incomeHint: "Movimientos de este mes",
           expense: "Gastos del mes",

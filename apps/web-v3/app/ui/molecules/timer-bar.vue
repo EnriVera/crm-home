@@ -16,7 +16,7 @@ const props = defineProps<{
   run: TimerRun | null;
   elapsedSeconds: number;
   /** Titles of the user's tasks (native autocomplete for the free timer). */
-  taskTitles: string[];
+  taskTitles?: string[] | undefined;
   typeName: string | null;
   categoryName: string | null;
   clientName: string | null;
@@ -125,7 +125,11 @@ function onStart() {
         />
       </label>
       <datalist :id="taskListId">
-        <option v-for="taskTitle in taskTitles" :key="taskTitle" :value="taskTitle" />
+        <option
+          v-for="taskTitle in taskTitles ?? []"
+          :key="taskTitle"
+          :value="taskTitle"
+        />
       </datalist>
       <button
         type="button"

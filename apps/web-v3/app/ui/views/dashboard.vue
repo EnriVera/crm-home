@@ -26,8 +26,8 @@ const {
   formatMoney,
 } = useDashboard();
 
-// The timer: the SAME composable as /schedules, so the dashboard clock
-// cannot get out of sync (PRD-v4 §8.3: the "Timer activo" (active timer) card).
+// The timer: the same composable as /schedules, so the dashboard clock
+// cannot drift from the timer screen (PRD-v4 §8.3: the "Timer activo" card).
 const { run, history, elapsedSeconds, sync, stop } = useTimer();
 const activity = computed(() => recentActivity(history.value));
 
@@ -79,7 +79,7 @@ async function onStop() {
       </div>
       <NuxtLink
         to="/tasks"
-        class="rounded bg-accent px-4 py-2 text-sm font-semibold text-accent-fg transition duration-100 ease-out hover:bg-accent-hover active:scale-[0.97]"
+        class="rounded-[var(--radius)] bg-accent px-4 py-2 text-sm font-semibold text-accent-fg transition duration-100 ease-out hover:bg-accent-hover active:scale-[0.97]"
       >
         {{ t("dashboard.newTask") }}
       </NuxtLink>
@@ -89,7 +89,37 @@ async function onStop() {
       {{ t(error) }}
     </p>
 
-    <!-- Active timer (CONDITIONAL: only when there is a running timer,
+    <!-- An empty dashboard explains what to do (PRD-v2 §8.2). -->
+    <div
+      v-if="!isLoading && isEmpty"
+      class="mt-6 rounded-[var(--radius)] border border-border bg-surface p-8 text-center"
+      data-testid="dashboard-empty"
+    >
+      <span
+        class="mx-auto grid size-12 place-items-center rounded-full bg-primary-50 text-primary-700"
+        aria-hidden="true"
+      >
+        <PhCheckSquare :size="24" weight="bold" />
+      </span>
+      <h2 class="mt-4 text-base font-semibold text-text">
+        {{ t("dashboard.emptyTitle") }}
+      </h2>
+      <div class="mt-4 flex flex-wrap justify-center gap-3">
+        <NuxtLink
+          to="/tasks"
+          class="rounded-[var(--radius)] bg-accent px-4 py-2 text-sm font-semibold text-accent-fg transition duration-100 ease-out hover:bg-accent-hover"
+        >
+          {{ t("dashboard.emptyCreateTask") }}
+        </NuxtLink>
+        <NuxtLink
+          to="/schedules"
+          class="rounded-[var(--radius)] border border-border px-4 py-2 text-sm font-medium text-text transition-colors hover:bg-surface-2"
+        >
+          {{ t("dashboard.emptyStartTimer") }}
+        </NuxtLink>
+      </div>
+    </div>
+    <!-- The timer card only shows when there is a running timer,
          PRD-v4 §8.3 — absence of data, not a placeholder). -->
     <article
       v-if="run"
@@ -102,7 +132,6 @@ async function onStop() {
       <TimerBar
         :run="run"
         :elapsed-seconds="elapsedSeconds"
-        :task-titles="[]"
         :type-name="run.typeId ? (typeNameById.get(run.typeId) ?? null) : null"
         :category-name="run.categoryId ? (categoryNameById.get(run.categoryId) ?? null) : null"
         :client-name="run.clientId ? (clientNameById.get(run.clientId) ?? null) : null"
@@ -111,9 +140,10 @@ async function onStop() {
       />
     </article>
 
-    <!-- Stat cards (PRD-v4 §8.3: income, expenses, active tasks, clients). -->
-    <div
+    <!-- The month in numbers (PRD-v4 §8.3). -->
+    <section
       class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+      :aria-label="t('dashboard.stats.ariaLabel')"
       data-testid="dashboard-stats"
     >
       <article class="rounded-[var(--radius)] border border-border bg-surface p-5">
@@ -163,10 +193,10 @@ async function onStop() {
           {{ t("dashboard.stats.clientsHint") }}
         </p>
       </article>
-    </div>
+    </section>
 
     <div class="mt-6 grid gap-4 lg:grid-cols-3">
-      <!-- Upcoming tasks (2/3 of the width). -->
+      <!-- The tasks that come next (2/3 of the width). -->
       <section class="lg:col-span-2" aria-labelledby="dashboard-recent-title">
         <div class="flex items-baseline justify-between gap-4">
           <h2
@@ -214,7 +244,6 @@ async function onStop() {
                 {{ categoryNameById.get(task.categoryId) }}
               </span>
               <span
-                v-else
                 class="shrink-0 rounded-full bg-surface-2 px-2 py-0.5 text-xs font-medium text-text-2"
               >
                 {{ stateName(task.stateId) }}
@@ -224,7 +253,7 @@ async function onStop() {
         </div>
       </section>
 
-      <!-- Recent activity (1/3 of the width). -->
+      <!-- The last movements of the timer (1/3 of the width). -->
       <section aria-labelledby="dashboard-activity-title">
         <h2
           id="dashboard-activity-title"
@@ -265,7 +294,7 @@ async function onStop() {
       </section>
     </div>
 
-    <!-- Task counts per column: the dashboard summary by state (PRD-v2 §8.2). -->
+    <!-- How many tasks each column has (PRD-v2 §8.2). -->
     <section class="mt-6" aria-labelledby="dashboard-states-title">
       <div class="flex items-baseline justify-between gap-4">
         <h2
@@ -286,7 +315,7 @@ async function onStop() {
         <article
           v-for="tally in tallies"
           :key="tally.state.id"
-          class="rounded-lg border border-border bg-surface p-5"
+          class="rounded-[var(--radius)] border border-border bg-surface p-5"
         >
           <p class="text-xs font-medium uppercase tracking-wide text-text-2">
             {{ tally.state.name }}
@@ -298,35 +327,5 @@ async function onStop() {
       </div>
     </section>
 
-    <!-- Empty state (PRD-v2 §8.2: never a blank screen). -->
-    <div
-      v-if="!isLoading && isEmpty"
-      class="mt-6 rounded-lg border border-border bg-surface p-8 text-center"
-      data-testid="dashboard-empty"
-    >
-      <span
-        class="mx-auto grid size-12 place-items-center rounded-full bg-primary-50 text-primary-700"
-        aria-hidden="true"
-      >
-        <PhCheckSquare :size="24" weight="bold" />
-      </span>
-      <h2 class="mt-4 text-base font-semibold text-text">
-        {{ t("dashboard.emptyTitle") }}
-      </h2>
-      <div class="mt-4 flex flex-wrap justify-center gap-3">
-        <NuxtLink
-          to="/tasks"
-          class="rounded bg-accent px-4 py-2 text-sm font-semibold text-accent-fg transition duration-100 ease-out hover:bg-accent-hover"
-        >
-          {{ t("dashboard.emptyCreateTask") }}
-        </NuxtLink>
-        <NuxtLink
-          to="/schedules"
-          class="rounded border border-border px-4 py-2 text-sm font-medium text-text transition-colors hover:bg-surface-2"
-        >
-          {{ t("dashboard.emptyStartTimer") }}
-        </NuxtLink>
-      </div>
-    </div>
   </section>
 </template>
