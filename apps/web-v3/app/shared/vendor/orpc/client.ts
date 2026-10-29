@@ -114,8 +114,69 @@ export interface TaskProcedureMap {
   };
 }
 
+/** The timer procedures this app talks to (PRD-v4 §8.5). */
+export type TimerProcedure = "current" | "start" | "stop" | "heartbeat" | "history";
+
+export interface TimerProcedureMap {
+  current: {
+    input: undefined;
+    output: TimerWire | null;
+  };
+  start: {
+    input: {
+      timer_title: string;
+      timer_task_id?: string | null;
+      timer_client_id?: string | null;
+      timer_type_id?: string | null;
+      timer_category_id?: string | null;
+      timer_origin?: "manual" | "resumed";
+    };
+    output: TimerWire;
+  };
+  stop: {
+    input: { timer_id: string };
+    output: TimerWire;
+  };
+  heartbeat: {
+    input: { timer_id: string; timer_at?: string };
+    output: TimerWire;
+  };
+  history: {
+    input: {
+      timer_from?: string;
+      timer_to?: string;
+      timer_type_id?: string;
+      timer_category_id?: string;
+      timer_task_id?: string;
+      timer_search?: string;
+      timer_limit?: number;
+    };
+    output: TimerWire[];
+  };
+}
+
+/** The wire shape of a timer run, as the API returns it. */
+export interface TimerWire {
+  timer_id: string;
+  timer_title: string;
+  timer_task_id: string | null;
+  timer_client_id: string | null;
+  timer_type_id: string | null;
+  timer_category_id: string | null;
+  timer_start: string;
+  timer_end: string | null;
+  timer_duration_seconds: number | null;
+  timer_origin: "manual" | "resumed";
+  timer_last_heartbeat: string | null;
+}
+
 /** The client procedures this app talks to (task drawer select). */
-export type ClientProcedure = "list" | "create" | "update" | "remove" | "dependencies";
+export type ClientProcedure =
+  | "list"
+  | "create"
+  | "update"
+  | "remove"
+  | "dependencies";
 
 export interface ClientProcedureMap {
   list: {
@@ -353,6 +414,21 @@ export function callTasks<P extends TaskProcedure>(
       ? ["tasks", "states", "list"]
       : ["tasks", procedure];
   return callProcedure<TaskProcedureMap[P]["output"]>(segments, input);
+}
+
+/**
+ * Calls one timer procedure. The timer lives under the `timers` segment of
+ * the orpc router (it is NOT the `schedules` context, which holds the
+ * recurring billing rules).
+ */
+export function callTimers<P extends TimerProcedure>(
+  procedure: P,
+  input: TimerProcedureMap[P]["input"],
+): Promise<TimerProcedureMap[P]["output"]> {
+  return callProcedure<TimerProcedureMap[P]["output"]>(
+    ["timers", procedure],
+    input,
+  );
 }
 
 /**

@@ -96,6 +96,33 @@ describe.skipIf(!databaseUrl)("002_tasks migration (integration)", () => {
 
   afterAll(async () => {
     if (!db) return;
+    // Los tests de este archivo siembran usuarios con ids fijos: si quedan,
+    // la próxima corrida del suite falla con "key already exists". Se
+    // borran en orden inverso de FKs (hijo → padre).
+    await sql`DELETE FROM task_attachments WHERE taat_task_id IN (SELECT task_id FROM task WHERE task_user_id IN (SELECT user_id FROM "user" WHERE user_email LIKE 'wu%@example.com'))`.execute(
+      unknownDb,
+    );
+    await sql`DELETE FROM task WHERE task_user_id IN (SELECT user_id FROM "user" WHERE user_email LIKE 'wu%@example.com')`.execute(
+      unknownDb,
+    );
+    await sql`DELETE FROM type_categories_client WHERE tccl_clie_id IN (SELECT clie_id FROM client WHERE clie_user_id IN (SELECT user_id FROM "user" WHERE user_email LIKE 'wu%@example.com'))`.execute(
+      unknownDb,
+    );
+    await sql`DELETE FROM categories WHERE cate_user_id IN (SELECT user_id FROM "user" WHERE user_email LIKE 'wu%@example.com')`.execute(
+      unknownDb,
+    );
+    await sql`DELETE FROM types WHERE type_user_id IN (SELECT user_id FROM "user" WHERE user_email LIKE 'wu%@example.com')`.execute(
+      unknownDb,
+    );
+    await sql`DELETE FROM client WHERE clie_user_id IN (SELECT user_id FROM "user" WHERE user_email LIKE 'wu%@example.com')`.execute(
+      unknownDb,
+    );
+    await sql`DELETE FROM task_state WHERE tast_user_id IN (SELECT user_id FROM "user" WHERE user_email LIKE 'wu%@example.com')`.execute(
+      unknownDb,
+    );
+    await sql`DELETE FROM "user" WHERE user_email LIKE 'wu%@example.com'`.execute(
+      unknownDb,
+    );
     await db.destroy();
   });
 

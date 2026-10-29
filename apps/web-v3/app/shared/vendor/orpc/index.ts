@@ -4,6 +4,7 @@ export {
   callClients,
   callConfig,
   callTasks,
+  callTimers,
 } from "./client";
 export type {
   AppWire,
@@ -21,6 +22,9 @@ export type {
   TaskStateConfigWire,
   TaskStateWire,
   TaskWire,
+  TimerProcedure,
+  TimerProcedureMap,
+  TimerWire,
   TypeWire,
 } from "./client";
 

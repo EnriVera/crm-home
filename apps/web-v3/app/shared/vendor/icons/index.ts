@@ -1,4 +1,5 @@
 export {
+  PhArrowCounterClockwise,
   PhArrowsLeftRight,
   PhCheck,
   PhCheckSquare,
@@ -14,10 +15,12 @@ export {
   PhMagnifyingGlass,
   PhMoon,
   PhPencilSimple,
+  PhPlay,
   PhPlus,
   PhShieldCheck,
   PhSignOut,
   PhSlidersHorizontal,
+  PhSquare,
   PhSquaresFour,
   PhSun,
   PhTextB,

@@ -91,6 +91,14 @@ import {
   createUpdateCategoryHandler,
   type CategoriesRouteDependencies,
 } from "./categories/categories-routes";
+import {
+  createGetCurrentTimerHandler,
+  createHeartbeatTimerHandler,
+  createListTimerRunsHandler,
+  createStartTimerHandler,
+  createStopTimerHandler,
+  type TimerRouteDependencies,
+} from "./timers/timer-routes";
 
 export interface RouterDependencies
   extends AuthRouteDependencies,
@@ -102,7 +110,8 @@ export interface RouterDependencies
     SchedulesRouteDependencies,
     ConfigRouteDependencies,
     TypesRouteDependencies,
-    CategoriesRouteDependencies {
+    CategoriesRouteDependencies,
+    TimerRouteDependencies {
   getHealth: GetHealth;
   listClientsHandler: ReturnType<typeof createListClientsHandler>;
 }
@@ -230,6 +239,12 @@ export function createRpcHandler(
   const createCategoryH3 = asBridgeHandler(createCreateCategoryHandler(deps));
   const updateCategoryH3 = asBridgeHandler(createUpdateCategoryHandler(deps));
   const removeCategoryH3 = asBridgeHandler(createRemoveCategoryHandler(deps));
+
+  const getCurrentTimerH3 = asBridgeHandler(createGetCurrentTimerHandler(deps));
+  const startTimerH3 = asBridgeHandler(createStartTimerHandler(deps));
+  const stopTimerH3 = asBridgeHandler(createStopTimerHandler(deps));
+  const heartbeatTimerH3 = asBridgeHandler(createHeartbeatTimerHandler(deps));
+  const listTimerRunsH3 = asBridgeHandler(createListTimerRunsHandler(deps));
 
   const typesForFormH3 = createListTypesForFormHandler(deps);
   const categoriesByTypeH3 = createListCategoriesByTypeHandler(deps);
@@ -559,6 +574,31 @@ export function createRpcHandler(
       method: "POST",
       path: "/categories/remove",
       run: wrapPost(removeCategoryH3, "/categories/remove"),
+    },
+    {
+      method: "POST",
+      path: "/timers/current",
+      run: wrapPost(getCurrentTimerH3, "/timers/current"),
+    },
+    {
+      method: "POST",
+      path: "/timers/start",
+      run: wrapPost(startTimerH3, "/timers/start"),
+    },
+    {
+      method: "POST",
+      path: "/timers/stop",
+      run: wrapPost(stopTimerH3, "/timers/stop"),
+    },
+    {
+      method: "POST",
+      path: "/timers/heartbeat",
+      run: wrapPost(heartbeatTimerH3, "/timers/heartbeat"),
+    },
+    {
+      method: "POST",
+      path: "/timers/history",
+      run: wrapPost(listTimerRunsH3, "/timers/history"),
     },
   ];
 

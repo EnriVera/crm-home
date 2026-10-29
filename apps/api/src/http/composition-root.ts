@@ -17,6 +17,11 @@ import { CreateClient } from "../application/clients/create-client";
 import { UpdateClient } from "../application/clients/update-client";
 import { DeleteClient } from "../application/clients/delete-client";
 import { ListClientDependencies } from "../application/clients/list-client-dependencies";
+import { StartTimer } from "../application/timers/start-timer";
+import { StopTimer } from "../application/timers/stop-timer";
+import { HeartbeatTimer } from "../application/timers/heartbeat-timer";
+import { GetCurrentTimer } from "../application/timers/get-current-timer";
+import { ListTimerRuns } from "../application/timers/list-timer-runs";
 import { ListIncomes } from "../application/incomes/list-incomes";
 import { CreateIncome } from "../application/incomes/create-income";
 import { UpdateIncome } from "../application/incomes/update-income";
@@ -70,6 +75,7 @@ import { KyselyAppRepository } from "../infrastructure/kysely/app-repository";
 import { KyselyCurrencyRepository } from "../infrastructure/kysely/currency-repository";
 import { KyselyTypeRepository } from "../infrastructure/kysely/type-repository";
 import { KyselyCategoryRepository } from "../infrastructure/kysely/category-repository";
+import { KyselyTimerRunRepository } from "../infrastructure/kysely/timer-run-repository";
 import { KyselyScheduleRepository } from "../infrastructure/kysely/schedule-repository";
 import { KyselyEmailSendingRepository } from "../infrastructure/kysely/email-sending-repository";
 import { KyselyLoginRepository } from "../infrastructure/kysely/login-repository";
@@ -274,6 +280,7 @@ export function createCompositionRoot(
     const currencyRepository = new KyselyCurrencyRepository(db);
     const typeRepository = new KyselyTypeRepository(db);
     const categoryRepository = new KyselyCategoryRepository(db);
+    const timerRunRepository = new KyselyTimerRunRepository(db);
     const listExpenses = new ListExpenses({ expenseRepository });
     const createExpenseUseCase = new CreateExpense({ expenseRepository });
     const updateExpenseUseCase = new UpdateExpense({ expenseRepository });
@@ -303,6 +310,11 @@ export function createCompositionRoot(
       typeRepository,
     });
     const removeCategory = new RemoveCategory({ categoryRepository });
+    const startTimer = new StartTimer({ timerRunRepository });
+    const stopTimer = new StopTimer({ timerRunRepository });
+    const heartbeatTimer = new HeartbeatTimer({ timerRunRepository });
+    const getCurrentTimer = new GetCurrentTimer({ timerRunRepository });
+    const listTimerRuns = new ListTimerRuns({ timerRunRepository });
     const listClientsForSelector = new ListClientsForSelector({
       clientLookupRepository,
     });
@@ -367,6 +379,11 @@ export function createCompositionRoot(
       createCategory,
       updateCategory,
       removeCategory,
+      startTimer,
+      stopTimer,
+      heartbeatTimer,
+      getCurrentTimer,
+      listTimerRuns,
     });
     app.all("/rpc/**", (event) => rpcHandler(event));
   } else {

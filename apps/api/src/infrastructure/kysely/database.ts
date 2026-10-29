@@ -221,6 +221,24 @@ export interface TaskTable {
  task_deleted_at: Date | null;
 }
 
+export interface TimerRunTable {
+  timr_id: string;
+  timr_user_id: string;
+  timr_title: string;
+  timr_task_id: string | null;
+  timr_clie_id: string | null;
+  timr_type_id: string | null;
+  timr_cate_id: string | null;
+  timr_start: Date;
+  timr_end: Date | null;
+  timr_duration_seconds: number | null;
+  timr_origin: string;
+  timr_last_heartbeat: Date | null;
+  timr_created_at: Generated<Date>;
+  timr_updated_at: Generated<Date>;
+  timr_deleted_at: Date | null;
+}
+
 export interface DatabaseSchema {
  sino: SinoTable;
  apps: AppsTable;
@@ -238,6 +256,7 @@ export interface DatabaseSchema {
  expense: ExpenseTable;
  transfer: TransferTable;
  schedule: ScheduleTable;
+ timer_run: TimerRunTable;
  type_categories_client: TypeCategoriesClientTable;
  attachments: AttachmentTable;
  task_attachments: TaskAttachmentsTable;
