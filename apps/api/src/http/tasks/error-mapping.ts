@@ -1,3 +1,4 @@
+import { HTTPError } from "h3";
 import {
   InvalidKanbanOrder,
   InvalidStateTransition,
@@ -13,8 +14,10 @@ import {
  * error al cliente — solo el `code` y un mensaje genérico.
  *
  * Status codes:
- * - 400: input malformado (zod validation lo maneja ANTES de llegar al caso
- *   de uso; este helper sólo se llama para errores del dominio).
+ * - 400: input malformado. `readValidatedBody` de h3 lanza un `HTTPError`
+ *   con status 400 cuando el schema de zod falla; sin esta rama caía en el
+ *   500 de abajo y el cliente no podía distinguir "escribiste mal un valor"
+ *   de "el server está roto".
  * - 401: Unauthorized.
  * - 404: TaskNotFound, TaskStateNotFound.
  * - 409: InvalidKanbanOrder, InvalidStateTransition (conflictos de estado).
@@ -27,6 +30,13 @@ export interface TaskErrorResponse {
 }
 
 export function mapTaskErrorToStatus(error: unknown): TaskErrorResponse {
+  // Validación de zod (h3): el status ya viene bien calculado por h3.
+  if (HTTPError.isError(error) && error.status === 400) {
+    return {
+      status: 400,
+      body: { error: "Validation failed", code: "VALIDATION_ERROR" },
+    };
+  }
   if (error instanceof TaskNotFound) {
     return {
       status: 404,

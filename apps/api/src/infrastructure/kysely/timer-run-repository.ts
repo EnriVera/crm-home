@@ -4,6 +4,7 @@ import type {
   TimerRunRow,
 } from "../../domain/ports/timer-run-repository";
 import type { Transaction } from "../../domain/ports/transaction";
+import { TimerAlreadyRunningError } from "../../domain/timers/errors";
 import type { Database } from "./database";
 
 interface TimerRunDbRow {
@@ -19,6 +20,24 @@ interface TimerRunDbRow {
   timr_duration_seconds: number | null;
   timr_origin: string;
   timr_last_heartbeat: Date | null;
+}
+
+/**
+ * ¿El error es una violación de unicidad de Postgres (SQLSTATE 23505)?
+ *
+ * El driver `pg` expone el SQLSTATE en `code` y el nombre del índice
+ * en `constraint`. El índice parcial único del timer es el único
+ * disparador posible de esto en esta tabla.
+ */
+function isUniqueViolation(err: unknown): boolean {
+  if (typeof err !== "object" || err === null) return false;
+  const candidate = err as { code?: unknown; constraint?: unknown };
+  return (
+    candidate.code === "23505" &&
+    (typeof candidate.constraint === "string"
+      ? candidate.constraint.includes("timer_run")
+      : true)
+  );
 }
 
 function mapTimerRunRow(row: TimerRunDbRow): TimerRunRow {
@@ -43,6 +62,16 @@ function mapTimerRunRow(row: TimerRunDbRow): TimerRunRow {
  */
 export class KyselyTimerRunRepository implements TimerRunRepository {
   constructor(private readonly db: Database) {}
+
+  async lockUserTimers(userId: string, trx?: Transaction): Promise<void> {
+    // Lock de advice a nivel de transacción: se toma y se suelta con la
+    // transacción, así que un arranque fallido no deja el usuario
+    // bloqueado. `hashtext` deriva el id del usuario a una clave de 32
+    // bits (el advisory lock trabaja con int4).
+    await sql`SELECT pg_advisory_xact_lock(hashtext(${userId}))`.execute(
+      this.resolve(trx),
+    );
+  }
 
   async findOpen(
     userId: string,
@@ -125,22 +154,34 @@ export class KyselyTimerRunRepository implements TimerRunRepository {
     trx?: Transaction,
   ): Promise<TimerRunRow> {
     const db = this.resolve(trx);
-    const row = await db
-      .insertInto("timer_run")
-      .values({
-        timr_id: sql<string>`gen_random_uuid()`,
-        timr_user_id: params.userId,
-        timr_title: params.title,
-        timr_task_id: params.taskId,
-        timr_clie_id: params.clientId,
-        timr_type_id: params.typeId,
-        timr_cate_id: params.categoryId,
-        timr_start: params.start,
-        timr_origin: params.origin,
-      })
-      .returningAll()
-      .executeTakeFirstOrThrow();
-    return mapTimerRunRow(row as TimerRunDbRow);
+    try {
+      const row = await db
+        .insertInto("timer_run")
+        .values({
+          timr_id: sql<string>`gen_random_uuid()`,
+          timr_user_id: params.userId,
+          timr_title: params.title,
+          timr_task_id: params.taskId,
+          timr_clie_id: params.clientId,
+          timr_type_id: params.typeId,
+          timr_cate_id: params.categoryId,
+          timr_start: params.start,
+          timr_origin: params.origin,
+        })
+        .returningAll()
+        .executeTakeFirstOrThrow();
+      return mapTimerRunRow(row as TimerRunDbRow);
+    } catch (err) {
+      // El índice parcial único `idx_timer_run_user_open` (migración 009)
+      // rechaza el insert si ya hay una corrida abierta para el usuario:
+      // dos arranques simultáneos no pueden dejar dos corridas colgadas.
+      // Traducimos la violación de unicidad a un error de dominio para
+      // que el caso de uso reintente en vez de devolver un 500.
+      if (isUniqueViolation(err)) {
+        throw new TimerAlreadyRunningError();
+      }
+      throw err;
+    }
   }
 
   async close(

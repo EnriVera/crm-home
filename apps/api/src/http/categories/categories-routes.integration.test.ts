@@ -208,5 +208,38 @@ describe.skipIf(!databaseUrl)(
       );
       expect(res.status).toBe(401);
     });
+
+    test("categories/update sin campos responde 200 y no rompe la fila", async () => {
+      // Un PATCH sólo con el id es válido según el contrato (todos los
+      // campos son opcionales). Armaba un SET vacío y Postgres respondía
+      // "syntax error at or near where": un 500 en vez de un no-op.
+      const createRes = await post("/rpc/categories/create", {
+        cate_name: "Sin cambios",
+        cate_type_id: typeId,
+      });
+      const created = (await createRes.json()) as OrpcEnvelope<{
+        cate_id: string;
+        cate_name: string;
+      }>;
+
+      const updateRes = await post("/rpc/categories/update", {
+        cate_id: created.json.cate_id,
+      });
+      expect(updateRes.status).toBe(200);
+      const updated = (await updateRes.json()) as OrpcEnvelope<{
+        cate_id: string;
+        cate_name: string;
+      }>;
+      expect(updated.json.cate_name).toBe("Sin cambios");
+
+      await post("/rpc/categories/remove", { cate_id: created.json.cate_id });
+    });
+
+    test("un body inválido responde 400, no 500", async () => {
+      const res = await post("/rpc/categories/update", {
+        cate_id: "no-soy-un-uuid",
+      });
+      expect(res.status).toBe(400);
+    });
   },
 );

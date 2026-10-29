@@ -154,6 +154,26 @@ export class KyselyTypeRepository implements TypeRepository {
       setValues.type_modules = Array.from(params.modules);
     }
 
+    // Un PATCH sin campos para cambiar es un no-op: se devuelve la fila
+    // actual. Armar un `SET` vacío produce SQL inválido en Postgres
+    // ("syntax error at or near where") y terminaba en un 500.
+    if (Object.keys(setValues).length === 0) {
+      const current = await this.db
+        .selectFrom("types")
+        .select([
+          "type_id",
+          "type_user_id",
+          "type_name",
+          "type_modules",
+          "type_created_at",
+        ])
+        .where("type_user_id", "=", params.userId)
+        .where("type_id", "=", params.typeId)
+        .where("type_deleted_at", "is", null)
+        .executeTakeFirstOrThrow();
+      return mapTypeRow(current as TypeDbRow);
+    }
+
     const row = await this.db
       .updateTable("types")
       .set(setValues)

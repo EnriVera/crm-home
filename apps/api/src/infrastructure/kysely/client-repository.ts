@@ -9,8 +9,8 @@ import { mapClientRow, type ClientDbRow } from "./_mappers";
  * de /clients:
  *
  *  - `list`: filtro por user + search ILIKE sobre `clie_name`, cap a
- *    `min(limit, 50)` (mismo criterio que el lookup para no devolver
- *    respuestas gigantes).
+ *    `min(limit, 100)` (el `max` del contrato `clientLimitSchema`: con
+ *    un tope menor la grilla pierde clientes que el usuario sí tiene).
  *  - `findById`: filtro por user + id + `clie_deleted_at IS NULL`. Retorna
  *    `null` si no existe o está borrado (los callers lo traducen a 404).
  *  - `insert`: genera UUID vía `gen_random_uuid()`, setea timestamps via
@@ -32,7 +32,7 @@ export class KyselyClientRepository implements ClientRepository {
     search: string;
     limit: number;
   }): Promise<ClientRow[]> {
-    const cappedLimit = Math.min(params.limit, 50);
+    const cappedLimit = Math.min(params.limit, 100);
     const rows = await this.db
       .selectFrom("client")
       .selectAll()

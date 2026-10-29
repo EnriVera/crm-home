@@ -26,6 +26,22 @@ export interface TimerRunRow {
 }
 
 export interface TimerRunRepository {
+  /**
+   * Serializa los arranques de timer de un mismo usuario.
+   *
+   * "A lo sumo una corrida abierta por usuario" lo garantiza el índice
+   * parcial único de la base, pero un arranque necesita *cerrar* la
+   * corrida anterior y *abrir* la nueva: si dos arranques se cruzan,
+   * ambos cierran la misma corrida y uno choca con el índice. Tomando
+   * un lock de usuario antes de leer, los arranques del mismo usuario
+   * se ejecutan uno detrás del otro (mismo resultado que en serie:
+   * gana el último).
+   *
+   * El lock debe vivir en la transacción que lo usa: si la operación
+   * falla, el lock se libera solo.
+   */
+  lockUserTimers(userId: string, trx?: Transaction): Promise<void>;
+
   /** The open run of the user (end IS NULL), if any. */
   findOpen(userId: string, trx?: Transaction): Promise<TimerRunRow | null>;
 

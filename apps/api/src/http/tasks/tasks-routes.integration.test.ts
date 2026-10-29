@@ -144,4 +144,28 @@ describe.skipIf(!databaseUrl)("tasks HTTP endpoints (integration)", () => {
     });
     expect(getRes.status).toBe(200);
   });
+
+  test("los endpoints legacy sin sesión responden 401", async () => {
+    // Estos handlers leen el userId de un header que manda el cliente. Sin
+    // sesión, el `event` crudo conservaba ese header: un caller sin cookie
+    // podía leer las categorías de otro usuario.
+    for (const path of [
+      "/rpc/tasks/categories-by-type?type_id=" + typeId,
+      "/rpc/tasks/types-for-form?clie_id=" + typeId,
+    ]) {
+      const res = await fetchApp(
+        new Request(`http://test${path}`, {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            // Sin cookie de sesión, pero con el header que usan estos
+            // handlers para identificar al usuario.
+            "x-user-id": "11111111-1111-4111-8111-111111111111",
+          },
+          body: JSON.stringify({ json: {} }),
+        }),
+      );
+      expect(res.status).toBe(401);
+    }
+  });
 });

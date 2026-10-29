@@ -31,6 +31,7 @@ function repo(open: TimerRunRow | null): {
 } {
   const closed: { timerId: string; end: Date }[] = [];
   const repository: TimerRunRepository = {
+    lockUserTimers: async () => {},
     findOpen: async () => open,
     list: async () => [],
     findById: async () => open,
@@ -79,9 +80,9 @@ describe("GetCurrentTimer", () => {
 
     const result = await useCase.execute({ userId: "user-1" });
 
-    expect(result?.end).toEqual(open.lastHeartbeat);
+    expect(result?.end ?? undefined).toEqual(open.lastHeartbeat ?? undefined);
     expect(closed).toHaveLength(1);
-    expect(closed[0]?.end).toEqual(open.lastHeartbeat);
+    expect(closed[0]?.end ?? undefined).toEqual(open.lastHeartbeat ?? undefined);
   });
 
   it("keeps a run whose heartbeat is younger than 12h", async () => {

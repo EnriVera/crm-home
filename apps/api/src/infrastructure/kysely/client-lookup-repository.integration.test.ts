@@ -78,14 +78,14 @@ describe.skipIf(!databaseUrl)(
       expect(upper.map((r) => r.id)).toEqual([clientId]);
     });
 
-    test("searchByNamePrefix aplica cap automático en 50", async () => {
+    test("searchByNamePrefix devuelve hasta 100 filas (el max del contrato)", async () => {
       const userId = crypto.randomUUID();
       await sql`INSERT INTO "user" (user_id, user_email, user_name)
                 VALUES (${userId}, ${`d-${Date.now()}@example.com`}, 'D')`.execute(
         db,
       );
 
-      for (let i = 0; i < 60; i += 1) {
+      for (let i = 0; i < 120; i += 1) {
         await sql`INSERT INTO client (clie_id, clie_user_id, clie_name)
                   VALUES (${crypto.randomUUID()}, ${userId}, ${`Match ${i}`})`.execute(
           db,
@@ -97,7 +97,15 @@ describe.skipIf(!databaseUrl)(
         query: "Match",
         limit: 100,
       });
-      expect(results.length).toBe(50);
+      expect(results.length).toBe(100);
+
+      // Por encima del max del contrato el repo no inventa filas.
+      const capped = await repository.searchByNamePrefix({
+        userId,
+        query: "Match",
+        limit: 500,
+      });
+      expect(capped.length).toBe(100);
     });
   },
 );

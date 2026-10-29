@@ -183,4 +183,68 @@ describe.skipIf(!databaseUrl)("clients HTTP endpoints (integration)", () => {
     expect(deps.json.total).toBe(1);
     expect(deps.json.dependencies[0]?.task_title).toBe("Tarea del cliente");
   });
+
+  test("get devuelve un client aunque no esté en la primera página del listado", async () => {
+    // El listado tiene un tope de página: un `get` implementado sobre la
+    // lista devolvía 404 para cualquier client fuera de esa ventana.
+    const created: string[] = [];
+    for (let i = 0; i < 3; i++) {
+      const res = await post("/rpc/clients/create", {
+        client_name: `Cliente paginado ${i}`,
+        client_email: null,
+        client_phone: null,
+      });
+      const body = (await res.json()) as OrpcEnvelope<{ client_id: string }>;
+      created.push(body.json.client_id);
+    }
+
+    const listRes = await post("/rpc/clients/list", { search: "", limit: 1 });
+    const listed = (await listRes.json()) as OrpcEnvelope<
+      { client_id: string }[]
+    >;
+    // El listado devuelve 1 (el tope del lookup), así que el resto de los
+    // clientes no están en la lista.
+    expect(listed.json).toHaveLength(1);
+
+    for (const clientId of created) {
+      const getRes = await post("/rpc/clients/get", { client_id: clientId });
+      expect(getRes.status).toBe(200);
+      const body = (await getRes.json()) as OrpcEnvelope<{ client_id: string }>;
+      expect(body.json.client_id).toBe(clientId);
+    }
+
+    for (const clientId of created) {
+      await post("/rpc/clients/remove", { client_id: clientId });
+    }
+  });
+
+  test("list devuelve los 55 clientes, no una ventana de 50", async () => {
+    // El repo truncaba a 50 mientras el contrato permite 100: con más de
+    // 50 clientes la grilla perdía los últimos y el buscador del cliente
+    // en el drawer de tareas no los encontraba.
+    const created: string[] = [];
+    for (let i = 0; i < 55; i++) {
+      const res = await post("/rpc/clients/create", {
+        client_name: `Cliente numerouso ${i}`,
+        client_email: null,
+        client_phone: null,
+      });
+      const body = (await res.json()) as OrpcEnvelope<{ client_id: string }>;
+      created.push(body.json.client_id);
+    }
+
+    const listRes = await post("/rpc/clients/list", { search: "", limit: 100 });
+    const listed = (await listRes.json()) as OrpcEnvelope<
+      { client_id: string }[]
+    >;
+    expect(listed.json.length).toBeGreaterThanOrEqual(55);
+    const ids = new Set(listed.json.map((c) => c.client_id));
+    for (const clientId of created) {
+      expect(ids.has(clientId)).toBe(true);
+    }
+
+    for (const clientId of created) {
+      await post("/rpc/clients/remove", { client_id: clientId });
+    }
+  });
 });

@@ -643,16 +643,32 @@ export function createRpcHandler(
     // handlers usan `getHeader(event, "x-user-id")` (vía `readUserId`).
     // Aceptamos kebab y camelCase porque el cliente ORPC preserva el
     // property name del procedure como segment del path (no kebab-translate).
-    if (
+    //
+    // La sesión es obligatoria acá: estos handlers leen el userId de un
+    // header que manda el cliente. Sin sesión, el `event` crudo conserva el
+    // `x-user-id` del caller — un caller sin cookie podría leer las
+    // categories de otro usuario. El dispatcher ORPC no tiene ese problema
+    // porque sus wrappers reconstruyen el `event` e inyectan solo el userId
+    // resuelto de la sesión.
+    const legacyPath =
       path === "/rpc/tasks/types-for-form" ||
-      path === "/rpc/tasks/typesForForm"
-    ) {
-      return typesForFormH3(eventWithUserId);
-    }
-    if (
+      path === "/rpc/tasks/typesForForm" ||
       path === "/rpc/tasks/categories-by-type" ||
-      path === "/rpc/tasks/categoriesByType"
-    ) {
+      path === "/rpc/tasks/categoriesByType";
+    if (legacyPath) {
+      if (userIdFromSession === null) {
+        return Response.json(
+          {
+            defined: true,
+            code: "UNAUTHORIZED",
+            message: "Authentication required",
+          },
+          { status: 401 },
+        );
+      }
+      if (path.startsWith("/rpc/tasks/types")) {
+        return typesForFormH3(eventWithUserId);
+      }
       return categoriesByTypeH3(eventWithUserId);
     }
 

@@ -8,6 +8,7 @@ import type { GetCurrentTimer } from "../../application/timers/get-current-timer
 import type { ListTimerRuns } from "../../application/timers/list-timer-runs";
 import type { TimerRunRow } from "../../domain/ports/timer-run-repository";
 import { InvalidTimerInput, TimerNotFound } from "../../application/timers/errors";
+import { TimerAlreadyRunningError } from "../../domain/timers/errors";
 import { mapTaskErrorToStatus } from "../tasks/error-mapping";
 import { readUserId } from "../tasks/tasks-routes";
 
@@ -104,6 +105,18 @@ export function createStartTimerHandler(deps: TimerRouteDependencies) {
             message: err.message,
           },
           { status: 400 },
+        );
+      }
+      if (err instanceof TimerAlreadyRunningError) {
+        // El arranque perdió la carrera contra otro simultáneo y agotó
+        // los reintentos: es un conflicto, no un server roto.
+        return Response.json(
+          {
+            defined: true,
+            code: "TIMER_ALREADY_RUNNING",
+            message: err.message,
+          },
+          { status: 409 },
         );
       }
       const { status, body } = mapTaskErrorToStatus(err);

@@ -7,8 +7,10 @@ import { mapClientRow, type ClientDbRow } from "./_mappers";
 /**
  * Lookup de clientes autocompletables por prefijo de nombre.
  * Usa `ILIKE` case-insensitive sobre `clie_name`, filtra por `clie_user_id`
- * (multi-user isolation) y trunca a `min(limit, 50)` para evitar respuestas
- * gigantes.
+ * (multi-user isolation) y trunca a `min(limit, 100)`: el tope es el
+ * `max` del contrato (`clientLimitSchema`), no un número redondo menor.
+ * El autocompletado de tareas se sigue acotando a 50 por su propio
+ * schema (`listClientsSearchInputSchema`), no por este repo.
  */
 export class KyselyClientLookupRepository implements ClientLookupRepository {
   constructor(private readonly db: Database) {}
@@ -18,7 +20,7 @@ export class KyselyClientLookupRepository implements ClientLookupRepository {
     query: string;
     limit: number;
   }): Promise<ClientRow[]> {
-    const cappedLimit = Math.min(params.limit, 50);
+    const cappedLimit = Math.min(params.limit, 100);
     const rows = await this.db
       .selectFrom("client")
       .selectAll()

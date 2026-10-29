@@ -13,6 +13,7 @@ import { GetTask } from "../application/tasks/get-task";
 import { ListCategoriesByType } from "../application/tasks/list-categories-by-type";
 import { ListClientsForSelector } from "../application/tasks/list-clients-for-selector";
 import { ListClients } from "../application/clients/list-clients";
+import { GetClient } from "../application/clients/get-client";
 import { CreateClient } from "../application/clients/create-client";
 import { UpdateClient } from "../application/clients/update-client";
 import { DeleteClient } from "../application/clients/delete-client";
@@ -256,6 +257,7 @@ export function createCompositionRoot(
       transactionManager,
     });
     const listClients = new ListClients({ clientLookupRepository });
+    const getClient = new GetClient({ clientRepository });
     const createClient = new CreateClient({ clientRepository });
     const updateClient = new UpdateClient({ clientRepository });
     const deleteClient = new DeleteClient({ clientRepository });
@@ -264,6 +266,7 @@ export function createCompositionRoot(
     });
     const listClientsHandler = createListClientsHandler({
       listClients,
+      getClient,
       createClient,
       updateClient,
       deleteClient,
@@ -310,7 +313,10 @@ export function createCompositionRoot(
       typeRepository,
     });
     const removeCategory = new RemoveCategory({ categoryRepository });
-    const startTimer = new StartTimer({ timerRunRepository });
+    const startTimer = new StartTimer({
+      timerRunRepository,
+      transactionManager,
+    });
     const stopTimer = new StopTimer({ timerRunRepository });
     const heartbeatTimer = new HeartbeatTimer({ timerRunRepository });
     const getCurrentTimer = new GetCurrentTimer({ timerRunRepository });
@@ -327,6 +333,7 @@ export function createCompositionRoot(
 
     const rpcHandler = createRpcHandler({
       listClients,
+      getClient,
       createClient,
       updateClient,
       deleteClient,

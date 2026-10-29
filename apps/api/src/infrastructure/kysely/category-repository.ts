@@ -81,6 +81,20 @@ export class KyselyCategoryRepository implements CategoryRepository {
     if (params.name !== undefined) values.cate_name = params.name;
     if (params.typeId !== undefined) values.cate_type_id = params.typeId;
 
+    // Un PATCH sin campos para cambiar es un no-op: se devuelve la fila
+    // actual. Armar un `SET` vacío produce SQL inválido en Postgres
+    // ("syntax error at or near where") y terminaba en un 500.
+    if (Object.keys(values).length === 0) {
+      const current = await this.db
+        .selectFrom("categories")
+        .selectAll()
+        .where("cate_user_id", "=", params.userId)
+        .where("cate_id", "=", params.categoryId)
+        .where("cate_deleted_at", "is", null)
+        .executeTakeFirstOrThrow();
+      return mapCategoryRow(current as CategoryDbRow);
+    }
+
     const row = await this.db
       .updateTable("categories")
       .set(values)

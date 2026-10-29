@@ -2,6 +2,7 @@ import type { H3Event } from "h3";
 import { readValidatedBody } from "h3";
 import { z } from "zod";
 import { ListClients } from "../../application/clients/list-clients";
+import { GetClient } from "../../application/clients/get-client";
 import { CreateClient } from "../../application/clients/create-client";
 import { UpdateClient } from "../../application/clients/update-client";
 import { DeleteClient } from "../../application/clients/delete-client";
@@ -27,6 +28,7 @@ import { readUserId } from "../tasks/tasks-routes";
 
 export interface ClientsRouteDependencies {
   listClients: ListClients;
+  getClient: GetClient;
   createClient: CreateClient;
   updateClient: UpdateClient;
   deleteClient: DeleteClient;
@@ -100,12 +102,13 @@ export function createGetClientHandler(deps: ClientsRouteDependencies) {
     try {
       const userId = readUserId(event);
       const body = await readValidatedBody(event, getClientInputSchema.parse);
-      const result = await deps.listClients.execute({
+      // `get` lee por id, no por listado: el lookup de búsqueda tiene un
+      // tope de página, así que filtrar la lista en memoria devolvía 404
+      // para cualquier client fuera de esa ventana.
+      const found = await deps.getClient.execute({
         userId,
-        search: "",
-        limit: 100,
+        clientId: body.client_id,
       });
-      const found = result.find((row) => row.id === body.client_id);
       if (!found) {
         return Response.json(
           {
