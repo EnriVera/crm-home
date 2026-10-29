@@ -114,6 +114,56 @@ export interface TaskProcedureMap {
   };
 }
 
+/** The finance procedures this app talks to (dashboard money cards). */
+export type FinanceProcedure = "income.list" | "expense.list";
+
+export interface FinanceProcedureMap {
+  "income.list": {
+    input: {
+      search?: string;
+      date_from?: string | null;
+      date_to?: string | null;
+      limit?: number;
+    };
+    output: IncomeWire[];
+  };
+  "expense.list": {
+    input: {
+      search?: string;
+      date_from?: string | null;
+      date_to?: string | null;
+      limit?: number;
+    };
+    output: ExpenseWire[];
+  };
+}
+
+/** The wire shape of an income, as the API returns it. */
+export interface IncomeWire {
+  inco_id: string;
+  inco_account_id: string;
+  inco_amount: string;
+  inco_currency_id: string;
+  inco_description: string | null;
+  inco_category: string | null;
+  inco_date: string;
+  inco_created_at: string;
+  inco_updated_at: string;
+}
+
+/** The wire shape of an expense, as the API returns it. */
+export interface ExpenseWire {
+  expe_id: string;
+  expe_account_id: string;
+  expe_amount: string;
+  expe_currency_id: string;
+  expe_description: string | null;
+  expe_category: string | null;
+  expe_date: string;
+  expe_created_at: string;
+  expe_updated_at: string;
+}
+
 /** The timer procedures this app talks to (PRD-v4 §8.5). */
 export type TimerProcedure = "current" | "start" | "stop" | "heartbeat" | "history";
 
@@ -414,6 +464,18 @@ export function callTasks<P extends TaskProcedure>(
       ? ["tasks", "states", "list"]
       : ["tasks", procedure];
   return callProcedure<TaskProcedureMap[P]["output"]>(segments, input);
+}
+
+/**
+ * Calls one finance procedure. Incomes live under `incomes` and expenses
+ * under `expenses` in the orpc router.
+ */
+export function callFinance<P extends FinanceProcedure>(
+  procedure: P,
+  input: FinanceProcedureMap[P]["input"],
+): Promise<FinanceProcedureMap[P]["output"]> {
+  const segments = procedure === "income.list" ? ["incomes", "list"] : ["expenses", "list"];
+  return callProcedure<FinanceProcedureMap[P]["output"]>(segments, input);
 }
 
 /**

@@ -21,6 +21,10 @@ export interface TaskSummary {
   title: string;
   stateId: string;
   updatedAt: Date;
+  /** Los links que la fila del dashboard muestra (cliente · tipo). */
+  clientId: string | null;
+  typeId: string | null;
+  categoryId: string | null;
 }
 
 /** How many tasks sit in one column. */

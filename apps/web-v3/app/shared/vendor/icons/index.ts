@@ -25,6 +25,7 @@ export {
   PhSun,
   PhTextB,
   PhTextItalic,
+  PhTimer,
   PhTrash,
   PhTrendDown,
   PhTrendUp,

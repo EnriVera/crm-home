@@ -23,6 +23,9 @@ function toTaskSummary(wire: TaskWire): TaskSummary {
     title: wire.task_title,
     stateId: wire.task_tast_id,
     updatedAt: new Date(wire.task_updated_at),
+    clientId: wire.task_clie_id,
+    typeId: wire.task_type_id,
+    categoryId: wire.task_cate_id,
   };
 }
 

@@ -30,6 +30,20 @@ export default defineI18nConfig(() => ({
         timerTitle: "Timer activo",
         timerIdle: "No hay ningún timer corriendo.",
         timerCta: "Iniciá tu primer timer",
+        stats: {
+          income: "Ingresos del mes",
+          incomeHint: "Movimientos de este mes",
+          expense: "Gastos del mes",
+          expenseHint: "Movimientos de este mes",
+          activeTasks: "Tareas activas",
+          tasksHint: "Tareas en total",
+          clients: "Clientes",
+          hoursHint: "{time} registradas esta semana",
+        },
+        upcomingTitle: "Próximas tareas",
+        activityTitle: "Actividad reciente",
+        activityEmpty: "Todavía no hay actividad.",
+        activityTimer: "Registraste un timer de {title}",
         statesTitle: "Tareas por estado",
         totalTasks: "{count} tareas en total",
         recentTitle: "Últimas tareas",
@@ -218,6 +232,22 @@ export default defineI18nConfig(() => ({
         range: {
           hoy: "Hoy",
           semana: "Esta semana",
+        },
+        chart: {
+          title: "Tiempo por tipo",
+          empty: "Todavía no hay tiempo registrado.",
+        },
+        detail: {
+          title: "Detalle por día",
+          search: "Buscar una ejecución…",
+          allTypes: "Todos los tipos",
+          allCategories: "Todas las categorías",
+          allTasks: "Todas las tareas",
+          empty: "Ninguna ejecución coincide con los filtros.",
+        },
+        origin: {
+          manual: "Manual",
+          resumed: "Reanudado",
         },
       },
       clients: {

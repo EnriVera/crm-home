@@ -142,6 +142,77 @@ export function totalSeconds(
 }
 
 /**
+ * The time by type, for the donut of PRD-v4 §8.5.
+ *
+ * A free timer has no type: it goes to the "Sin tipo" slice (it IS a
+ * meaningful slice — the time you did not link to anything).
+ */
+export function groupByType(
+  runs: TimerRun[],
+  typeNames: Map<string, string>,
+  now: Date = new Date(),
+): { id: string; label: string; seconds: number }[] {
+  const totals = new Map<string, number>();
+  for (const run of runs) {
+    const key = run.typeId ?? "";
+    const end = run.end ? run.end.getTime() : now.getTime();
+    const seconds = Math.max(0, Math.floor((end - run.start.getTime()) / 1000));
+    totals.set(key, (totals.get(key) ?? 0) + seconds);
+  }
+  return [...totals.entries()]
+    .map(([id, seconds]) => ({
+      id,
+      label: id === "" ? "Sin tipo" : (typeNames.get(id) ?? "Sin tipo"),
+      seconds,
+    }))
+    .sort((a, b) => b.seconds - a.seconds);
+}
+
+/**
+ * The runs that match the filters of the detail table (PRD-v2 §8.4.3:
+ * buscador + filtros por tipo, categoría y tarea).
+ */
+export function filterRuns(
+  runs: TimerRun[],
+  filters: {
+    search?: string;
+    typeId?: string | null;
+    categoryId?: string | null;
+    taskId?: string | null;
+  },
+): TimerRun[] {
+  const needle = filters.search?.trim().toLowerCase() ?? "";
+  return runs.filter((run) => {
+    if (filters.typeId && run.typeId !== filters.typeId) return false;
+    if (filters.categoryId && run.categoryId !== filters.categoryId)
+      return false;
+    if (filters.taskId && run.taskId !== filters.taskId) return false;
+    if (needle && !run.title.toLowerCase().includes(needle)) return false;
+    return true;
+  });
+}
+
+/**
+ * The runs grouped by day (the "detalle por día" of PRD-v2 §8.4.3).
+ */
+export function groupByDay(
+  runs: TimerRun[],
+): { day: string; date: Date; runs: TimerRun[] }[] {
+  const groups = new Map<string, { day: string; date: Date; runs: TimerRun[] }>();
+  for (const run of runs) {
+    const key = dayKey(run.start);
+    const group = groups.get(key) ?? {
+      day: key,
+      date: run.start,
+      runs: [],
+    };
+    group.runs.push(run);
+    groups.set(key, group);
+  }
+  return [...groups.values()].sort((a, b) => b.date.getTime() - a.date.getTime());
+}
+
+/**
  * The run with the most hours in the period (the "tarea con más horas"
  * stat of the catalogue).
  */

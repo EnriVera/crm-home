@@ -1,18 +1,22 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from "vue";
 import {
+  filterRuns,
+  formatDay,
   formatDuration,
   formatTimeRange,
+  groupByDay,
+  groupByType,
   startOfDay,
   startOfWeek,
   totalSeconds,
   type TimerRun,
 } from "~/domain/schedule/entities";
 import { useTimer } from "~/shared/composables/use-timer";
-import { listTaskTypes, listAllCategories } from "~/infrastructure/task/orpc-task";
+import { listTaskTypes, listAllCategories, listTasks } from "~/infrastructure/task/orpc-task";
 import { listClients } from "~/infrastructure/client/orpc-client";
-import { listTasks } from "~/infrastructure/task/orpc-task";
 import TimerBar from "~/ui/molecules/timer-bar.vue";
+import TimeDonut from "~/ui/organisms/time-donut.vue";
 import { PhArrowCounterClockwise, PhPlay } from "~/shared/vendor/icons";
 
 /**
@@ -47,6 +51,25 @@ const taskTitles = ref<string[]>([]);
 const typeNames = ref(new Map<string, string>());
 const categoryNames = ref(new Map<string, string>());
 const clientNames = ref(new Map<string, string>());
+const taskList = ref<{ id: string; title: string }[]>([]);
+
+// Filtros del detalle por día (PRD-v2 §8.4.3: buscador + tipo, categoría y tarea).
+const detailSearch = ref("");
+const detailTypeId = ref<string | null>(null);
+const detailCategoryId = ref<string | null>(null);
+const detailTaskId = ref<string | null>(null);
+
+/** La paleta de datos de los tokens (PRD-v4 §11.3), para las porciones. */
+const DATA_COLORS = [
+  "var(--color-data-blue)",
+  "var(--color-data-green)",
+  "var(--color-data-pink)",
+  "var(--color-data-cyan)",
+  "var(--color-data-amber)",
+  "var(--color-data-purple)",
+  "var(--color-data-red)",
+  "var(--color-data-gray)",
+];
 
 onMounted(async () => {
   await sync();
@@ -57,6 +80,7 @@ onMounted(async () => {
     listClients(),
   ]);
   taskTitles.value = tasks.map((task) => task.title);
+  taskList.value = tasks.map((task) => ({ id: task.id, title: task.title }));
   typeNames.value = new Map(types.map((type) => [type.id, type.name]));
   categoryNames.value = new Map(
     categories.map((category) => [category.id, category.name]),
@@ -76,6 +100,33 @@ const rangeTotalSeconds = computed(() => {
     range.value === "hoy" ? startOfDay(new Date()) : startOfWeek(new Date());
   return totalSeconds(visibleRuns.value, from, new Date(), new Date());
 });
+
+/** El donut: el tiempo del rango por tipo. */
+const chartSlices = computed(() => {
+  const byType = groupByType(visibleRuns.value, typeNames.value, new Date());
+  return byType
+    .map((slice, index) => ({
+      // El id NO puede venir vacío (unovis lo usa como clave del arco).
+      id: slice.id === "" ? "sin-tipo" : slice.id,
+      label: slice.label,
+      seconds: slice.seconds,
+      color: DATA_COLORS[index % DATA_COLORS.length]!,
+    }))
+    // Una porción de 0 segundos no se ve: fuera, que un id vacío rompe.
+    .filter((slice) => slice.seconds > 0);
+});
+
+/** The detail by day (PRD-v2 §8.4.3), with the filters applied. */
+const detailGroups = computed(() =>
+  groupByDay(
+    filterRuns(history.value, {
+      search: detailSearch.value,
+      typeId: detailTypeId.value,
+      categoryId: detailCategoryId.value,
+      taskId: detailTaskId.value,
+    }),
+  ),
+);
 
 const runningTypeName = computed(() =>
   run.value?.typeId ? (typeNames.value.get(run.value.typeId) ?? null) : null,
@@ -210,6 +261,115 @@ watch(range, () => {
         </p>
       </article>
     </div>
+
+    <!-- Gráfica: el tiempo del rango por tipo (PRD-v4 §8.5). -->
+    <article class="mt-5 rounded-[var(--radius)] border border-border bg-surface p-6">
+      <h2 class="text-base font-semibold text-text">
+        {{ t("schedules.chart.title") }}
+      </h2>
+      <div class="mt-4">
+        <TimeDonut :slices="chartSlices" />
+      </div>
+    </article>
+
+    <!-- Detalle por día (PRD-v2 §8.4.3): buscador + filtros por tipo,
+         categoría y tarea. -->
+    <article class="mt-5 rounded-[var(--radius)] border border-border bg-surface p-6">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <h2 class="text-base font-semibold text-text">
+          {{ t("schedules.detail.title") }}
+        </h2>
+        <div class="flex flex-wrap items-center gap-2">
+          <input
+            v-model="detailSearch"
+            type="search"
+            :placeholder="t('schedules.detail.search')"
+            class="h-9 w-full max-w-48 rounded-full border border-border bg-surface px-3 text-sm text-text outline-none transition-colors placeholder:text-text-2 focus:border-accent"
+            data-testid="detail-search"
+          />
+          <select
+            v-model="detailTypeId"
+            class="h-9 rounded-full border border-border bg-surface px-3 text-sm text-text outline-none transition-colors focus:border-accent"
+            data-testid="detail-type-filter"
+          >
+            <option :value="null">{{ t("schedules.detail.allTypes") }}</option>
+            <option v-for="[id, name] in typeNames" :key="id" :value="id">
+              {{ name }}
+            </option>
+          </select>
+          <select
+            v-model="detailCategoryId"
+            class="h-9 rounded-full border border-border bg-surface px-3 text-sm text-text outline-none transition-colors focus:border-accent"
+            data-testid="detail-category-filter"
+          >
+            <option :value="null">
+              {{ t("schedules.detail.allCategories") }}
+            </option>
+            <option v-for="[id, name] in categoryNames" :key="id" :value="id">
+              {{ name }}
+            </option>
+          </select>
+          <select
+            v-model="detailTaskId"
+            class="h-9 rounded-full border border-border bg-surface px-3 text-sm text-text outline-none transition-colors focus:border-accent"
+            data-testid="detail-task-filter"
+          >
+            <option :value="null">{{ t("schedules.detail.allTasks") }}</option>
+            <option v-for="task in taskList" :key="task.id" :value="task.id">
+              {{ task.title }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <p
+        v-if="detailGroups.length === 0"
+        class="mt-4 rounded-[var(--radius)] border border-dashed border-border px-4 py-10 text-center text-sm text-text-2"
+        data-testid="detail-empty"
+      >
+        {{ t("schedules.detail.empty") }}
+      </p>
+
+      <div v-else class="mt-4 space-y-6">
+        <section
+          v-for="group in detailGroups"
+          :key="group.day"
+          data-testid="detail-day"
+        >
+          <h3 class="text-sm font-semibold text-text">
+            {{ formatDay(group.date) }}
+          </h3>
+          <ul class="mt-2 divide-y divide-border rounded-[var(--radius)] border border-border">
+            <li
+              v-for="item in group.runs"
+              :key="item.id"
+              class="flex flex-wrap items-center gap-3 px-4 py-3"
+            >
+              <div class="min-w-0 flex-1">
+                <p class="truncate text-sm font-medium text-text">{{ item.title }}</p>
+                <p class="truncate text-xs text-text-2">{{ runSubtitle(item) }}</p>
+              </div>
+              <span
+                class="shrink-0 rounded-full bg-surface-2 px-2 py-0.5 text-xs text-text-2"
+                data-testid="detail-origin"
+              >
+                {{
+                  item.origin === "resumed"
+                    ? t("schedules.origin.resumed")
+                    : t("schedules.origin.manual")
+                }}
+              </span>
+              <span class="shrink-0 text-sm tabular-nums text-text-2">
+                {{ formatTimeRange(item) }}
+              </span>
+              <span class="shrink-0 text-sm font-medium tabular-nums text-text">
+                {{ formatDuration(item.durationSeconds ?? 0) }}
+              </span>
+            </li>
+          </ul>
+        </section>
+      </div>
+    </article>
 
     <!-- History (PRD-v4 §8.5). -->
     <article class="mt-5 rounded-[var(--radius)] border border-border bg-surface p-6">

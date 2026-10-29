@@ -3,6 +3,7 @@ export {
   callCategoriesByType,
   callClients,
   callConfig,
+  callFinance,
   callTasks,
   callTimers,
 } from "./client";
@@ -17,6 +18,10 @@ export type {
   ConfigProcedure,
   ConfigProcedureMap,
   CurrencyWire,
+  ExpenseWire,
+  FinanceProcedure,
+  FinanceProcedureMap,
+  IncomeWire,
   TaskProcedure,
   TaskProcedureMap,
   TaskStateConfigWire,
