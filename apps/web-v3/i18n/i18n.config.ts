@@ -187,6 +187,34 @@ export default defineI18nConfig(() => ({
         list: "Lista",
         kanban: "Kanban",
       },
+      clients: {
+        title: "Clientes",
+        subtitle: "{count} clientes",
+        new: "Nuevo cliente",
+        add: "Agregar cliente",
+        search: "Buscar clientes…",
+        empty: "Todavía no tenés clientes. Agregá el primero.",
+        loadError: "No pudimos cargar tus clientes.",
+        deleteError: "No pudimos eliminar el cliente.",
+        drawer: {
+          newTitle: "Nuevo cliente",
+          editTitle: "Editar cliente",
+          name: "Nombre o empresa",
+          namePlaceholder: "Acme Studio",
+          email: "Email",
+          // El placeholder no puede llevar "@": el tokenizador de vue-i18n
+          // lo lee como inicio de un mensaje enlazado y revienta el render
+          // (mismo criterio que en auth.emailPlaceholder).
+          emailPlaceholder: "nombre en estudio.com",
+          phone: "Teléfono",
+          phonePlaceholder: "+54 9 11 0000-1111",
+          delete: "Eliminar cliente",
+          deleteConfirm: "Este cliente no tiene tareas asociadas. ¿Lo eliminás?",
+          deleteWithDependencies:
+            "Este cliente tiene {count} tarea | Este cliente tiene {count} tareas. Si lo eliminás, quedan sin cliente.",
+          deleteConfirmButton: "Eliminar igual",
+        },
+      },
       tasks: {
         title: "Tareas",
         subtitle: "Tablero por estado · {count} tareas activas",

@@ -16,6 +16,7 @@ import { ListClients } from "../application/clients/list-clients";
 import { CreateClient } from "../application/clients/create-client";
 import { UpdateClient } from "../application/clients/update-client";
 import { DeleteClient } from "../application/clients/delete-client";
+import { ListClientDependencies } from "../application/clients/list-client-dependencies";
 import { ListIncomes } from "../application/incomes/list-incomes";
 import { CreateIncome } from "../application/incomes/create-income";
 import { UpdateIncome } from "../application/incomes/update-income";
@@ -252,11 +253,15 @@ export function createCompositionRoot(
     const createClient = new CreateClient({ clientRepository });
     const updateClient = new UpdateClient({ clientRepository });
     const deleteClient = new DeleteClient({ clientRepository });
+    const listClientDependencies = new ListClientDependencies({
+      taskRepository,
+    });
     const listClientsHandler = createListClientsHandler({
       listClients,
       createClient,
       updateClient,
       deleteClient,
+      listClientDependencies,
     });
     const listIncomes = new ListIncomes({ incomeRepository });
     const createIncomeUseCase = new CreateIncome({ incomeRepository });
@@ -313,6 +318,7 @@ export function createCompositionRoot(
       createClient,
       updateClient,
       deleteClient,
+      listClientDependencies,
       listIncomes,
       createIncome: createIncomeUseCase,
       updateIncome: updateIncomeUseCase,

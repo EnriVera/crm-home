@@ -64,6 +64,26 @@ export const removeClientInputSchema = z.object({
  client_id: uuidSchema,
 });
 
+/* ---------- Dependencies (delete confirmation, PRD-v2 §8.5) ---------- */
+
+/**
+ * What a client is attached to.
+ *
+ * The PRD requires that deleting a client with tasks or movements asks
+ * for an explicit confirmation that LISTS the dependencies. The DB only
+ * links clients to tasks (`task_clie_id`); income/expense/transfer have
+ * no client column, so tasks are the only dependency there is.
+ */
+export const clientDependencySchema = z.object({
+ task_id: uuidSchema,
+ task_title: z.string(),
+});
+
+export const clientDependenciesOutputSchema = z.object({
+ dependencies: z.array(clientDependencySchema),
+ total: z.number().int(),
+});
+
 const okOutputSchema = z.object({ ok: z.literal(true) });
 
 /* ---------- Contract router ---------- */
@@ -87,6 +107,9 @@ export const clientsContract = oc
   create: oc.input(createClientInputSchema).output(clientSchema),
   update: oc.input(updateClientInputSchema).output(clientSchema),
   remove: oc.input(removeClientInputSchema).output(okOutputSchema),
+  dependencies: oc
+   .input(z.object({ client_id: uuidSchema }))
+   .output(clientDependenciesOutputSchema),
  });
 
 export type Client = z.infer<typeof clientSchema>;

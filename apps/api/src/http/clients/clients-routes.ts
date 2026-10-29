@@ -5,6 +5,7 @@ import { ListClients } from "../../application/clients/list-clients";
 import { CreateClient } from "../../application/clients/create-client";
 import { UpdateClient } from "../../application/clients/update-client";
 import { DeleteClient } from "../../application/clients/delete-client";
+import { ListClientDependencies } from "../../application/clients/list-client-dependencies";
 import {
   ClientNotFound,
   InvalidClientInput,
@@ -29,6 +30,7 @@ export interface ClientsRouteDependencies {
   createClient: CreateClient;
   updateClient: UpdateClient;
   deleteClient: DeleteClient;
+  listClientDependencies: ListClientDependencies;
 }
 
 const listClientsInputSchema = z.object({
@@ -205,6 +207,39 @@ export function deleteClientHandler(deps: ClientsRouteDependencies) {
           { status: 404 },
         );
       }
+      const { status, body } = mapTaskErrorToStatus(err);
+      return Response.json(body, { status });
+    }
+  };
+}
+
+/**
+ * Qué tiene enganchado un cliente (PRD-v2 §8.5): la UI lo consulta antes
+ * de borrar para pedir una confirmación explícita que liste las
+ * dependencias.
+ */
+export function listClientDependenciesHandler(
+  deps: ClientsRouteDependencies,
+) {
+  return async (event: H3Event): Promise<Response> => {
+    try {
+      const userId = readUserId(event);
+      const body = await readValidatedBody(
+        event,
+        getClientInputSchema.parse,
+      );
+      const result = await deps.listClientDependencies.execute({
+        userId,
+        clientId: body.client_id,
+      });
+      return Response.json({
+        dependencies: result.dependencies.map((dependency) => ({
+          task_id: dependency.taskId,
+          task_title: dependency.taskTitle,
+        })),
+        total: result.total,
+      });
+    } catch (err) {
       const { status, body } = mapTaskErrorToStatus(err);
       return Response.json(body, { status });
     }

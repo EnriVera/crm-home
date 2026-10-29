@@ -9,7 +9,6 @@
 import type { Task, TaskColumn } from "~/domain/task/entities";
 import {
   callCategoriesByType,
-  callClients,
   callConfig,
   callTasks,
   type TaskStateWire,
@@ -141,18 +140,6 @@ export async function moveTask(input: {
 
 export async function removeTask(id: string): Promise<void> {
   await callTasks("remove", { task_id: id });
-}
-
-/** The clients of the user (task drawer select + card name lookup). */
-export async function listClients(search = ""): Promise<ClientOption[]> {
-  const wire = await callClients(
-    "list",
-    search ? { search, limit: 100 } : { limit: 100 },
-  );
-  return wire.map((client) => ({
-    id: client.client_id,
-    name: client.client_name,
-  }));
 }
 
 /**

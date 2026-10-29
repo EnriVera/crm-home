@@ -18,6 +18,9 @@ const { adapterMock } = await vi.hoisted(async () => {
 });
 
 vi.mock("~/infrastructure/task/orpc-task", () => adapterMock);
+vi.mock("~/infrastructure/client/orpc-client", () => ({
+  listClients: vi.fn(async () => []),
+}));
 
 import { useTasks } from "~/shared/composables/use-tasks";
 import type { Task, TaskColumn } from "~/domain/task/entities";

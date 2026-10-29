@@ -26,7 +26,14 @@ export const schedulesSearchSchema = z.object({
 });
 
 export const clientsSearchSchema = z.object({
- filter: z.enum(["todos", "activos", "inactivos"]).optional(),
+  // El drawer de creación/edición vive en la URL (PRD-v4 §9.1).
+  // `delete=1` abre el drawer en modo confirmación de borrado (lo usa el
+  // botón de borrar de la card).
+  // NO hay filtros por estado: la tabla de clientes no tiene columna de
+  // estado (el catálogo los muestra, la DB no los tiene).
+  drawer: z.string().min(1).optional(),
+  edit: z.string().min(1).optional(),
+  delete: z.string().optional(),
 });
 
 export const financeSearchSchema = z.object({

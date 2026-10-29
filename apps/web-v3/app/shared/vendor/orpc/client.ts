@@ -22,6 +22,8 @@ export interface ClientWire {
   client_name: string;
   client_email: string | null;
   client_phone: string | null;
+  client_created_at: string;
+  client_updated_at: string;
 }
 
 export type { TaskStateWire, TaskWire } from "@crm/contract/task";
@@ -113,12 +115,40 @@ export interface TaskProcedureMap {
 }
 
 /** The client procedures this app talks to (task drawer select). */
-export type ClientProcedure = "list";
+export type ClientProcedure = "list" | "create" | "update" | "remove" | "dependencies";
 
 export interface ClientProcedureMap {
   list: {
     input: { search?: string; limit?: number };
     output: ClientWire[];
+  };
+  create: {
+    input: {
+      client_name: string;
+      client_email?: string | null;
+      client_phone?: string | null;
+    };
+    output: ClientWire;
+  };
+  update: {
+    input: {
+      client_id: string;
+      client_name?: string;
+      client_email?: string | null;
+      client_phone?: string | null;
+    };
+    output: ClientWire;
+  };
+  remove: {
+    input: { client_id: string };
+    output: { ok: true };
+  };
+  dependencies: {
+    input: { client_id: string };
+    output: {
+      dependencies: { task_id: string; task_title: string }[];
+      total: number;
+    };
   };
 }
 
@@ -325,7 +355,10 @@ export function callTasks<P extends TaskProcedure>(
   return callProcedure<TaskProcedureMap[P]["output"]>(segments, input);
 }
 
-/** Calls one client procedure (the `clients` context of the orpc router). */
+/**
+ * Calls one client procedure. The backend exposes the client context
+ * under the `clients` segment of the orpc router.
+ */
 export function callClients<P extends ClientProcedure>(
   procedure: P,
   input: ClientProcedureMap[P]["input"],

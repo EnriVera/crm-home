@@ -35,6 +35,7 @@ import {
   createGetClientHandler,
   createListClientsHandler,
   deleteClientHandler,
+  listClientDependenciesHandler,
   updateClientHandler,
   type ClientsRouteDependencies,
 } from "./clients/clients-routes";
@@ -188,6 +189,9 @@ export function createRpcHandler(
   const createClientH3 = asBridgeHandler(createClientHandler(deps));
   const updateClientH3 = asBridgeHandler(updateClientHandler(deps));
   const deleteClientH3 = asBridgeHandler(deleteClientHandler(deps));
+  const listClientDependenciesH3 = asBridgeHandler(
+    listClientDependenciesHandler(deps),
+  );
 
   const listIncomesH3 = asBridgeHandler(createListIncomesHandler(deps));
   const getIncomeH3 = asBridgeHandler(createGetIncomeHandler(deps));
@@ -394,6 +398,11 @@ export function createRpcHandler(
       method: "POST",
       path: "/clients/remove",
       run: wrapPost(deleteClientH3, "/clients/remove"),
+    },
+    {
+      method: "POST",
+      path: "/clients/dependencies",
+      run: wrapPost(listClientDependenciesH3, "/clients/dependencies"),
     },
     {
       method: "POST",

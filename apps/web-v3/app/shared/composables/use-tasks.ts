@@ -8,7 +8,6 @@ import {
 import {
   createTask,
   listAllCategories,
-  listClients,
   listTaskColumns,
   listTasks,
   listTaskTypes,
@@ -20,6 +19,7 @@ import {
   type TaskUpdateInput,
   type TypeOption,
 } from "~/infrastructure/task/orpc-task";
+import { listClients } from "~/infrastructure/client/orpc-client";
 
 /**
  * useTasks: the /tasks screen state (PRD-v4 §8.4).
@@ -67,7 +67,10 @@ export function useTasks() {
         ]);
       tasks.value = taskList;
       columns.value = columnList;
-      clients.value = clientList;
+      clients.value = clientList.map((client) => ({
+        id: client.id,
+        name: client.name,
+      }));
       types.value = typeList;
       categories.value = categoryList;
     } catch {
