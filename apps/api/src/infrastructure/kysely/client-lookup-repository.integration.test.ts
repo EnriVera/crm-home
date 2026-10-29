@@ -25,7 +25,7 @@ describe.skipIf(!databaseUrl)(
       await db.destroy();
     });
 
-    test("searchByNamePrefix devuelve solo clientes del userId (multi-user isolation)", async () => {
+    test("searchByName devuelve solo clientes del userId (multi-user isolation)", async () => {
       const userA = crypto.randomUUID();
       const userB = crypto.randomUUID();
       await sql`INSERT INTO "user" (user_id, user_email, user_name)
@@ -40,7 +40,7 @@ describe.skipIf(!databaseUrl)(
                 VALUES (${clientA}, ${userA}, 'Acme Corp'),
                        (${clientB}, ${userB}, 'Acme Subsidiary')`.execute(db);
 
-      const results = await repository.searchByNamePrefix({
+      const results = await repository.searchByName({
         userId: userA,
         query: "Acme",
         limit: 50,
@@ -50,7 +50,7 @@ describe.skipIf(!databaseUrl)(
       expect(results.find((r) => r.id === clientB)).toBeUndefined();
     });
 
-    test("searchByNamePrefix es case-insensitive (ILIKE)", async () => {
+    test("searchByName es case-insensitive (ILIKE)", async () => {
       const userId = crypto.randomUUID();
       await sql`INSERT INTO "user" (user_id, user_email, user_name)
                 VALUES (${userId}, ${`c-${Date.now()}@example.com`}, 'C')`.execute(
@@ -63,12 +63,12 @@ describe.skipIf(!databaseUrl)(
         db,
       );
 
-      const lower = await repository.searchByNamePrefix({
+      const lower = await repository.searchByName({
         userId,
         query: "globex",
         limit: 50,
       });
-      const upper = await repository.searchByNamePrefix({
+      const upper = await repository.searchByName({
         userId,
         query: "GLOBEX",
         limit: 50,
@@ -78,7 +78,7 @@ describe.skipIf(!databaseUrl)(
       expect(upper.map((r) => r.id)).toEqual([clientId]);
     });
 
-    test("searchByNamePrefix devuelve hasta 100 filas (el max del contrato)", async () => {
+    test("searchByName devuelve hasta 100 filas (el max del contrato)", async () => {
       const userId = crypto.randomUUID();
       await sql`INSERT INTO "user" (user_id, user_email, user_name)
                 VALUES (${userId}, ${`d-${Date.now()}@example.com`}, 'D')`.execute(
@@ -92,7 +92,7 @@ describe.skipIf(!databaseUrl)(
         );
       }
 
-      const results = await repository.searchByNamePrefix({
+      const results = await repository.searchByName({
         userId,
         query: "Match",
         limit: 100,
@@ -100,7 +100,7 @@ describe.skipIf(!databaseUrl)(
       expect(results.length).toBe(100);
 
       // Por encima del max del contrato el repo no inventa filas.
-      const capped = await repository.searchByNamePrefix({
+      const capped = await repository.searchByName({
         userId,
         query: "Match",
         limit: 500,

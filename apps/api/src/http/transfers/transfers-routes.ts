@@ -9,8 +9,8 @@ import {
   InvalidTransferInput,
   TransferNotFound,
 } from "../../application/transfers/errors";
-import { mapTaskErrorToStatus } from "../tasks/error-mapping";
-import { readUserId } from "../tasks/tasks-routes";
+import { mapDomainErrorToStatus } from "../error-mapping";
+import { readUserId } from "../request-user";
 
 export interface TransfersRouteDependencies {
   listTransfers: ListTransfers;
@@ -103,7 +103,7 @@ export function createListTransfersHandler(deps: TransfersRouteDependencies) {
       });
       return Response.json(rows.map(mapTransferRowToContract));
     } catch (err) {
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };
@@ -134,7 +134,7 @@ export function createGetTransferHandler(deps: TransfersRouteDependencies) {
       }
       return Response.json(mapTransferRowToContract(found));
     } catch (err) {
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };
@@ -159,17 +159,7 @@ export function createTransferHandler(deps: TransfersRouteDependencies) {
       });
       return Response.json(mapTransferRowToContract(row), { status: 201 });
     } catch (err) {
-      if (err instanceof InvalidTransferInput) {
-        return Response.json(
-          {
-            defined: true,
-            code: "INVALID_TRANSFER_INPUT",
-            message: err.message,
-          },
-          { status: 400 },
-        );
-      }
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };
@@ -195,23 +185,7 @@ export function updateTransferHandler(deps: TransfersRouteDependencies) {
       });
       return Response.json(mapTransferRowToContract(row));
     } catch (err) {
-      if (err instanceof InvalidTransferInput) {
-        return Response.json(
-          {
-            defined: true,
-            code: "INVALID_TRANSFER_INPUT",
-            message: err.message,
-          },
-          { status: 400 },
-        );
-      }
-      if (err instanceof TransferNotFound) {
-        return Response.json(
-          { defined: true, code: "TRANSFER_NOT_FOUND", message: err.message },
-          { status: 404 },
-        );
-      }
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };
@@ -231,13 +205,7 @@ export function removeTransferHandler(deps: TransfersRouteDependencies) {
       });
       return Response.json({ ok: true });
     } catch (err) {
-      if (err instanceof TransferNotFound) {
-        return Response.json(
-          { defined: true, code: "TRANSFER_NOT_FOUND", message: err.message },
-          { status: 404 },
-        );
-      }
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };

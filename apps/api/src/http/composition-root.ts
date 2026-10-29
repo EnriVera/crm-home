@@ -115,6 +115,10 @@ export interface AppEnv extends TelemetryEnv {
   SMTP_PASS?: string;
   SMTP_SECURE?: string;
   WEB_ORIGINS?: string;
+  /** Desactiva el loop de drenaje de la cola de emails. */
+  EMAIL_DRAIN_LOOP_ENABLED?: string;
+  /** Cada cuánto corre el drenaje (ms). Default: 60000. */
+  EMAIL_DRAIN_INTERVAL_MS?: string;
 }
 
 export interface CompositionRootOverrides {
@@ -133,17 +137,18 @@ export function createCompositionRoot(
 
   const app = new H3();
 
-  // Dev-mode CORS: the orpc client sends credentials: 'include' (cookies
-  // for the session), so Access-Control-Allow-Origin must be the explicit
-  // origin (not '*') and Access-Control-Allow-Credentials must be true.
-  // All three dev frontends are allowed (override with WEB_ORIGINS,
-  // comma-separated, e.g. for 127.0.0.1 or CI):
-  //   - apps/web    (octane) on http://localhost:5173
-  //   - apps/web-v2 (Vue)    on http://localhost:5174
-  //   - apps/web-v3 (Nuxt)   on http://localhost:5175
-  // The orpc handler is mounted at /rpc/** and uses POST for procedures,
-  // so the preflight (OPTIONS) must accept POST + the standard headers.
-  // For production, replace the explicit origins with a vetted allowlist.
+  // CORS de dev: el cliente orpc manda credentials: 'include' (las cookies
+  // de la sesión), así que Access-Control-Allow-Origin tiene que ser el
+  // origin explícito (no '*') y Access-Control-Allow-Credentials true.
+  // Se permiten los tres frontends de dev (se overridea con WEB_ORIGINS,
+  // separado por comas, p. ej. para 127.0.0.1 o CI):
+  //   - apps/web    (octane) en http://localhost:5173
+  //   - apps/web-v2 (Vue)    en http://localhost:5174
+  //   - apps/web-v3 (Nuxt)   en http://localhost:5175
+  // El handler orpc está montado en /rpc/** y usa POST para las procedures,
+  // así que el preflight (OPTIONS) tiene que aceptar POST + los headers
+  // estándar. En producción, reemplazar los origins por una allowlist
+  // revisada.
   const devCors = {
     origin: (
       env.WEB_ORIGINS ??
@@ -264,14 +269,6 @@ export function createCompositionRoot(
     const listClientDependencies = new ListClientDependencies({
       taskRepository,
     });
-    const listClientsHandler = createListClientsHandler({
-      listClients,
-      getClient,
-      createClient,
-      updateClient,
-      deleteClient,
-      listClientDependencies,
-    });
     const listIncomes = new ListIncomes({ incomeRepository });
     const createIncomeUseCase = new CreateIncome({ incomeRepository });
     const updateIncomeUseCase = new UpdateIncome({ incomeRepository });
@@ -354,7 +351,6 @@ export function createCompositionRoot(
       createSchedule: createScheduleUseCase,
       updateSchedule: updateScheduleUseCase,
       removeSchedule: removeScheduleUseCase,
-      listClientsHandler,
       getHealth,
       requestOtp,
       verifyOtp,
@@ -414,8 +410,7 @@ export function createAppFetch(
   overrides: CompositionRootOverrides = {},
 ): (request: Request) => Promise<Response> {
   const { app } = createCompositionRoot(env, overrides);
-  return (request: Request) =>
-    Promise.resolve(app.fetch(request as never)) as Promise<Response>;
+  return async (request: Request) => app.fetch(request);
 }
 
 // Entry para nitro (nitro.config.ts apunta aquí con route "/**").
@@ -437,9 +432,14 @@ function startEmailDrainLoop(env: AppEnv): void {
   // SAFETY: el interval corre por la duración del proceso nitro. La función
   // tick recrea la DB y el EmailSender cada corrida para reflejar cambios
   // de env vars en runtime (DATABASE_URL, SMTP_HOST, etc. sin reinicio).
-  const intervalMs = env.EMAIL_DRAIN_INTERVAL_MS
-    ? Number(env.EMAIL_DRAIN_INTERVAL_MS)
-    : 60_000;
+  //
+  // Un valor no numérico cae al default: `setInterval` con NaN se vuelve
+  // ~1ms y el loop golpearía la base en modo martillo.
+  const parsedInterval = Number(env.EMAIL_DRAIN_INTERVAL_MS);
+  const intervalMs =
+    env.EMAIL_DRAIN_INTERVAL_MS && Number.isFinite(parsedInterval)
+      ? parsedInterval
+      : 60_000;
   console.log(
     `[email-drain] starting loop (interval=${intervalMs}ms, db=${env.DATABASE_URL ? "yes" : "no"}, smtp=${env.SMTP_HOST ?? env.SMTP_URL ?? "console-fallback"})`,
   );
@@ -447,8 +447,8 @@ function startEmailDrainLoop(env: AppEnv): void {
   const tick = async (): Promise<void> => {
     const databaseUrl = env.DATABASE_URL ?? "";
     if (!databaseUrl) return;
+    const db = createDatabase(databaseUrl);
     try {
-      const db = createDatabase(databaseUrl);
       const repository = new KyselyEmailSendingRepository(db);
       const sender = createEmailSender({
         SMTP_URL: env.SMTP_URL,
@@ -468,9 +468,12 @@ function startEmailDrainLoop(env: AppEnv): void {
           `[email-drain] drained processed=${result.processed} sent=${result.sent} failed=${result.failed} pending=${result.pending} sender=${sender.kind}`,
         );
       }
-      await db.destroy();
     } catch (err) {
       console.error("[email-drain] tick failed:", err);
+    } finally {
+      // El pool se cierra siempre: si el drain tiró, el handle queda
+      // abierto y cada tick filtraría una conexión.
+      await db.destroy();
     }
   };
 

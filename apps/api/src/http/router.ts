@@ -113,7 +113,6 @@ export interface RouterDependencies
     CategoriesRouteDependencies,
     TimerRouteDependencies {
   getHealth: GetHealth;
-  listClientsHandler: ReturnType<typeof createListClientsHandler>;
 }
 
 /**
@@ -390,8 +389,8 @@ export function createRpcHandler(
     {
       method: "POST",
       path: "/clients/list",
-      // Usamos wrapPost para que el body se inyecte como query string
-      // (los handlers leen via `getQuery(event)` consistentemente con tasks).
+      // El input llega en el body (`{json: …}`) y el handler lo valida
+      // con `readValidatedBody`, igual que tasks.
       run: wrapPost(listClientsH3, "/clients/list"),
     },
     {

@@ -1,6 +1,6 @@
 import { sql } from "kysely";
 import type { ScheduleRepository } from "../../domain/ports/schedule-repository";
-import type { ScheduleRow } from "../../domain/tasks/types";
+import type { ScheduleRow } from "../../domain/types";
 import type { Database } from "./database";
 import { mapScheduleRow, type ScheduleDbRow } from "./_mappers";
 

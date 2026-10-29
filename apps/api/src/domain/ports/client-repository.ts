@@ -1,4 +1,4 @@
-import type { ClientRow } from "../tasks/types";
+import type { ClientRow } from "../types";
 
 /**
  * Puerto CRUD de la entidad `client`.
@@ -35,7 +35,14 @@ export interface ClientRepository {
     phone: string | null;
   }): Promise<ClientRow>;
 
-  /** Actualiza un client. Solo se actualizan los campos provistos. */
+  /**
+   * Actualiza un client. Solo se actualizan los campos provistos.
+   *
+   * El contrato de los campos opcionales: `undefined` = "no tocar el
+   * campo" y `null` = "vaciar el campo". Los dos estados son distintos y
+   * se distinguen con `!== undefined`, así que un `null` explícito borra
+   * el email o el teléfono del cliente.
+   */
   update(params: {
     userId: string;
     clientId: string;

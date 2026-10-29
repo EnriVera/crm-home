@@ -12,13 +12,11 @@ import {
   InvalidKanbanOrder,
   TaskNotFound,
   TaskStateNotFound,
-  Unauthorized,
 } from "../../application/tasks/errors";
 import type { CreateTask } from "../../application/tasks/create-task";
 import type { GetTask } from "../../application/tasks/get-task";
 import type { ListTasks } from "../../application/tasks/list-tasks";
 import type { MoveTask } from "../../application/tasks/move-task";
-import { mapTaskErrorToStatus } from "./error-mapping";
 import {
   createCreateTaskHandler,
   createGetTaskHandler,
@@ -121,38 +119,6 @@ function makeEvent(
 }
 
 // ─── Tests ──────────────────────────────────────────────────────────────────
-
-describe("mapTaskErrorToStatus", () => {
-  test("TaskNotFound → 404 con code TASK_NOT_FOUND", () => {
-    const r = mapTaskErrorToStatus(new TaskNotFound());
-    expect(r.status).toBe(404);
-    expect(r.body.code).toBe("TASK_NOT_FOUND");
-  });
-
-  test("TaskStateNotFound → 404", () => {
-    const r = mapTaskErrorToStatus(new TaskStateNotFound());
-    expect(r.status).toBe(404);
-    expect(r.body.code).toBe("TASK_STATE_NOT_FOUND");
-  });
-
-  test("InvalidKanbanOrder → 409", () => {
-    const r = mapTaskErrorToStatus(new InvalidKanbanOrder());
-    expect(r.status).toBe(409);
-    expect(r.body.code).toBe("INVALID_KANBAN_ORDER");
-  });
-
-  test("Unauthorized → 401", () => {
-    const r = mapTaskErrorToStatus(new Unauthorized());
-    expect(r.status).toBe(401);
-    expect(r.body.code).toBe("UNAUTHORIZED");
-  });
-
-  test("Unknown error → 500 INTERNAL_ERROR", () => {
-    const r = mapTaskErrorToStatus(new Error("boom"));
-    expect(r.status).toBe(500);
-    expect(r.body.code).toBe("INTERNAL_ERROR");
-  });
-});
 
 describe("createMoveTaskHandler — wrapping + error mapping", () => {
   let deps: TasksRouteDependencies;

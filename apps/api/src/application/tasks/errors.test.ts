@@ -5,8 +5,8 @@ import {
   TaskDomainError,
   TaskNotFound,
   TaskStateNotFound,
-  Unauthorized,
 } from "./errors";
+import { Unauthorized } from "../../domain/errors";
 
 describe("tasks errors", () => {
   test("TaskNotFound es Error, TaskDomainError y expone code 'TASK_NOT_FOUND'", () => {
@@ -38,7 +38,7 @@ describe("tasks errors", () => {
 
   test("Unauthorized expone code 'UNAUTHORIZED'", () => {
     const err = new Unauthorized();
-    expect(err).toBeInstanceOf(TaskDomainError);
+    expect(err).toBeInstanceOf(Error);
     expect(err.code).toBe("UNAUTHORIZED");
   });
 });

@@ -6,8 +6,8 @@ import type { CreateType } from "../../application/types/create-type";
 import type { UpdateType } from "../../application/types/update-type";
 import type { RemoveType } from "../../application/types/remove-type";
 import { InvalidTypeInput, TypeNotFound } from "../../application/types/errors";
-import { mapTaskErrorToStatus } from "../tasks/error-mapping";
-import { readUserId } from "../tasks/tasks-routes";
+import { mapDomainErrorToStatus } from "../error-mapping";
+import { readUserId } from "../request-user";
 
 /**
  * Entry HTTP del módulo `types` (tab `tipos` en /config).
@@ -17,7 +17,7 @@ import { readUserId } from "../tasks/tasks-routes";
  *    session cookie (leído como header `X-User-Id` por el router).
  *  - `readValidatedBody(event, zodSchema.parse)` valida el body con
  *    Zod antes de invocar el use case.
- *  - Errores ORPC mapeados via `mapTaskErrorToStatus` (compartido
+ *  - Errores mapeados con el helper compartido `mapDomainErrorToStatus`
  *    con tasks / clients — el shape del error envelope es idéntico).
  *
  * Multi-módulo (migration 007):
@@ -86,7 +86,7 @@ export function createListTypesHandler(deps: TypesRouteDependencies) {
       });
       return Response.json(rows.map(mapTypeRowToContract));
     } catch (err) {
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };
@@ -104,17 +104,7 @@ export function createCreateTypeHandler(deps: TypesRouteDependencies) {
       });
       return Response.json(mapTypeRowToContract(row), { status: 201 });
     } catch (err) {
-      if (err instanceof InvalidTypeInput) {
-        return Response.json(
-          {
-            defined: true,
-            code: "INVALID_TYPE_INPUT",
-            message: err.message,
-          },
-          { status: 400 },
-        );
-      }
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };
@@ -133,23 +123,7 @@ export function createUpdateTypeHandler(deps: TypesRouteDependencies) {
       });
       return Response.json(mapTypeRowToContract(row));
     } catch (err) {
-      if (err instanceof InvalidTypeInput) {
-        return Response.json(
-          {
-            defined: true,
-            code: "INVALID_TYPE_INPUT",
-            message: err.message,
-          },
-          { status: 400 },
-        );
-      }
-      if (err instanceof TypeNotFound) {
-        return Response.json(
-          { defined: true, code: "TYPE_NOT_FOUND", message: err.message },
-          { status: 404 },
-        );
-      }
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };
@@ -166,13 +140,7 @@ export function createRemoveTypeHandler(deps: TypesRouteDependencies) {
       });
       return Response.json(mapTypeRowToContract(row));
     } catch (err) {
-      if (err instanceof TypeNotFound) {
-        return Response.json(
-          { defined: true, code: "TYPE_NOT_FOUND", message: err.message },
-          { status: 404 },
-        );
-      }
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };

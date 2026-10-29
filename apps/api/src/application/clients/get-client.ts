@@ -1,5 +1,5 @@
 import type { ClientRepository } from "../../domain/ports/client-repository";
-import type { ClientRow } from "../../domain/tasks/types";
+import type { ClientRow } from "../../domain/types";
 
 export interface GetClientInput {
   userId: string;

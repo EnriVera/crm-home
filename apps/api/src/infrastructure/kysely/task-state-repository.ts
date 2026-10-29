@@ -1,6 +1,6 @@
 import type { TaskStateRepository } from "../../domain/ports/task-state-repository";
 import type { Transaction } from "../../domain/ports/transaction";
-import type { TaskStatePatch, TaskStateRow } from "../../domain/tasks/types";
+import type { TaskStatePatch, TaskStateRow } from "../../domain/types";
 import { sql } from "kysely";
 import type { Database } from "./database";
 import { mapTaskStateRow, type TaskStateDbRow } from "./_mappers";

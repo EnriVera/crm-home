@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test } from "bun:test";
 import type { ClientRepository } from "../../domain/ports/client-repository";
-import type { ClientRow } from "../../domain/tasks/types";
+import type { ClientRow } from "../../domain/types";
 import { DeleteClient } from "./delete-client";
 import { ClientNotFound } from "./errors";
 

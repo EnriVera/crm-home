@@ -42,12 +42,3 @@ export class InvalidStateTransition extends TaskDomainError {
     this.name = "InvalidStateTransition";
   }
 }
-
-export class Unauthorized extends TaskDomainError {
-  readonly code = "UNAUTHORIZED";
-
-  constructor(message = "Unauthorized") {
-    super(message);
-    this.name = "Unauthorized";
-  }
-}

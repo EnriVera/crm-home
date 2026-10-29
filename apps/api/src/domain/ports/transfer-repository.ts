@@ -1,4 +1,4 @@
-import type { TransferRow } from "../tasks/types";
+import type { TransferRow } from "../types";
 
 /**
  * Puerto CRUD del módulo /transfers (movimientos de plata entre cuentas).

@@ -1,5 +1,5 @@
 import type { TaskRepository } from "../../domain/ports/task-repository";
-import type { TaskRow } from "../../domain/tasks/types";
+import type { TaskRow } from "../../domain/types";
 import { TaskNotFound } from "./errors";
 
 export interface GetTaskInput {

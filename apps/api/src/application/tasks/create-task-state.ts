@@ -1,7 +1,7 @@
 import type { Clock } from "../../domain/ports/clock";
 import type { IdGenerator } from "../../domain/ports/id-generator";
 import type { TaskStateRepository } from "../../domain/ports/task-state-repository";
-import type { TaskStateRow } from "../../domain/tasks/types";
+import type { TaskStateRow } from "../../domain/types";
 
 export interface CreateTaskStateInput {
   userId: string;

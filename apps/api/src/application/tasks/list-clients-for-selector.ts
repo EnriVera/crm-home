@@ -1,5 +1,5 @@
 import type { ClientLookupRepository } from "../../domain/ports/client-lookup-repository";
-import type { ClientRow } from "../../domain/tasks/types";
+import type { ClientRow } from "../../domain/types";
 
 export interface ListClientsForSelectorInput {
   userId: string;
@@ -20,7 +20,7 @@ export class ListClientsForSelector {
 
   async execute(input: ListClientsForSelectorInput): Promise<ClientRow[]> {
     const limit = Math.min(input.limit ?? 50, 50);
-    return this.deps.clientLookupRepository.searchByNamePrefix({
+    return this.deps.clientLookupRepository.searchByName({
       userId: input.userId,
       query: input.query,
       limit,

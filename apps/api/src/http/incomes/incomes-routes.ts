@@ -9,17 +9,16 @@ import {
   IncomeNotFound,
   InvalidIncomeInput,
 } from "../../application/incomes/errors";
-import { mapTaskErrorToStatus } from "../tasks/error-mapping";
-import { readUserId } from "../tasks/tasks-routes";
+import { mapDomainErrorToStatus } from "../error-mapping";
+import { readUserId } from "../request-user";
 
 /**
  * Entry HTTP del módulo `incomes`.
  *
  * Sigue el patrón de `clients-routes.ts`: lee `userId` desde el header
  * `X-User-Id` (inyectado por el dispatch wrapper) y devuelve el output
- * envuelto en un Response JSON. Los errores se mapean vía
- * `mapTaskErrorToStatus` (compartido entre módulos por ahora; TODO
- * extraer a http/helpers.ts cuando haya un 4to módulo con errores custom).
+ * envuelto en un Response JSON. Los errores se mapean con el helper
+ * compartido `mapDomainErrorToStatus`.
  */
 
 export interface IncomesRouteDependencies {
@@ -113,7 +112,7 @@ export function createListIncomesHandler(deps: IncomesRouteDependencies) {
       });
       return Response.json(rows.map(mapIncomeRowToContract));
     } catch (err) {
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };
@@ -144,7 +143,7 @@ export function createGetIncomeHandler(deps: IncomesRouteDependencies) {
       }
       return Response.json(mapIncomeRowToContract(found));
     } catch (err) {
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };
@@ -169,13 +168,7 @@ export function createIncomeHandler(deps: IncomesRouteDependencies) {
       });
       return Response.json(mapIncomeRowToContract(row), { status: 201 });
     } catch (err) {
-      if (err instanceof InvalidIncomeInput) {
-        return Response.json(
-          { defined: true, code: "INVALID_INCOME_INPUT", message: err.message },
-          { status: 400 },
-        );
-      }
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };
@@ -201,19 +194,7 @@ export function updateIncomeHandler(deps: IncomesRouteDependencies) {
       });
       return Response.json(mapIncomeRowToContract(row));
     } catch (err) {
-      if (err instanceof InvalidIncomeInput) {
-        return Response.json(
-          { defined: true, code: "INVALID_INCOME_INPUT", message: err.message },
-          { status: 400 },
-        );
-      }
-      if (err instanceof IncomeNotFound) {
-        return Response.json(
-          { defined: true, code: "INCOME_NOT_FOUND", message: err.message },
-          { status: 404 },
-        );
-      }
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };
@@ -233,13 +214,7 @@ export function removeIncomeHandler(deps: IncomesRouteDependencies) {
       });
       return Response.json({ ok: true });
     } catch (err) {
-      if (err instanceof IncomeNotFound) {
-        return Response.json(
-          { defined: true, code: "INCOME_NOT_FOUND", message: err.message },
-          { status: 404 },
-        );
-      }
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };

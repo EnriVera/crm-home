@@ -1,4 +1,4 @@
-import type { ExpenseRow } from "../tasks/types";
+import type { ExpenseRow } from "../types";
 
 /**
  * Puerto CRUD del módulo /expenses (gastos: plata que sale de una cuenta).

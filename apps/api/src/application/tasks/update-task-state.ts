@@ -1,5 +1,5 @@
 import type { TaskStateRepository } from "../../domain/ports/task-state-repository";
-import type { TaskStatePatch, TaskStateRow } from "../../domain/tasks/types";
+import type { TaskStatePatch, TaskStateRow } from "../../domain/types";
 import { TaskStateNotFound } from "./errors";
 
 export interface UpdateTaskStateInput {

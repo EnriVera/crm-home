@@ -1,5 +1,5 @@
 import type { TypeLookupRepository } from "../../domain/ports/type-lookup-repository";
-import type { TypeCategoriesClientRow } from "../../domain/tasks/types";
+import type { TypeCategoriesClientRow } from "../../domain/types";
 
 export interface ListTypesForFormInput {
  userId: string;

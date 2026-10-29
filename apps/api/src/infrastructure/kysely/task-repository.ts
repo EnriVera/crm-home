@@ -4,7 +4,7 @@ import type {
   MoveTaskParams,
   TaskPatch,
   TaskRow,
-} from "../../domain/tasks/types";
+} from "../../domain/types";
 import type { Database } from "./database";
 import { mapTaskRow, type TaskDbRow } from "./_mappers";
 

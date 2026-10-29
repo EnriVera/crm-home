@@ -9,8 +9,8 @@ import {
   InvalidScheduleInput,
   ScheduleNotFound,
 } from "../../application/schedules/errors";
-import { mapTaskErrorToStatus } from "../tasks/error-mapping";
-import { readUserId } from "../tasks/tasks-routes";
+import { mapDomainErrorToStatus } from "../error-mapping";
+import { readUserId } from "../request-user";
 
 export interface SchedulesRouteDependencies {
   listSchedules: ListSchedules;
@@ -107,7 +107,7 @@ export function createListSchedulesHandler(deps: SchedulesRouteDependencies) {
       });
       return Response.json(rows.map(mapScheduleRowToContract));
     } catch (err) {
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };
@@ -135,7 +135,7 @@ export function createGetScheduleHandler(deps: SchedulesRouteDependencies) {
       }
       return Response.json(mapScheduleRowToContract(found));
     } catch (err) {
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };
@@ -162,17 +162,7 @@ export function createScheduleHandler(deps: SchedulesRouteDependencies) {
       });
       return Response.json(mapScheduleRowToContract(row), { status: 201 });
     } catch (err) {
-      if (err instanceof InvalidScheduleInput) {
-        return Response.json(
-          {
-            defined: true,
-            code: "INVALID_SCHEDULE_INPUT",
-            message: err.message,
-          },
-          { status: 400 },
-        );
-      }
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };
@@ -200,23 +190,7 @@ export function updateScheduleHandler(deps: SchedulesRouteDependencies) {
       });
       return Response.json(mapScheduleRowToContract(row));
     } catch (err) {
-      if (err instanceof InvalidScheduleInput) {
-        return Response.json(
-          {
-            defined: true,
-            code: "INVALID_SCHEDULE_INPUT",
-            message: err.message,
-          },
-          { status: 400 },
-        );
-      }
-      if (err instanceof ScheduleNotFound) {
-        return Response.json(
-          { defined: true, code: "SCHEDULE_NOT_FOUND", message: err.message },
-          { status: 404 },
-        );
-      }
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };
@@ -236,13 +210,7 @@ export function removeScheduleHandler(deps: SchedulesRouteDependencies) {
       });
       return Response.json({ ok: true });
     } catch (err) {
-      if (err instanceof ScheduleNotFound) {
-        return Response.json(
-          { defined: true, code: "SCHEDULE_NOT_FOUND", message: err.message },
-          { status: 404 },
-        );
-      }
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };

@@ -1,4 +1,4 @@
-import type { AttachmentRow } from "../tasks/types";
+import type { AttachmentRow } from "../types";
 import type { Transaction } from "./transaction";
 
 /**

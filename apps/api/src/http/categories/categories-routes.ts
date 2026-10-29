@@ -9,8 +9,8 @@ import {
   CategoryNotFound,
   InvalidCategoryInput,
 } from "../../application/categories/errors";
-import { mapTaskErrorToStatus } from "../tasks/error-mapping";
-import { readUserId } from "../tasks/tasks-routes";
+import { mapDomainErrorToStatus } from "../error-mapping";
+import { readUserId } from "../request-user";
 
 /**
  * Entry HTTP del módulo `categories` (tab `categorías` en /config).
@@ -20,7 +20,7 @@ import { readUserId } from "../tasks/tasks-routes";
  *    session cookie (leído como header `X-User-Id` por el router).
  *  - `readValidatedBody(event, zodSchema.parse)` valida el body con
  *    Zod antes de invocar el use case.
- *  - Errores ORPC mapeados via `mapTaskErrorToStatus`.
+ *  - Errores mapeados con el helper compartido `mapDomainErrorToStatus`.
  *
  * Una categoría siempre pertenece a un type (`cate_type_id NOT NULL`).
  */
@@ -67,24 +67,6 @@ function mapCategoryRowToContract(row: {
   };
 }
 
-function invalidInputResponse(err: InvalidCategoryInput) {
-  return Response.json(
-    {
-      defined: true,
-      code: "INVALID_CATEGORY_INPUT",
-      message: err.message,
-    },
-    { status: 400 },
-  );
-}
-
-function notFoundResponse(err: CategoryNotFound) {
-  return Response.json(
-    { defined: true, code: "CATEGORY_NOT_FOUND", message: err.message },
-    { status: 404 },
-  );
-}
-
 export function createListCategoriesHandler(deps: CategoriesRouteDependencies) {
   return async (event: H3Event): Promise<Response> => {
     try {
@@ -101,7 +83,7 @@ export function createListCategoriesHandler(deps: CategoriesRouteDependencies) {
       });
       return Response.json(rows.map(mapCategoryRowToContract));
     } catch (err) {
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };
@@ -122,10 +104,7 @@ export function createCreateCategoryHandler(deps: CategoriesRouteDependencies) {
       });
       return Response.json(mapCategoryRowToContract(row), { status: 201 });
     } catch (err) {
-      if (err instanceof InvalidCategoryInput) {
-        return invalidInputResponse(err);
-      }
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };
@@ -147,13 +126,7 @@ export function createUpdateCategoryHandler(deps: CategoriesRouteDependencies) {
       });
       return Response.json(mapCategoryRowToContract(row));
     } catch (err) {
-      if (err instanceof InvalidCategoryInput) {
-        return invalidInputResponse(err);
-      }
-      if (err instanceof CategoryNotFound) {
-        return notFoundResponse(err);
-      }
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };
@@ -173,10 +146,7 @@ export function createRemoveCategoryHandler(deps: CategoriesRouteDependencies) {
       });
       return Response.json({ ok: true });
     } catch (err) {
-      if (err instanceof CategoryNotFound) {
-        return notFoundResponse(err);
-      }
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };

@@ -4,10 +4,8 @@ import type {
 } from "../../domain/ports/timer-run-repository";
 import type { TransactionManager } from "../../domain/ports/transaction-manager";
 import { TimerAlreadyRunningError } from "../../domain/timers/errors";
+import { MAX_TIMER_MS } from "../../domain/timers/limits";
 import { InvalidTimerInput } from "./errors";
-
-/** El timer se auto-cierra a las 12 horas (PRD-v2 §8.4). */
-export const MAX_TIMER_MS = 12 * 60 * 60 * 1000;
 
 export interface StartTimerInput {
   userId: string;
@@ -74,11 +72,17 @@ export class StartTimer {
             trx,
           );
           if (open) {
+            // La corrida abandonada se cierra en el límite de 12 horas, no
+            // en "ahora": el tiempo que el usuario estuvo realmente con la
+            // pantalla abierta es el que se factura (PRD-v2 §8.4).
+            const end = new Date(
+              Math.min(now.getTime(), open.start.getTime() + MAX_TIMER_MS),
+            );
             await this.deps.timerRunRepository.close(
               {
                 userId: input.userId,
                 timerId: open.id,
-                end: now,
+                end,
               },
               trx,
             );

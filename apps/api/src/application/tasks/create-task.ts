@@ -2,7 +2,7 @@ import type { Clock } from "../../domain/ports/clock";
 import type { IdGenerator } from "../../domain/ports/id-generator";
 import type { TaskRepository } from "../../domain/ports/task-repository";
 import type { TaskStateRepository } from "../../domain/ports/task-state-repository";
-import type { TaskRow } from "../../domain/tasks/types";
+import type { TaskRow } from "../../domain/types";
 import { KANBAN_DEFAULT_STEP } from "./constants";
 import { TaskStateNotFound } from "./errors";
 

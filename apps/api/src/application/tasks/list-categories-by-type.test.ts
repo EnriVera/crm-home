@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test } from "bun:test";
 import { InMemoryCategoryLookupRepository, makeTask } from "./test-helpers";
-import type { CategoryRow } from "../../domain/tasks/types";
+import type { CategoryRow } from "../../domain/types";
 import { ListCategoriesByType } from "./list-categories-by-type";
 
 function makeCategory(overrides: Partial<CategoryRow>): CategoryRow {

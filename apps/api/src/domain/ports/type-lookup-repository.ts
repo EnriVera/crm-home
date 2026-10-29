@@ -1,4 +1,4 @@
-import type { TypeCategoriesClientRow } from "../tasks/types";
+import type { TypeCategoriesClientRow } from "../types";
 
 /**
  * Lookup read-only: tipos aplicables al form, filtrados opcionalmente por cliente.

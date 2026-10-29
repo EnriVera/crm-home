@@ -1,4 +1,4 @@
-import type { TaskStatePatch, TaskStateRow } from "../tasks/types";
+import type { TaskStatePatch, TaskStateRow } from "../types";
 import type { Transaction } from "./transaction";
 
 /**

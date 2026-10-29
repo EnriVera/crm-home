@@ -1,11 +1,11 @@
-import type { ClientRow } from "../tasks/types";
+import type { ClientRow } from "../types";
 
 /**
  * Lookup read-only: clientes autocompletables por prefijo de nombre.
  * Consumido por el form organism de tasks (WU11) vía endpoint `/tasks/clients.search`.
  */
 export interface ClientLookupRepository {
-  searchByNamePrefix(params: {
+  searchByName(params: {
     userId: string;
     query: string;
     limit: number;

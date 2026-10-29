@@ -23,21 +23,20 @@ interface TimerRunDbRow {
 }
 
 /**
- * ¿El error es una violación de unicidad de Postgres (SQLSTATE 23505)?
+ * ¿El error es una violación del índice parcial único del timer
+ * (SQLSTATE 23505)?
  *
- * El driver `pg` expone el SQLSTATE en `code` y el nombre del índice
- * en `constraint`. El índice parcial único del timer es el único
- * disparador posible de esto en esta tabla.
+ * El driver `pg` expone el SQLSTATE en `code` y el nombre del índice en
+ * `constraint`. El índice parcial único del timer es el único disparador
+ * posible de esto en esta tabla: si el `constraint` viene y no es el de
+ * `timer_run`, la violación es de otro índice y no se traduce.
  */
 function isUniqueViolation(err: unknown): boolean {
   if (typeof err !== "object" || err === null) return false;
   const candidate = err as { code?: unknown; constraint?: unknown };
-  return (
-    candidate.code === "23505" &&
-    (typeof candidate.constraint === "string"
-      ? candidate.constraint.includes("timer_run")
-      : true)
-  );
+  if (candidate.code !== "23505") return false;
+  if (typeof candidate.constraint !== "string") return true;
+  return candidate.constraint.includes("timer_run");
 }
 
 function mapTimerRunRow(row: TimerRunDbRow): TimerRunRow {
@@ -63,11 +62,14 @@ function mapTimerRunRow(row: TimerRunDbRow): TimerRunRow {
 export class KyselyTimerRunRepository implements TimerRunRepository {
   constructor(private readonly db: Database) {}
 
-  async lockUserTimers(userId: string, trx?: Transaction): Promise<void> {
+  async lockUserTimers(userId: string, trx: Transaction): Promise<void> {
     // Lock de advice a nivel de transacción: se toma y se suelta con la
     // transacción, así que un arranque fallido no deja el usuario
     // bloqueado. `hashtext` deriva el id del usuario a una clave de 32
     // bits (el advisory lock trabaja con int4).
+    //
+    // La transacción es obligatoria: sin ella el lock se suelta al
+    // terminar la llamada y la serialización se pierde.
     await sql`SELECT pg_advisory_xact_lock(hashtext(${userId}))`.execute(
       this.resolve(trx),
     );
@@ -167,6 +169,10 @@ export class KyselyTimerRunRepository implements TimerRunRepository {
           timr_cate_id: params.categoryId,
           timr_start: params.start,
           timr_origin: params.origin,
+          // El mismo reloj que usan `close` y `heartbeat`: el default
+          // `NOW()` de la base y el reloj de la app no tienen por qué
+          // coincidir al milisegundo.
+          timr_updated_at: new Date(),
         })
         .returningAll()
         .executeTakeFirstOrThrow();

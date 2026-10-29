@@ -1,5 +1,5 @@
 import type { TransferRepository } from "../../domain/ports/transfer-repository";
-import type { TransferRow } from "../../domain/tasks/types";
+import type { TransferRow } from "../../domain/types";
 import { TransferNotFound } from "./errors";
 
 export interface RemoveTransferInput {

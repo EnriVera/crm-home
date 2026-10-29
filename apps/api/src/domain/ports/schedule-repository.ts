@@ -1,4 +1,4 @@
-import type { ScheduleRow } from "../tasks/types";
+import type { ScheduleRow } from "../types";
 
 export interface ScheduleRepository {
   list(params: { userId: string; limit: number }): Promise<ScheduleRow[]>;

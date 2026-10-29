@@ -1,5 +1,5 @@
 import type { ScheduleRepository } from "../../domain/ports/schedule-repository";
-import type { ScheduleRow } from "../../domain/tasks/types";
+import type { ScheduleRow } from "../../domain/types";
 import { InvalidScheduleInput } from "./errors";
 
 export interface CreateScheduleInput {

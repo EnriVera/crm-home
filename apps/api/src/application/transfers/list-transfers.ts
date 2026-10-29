@@ -1,5 +1,5 @@
 import type { TransferRepository } from "../../domain/ports/transfer-repository";
-import type { TransferRow } from "../../domain/tasks/types";
+import type { TransferRow } from "../../domain/types";
 
 export interface ListTransfersInput {
     userId: string;

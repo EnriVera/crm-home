@@ -1,5 +1,8 @@
 import type { Transaction } from "./transaction";
 
+/** Cómo arrancó la corrida: a mano o reanudando una del historial. */
+export type TimerOrigin = "manual" | "resumed";
+
 /**
  * Puerto del módulo /schedules → TIMER (PRD-v4 §8.5, PRD-v2 §8.4).
  *
@@ -21,7 +24,7 @@ export interface TimerRunRow {
   start: Date;
   end: Date | null;
   durationSeconds: number | null;
-  origin: "manual" | "resumed";
+  origin: TimerOrigin;
   lastHeartbeat: Date | null;
 }
 
@@ -37,15 +40,16 @@ export interface TimerRunRepository {
    * se ejecutan uno detrás del otro (mismo resultado que en serie:
    * gana el último).
    *
-   * El lock debe vivir en la transacción que lo usa: si la operación
-   * falla, el lock se libera solo.
+   * El lock tiene que vivir en la transacción que lo usa: sin
+   * transacción el lock se libera al terminar la llamada y la
+   * serialización se pierde. Por eso la transacción es obligatoria.
    */
-  lockUserTimers(userId: string, trx?: Transaction): Promise<void>;
+  lockUserTimers(userId: string, trx: Transaction): Promise<void>;
 
-  /** The open run of the user (end IS NULL), if any. */
+  /** La corrida abierta del usuario (end IS NULL), si hay. */
   findOpen(userId: string, trx?: Transaction): Promise<TimerRunRow | null>;
 
-  /** The runs of the user, newest first, with the optional filters. */
+  /** Las corridas del usuario, de la más nueva a la más vieja. */
   list(
     params: {
       userId: string;
@@ -74,18 +78,18 @@ export interface TimerRunRepository {
       typeId: string | null;
       categoryId: string | null;
       start: Date;
-      origin: "manual" | "resumed";
+      origin: TimerOrigin;
     },
     trx?: Transaction,
   ): Promise<TimerRunRow>;
 
-  /** Closes a run: end + duration (computed from the start). */
+  /** Cierra una corrida: end + duration (calculada desde el start). */
   close(
     params: { userId: string; timerId: string; end: Date },
     trx?: Transaction,
   ): Promise<TimerRunRow>;
 
-  /** Registers the heartbeat of a running timer. */
+  /** Registra el heartbeat de una corrida abierta. */
   heartbeat(
     params: { userId: string; timerId: string; at: Date },
     trx?: Transaction,

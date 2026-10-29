@@ -22,7 +22,7 @@ import type {
   TaskStateRow,
   TransferRow,
   TypeCategoriesClientRow,
-} from "../../domain/tasks/types";
+} from "../../domain/types";
 
 // ─── TaskStateRow ───────────────────────────────────────────────────────────
 

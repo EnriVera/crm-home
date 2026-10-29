@@ -1,5 +1,5 @@
 import type { ClientLookupRepository } from "../../domain/ports/client-lookup-repository";
-import type { ClientRow } from "../../domain/tasks/types";
+import type { ClientRow } from "../../domain/types";
 
 export interface ListClientsInput {
   userId: string;
@@ -16,7 +16,7 @@ export class ListClients {
 
   async execute(input: ListClientsInput): Promise<ClientRow[]> {
     const limit = Math.min(Math.max(input.limit, 1), 100);
-    return this.deps.clientLookupRepository.searchByNamePrefix({
+    return this.deps.clientLookupRepository.searchByName({
       userId: input.userId,
       query: input.search,
       limit,

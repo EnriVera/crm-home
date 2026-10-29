@@ -1,5 +1,5 @@
 import type { TaskStateRepository } from "../../domain/ports/task-state-repository";
-import type { TaskStateRow } from "../../domain/tasks/types";
+import type { TaskStateRow } from "../../domain/types";
 
 export interface ListTaskStatesInput {
  userId: string;

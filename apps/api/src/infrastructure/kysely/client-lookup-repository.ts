@@ -1,12 +1,12 @@
 import type { ClientLookupRepository } from "../../domain/ports/client-lookup-repository";
-import type { Transaction } from "../../domain/ports/transaction";
-import type { ClientRow } from "../../domain/tasks/types";
+import type { ClientRow } from "../../domain/types";
 import type { Database } from "./database";
 import { mapClientRow, type ClientDbRow } from "./_mappers";
 
 /**
- * Lookup de clientes autocompletables por prefijo de nombre.
- * Usa `ILIKE` case-insensitive sobre `clie_name`, filtra por `clie_user_id`
+ * Lookup de clientes autocompletables por nombre.
+ * Usa `ILIKE` case-insensitive sobre `clie_name` (contiene, no prefijo: el
+ * autocompletado busca en medio del nombre), filtra por `clie_user_id`
  * (multi-user isolation) y trunca a `min(limit, 100)`: el tope es el
  * `max` del contrato (`clientLimitSchema`), no un número redondo menor.
  * El autocompletado de tareas se sigue acotando a 50 por su propio
@@ -15,25 +15,26 @@ import { mapClientRow, type ClientDbRow } from "./_mappers";
 export class KyselyClientLookupRepository implements ClientLookupRepository {
   constructor(private readonly db: Database) {}
 
-  async searchByNamePrefix(params: {
+  async searchByName(params: {
     userId: string;
     query: string;
     limit: number;
   }): Promise<ClientRow[]> {
-    const cappedLimit = Math.min(params.limit, 100);
-    const rows = await this.db
+    const query = params.query.trim();
+    const cappedLimit = Math.min(Math.max(params.limit, 1), 100);
+    // Una query vacía (o solo espacios) matchea todos los clientes del
+    // usuario: el filtro se omite en vez de escanear con `%   %`.
+    const base = this.db
       .selectFrom("client")
       .selectAll()
       .where("clie_user_id", "=", params.userId)
-      .where("clie_deleted_at", "is", null)
-      .where("clie_name", "ilike", `%${params.query}%`)
+      .where("clie_deleted_at", "is", null);
+    const rows = await (query.length > 0
+      ? base.where("clie_name", "ilike", `%${query}%`)
+      : base
+    )
       .limit(cappedLimit)
       .execute();
     return rows.map((row) => mapClientRow(row as ClientDbRow));
   }
-
-  // Lookup repos no reciben `trx?` en su contrato (son read-only),
-  // pero aceptamos el parámetro para homogeneidad de la firma.
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private unused(_trx?: Transaction): void {}
 }

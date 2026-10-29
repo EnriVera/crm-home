@@ -1,5 +1,5 @@
 import type { ExpenseRepository } from "../../domain/ports/expense-repository";
-import type { ExpenseRow } from "../../domain/tasks/types";
+import type { ExpenseRow } from "../../domain/types";
 
 export interface ListExpensesInput {
     userId: string;

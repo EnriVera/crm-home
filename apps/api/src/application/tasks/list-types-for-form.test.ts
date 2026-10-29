@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test } from "bun:test";
 import { InMemoryTypeLookupRepository } from "./test-helpers";
-import type { TypeCategoriesClientRow } from "../../domain/tasks/types";
+import type { TypeCategoriesClientRow } from "../../domain/types";
 import { ListTypesForForm } from "./list-types-for-form";
 
 function makeRow(

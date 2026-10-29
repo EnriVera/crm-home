@@ -1,6 +1,6 @@
 import { sql } from "kysely";
 import type { ClientRepository } from "../../domain/ports/client-repository";
-import type { ClientRow } from "../../domain/tasks/types";
+import type { ClientRow } from "../../domain/types";
 import type { Database } from "./database";
 import { mapClientRow, type ClientDbRow } from "./_mappers";
 
@@ -32,13 +32,19 @@ export class KyselyClientRepository implements ClientRepository {
     search: string;
     limit: number;
   }): Promise<ClientRow[]> {
-    const cappedLimit = Math.min(params.limit, 100);
-    const rows = await this.db
+    const cappedLimit = Math.min(Math.max(params.limit, 1), 100);
+    const search = params.search.trim();
+    const base = this.db
       .selectFrom("client")
       .selectAll()
       .where("clie_user_id", "=", params.userId)
-      .where("clie_deleted_at", "is", null)
-      .where("clie_name", "ilike", `%${params.search}%`)
+      .where("clie_deleted_at", "is", null);
+    // Una search vacía (o solo espacios) matchea todos los clientes del
+    // usuario: el filtro se omite en vez de escanear con `%   %`.
+    const rows = await (search.length > 0
+      ? base.where("clie_name", "ilike", `%${search}%`)
+      : base
+    )
       .limit(cappedLimit)
       .execute();
     return rows.map((row) => mapClientRow(row as ClientDbRow));

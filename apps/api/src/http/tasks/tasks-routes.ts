@@ -1,5 +1,5 @@
 import type { H3Event } from "h3";
-import { readValidatedBody, getHeader, getQuery } from "h3";
+import { readValidatedBody, getQuery } from "h3";
 import {
   // Wire types (snake_case) — imported from `./contracts` to avoid
   // colliding with the entity `Task` / `TaskState` of the same name
@@ -37,15 +37,15 @@ import type { MoveTask } from "../../application/tasks/move-task";
 import type { ReorderTaskStates } from "../../application/tasks/reorder-task-states";
 import type { UpdateTask } from "../../application/tasks/update-task";
 import type { UpdateTaskState } from "../../application/tasks/update-task-state";
-import { Unauthorized } from "../../application/tasks/errors";
 import type {
   CategoryRow,
   ClientRow,
   TaskRow,
   TaskStateRow,
   TypeCategoriesClientRow,
-} from "../../domain/tasks/types";
-import { mapTaskErrorToStatus } from "./error-mapping";
+} from "../../domain/types";
+import { mapDomainErrorToStatus } from "../error-mapping";
+import { readUserId } from "../request-user";
 
 /**
  * HTTP layer del módulo tasks. Cada handler es una factory `(deps) => handler`
@@ -59,7 +59,7 @@ import { mapTaskErrorToStatus } from "./error-mapping";
  * 3. Traduce snake_case → camelCase y agrega `userId` antes de invocar el
  *    caso de uso.
  * 4. Devuelve `Response.json(result)` con status 200, o error mapeado por
- *    `mapTaskErrorToStatus`.
+ *    `mapDomainErrorToStatus`.
  */
 
 export interface TasksRouteDependencies {
@@ -79,14 +79,6 @@ export interface TasksRouteDependencies {
   listCategoriesByType: ListCategoriesByType;
 }
 
-export function readUserId(event: H3Event): string {
-  const userId = getHeader(event, "x-user-id");
-  if (!userId) {
-    throw new Unauthorized("Missing X-User-Id header");
-  }
-  return userId;
-}
-
 async function runOrMapError<T>(fn: () => Promise<T>): Promise<Response> {
   try {
     const result = await fn();
@@ -95,7 +87,7 @@ async function runOrMapError<T>(fn: () => Promise<T>): Promise<Response> {
     if (result instanceof Response) return result;
     return Response.json(result);
   } catch (err) {
-    const { status, body } = mapTaskErrorToStatus(err);
+    const { status, body } = mapDomainErrorToStatus(err);
     return Response.json(body, { status });
   }
 }

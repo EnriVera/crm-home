@@ -1,4 +1,4 @@
-import type { CategoryRow } from "../tasks/types";
+import type { CategoryRow } from "../types";
 
 /**
  * Lookup read-only: categorías de un tipo dado, para alimentar el select

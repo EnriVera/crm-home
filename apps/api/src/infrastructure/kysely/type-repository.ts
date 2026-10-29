@@ -1,9 +1,10 @@
 import { sql } from "kysely";
 import type { Database } from "./database";
-import type {
-  TypeModules,
-  TypeRepository,
-  TypeRow,
+import {
+  TYPE_MODULE_NAMES,
+  type TypeModules,
+  type TypeRepository,
+  type TypeRow,
 } from "../../domain/ports/type-repository";
 
 interface TypeDbRow {
@@ -22,6 +23,21 @@ function mapTypeRow(row: TypeDbRow): TypeRow {
     modules: row.type_modules as TypeModules,
     createdAt: row.type_created_at,
   };
+}
+
+/**
+ * Los módulos se interpolan con `sql.lit` (kysely no tiene bind para el
+ * array overlap `&&`), así que el set cerrado se valida acá: la allowlist
+ * no depende de que el caller haya pasado por el use case.
+ */
+function litModules(modules: TypeModules): string[] {
+  const unknown = modules.filter(
+    (module) => !TYPE_MODULE_NAMES.includes(module),
+  );
+  if (unknown.length > 0) {
+    throw new Error(`Unknown type module: ${unknown.join(", ")}`);
+  }
+  return [...modules];
 }
 
 /**
@@ -73,7 +89,7 @@ export class KyselyTypeRepository implements TypeRepository {
       // del set cerrado son conocidos y no vienen del user input, así
       // que sql.lit es seguro contra injection).
       const modulesArray = sql<string[]>`ARRAY[${sql.join(
-        params.modules.map((m) => sql.lit(m)),
+        litModules(params.modules).map((m) => sql.lit(m)),
       )}]::TEXT[]`;
       query = query.where(sql<boolean>`type_modules && ${modulesArray}`);
     }
@@ -125,7 +141,7 @@ export class KyselyTypeRepository implements TypeRepository {
         type_user_id: params.userId,
         type_name: params.name,
         type_modules: sql<string[]>`ARRAY[${sql.join(
-          params.modules.map((m) => sql.lit(m)),
+          litModules(params.modules).map((m) => sql.lit(m)),
         )}]::TEXT[]`,
       })
       .returning([

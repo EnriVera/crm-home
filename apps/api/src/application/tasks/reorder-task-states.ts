@@ -1,6 +1,7 @@
 import type { TaskStateRepository } from "../../domain/ports/task-state-repository";
 import type { TransactionManager } from "../../domain/ports/transaction-manager";
-import { Unauthorized, TaskStateNotFound } from "./errors";
+import { Unauthorized } from "../../domain/errors";
+import { TaskStateNotFound } from "./errors";
 
 export interface ReorderTaskStatesInput {
   userId: string;

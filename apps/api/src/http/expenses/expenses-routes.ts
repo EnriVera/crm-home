@@ -9,8 +9,8 @@ import {
   ExpenseNotFound,
   InvalidExpenseInput,
 } from "../../application/expenses/errors";
-import { mapTaskErrorToStatus } from "../tasks/error-mapping";
-import { readUserId } from "../tasks/tasks-routes";
+import { mapDomainErrorToStatus } from "../error-mapping";
+import { readUserId } from "../request-user";
 
 /**
  * Entry HTTP del módulo `expenses`. Mismo patrón que `incomes-routes.ts`.
@@ -113,7 +113,7 @@ export function createListExpensesHandler(deps: ExpensesRouteDependencies) {
       });
       return Response.json(rows.map(mapExpenseRowToContract));
     } catch (err) {
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };
@@ -144,7 +144,7 @@ export function createGetExpenseHandler(deps: ExpensesRouteDependencies) {
       }
       return Response.json(mapExpenseRowToContract(found));
     } catch (err) {
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };
@@ -170,17 +170,7 @@ export function createExpenseHandler(deps: ExpensesRouteDependencies) {
       });
       return Response.json(mapExpenseRowToContract(row), { status: 201 });
     } catch (err) {
-      if (err instanceof InvalidExpenseInput) {
-        return Response.json(
-          {
-            defined: true,
-            code: "INVALID_EXPENSE_INPUT",
-            message: err.message,
-          },
-          { status: 400 },
-        );
-      }
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };
@@ -207,23 +197,7 @@ export function updateExpenseHandler(deps: ExpensesRouteDependencies) {
       });
       return Response.json(mapExpenseRowToContract(row));
     } catch (err) {
-      if (err instanceof InvalidExpenseInput) {
-        return Response.json(
-          {
-            defined: true,
-            code: "INVALID_EXPENSE_INPUT",
-            message: err.message,
-          },
-          { status: 400 },
-        );
-      }
-      if (err instanceof ExpenseNotFound) {
-        return Response.json(
-          { defined: true, code: "EXPENSE_NOT_FOUND", message: err.message },
-          { status: 404 },
-        );
-      }
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };
@@ -243,13 +217,7 @@ export function removeExpenseHandler(deps: ExpensesRouteDependencies) {
       });
       return Response.json({ ok: true });
     } catch (err) {
-      if (err instanceof ExpenseNotFound) {
-        return Response.json(
-          { defined: true, code: "EXPENSE_NOT_FOUND", message: err.message },
-          { status: 404 },
-        );
-      }
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };

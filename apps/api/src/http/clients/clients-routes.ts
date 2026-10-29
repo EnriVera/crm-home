@@ -1,6 +1,14 @@
 import type { H3Event } from "h3";
 import { readValidatedBody } from "h3";
 import { z } from "zod";
+import {
+  clientEmailSchema,
+  clientLimitSchema,
+  clientNameSchema,
+  clientPhoneSchema,
+  clientSearchSchema,
+} from "@crm/contract/client";
+import { uuidSchema } from "@crm/contract/shared/identifiers";
 import { ListClients } from "../../application/clients/list-clients";
 import { GetClient } from "../../application/clients/get-client";
 import { CreateClient } from "../../application/clients/create-client";
@@ -11,19 +19,16 @@ import {
   ClientNotFound,
   InvalidClientInput,
 } from "../../application/clients/errors";
-import { mapTaskErrorToStatus } from "../tasks/error-mapping";
-import { readUserId } from "../tasks/tasks-routes";
+import { mapDomainErrorToStatus } from "../error-mapping";
+import { readUserId } from "../request-user";
 
 /**
  * Entry HTTP del módulo `clients`.
  *
  * Sigue el patrón de `tasks-routes.ts`: lee `userId` desde el header
  * `X-User-Id` (inyectado por el dispatch wrapper) y devuelve el output
- * envuelto en un Response JSON. Los errores ORPC se mapean vía
- * `mapTaskErrorToStatus` (compartido con tasks).
- *
- * TODO: extraer `readUserId` y `mapTaskErrorToStatus` a un módulo
- * `http/helpers.ts` para evitar que clients dependa de tasks.
+ * envuelto en un Response JSON. Los errores se mapean con el helper
+ * compartido `mapDomainErrorToStatus`.
  */
 
 export interface ClientsRouteDependencies {
@@ -35,31 +40,29 @@ export interface ClientsRouteDependencies {
   listClientDependencies: ListClientDependencies;
 }
 
+// Los schemas de entrada vienen del contrato (`@crm/contract/client`): la
+// API no re-declara lo que el contrato ya define.
 const listClientsInputSchema = z.object({
-  search: z.string().max(100).default(""),
-  limit: z.number().int().min(1).max(100).default(50),
+  search: clientSearchSchema,
+  limit: clientLimitSchema,
 });
 
-const getClientInputSchema = z.object({
-  client_id: z.string().uuid(),
-});
+const getClientInputSchema = z.object({ client_id: uuidSchema });
 
 const createClientInputSchema = z.object({
-  client_name: z.string().min(1).max(100),
-  client_email: z.union([z.string().email(), z.null()]).default(null),
-  client_phone: z.union([z.string().max(40), z.null()]).default(null),
+  client_name: clientNameSchema,
+  client_email: clientEmailSchema,
+  client_phone: clientPhoneSchema,
 });
 
 const updateClientInputSchema = z.object({
-  client_id: z.string().uuid(),
-  client_name: z.string().min(1).max(100).optional(),
-  client_email: z.union([z.string().email(), z.null()]).optional(),
-  client_phone: z.union([z.string().max(40), z.null()]).optional(),
+  client_id: uuidSchema,
+  client_name: clientNameSchema.optional(),
+  client_email: clientEmailSchema.optional(),
+  client_phone: clientPhoneSchema.optional(),
 });
 
-const removeClientInputSchema = z.object({
-  client_id: z.string().uuid(),
-});
+const removeClientInputSchema = z.object({ client_id: uuidSchema });
 
 function mapClientRowToContract(row: {
   id: string;
@@ -91,7 +94,7 @@ export function createListClientsHandler(deps: ClientsRouteDependencies) {
       });
       return Response.json(rows.map(mapClientRowToContract));
     } catch (err) {
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };
@@ -121,7 +124,7 @@ export function createGetClientHandler(deps: ClientsRouteDependencies) {
       }
       return Response.json(mapClientRowToContract(found));
     } catch (err) {
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };
@@ -143,13 +146,7 @@ export function createClientHandler(deps: ClientsRouteDependencies) {
       });
       return Response.json(mapClientRowToContract(row), { status: 201 });
     } catch (err) {
-      if (err instanceof InvalidClientInput) {
-        return Response.json(
-          { defined: true, code: "INVALID_CLIENT_INPUT", message: err.message },
-          { status: 400 },
-        );
-      }
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };
@@ -172,19 +169,7 @@ export function updateClientHandler(deps: ClientsRouteDependencies) {
       });
       return Response.json(mapClientRowToContract(row));
     } catch (err) {
-      if (err instanceof InvalidClientInput) {
-        return Response.json(
-          { defined: true, code: "INVALID_CLIENT_INPUT", message: err.message },
-          { status: 400 },
-        );
-      }
-      if (err instanceof ClientNotFound) {
-        return Response.json(
-          { defined: true, code: "CLIENT_NOT_FOUND", message: err.message },
-          { status: 404 },
-        );
-      }
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };
@@ -204,13 +189,7 @@ export function deleteClientHandler(deps: ClientsRouteDependencies) {
       });
       return Response.json({ ok: true });
     } catch (err) {
-      if (err instanceof ClientNotFound) {
-        return Response.json(
-          { defined: true, code: "CLIENT_NOT_FOUND", message: err.message },
-          { status: 404 },
-        );
-      }
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };
@@ -243,7 +222,7 @@ export function listClientDependenciesHandler(
         total: result.total,
       });
     } catch (err) {
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };

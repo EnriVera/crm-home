@@ -5,7 +5,7 @@ import {
   makeTaskState,
 } from "./test-helpers";
 import { ReorderTaskStates } from "./reorder-task-states";
-import { Unauthorized } from "./errors";
+import { Unauthorized } from "../../domain/errors";
 
 describe("ReorderTaskStates", () => {
   let repo: InMemoryTaskStateRepository;

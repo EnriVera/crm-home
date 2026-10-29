@@ -1,5 +1,5 @@
 import type { CategoryLookupRepository } from "../../domain/ports/category-lookup-repository";
-import type { CategoryRow } from "../../domain/tasks/types";
+import type { CategoryRow } from "../../domain/types";
 
 export interface ListCategoriesByTypeInput {
  userId: string;

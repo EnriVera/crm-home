@@ -34,7 +34,7 @@ import type {
   TaskRow,
   TaskStateRow,
   TypeCategoriesClientRow,
-} from "../../domain/tasks/types";
+} from "../../domain/types";
 
 // ─── In-memory ports ────────────────────────────────────────────────────────
 
@@ -156,7 +156,7 @@ export class InMemoryTaskStateRepository implements TaskStateRepository {
 export class InMemoryClientLookupRepository implements ClientLookupRepository {
   rows = new Map<string, ClientRow>();
 
-  async searchByNamePrefix(params: {
+  async searchByName(params: {
     userId: string;
     query: string;
     limit: number;

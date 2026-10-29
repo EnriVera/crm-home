@@ -5,8 +5,8 @@ import type { ListApps } from "../../application/config/list-apps";
 import type { ListCurrencies } from "../../application/config/list-currencies";
 import type { CreateCurrency } from "../../application/config/create-currency";
 import { InvalidCurrencyInput } from "../../application/config/errors";
-import { mapTaskErrorToStatus } from "../tasks/error-mapping";
-import { readUserId } from "../tasks/tasks-routes";
+import { mapDomainErrorToStatus } from "../error-mapping";
+import { readUserId } from "../request-user";
 
 export interface ConfigRouteDependencies {
   listApps: ListApps;
@@ -51,17 +51,7 @@ export function createCreateCurrencyHandler(deps: ConfigRouteDependencies) {
       });
       return Response.json(currency, { status: 201 });
     } catch (err) {
-      if (err instanceof InvalidCurrencyInput) {
-        return Response.json(
-          {
-            defined: true,
-            code: "INVALID_CURRENCY_INPUT",
-            message: err.message,
-          },
-          { status: 400 },
-        );
-      }
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };

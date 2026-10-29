@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, test } from "bun:test";
 import { CreateClient } from "./create-client";
 import { InvalidClientInput } from "./errors";
 import type { ClientRepository } from "../../domain/ports/client-repository";
-import type { ClientRow } from "../../domain/tasks/types";
+import type { ClientRow } from "../../domain/types";
 
 /**
  * In-memory minimal para el contract del ClientRepository.

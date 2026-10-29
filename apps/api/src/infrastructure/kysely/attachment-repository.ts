@@ -1,6 +1,6 @@
 import type { AttachmentRepository } from "../../domain/ports/attachment-repository";
 import type { Transaction } from "../../domain/ports/transaction";
-import type { AttachmentRow } from "../../domain/tasks/types";
+import type { AttachmentRow } from "../../domain/types";
 import type { Database } from "./database";
 import { mapAttachmentRow, type AttachmentDbRow } from "./_mappers";
 

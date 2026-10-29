@@ -2,7 +2,7 @@ import type {
   MoveTaskParams,
   TaskPatch,
   TaskRow,
-} from "../tasks/types";
+} from "../types";
 import type { Transaction } from "./transaction";
 
 /**

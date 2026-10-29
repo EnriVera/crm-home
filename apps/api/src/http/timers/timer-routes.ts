@@ -1,6 +1,11 @@
 import type { H3Event } from "h3";
 import { readValidatedBody } from "h3";
-import { z } from "zod";
+import {
+  startTimerInputSchema as startTimerInputSchemaContract,
+  stopTimerInputSchema as stopTimerInputSchemaContract,
+  heartbeatTimerInputSchema as heartbeatTimerInputSchemaContract,
+  listTimerRunsInputSchema as listTimerRunsInputSchemaContract,
+} from "@crm/contract/schedule";
 import type { StartTimer } from "../../application/timers/start-timer";
 import type { StopTimer } from "../../application/timers/stop-timer";
 import type { HeartbeatTimer } from "../../application/timers/heartbeat-timer";
@@ -9,8 +14,8 @@ import type { ListTimerRuns } from "../../application/timers/list-timer-runs";
 import type { TimerRunRow } from "../../domain/ports/timer-run-repository";
 import { InvalidTimerInput, TimerNotFound } from "../../application/timers/errors";
 import { TimerAlreadyRunningError } from "../../domain/timers/errors";
-import { mapTaskErrorToStatus } from "../tasks/error-mapping";
-import { readUserId } from "../tasks/tasks-routes";
+import { mapDomainErrorToStatus } from "../error-mapping";
+import { readUserId } from "../request-user";
 
 /**
  * Entry HTTP del TIMER de /schedules (PRD-v4 §8.5).
@@ -26,31 +31,12 @@ export interface TimerRouteDependencies {
   listTimerRuns: ListTimerRuns;
 }
 
-const startTimerInputSchema = z.object({
-  timer_title: z.string().min(1).max(255),
-  timer_task_id: z.string().uuid().nullable().default(null),
-  timer_client_id: z.string().uuid().nullable().default(null),
-  timer_type_id: z.string().uuid().nullable().default(null),
-  timer_category_id: z.string().uuid().nullable().default(null),
-  timer_origin: z.enum(["manual", "resumed"]).default("manual"),
-});
-
-const stopTimerInputSchema = z.object({ timer_id: z.string().uuid() });
-
-const heartbeatTimerInputSchema = z.object({
-  timer_id: z.string().uuid(),
-  timer_at: z.coerce.date().optional(),
-});
-
-const listTimerRunsInputSchema = z.object({
-  timer_from: z.coerce.date().optional(),
-  timer_to: z.coerce.date().optional(),
-  timer_type_id: z.string().uuid().optional(),
-  timer_category_id: z.string().uuid().optional(),
-  timer_task_id: z.string().uuid().optional(),
-  timer_search: z.string().max(100).optional(),
-  timer_limit: z.number().int().min(1).max(500).default(100),
-});
+// Los schemas de entrada vienen del contrato (`@crm/contract/schedule`): la
+// API no re-declara lo que el contrato ya define.
+const startTimerInputSchema = startTimerInputSchemaContract;
+const stopTimerInputSchema = stopTimerInputSchemaContract;
+const heartbeatTimerInputSchema = heartbeatTimerInputSchemaContract;
+const listTimerRunsInputSchema = listTimerRunsInputSchemaContract;
 
 function mapTimerRunToContract(row: TimerRunRow) {
   return {
@@ -75,7 +61,7 @@ export function createGetCurrentTimerHandler(deps: TimerRouteDependencies) {
       const current = await deps.getCurrentTimer.execute({ userId });
       return Response.json(current ? mapTimerRunToContract(current) : null);
     } catch (err) {
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };
@@ -97,29 +83,7 @@ export function createStartTimerHandler(deps: TimerRouteDependencies) {
       });
       return Response.json(mapTimerRunToContract(row), { status: 201 });
     } catch (err) {
-      if (err instanceof InvalidTimerInput) {
-        return Response.json(
-          {
-            defined: true,
-            code: "INVALID_TIMER_INPUT",
-            message: err.message,
-          },
-          { status: 400 },
-        );
-      }
-      if (err instanceof TimerAlreadyRunningError) {
-        // El arranque perdió la carrera contra otro simultáneo y agotó
-        // los reintentos: es un conflicto, no un server roto.
-        return Response.json(
-          {
-            defined: true,
-            code: "TIMER_ALREADY_RUNNING",
-            message: err.message,
-          },
-          { status: 409 },
-        );
-      }
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };
@@ -136,13 +100,7 @@ export function createStopTimerHandler(deps: TimerRouteDependencies) {
       });
       return Response.json(mapTimerRunToContract(row));
     } catch (err) {
-      if (err instanceof TimerNotFound) {
-        return Response.json(
-          { defined: true, code: "TIMER_NOT_FOUND", message: err.message },
-          { status: 404 },
-        );
-      }
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };
@@ -160,13 +118,7 @@ export function createHeartbeatTimerHandler(deps: TimerRouteDependencies) {
       });
       return Response.json(mapTimerRunToContract(row));
     } catch (err) {
-      if (err instanceof TimerNotFound) {
-        return Response.json(
-          { defined: true, code: "TIMER_NOT_FOUND", message: err.message },
-          { status: 404 },
-        );
-      }
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };
@@ -189,7 +141,7 @@ export function createListTimerRunsHandler(deps: TimerRouteDependencies) {
       });
       return Response.json(rows.map(mapTimerRunToContract));
     } catch (err) {
-      const { status, body } = mapTaskErrorToStatus(err);
+      const { status, body } = mapDomainErrorToStatus(err);
       return Response.json(body, { status });
     }
   };

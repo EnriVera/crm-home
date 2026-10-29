@@ -2,7 +2,7 @@ import type {
   TimerRunRepository,
   TimerRunRow,
 } from "../../domain/ports/timer-run-repository";
-import { MAX_TIMER_MS } from "./start-timer";
+import { MAX_TIMER_MS } from "../../domain/timers/limits";
 
 export interface GetCurrentTimerInput {
   userId: string;
