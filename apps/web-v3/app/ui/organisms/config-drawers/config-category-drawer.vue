@@ -31,14 +31,15 @@ const name = ref("");
 const typeId = ref("");
 
 watch(
-  () => props.open,
-  (isOpen) => {
+  [() => props.open, () => props.initial],
+  ([isOpen]) => {
     if (!isOpen) return;
     name.value = props.initial?.name ?? "";
     typeId.value = props.initial?.typeId ?? props.types[0]?.id ?? "";
   },
   // `immediate` so a deep-link that mounts the drawer already open
-  // initializes the fields too.
+  // initializes the fields too. It also re-runs when the record arrives:
+  // a deep-link to an edit opens the drawer before the categories load.
   { immediate: true },
 );
 

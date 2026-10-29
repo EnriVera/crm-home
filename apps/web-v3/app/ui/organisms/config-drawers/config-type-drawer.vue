@@ -31,8 +31,8 @@ const name = ref("");
 const modules = ref<TypeModule[]>([]);
 
 watch(
-  () => props.open,
-  (isOpen) => {
+  [() => props.open, () => props.initial],
+  ([isOpen]) => {
     if (!isOpen) return;
     name.value = props.initial?.name ?? "";
     // Edit keeps the stored modules; create defaults to the tasks module.
@@ -41,7 +41,9 @@ watch(
       : (["tasks"] as TypeModule[]);
   },
   // `immediate` so a deep-link that mounts the drawer already open
-  // (/?tab=tipos&drawer=new) initializes the fields too.
+  // (/?tab=tipos&drawer=new) initializes the fields too. It also re-runs
+  // when the record arrives: a deep-link to an edit opens the drawer
+  // before the types are loaded.
   { immediate: true },
 );
 

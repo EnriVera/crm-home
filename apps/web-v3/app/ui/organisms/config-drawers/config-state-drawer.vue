@@ -33,19 +33,28 @@ const name = ref("");
 /** 0 = "Al principio"; i+1 = after the i-th existing state. */
 const position = ref(0);
 
+/**
+ * Fills the fields from the props.
+ *
+ * It runs when the drawer opens AND when the record or the list arrive:
+ * a deep-link that opens the drawer before the states are loaded would
+ * otherwise leave the form empty (the edit saved an empty name).
+ */
+function syncFields(): void {
+  if (!props.open) return;
+  name.value = props.initial?.name ?? "";
+  if (props.initial) {
+    const ordered = props.states.filter((s) => s.id !== props.initial!.id);
+    const index = ordered.findIndex((s) => s.order > props.initial!.order);
+    position.value = index === -1 ? ordered.length : index;
+  } else {
+    position.value = props.states.length;
+  }
+}
+
 watch(
-  () => props.open,
-  (isOpen) => {
-    if (!isOpen) return;
-    name.value = props.initial?.name ?? "";
-    if (props.initial) {
-      const ordered = props.states.filter((s) => s.id !== props.initial!.id);
-      const index = ordered.findIndex((s) => s.order > props.initial!.order);
-      position.value = index === -1 ? ordered.length : index;
-    } else {
-      position.value = props.states.length;
-    }
-  },
+  [() => props.open, () => props.initial, () => props.states],
+  syncFields,
   // `immediate` so a deep-link that mounts the drawer already open
   // initializes the fields too.
   { immediate: true },
