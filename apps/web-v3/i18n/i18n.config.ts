@@ -104,6 +104,7 @@ export default defineI18nConfig(() => ({
       config: {
         title: "Configuración",
         loadError: "No pudimos cargar tu configuración.",
+        deleteError: "No pudimos eliminar el registro.",
         themeError: "No pudimos guardar tu preferencia de tema.",
         tabs: {
           ariaLabel: "Secciones de configuración",

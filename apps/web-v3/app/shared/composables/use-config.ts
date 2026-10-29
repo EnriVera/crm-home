@@ -50,27 +50,34 @@ export function useConfig() {
   const categories = ref<Category[]>([]);
   const apps = ref<AppModule[]>([]);
   const currencies = ref<Currency[]>([]);
-  const search = ref("");
+  // One search box per tab: with a single one, the term typed in the
+  // types tab was still filtering the states when the tab changed.
+  const typeSearch = ref("");
+  const stateSearch = ref("");
+  const categorySearch = ref("");
+  const currencySearch = ref("");
 
   const isLoading = ref(false);
   const error = ref<string | null>(null);
 
   /** The types that match the search box. */
-  const visibleTypes = computed(() => filterTypes(types.value, search.value));
+  const visibleTypes = computed(() =>
+    filterTypes(types.value, typeSearch.value),
+  );
 
   /** The categories that match the search box. */
   const visibleCategories = computed(() =>
-    filterCategories(categories.value, search.value),
+    filterCategories(categories.value, categorySearch.value),
   );
 
   /** The states that match the search box, in board order. */
   const visibleStates = computed(() =>
-    filterStates(sortStates(states.value), search.value),
+    filterStates(sortStates(states.value), stateSearch.value),
   );
 
   /** The currencies that match the search box. */
   const visibleCurrencies = computed(() =>
-    filterCurrencies(currencies.value, search.value),
+    filterCurrencies(currencies.value, currencySearch.value),
   );
 
   /** The states in the order they are shown. */
@@ -278,7 +285,10 @@ export function useConfig() {
     categories,
     apps,
     currencies,
-    search,
+    typeSearch,
+    stateSearch,
+    categorySearch,
+    currencySearch,
     visibleTypes,
     visibleCategories,
     visibleStates,

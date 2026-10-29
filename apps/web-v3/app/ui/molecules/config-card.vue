@@ -13,9 +13,10 @@ defineProps<{
   name: string;
   /** Secondary line (modules, parent type, decimals…). */
   subtitle: string;
-  /** Empty string hides the action (e.g. global read-only records). */
-  editLabel: string;
-  deleteLabel: string;
+  /** The label of the edit action; undefined hides it (read-only records). */
+  editLabel?: string | undefined;
+  /** The label of the delete action; undefined hides it. */
+  deleteLabel?: string | undefined;
 }>();
 
 const emit = defineEmits<{
@@ -43,7 +44,7 @@ const emit = defineEmits<{
           data-testid="config-card-edit"
           @click="emit('edit')"
         >
-          <PhPencilSimple :size="15" weight="regular" />
+          <PhPencilSimple :size="15" weight="regular" aria-hidden="true" />
         </button>
         <button
           v-if="deleteLabel"
@@ -53,7 +54,7 @@ const emit = defineEmits<{
           data-testid="config-card-delete"
           @click="emit('remove')"
         >
-          <PhTrash :size="15" weight="regular" />
+          <PhTrash :size="15" weight="regular" aria-hidden="true" />
         </button>
       </div>
     </div>

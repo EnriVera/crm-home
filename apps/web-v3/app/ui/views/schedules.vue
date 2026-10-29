@@ -13,8 +13,7 @@ import {
   type TimerRun,
 } from "~/domain/schedule/entities";
 import { useTimer } from "~/shared/composables/use-timer";
-import { listTaskTypes, listAllCategories, listTasks } from "~/infrastructure/task/orpc-task";
-import { listClients } from "~/infrastructure/client/orpc-client";
+import { useScheduleFilters } from "~/shared/composables/use-schedule-filters";
 import TimerBar from "~/ui/molecules/timer-bar.vue";
 import TimeDonut from "~/ui/organisms/time-donut.vue";
 import { PhArrowCounterClockwise, PhPlay } from "~/shared/vendor/icons";
@@ -48,12 +47,15 @@ type Range = (typeof RANGES)[number];
 const range = ref<Range>("hoy");
 const busy = ref(false);
 
-const taskList = ref<{ id: string; title: string }[]>([]);
-/** The titles the timer bar offers as autocomplete. */
-const taskTitles = computed(() => taskList.value.map((task) => task.title));
-const typeNames = ref(new Map<string, string>());
-const categoryNames = ref(new Map<string, string>());
-const clientNames = ref(new Map<string, string>());
+const {
+  taskList,
+  taskTitles,
+  typeNames,
+  categoryNames,
+  clientNames,
+  error: filtersError,
+  load: loadFilters,
+} = useScheduleFilters();
 
 // Filters of the per-day detail (PRD-v2 §8.4.3: search + type, category and task).
 const detailSearch = ref("");
@@ -75,18 +77,7 @@ const DATA_COLORS = [
 
 onMounted(async () => {
   await sync();
-  const [tasks, types, categories, clients] = await Promise.all([
-    listTasks(),
-    listTaskTypes(),
-    listAllCategories(),
-    listClients(),
-  ]);
-  taskList.value = tasks.map((task) => ({ id: task.id, title: task.title }));
-  typeNames.value = new Map(types.map((type) => [type.id, type.name]));
-  categoryNames.value = new Map(
-    categories.map((category) => [category.id, category.name]),
-  );
-  clientNames.value = new Map(clients.map((client) => [client.id, client.name]));
+  await loadFilters();
 });
 
 /** The runs of the selected range. */
@@ -106,15 +97,17 @@ const rangeTotalSeconds = computed(() => {
 const chartSlices = computed(() => {
   const byType = groupByType(visibleRuns.value, typeNames.value, new Date());
   return byType
+    // A slice of 0 seconds is not visible: drop it, an empty id breaks.
+    .filter((slice) => slice.seconds > 0)
     .map((slice, index) => ({
       // The id must NOT come empty (unovis uses it as the arc key).
       id: slice.id === "" ? "sin-tipo" : slice.id,
       label: slice.label,
       seconds: slice.seconds,
-      color: DATA_COLORS[index % DATA_COLORS.length]!,
-    }))
-    // A slice of 0 seconds is not visible: drop it, an empty id breaks.
-    .filter((slice) => slice.seconds > 0);
+      // The color comes after the filter: with the empty slices in the
+      // list, the palette had gaps (the blue was skipped).
+      color: DATA_COLORS[index % DATA_COLORS.length] ?? DATA_COLORS[0]!,
+    }));
 });
 
 /** The detail by day (PRD-v2 §8.4.3), with the filters applied. */
@@ -128,6 +121,9 @@ const detailGroups = computed(() =>
     }),
   ),
 );
+
+/** The first error to show: the timer's or the catalogs'. */
+const shownError = computed(() => error.value ?? filtersError.value);
 
 const runningTypeName = computed(() =>
   run.value?.typeId ? (typeNames.value.get(run.value.typeId) ?? null) : null,
@@ -193,7 +189,14 @@ async function onRestart(item: TimerRun) {
   });
 }
 
-async function startRun(item: TimerRun, context: Partial<TimerRun>) {
+interface StartContext {
+  taskId: string | null;
+  clientId?: string | null;
+  typeId?: string | null;
+  categoryId?: string | null;
+}
+
+async function startRun(item: TimerRun, context: StartContext) {
   busy.value = true;
   try {
     await start({
@@ -221,8 +224,8 @@ async function startRun(item: TimerRun, context: Partial<TimerRun>) {
       <p class="mt-1 text-sm text-text-2">{{ t("schedules.subtitle") }}</p>
     </header>
 
-    <p v-if="error" class="mt-4 text-sm text-error" data-testid="schedules-error">
-      {{ t(error) }}
+    <p v-if="shownError" class="mt-4 text-sm text-error" data-testid="schedules-error">
+      {{ t(shownError) }}
     </p>
 
     <div class="mt-5">
@@ -271,7 +274,7 @@ async function startRun(item: TimerRun, context: Partial<TimerRun>) {
           {{ t("schedules.stats.longest") }}
         </p>
         <p class="mt-2 text-2xl font-semibold tabular-nums text-text">
-          {{ longest ? formatDuration(longest.durationSeconds ?? 0) : "0m 00s" }}
+          {{ formatDuration(longest?.durationSeconds ?? 0) }}
         </p>
         <p class="mt-1 truncate text-xs text-text-2">
           {{ longest?.title ?? t("schedules.stats.noRuns") }}
@@ -301,12 +304,14 @@ async function startRun(item: TimerRun, context: Partial<TimerRun>) {
             v-model="detailSearch"
             type="search"
             :placeholder="t('schedules.detail.search')"
+            :aria-label="t('schedules.detail.search')"
             class="h-9 w-full max-w-48 rounded-full border border-border bg-surface px-3 text-sm text-text outline-none transition-colors placeholder:text-text-2 focus:border-accent"
             data-testid="detail-search"
           />
           <select
             v-model="detailTypeId"
             class="h-9 rounded-full border border-border bg-surface px-3 text-sm text-text outline-none transition-colors focus:border-accent"
+            :aria-label="t('schedules.detail.allTypes')"
             data-testid="detail-type-filter"
           >
             <option :value="null">{{ t("schedules.detail.allTypes") }}</option>
@@ -317,6 +322,7 @@ async function startRun(item: TimerRun, context: Partial<TimerRun>) {
           <select
             v-model="detailCategoryId"
             class="h-9 rounded-full border border-border bg-surface px-3 text-sm text-text outline-none transition-colors focus:border-accent"
+            :aria-label="t('schedules.detail.allCategories')"
             data-testid="detail-category-filter"
           >
             <option :value="null">
@@ -329,6 +335,7 @@ async function startRun(item: TimerRun, context: Partial<TimerRun>) {
           <select
             v-model="detailTaskId"
             class="h-9 rounded-full border border-border bg-surface px-3 text-sm text-text outline-none transition-colors focus:border-accent"
+            :aria-label="t('schedules.detail.allTasks')"
             data-testid="detail-task-filter"
           >
             <option :value="null">{{ t("schedules.detail.allTasks") }}</option>

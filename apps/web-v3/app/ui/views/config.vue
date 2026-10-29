@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from "vue";
 import type { Component } from "vue";
-import type { ThemePreference, TypeModule } from "~/domain/config/entities";
+import type { TaskState, ThemePreference, TypeModule } from "~/domain/config/entities";
 import { categoryTypeName } from "~/domain/config/entities";
 import { useConfig } from "~/shared/composables/use-config";
 import { useRouteSearch } from "~/shared/composables/use-route-search";
@@ -37,7 +37,10 @@ const {
   categories,
   apps,
   currencies,
-  search,
+  typeSearch,
+  stateSearch,
+  categorySearch,
+  currencySearch,
   visibleTypes,
   visibleCategories,
   visibleStates,
@@ -80,6 +83,17 @@ const tabs = computed<Tab[]>(() => [
 
 const activeTab = computed(() => params.value.tab ?? "perfil");
 
+/**
+ * The position of a state in the board (1 = first column).
+ *
+ * It is the index in the ORDERED list, not in the filtered one: with the
+ * search box filtering, the filtered index showed a wrong position.
+ */
+function statePosition(state: TaskState): number {
+  const index = orderedStates.value.findIndex((item) => item.id === state.id);
+  return index === -1 ? 1 : index + 1;
+}
+
 const activeTabMeta = computed(
   () => tabs.value.find((tab) => tab.id === activeTab.value) ?? tabs.value[0]!,
 );
@@ -120,6 +134,24 @@ function openEdit(tab: (typeof LIST_TABS)[number], id: string) {
 
 function closeDrawer() {
   return set({ drawer: "", edit: "" });
+}
+
+/**
+ * Deletes a record of the tab.
+ *
+ * The error goes to the screen (the same line the drawer uses): a delete
+ * that fails silently leaves the user thinking it worked.
+ */
+async function removeRecord(
+  remove: (id: string) => Promise<void>,
+  id: string,
+): Promise<void> {
+  error.value = null;
+  try {
+    await remove(id);
+  } catch {
+    error.value = "config.deleteError";
+  }
 }
 
 async function submitType(values: { name: string; modules: TypeModule[] }) {
@@ -270,7 +302,6 @@ function selectTab(id: Tab["id"]) {
       {{ t(error) }}
     </p>
 
-    <!-- ── Perfil ─────────────────────────────────────────────── -->
     <div v-if="activeTab === 'perfil'" role="tabpanel"
       :id="`config-panel-perfil`"
       :aria-labelledby="`config-tab-perfil`"
@@ -363,14 +394,13 @@ function selectTab(id: Tab["id"]) {
       </article>
     </div>
 
-    <!-- ── Tipos ──────────────────────────────────────────────── -->
     <div v-else-if="activeTab === 'tipos'" role="tabpanel"
       :id="`config-panel-tipos`"
       :aria-labelledby="`config-tab-tipos`"
       class="mt-6" data-testid="config-tipos">
       <BaseView
         id="config-tipos"
-        v-model:search="search"
+        v-model:search="typeSearch"
         :loading="isLoading"
         :search-placeholder="t('config.types.search')"
       >
@@ -384,7 +414,7 @@ function selectTab(id: Tab["id"]) {
               :edit-label="t('config.drawer.editType')"
               :delete-label="t('config.types.delete')"
               @edit="openEdit('tipos', type.id)"
-              @remove="deleteType(type.id)"
+              @remove="removeRecord(deleteType, type.id)"
             />
             <button
               type="button"
@@ -392,7 +422,7 @@ function selectTab(id: Tab["id"]) {
               data-testid="config-add-type"
               @click="openCreate('tipos')"
             >
-              <PhPlus :size="20" weight="regular" />
+              <PhPlus :size="20" weight="regular" aria-hidden="true" />
               <span class="text-sm">{{ t("config.types.add") }}</span>
             </button>
           </div>
@@ -423,7 +453,7 @@ function selectTab(id: Tab["id"]) {
                   type="button"
                   class="rounded p-1 text-text-2 transition-colors hover:bg-surface-2 hover:text-error"
                   :aria-label="t('config.types.delete')"
-                  @click="deleteType(type.id)"
+                  @click="removeRecord(deleteType, type.id)"
                 >
                   <PhTrash :size="15" weight="regular" />
                 </button>
@@ -436,12 +466,11 @@ function selectTab(id: Tab["id"]) {
       <p
         class="mt-6 flex items-start gap-2 rounded-lg bg-primary-50 px-4 py-3 text-sm text-primary-700"
       >
-        <PhInfo :size="16" weight="bold" class="mt-0.5 shrink-0" />
+        <PhInfo :size="16" weight="bold" class="mt-0.5 shrink-0" aria-hidden="true" />
         <span>{{ t("config.types.info") }}</span>
       </p>
     </div>
 
-    <!-- ── Estados de tarea ───────────────────────────────────── -->
     <div
       v-else-if="activeTab === 'estados'"
       role="tabpanel"
@@ -452,21 +481,21 @@ function selectTab(id: Tab["id"]) {
     >
       <BaseView
         id="config-estados"
-        v-model:search="search"
+        v-model:search="stateSearch"
         :loading="isLoading"
         :search-placeholder="t('config.states.search')"
       >
         <template #grid>
           <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <ConfigCard
-              v-for="(state, index) in visibleStates"
+              v-for="state in visibleStates"
               :key="state.id"
               :name="state.name"
-              :subtitle="t('config.states.position', { n: index + 1 })"
+              :subtitle="t('config.states.position', { n: statePosition(state) })"
               :edit-label="t('config.drawer.editState')"
               :delete-label="t('config.states.delete')"
               @edit="openEdit('estados', state.id)"
-              @remove="deleteState(state.id)"
+              @remove="removeRecord(deleteState, state.id)"
             />
             <button
               type="button"
@@ -474,7 +503,7 @@ function selectTab(id: Tab["id"]) {
               data-testid="config-add-state"
               @click="openCreate('estados')"
             >
-              <PhPlus :size="20" weight="regular" />
+              <PhPlus :size="20" weight="regular" aria-hidden="true" />
               <span class="text-sm">{{ t("config.states.add") }}</span>
             </button>
           </div>
@@ -482,14 +511,14 @@ function selectTab(id: Tab["id"]) {
         <template #list>
           <ul class="divide-y divide-border rounded-[var(--radius)] border border-border bg-surface">
             <li
-              v-for="(state, index) in visibleStates"
+              v-for="state in visibleStates"
               :key="state.id"
               class="flex items-center justify-between gap-3 px-4 py-3"
             >
               <div class="min-w-0">
                 <p class="truncate text-sm font-medium text-text">{{ state.name }}</p>
                 <p class="truncate text-xs text-text-2">
-                  {{ t("config.states.position", { n: index + 1 }) }}
+                  {{ t("config.states.position", { n: statePosition(state) }) }}
                 </p>
               </div>
               <div class="flex shrink-0 gap-1">
@@ -505,7 +534,7 @@ function selectTab(id: Tab["id"]) {
                   type="button"
                   class="rounded p-1 text-text-2 transition-colors hover:bg-surface-2 hover:text-error"
                   :aria-label="t('config.states.delete')"
-                  @click="deleteState(state.id)"
+                  @click="removeRecord(deleteState, state.id)"
                 >
                   <PhTrash :size="15" weight="regular" />
                 </button>
@@ -518,12 +547,11 @@ function selectTab(id: Tab["id"]) {
       <p
         class="mt-6 flex items-start gap-2 rounded-lg bg-primary-50 px-4 py-3 text-sm text-primary-700"
       >
-        <PhInfo :size="16" weight="bold" class="mt-0.5 shrink-0" />
+        <PhInfo :size="16" weight="bold" class="mt-0.5 shrink-0" aria-hidden="true" />
         <span>{{ t("config.states.info") }}</span>
       </p>
     </div>
 
-    <!-- ── Categorías ─────────────────────────────────────────── -->
     <div
       v-else-if="activeTab === 'categorias'"
       role="tabpanel"
@@ -534,7 +562,7 @@ function selectTab(id: Tab["id"]) {
     >
       <BaseView
         id="config-categorias"
-        v-model:search="search"
+        v-model:search="categorySearch"
         :loading="isLoading"
         :search-placeholder="t('config.categorias.search')"
       >
@@ -551,7 +579,7 @@ function selectTab(id: Tab["id"]) {
               :edit-label="t('config.drawer.editCategory')"
               :delete-label="t('config.categorias.delete')"
               @edit="openEdit('categorias', category.id)"
-              @remove="deleteCategory(category.id)"
+              @remove="removeRecord(deleteCategory, category.id)"
             />
             <button
               type="button"
@@ -559,7 +587,7 @@ function selectTab(id: Tab["id"]) {
               data-testid="config-add-category"
               @click="openCreate('categorias')"
             >
-              <PhPlus :size="20" weight="regular" />
+              <PhPlus :size="20" weight="regular" aria-hidden="true" />
               <span class="text-sm">{{ t("config.categorias.add") }}</span>
             </button>
           </div>
@@ -590,7 +618,7 @@ function selectTab(id: Tab["id"]) {
                   type="button"
                   class="rounded p-1 text-text-2 transition-colors hover:bg-surface-2 hover:text-error"
                   :aria-label="t('config.categorias.delete')"
-                  @click="deleteCategory(category.id)"
+                  @click="removeRecord(deleteCategory, category.id)"
                 >
                   <PhTrash :size="15" weight="regular" />
                 </button>
@@ -603,12 +631,11 @@ function selectTab(id: Tab["id"]) {
       <p
         class="mt-6 flex items-start gap-2 rounded-lg bg-primary-50 px-4 py-3 text-sm text-primary-700"
       >
-        <PhInfo :size="16" weight="bold" class="mt-0.5 shrink-0" />
+        <PhInfo :size="16" weight="bold" class="mt-0.5 shrink-0" aria-hidden="true" />
         <span>{{ t("config.categorias.info") }}</span>
       </p>
     </div>
 
-    <!-- ── Apps ───────────────────────────────────────────────── -->
     <div v-else-if="activeTab === 'apps'" role="tabpanel"
       :id="`config-panel-apps`"
       :aria-labelledby="`config-tab-apps`"
@@ -623,7 +650,7 @@ function selectTab(id: Tab["id"]) {
             class="grid size-9 place-items-center rounded-full bg-primary-50 text-primary-700"
             aria-hidden="true"
           >
-            <PhGear :size="16" weight="regular" />
+            <PhGear :size="16" weight="regular" aria-hidden="true" />
           </span>
           <p class="mt-3 text-sm font-medium text-text">{{ app.name }}</p>
         </article>
@@ -631,12 +658,11 @@ function selectTab(id: Tab["id"]) {
       <p
         class="mt-6 flex items-start gap-2 rounded-lg bg-primary-50 px-4 py-3 text-sm text-primary-700"
       >
-        <PhInfo :size="16" weight="bold" class="mt-0.5 shrink-0" />
+        <PhInfo :size="16" weight="bold" class="mt-0.5 shrink-0" aria-hidden="true" />
         <span>{{ t("config.apps.info") }}</span>
       </p>
     </div>
 
-    <!-- ── Monedas ─────────────────────────────────────────────── -->
     <div
       v-else-if="activeTab === 'monedas'"
       role="tabpanel"
@@ -647,7 +673,7 @@ function selectTab(id: Tab["id"]) {
     >
       <BaseView
         id="config-monedas"
-        v-model:search="search"
+        v-model:search="currencySearch"
         :loading="isLoading"
         :search-placeholder="t('config.monedas.search')"
       >
@@ -658,8 +684,6 @@ function selectTab(id: Tab["id"]) {
               :key="currency.id"
               :name="currency.name"
               :subtitle="`${currency.decimals} ${t('config.monedas.decimals')}`"
-              edit-label=""
-              delete-label=""
             />
             <button
               type="button"
@@ -667,7 +691,7 @@ function selectTab(id: Tab["id"]) {
               data-testid="config-add-currency"
               @click="openCreate('monedas')"
             >
-              <PhPlus :size="20" weight="regular" />
+              <PhPlus :size="20" weight="regular" aria-hidden="true" />
               <span class="text-sm">{{ t("config.monedas.add") }}</span>
             </button>
           </div>
@@ -693,12 +717,12 @@ function selectTab(id: Tab["id"]) {
       <p
         class="mt-6 flex items-start gap-2 rounded-lg bg-primary-50 px-4 py-3 text-sm text-primary-700"
       >
-        <PhInfo :size="16" weight="bold" class="mt-0.5 shrink-0" />
+        <PhInfo :size="16" weight="bold" class="mt-0.5 shrink-0" aria-hidden="true" />
         <span>{{ t("config.monedas.info") }}</span>
       </p>
     </div>
 
-    <!-- ── Drawers: creation/edition lives in the URL (PRD §9.1). ── -->
+    <!-- Drawers: creation/edition lives in the URL (PRD §9.1). -->
     <ConfigTypeDrawer
       :open="drawerOpen && activeTab === 'tipos'"
       :initial="editingType"
