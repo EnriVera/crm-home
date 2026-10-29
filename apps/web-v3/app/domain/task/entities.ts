@@ -65,7 +65,7 @@ export function tasksByColumn(
  * The tasks whose title matches a search term.
  *
  * The wire task has no client/type names, so the search covers the title
- * only — searching "por cliente o tipo" needs joined data the API does
+ * only — searching "by client or type" needs joined data the API does
  * not return yet.
  */
 export function filterTasks(tasks: Task[], search: string): Task[] {

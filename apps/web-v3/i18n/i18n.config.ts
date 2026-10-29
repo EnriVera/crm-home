@@ -19,6 +19,7 @@ export default defineI18nConfig(() => ({
         config: "Configuración",
       },
       legal: {
+        navLabel: "Páginas legales",
         terms: {
           label: "Términos",
           title: "Términos y condiciones",
@@ -288,6 +289,7 @@ export default defineI18nConfig(() => ({
           deleteWithDependencies:
             "Este cliente tiene {count} tarea | Este cliente tiene {count} tareas. Si lo eliminás, quedan sin cliente.",
           deleteConfirmButton: "Eliminar igual",
+          saveError: "No pudimos guardar el cliente.",
           dependenciesError:
             "No pudimos verificar las dependencias. Reintentá antes de eliminar.",
         },
@@ -325,7 +327,7 @@ export default defineI18nConfig(() => ({
         },
       },
       comingSoon: {
-        title: "Módulo en construcción",
+        badge: "Módulo en construcción",
         subtitle: "Esta pantalla llega en la Fase 2.",
         body: "La API ya está lista; falta la pantalla. Por ahora los movimientos del mes se ven en el dashboard.",
         cta: "Ir al dashboard",

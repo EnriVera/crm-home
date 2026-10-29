@@ -25,16 +25,16 @@ import {
 } from "~/infrastructure/task/orpc-task";
 
 /**
- * useDashboard: lo que muestra el dashboard (PRD-v4 §8.3, MVP de PRD-v2 §8.2).
+ * useDashboard: what the dashboard shows (PRD-v4 §8.3, PRD-v2 §8.2 MVP).
  *
- * El dashboard es un resumen de lectura: el timer corriendo, las tareas por
- * estado, las últimas tareas, los totales del mes y la actividad reciente.
- * Las derivaciones son puras y viven en el dominio; este composable sólo
- * maneja el estado de carga y error.
+ * The dashboard is a read-only summary: the running timer, the tasks by
+ * state, the latest tasks, the monthly totals and the recent activity.
+ * The derivations are pure and live in the domain; this composable only
+ * handles the loading and error state.
  *
- * El timer (corrida activa, elapsed, historial) lo trae `useTimer`: el
- * dashboard usa el MISMO composable que /schedules para que el reloj no
- * pueda quedar desfasado entre pantallas.
+ * The timer (active run, elapsed, history) comes from `useTimer`: the
+ * dashboard uses the SAME composable as /schedules so the clock cannot get
+ * out of sync between screens.
  */
 export function useDashboard() {
   const tasks = ref<TaskSummary[]>([]);
@@ -56,15 +56,16 @@ export function useDashboard() {
   const recentTasks = computed<TaskSummary[]>(() => snapshot.value.recentTasks);
   const totalTasks = computed(() => snapshot.value.totalTasks);
 
-  /** Un usuario sin tareas ni movimientos no tiene nada que mostrar. */
+  /** A user with no tasks and no movements has nothing to show. */
   const isEmpty = computed(() => totalTasks.value === 0);
 
   /**
-   * El símbolo de la moneda.
+   * The currency symbol.
    *
-   * La API no tiene una "moneda por defecto": `currency` es una tabla global
-   * sin flag. Se usa la moneda del último movimiento del usuario y, si no
-   * hay movimientos, la primera por id (la sembrada al crear la cuenta).
+   * The API has no "default currency": `currency` is a global table without
+   * a flag. The currency of the user's latest movement is used and, when
+   * there are no movements, the first one by id (the one seeded when the
+   * account was created).
    */
   const currencySymbol = computed(() => {
     const latest = [...incomes.value, ...expenses.value].sort((a, b) =>
@@ -119,8 +120,8 @@ export function useDashboard() {
       types.value = loadedTypes;
       categories.value = loadedCategories;
     } catch {
-      // El dashboard es un resumen de lectura: un fallo deja el estado
-      // vacío en lugar de bloquear la app detrás de una pantalla de error.
+      // The dashboard is a read-only summary: a failure leaves the state
+      // empty instead of blocking the app behind an error screen.
       error.value = "dashboard.loadError";
     } finally {
       isLoading.value = false;

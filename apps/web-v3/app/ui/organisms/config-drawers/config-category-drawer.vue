@@ -42,9 +42,9 @@ watch(
   { immediate: true },
 );
 
-// Los tipos llegan por async: si el drawer se abrió antes de que cargaran,
-// el select quedaba vacío y "Guardar" no hacía nada (el submit aborta sin
-// typeId). Cuando llegan, se preselecciona el primero.
+// The types arrive async: if the drawer opened before they loaded, the
+// select was empty and "Save" did nothing (the submit aborts without a
+// typeId). When they arrive, the first one is preselected.
 watch(
   () => props.types,
   (types) => {

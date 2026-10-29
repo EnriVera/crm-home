@@ -84,7 +84,7 @@ onUnmounted(() => {
     <footer class="relative border-t border-border px-4 py-4">
       <nav
         class="flex flex-wrap items-center justify-center gap-4 text-sm"
-        aria-label="Páginas legales"
+        :aria-label="t('legal.navLabel')"
       >
         <NuxtLink
           to="/terms"

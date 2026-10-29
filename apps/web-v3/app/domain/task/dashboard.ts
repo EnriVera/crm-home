@@ -21,7 +21,7 @@ export interface TaskSummary {
   title: string;
   stateId: string;
   updatedAt: Date;
-  /** Los links que la fila del dashboard muestra (cliente · tipo). */
+  /** The links the dashboard row shows (client · type). */
   clientId: string | null;
   typeId: string | null;
   categoryId: string | null;

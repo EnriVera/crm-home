@@ -2,15 +2,15 @@ import { assign, setup } from "xstate";
 import { elapsedSeconds, type TimerRun } from "~/domain/schedule/entities";
 
 /**
- * Timer workflow (PRD-v4 §11.1: los workflows van en XState).
+ * Timer workflow (PRD-v4 §11.1: workflows live in XState).
  *
- * La máquina modela el ESTADO DEL TIMER, no el del server: el `start` es
- * del servidor, así que el reloj local se recalcula desde ahí (cerrar el
- * browser no pierde tiempo — criterio de PRD-v2 §8.4).
+ * The machine models the TIMER STATE, not the server's: the `start` comes
+ * from the server, so the local clock is recalculated from it (closing the
+ * browser does not lose time — PRD-v2 §8.4 criterion).
  *
- * - `idle`: no hay timer corriendo.
- * - `running`: hay una corrida abierta; el elapsed se recalcula en cada
- *   tick contra la hora del server.
+ * - `idle`: no timer is running.
+ * - `running`: there is an open run; the elapsed is recalculated on every
+ *   tick against the server time.
  */
 export interface TimerContext {
   run: TimerRun | null;
@@ -69,11 +69,11 @@ export const timerMachine = setup({
     },
     running: {
       on: {
-        // Un START mientras ya corre REEMPLAZA la corrida: el server cierra
-        // la anterior y abre la nueva (regla "un timer abierto"), así que la
-        // UI tiene que adoptar la nueva. Sin esta transición el `START`
-        // se ignoraba y la barra seguía mostrando la corrida ya cerrada,
-        // con su reloj corriendo y sin forma de pararla.
+        // A START while already running REPLACES the run: the server closes
+        // the previous one and opens the new one (the "one open timer" rule),
+        // so the UI has to adopt the new one. Without this transition the
+        // `START` was ignored and the bar kept showing the already closed run,
+        // with its clock ticking and no way to stop it.
         START: { actions: "setRun" },
         TICK: { actions: "tick" },
         STOPPED: { target: "idle", actions: "clearRun" },

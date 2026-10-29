@@ -13,6 +13,7 @@ export {
   PhList,
   PhListBullets,
   PhMagnifyingGlass,
+  PhMonitor,
   PhMoon,
   PhPencilSimple,
   PhPlay,

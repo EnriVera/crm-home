@@ -1,6 +1,6 @@
 /**
  * Finance adapter: the only place that talks to the API about ingresos y
- * gastos (las cards de dinero del dashboard, PRD-v4 §8.3).
+ * expenses (the money cards of the dashboard, PRD-v4 §8.3).
  */
 import { callFinance } from "~/shared/vendor/orpc";
 

@@ -1,5 +1,6 @@
 import { cleanup, render, screen, waitFor } from "@testing-library/vue";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { ref } from "vue";
 import DashboardView from "~/ui/views/dashboard.vue";
 
 const { dashboardState, loadMock, timerState, stopMock } = await vi.hoisted(
@@ -93,6 +94,7 @@ const MESSAGES: Record<string, string> = {
 };
 
 vi.stubGlobal("useI18n", () => ({
+  locale: ref("es"),
   t: (key: string, params?: Record<string, unknown>) => {
     const message = MESSAGES[key] ?? key;
     if (!params) return message;

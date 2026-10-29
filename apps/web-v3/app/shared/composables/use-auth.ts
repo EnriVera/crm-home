@@ -102,9 +102,9 @@ export function useAuth(pinia?: Pinia) {
       // back before the guard lets the visitor into the app.
       const user = await fetchSession();
       if (!user) {
-        // El código se consumió pero no hay sesión: sin ella el guard
-        // rebota a /login y el código ya no sirve (loop). Se reporta como
-        // fallo en vez de devolver un éxito que no se puede sostener.
+        // The code was consumed but there is no session: without it the
+        // guard bounces to /login and the code is useless (loop). It is
+        // reported as a failure instead of a success that cannot hold.
         store.clear();
         errorMessage.value = "auth.errors.unknown";
         return false;

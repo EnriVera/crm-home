@@ -85,7 +85,7 @@ export function useConfig() {
   }
 
   async function loadCategories() {
-    // Las categorías se muestran con el nombre de su type, así que el tab
+    // The categories are shown with the name of their type, so the tab
     // carga ambas listas.
     const [typeList, categoryList] = await Promise.all([
       listTypes(),

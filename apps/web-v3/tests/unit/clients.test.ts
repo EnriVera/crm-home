@@ -157,7 +157,7 @@ describe("clients view", () => {
     screen.getByTestId("clients-add").click();
 
     await waitFor(() =>
-      expect(setMock).toHaveBeenCalledWith({ drawer: "new", edit: "" }),
+      expect(setMock).toHaveBeenCalledWith({ drawer: "new", edit: "", delete: "" }),
     );
   });
 

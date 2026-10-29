@@ -4,8 +4,8 @@
  * The wire format is snake_case (`timer_*`); the domain speaks camelCase.
  * The mapping lives in the infrastructure adapter.
  *
- * El reloj es del servidor: la corrida se calcula desde `start`, así que
- * cerrar el browser no pierde el tiempo (criterio de PRD-v2 §8.4).
+ * The clock belongs to the server: the run is computed from `start`, so
+ * closing the browser does not lose the time (PRD-v2 §8.4 criterion).
  */
 
 /** A run of the timer. */
@@ -118,11 +118,11 @@ export function startOfWeek(date: Date): Date {
  * The total seconds of the runs that overlap a period.
  *
  * A run that started before the period counts the part that falls inside
- * it, so the "total de hoy" no se infla con timers de ayer.
+ * it, so the "total of today" does not get inflated with yesterday's timers.
  *
- * Una corrida CERRADA cuenta con su propio `end` (la verdad del server):
- * si el reloj del navegador va un segundo atrás, el `to` no la recorta.
- * Sólo las corridas abiertas se cortan en `to`.
+ * A CLOSED run has its own `end` (the server's truth): if the browser
+ * clock is a second behind, the `to` does not trim it. Only the open runs
+ * are cut at `to`.
  */
 export function totalSeconds(
   runs: TimerRun[],
@@ -170,7 +170,7 @@ export function groupByType(
 
 /**
  * The runs that match the filters of the detail table (PRD-v2 §8.4.3:
- * buscador + filtros por tipo, categoría y tarea).
+ * search + filters by type, category and task).
  */
 export function filterRuns(
   runs: TimerRun[],

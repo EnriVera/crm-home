@@ -16,27 +16,27 @@ import {
   stopTimer as stopTimerRequest,
 } from "~/infrastructure/schedule/orpc-timer";
 
-/** Cada cuánto el timer manda su latido al server (PRD-v2 §8.4). */
+/** How often the timer sends its heartbeat to the server (PRD-v2 §8.4). */
 const HEARTBEAT_MS = 60_000;
-/** Cada cuánto se recalcula el elapsed en pantalla. */
+/** How often the elapsed time on screen is recalculated. */
 const TICK_MS = 1_000;
 
 /**
- * useTimer: el estado del /schedules (PRD-v4 §8.5).
+ * useTimer: the state of /schedules (PRD-v4 §8.5).
  *
- * El server es la fuente de verdad: `current` devuelve la corrida abierta
- * con su `start` original, así que recargar la página no pierde el tiempo
- * (criterio de PRD-v2 §8.4).
+ * The server is the source of truth: `current` returns the open run with
+ * its original `start`, so reloading the page does not lose the time
+ * (PRD-v2 §8.4 criterion).
  *
- * El workflow lo maneja una máquina de XState (PRD-v4 §11.1) y la máquina
- * sólo refleja el estado: el elapsed se recalcula contra la hora del server.
+ * The workflow is handled by an XState machine (PRD-v4 §11.1) and the machine
+ * only mirrors the state: the elapsed is recalculated against the server time.
  */
 export function useTimer() {
   const actor = createActor(timerMachine);
   actor.start();
 
-  // El snapshot de XState no es reactivo para Vue: se guarda en un ref y se
-  // actualiza con cada transición (el patrón canónico Vue + XState).
+  // The XState snapshot is not reactive for Vue: it is kept in a ref and
+  // updated on every transition (the canonical Vue + XState pattern).
   const snapshot = shallowRef(actor.getSnapshot());
   actor.subscribe((next) => {
     snapshot.value = next;
@@ -53,8 +53,8 @@ export function useTimer() {
 
   let tickTimer: ReturnType<typeof setInterval> | undefined;
   let beatTimer: ReturnType<typeof setInterval> | undefined;
-  // Guardián contra respuestas fuera de orden: cada sync y cada
-  // start/stop toman un número y el que llega tarde lo descarta.
+  // Guardian against out-of-order responses: every sync and every
+  // start/stop takes a number and the late one discards its response.
   let syncGeneration = 0;
 
   function startTicking() {
@@ -74,7 +74,7 @@ export function useTimer() {
     clearInterval(beatTimer);
     beatTimer = setInterval(() => {
       void heartbeatTimer(timerId).catch(() => {
-        // Un latido fallido no corta el timer: el server sigue corriendo.
+        // A failed heartbeat does not stop the timer: the server keeps running.
       });
     }, HEARTBEAT_MS);
   }
@@ -84,14 +84,14 @@ export function useTimer() {
     beatTimer = undefined;
   }
 
-  /** Sincroniza con el server (al abrir la pantalla). */
+  /** Syncs with the server (when opening the screen). */
   async function sync() {
     isLoading.value = true;
     error.value = null;
-    // Cada sync toma un número de generación. Si mientras tanto el usuario
-    // arrancó o paró un timer, el sync que vuelve atrás descarta su
-    // respuesta: si no, un SYNC tardío resucitaba en la UI un timer ya
-    // parado (o borraba uno recién arrancado).
+    // Every sync takes a generation number. If the user started or stopped a
+    // timer meanwhile, the sync that arrives late discards its response:
+    // otherwise a late SYNC resurrected in the UI a timer that was already
+    // stopped (or erased one that had just been started).
     const generation = ++syncGeneration;
     try {
       const [current, runs] = await Promise.all([
@@ -116,7 +116,7 @@ export function useTimer() {
     }
   }
 
-  /** Arranca un timer (libre o ligado a una task). */
+  /** Starts a timer (free or linked to a task). */
   async function start(input: {
     title: string;
     taskId?: string | null;
@@ -126,7 +126,7 @@ export function useTimer() {
     origin?: "manual" | "resumed";
   }): Promise<TimerRun> {
     error.value = null;
-    // Un start invalida cualquier sync en vuelo: su respuesta es anterior.
+    // A start invalidates any sync in flight: its response is older.
     ++syncGeneration;
     const started = await startTimerRequest({
       title: input.title,
@@ -143,12 +143,12 @@ export function useTimer() {
     return started;
   }
 
-  /** Para el timer. */
+  /** Stops the timer. */
   async function stop(): Promise<TimerRun | null> {
     const current = run.value;
     if (!current) return null;
     error.value = null;
-    // Un stop invalida cualquier sync en vuelo: su respuesta es anterior.
+    // A stop invalidates any sync in flight: its response is older.
     ++syncGeneration;
     const closed = await stopTimerRequest(current.id);
     actor.send({ type: "STOPPED", run: closed });
@@ -162,7 +162,7 @@ export function useTimer() {
     history.value = await listTimerRuns({ limit: 200 });
   }
 
-  /** Los totals del catálogo: hoy, esta semana y la tarea con más horas. */
+  /** The catalog totals: today, this week and the task with the most hours. */
   const todaySeconds = computed(() =>
     totalSeconds(history.value, startOfDay(now.value), now.value, now.value),
   );

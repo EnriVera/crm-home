@@ -1,8 +1,10 @@
 <script setup lang="ts">
-// Gastos (PRD-v4 §8.7, Fase 2): la API existe, la pantalla todavía no.
-import ComingSoon from "~/ui/views/coming-soon.vue";
+// Gastos (PRD-v4 §8.7, Phase 2): the API exists, the screen does not yet.
+import ComingSoon from "~/ui/organisms/coming-soon.vue";
+
+const { t } = useI18n();
 </script>
 
 <template>
-  <ComingSoon />
+  <ComingSoon :name="t('nav.expenses')" />
 </template>

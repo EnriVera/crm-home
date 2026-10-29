@@ -2,8 +2,8 @@
  * Timer adapter: the only place that talks to the API about the timer
  * (PRD-v4 §8.5).
  *
- * OJO: el contexto `schedules` de la API es el de las reglas recurrentes
- * de cobro; el timer vive en `timers/*`.
+ * CAREFUL: the `schedules` context of the API is the recurring billing
+ * rules; the timer lives in `timers/*`.
  */
 import type { TimerRun } from "~/domain/schedule/entities";
 import { callTimers, type TimerWire } from "~/shared/vendor/orpc";

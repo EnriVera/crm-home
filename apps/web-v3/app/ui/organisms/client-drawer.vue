@@ -50,7 +50,7 @@ const mode = ref<"form" | "confirm">("form");
 const dependencyList = ref<{ taskId: string; taskTitle: string }[]>([]);
 const dependencyTotal = ref(0);
 const loadingDependencies = ref(false);
-/** Las dependencias no se pudieron cargar: el borrado queda bloqueado. */
+/** The dependencies could not be loaded: the delete stays blocked. */
 const dependenciesError = ref(false);
 
 watch(
@@ -63,8 +63,8 @@ watch(
     mode.value = "form";
     dependencyList.value = [];
     dependencyTotal.value = 0;
-    // El botón de borrar de la card abre el drawer directo en la
-    // confirmación (con las dependencias cargadas).
+    // The card's trash button opens the drawer straight into the
+    // confirmation (with the dependencies loaded).
     if (props.startInDeleteConfirm) void requestDelete();
   },
   { immediate: true },
@@ -85,8 +85,8 @@ function onSubmit() {
 /**
  * Deletes the client.
  *
- * With dependencies attached, the confirmation lists them first; without
- * them the delete goes straight through.
+ * The confirmation always opens: with dependencies attached it lists
+ * them first, and without them it asks for the explicit confirmation.
  */
 async function requestDelete() {
   if (!props.initial) return;
@@ -99,9 +99,9 @@ async function requestDelete() {
     dependencyList.value = result.dependencies;
     dependencyTotal.value = result.total;
   } catch {
-    // No se puede affirmar que el cliente no tiene dependencias: si la
-    // carga falla, el borrado queda bloqueado en vez de confirmar un
-    // borrado sin Listar lo que se rompe.
+    // The client cannot be claimed to have no dependencies: if the load
+    // fails, the delete stays blocked instead of confirming a delete
+    // without listing what breaks.
     dependencyList.value = [];
     dependencyTotal.value = 0;
     dependenciesError.value = true;

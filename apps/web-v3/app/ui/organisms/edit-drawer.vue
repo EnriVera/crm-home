@@ -268,7 +268,7 @@ function startResize(event: PointerEvent) {
 </template>
 
 <style scoped>
-/* PRD-v4 §11.5 #7: slide desde la derecha + overlay fade, 250ms ease-drawer.
+/* PRD-v4 §11.5 #7: slide from the right + overlay fade, 250ms ease-drawer.
    Enter y leave usan la misma curva: el cierre es el mismo movimiento
    revertido, sin desaparecer de golpe. */
 .drawer-overlay-enter-active,
@@ -288,7 +288,7 @@ function startResize(event: PointerEvent) {
 
 .drawer-panel-enter-from,
 .drawer-panel-leave-to {
-  /* 100% del panel + el margen de 16px del viewport (PRD §9.1) */
+  /* 100% of the panel + the 16px margin of the viewport (PRD §9.1) */
   transform: translateX(calc(100% + 1rem));
 }
 </style>

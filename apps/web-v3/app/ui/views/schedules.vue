@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref } from "vue";
 import {
   filterRuns,
   formatDay,
@@ -20,10 +20,11 @@ import TimeDonut from "~/ui/organisms/time-donut.vue";
 import { PhArrowCounterClockwise, PhPlay } from "~/shared/vendor/icons";
 
 /**
- * /schedules — el timer (PRD-v4 §8.5, PRD-v2 §8.4).
+ * /schedules — the timer (PRD-v4 §8.5, PRD-v2 §8.4).
  *
- * Pantalla en tres partes: la barra de timer, los tres stat cards (hoy /
- * esta semana / la tarea con más horas) y el historial con filtro de rango.
+ * Screen in three parts: the timer bar, the three stat cards (today /
+ * this week / the task with the most hours) and the history with the range
+ * filter.
  */
 const { t } = useI18n();
 const {
@@ -47,19 +48,20 @@ type Range = (typeof RANGES)[number];
 const range = ref<Range>("hoy");
 const busy = ref(false);
 
-const taskTitles = ref<string[]>([]);
+const taskList = ref<{ id: string; title: string }[]>([]);
+/** The titles the timer bar offers as autocomplete. */
+const taskTitles = computed(() => taskList.value.map((task) => task.title));
 const typeNames = ref(new Map<string, string>());
 const categoryNames = ref(new Map<string, string>());
 const clientNames = ref(new Map<string, string>());
-const taskList = ref<{ id: string; title: string }[]>([]);
 
-// Filtros del detalle por día (PRD-v2 §8.4.3: buscador + tipo, categoría y tarea).
+// Filters of the per-day detail (PRD-v2 §8.4.3: search + type, category and task).
 const detailSearch = ref("");
 const detailTypeId = ref<string | null>(null);
 const detailCategoryId = ref<string | null>(null);
 const detailTaskId = ref<string | null>(null);
 
-/** La paleta de datos de los tokens (PRD-v4 §11.3), para las porciones. */
+/** The data palette of the tokens (PRD-v4 §11.3), for the slices. */
 const DATA_COLORS = [
   "var(--color-data-blue)",
   "var(--color-data-green)",
@@ -79,7 +81,6 @@ onMounted(async () => {
     listAllCategories(),
     listClients(),
   ]);
-  taskTitles.value = tasks.map((task) => task.title);
   taskList.value = tasks.map((task) => ({ id: task.id, title: task.title }));
   typeNames.value = new Map(types.map((type) => [type.id, type.name]));
   categoryNames.value = new Map(
@@ -96,23 +97,23 @@ const visibleRuns = computed<TimerRun[]>(() => {
 
 /** The total of the visible range (the footer of the history card). */
 const rangeTotalSeconds = computed(() => {
-  const from =
-    range.value === "hoy" ? startOfDay(new Date()) : startOfWeek(new Date());
-  return totalSeconds(visibleRuns.value, from, new Date(), new Date());
+  const now = new Date();
+  const from = range.value === "hoy" ? startOfDay(now) : startOfWeek(now);
+  return totalSeconds(visibleRuns.value, from, now, now);
 });
 
-/** El donut: el tiempo del rango por tipo. */
+/** The donut: the time of the range by type. */
 const chartSlices = computed(() => {
   const byType = groupByType(visibleRuns.value, typeNames.value, new Date());
   return byType
     .map((slice, index) => ({
-      // El id NO puede venir vacío (unovis lo usa como clave del arco).
+      // The id must NOT come empty (unovis uses it as the arc key).
       id: slice.id === "" ? "sin-tipo" : slice.id,
       label: slice.label,
       seconds: slice.seconds,
       color: DATA_COLORS[index % DATA_COLORS.length]!,
     }))
-    // Una porción de 0 segundos no se ve: fuera, que un id vacío rompe.
+    // A slice of 0 seconds is not visible: drop it, an empty id breaks.
     .filter((slice) => slice.seconds > 0);
 });
 
@@ -171,16 +172,36 @@ async function onStop() {
   }
 }
 
-/** Restart a run from the history (PRD-v2 §8.4: cierra el que estaba corriendo). */
+/**
+ * Starts a run again from the history (PRD-v2 §8.4: the running one is closed).
+ *
+ * The row has two buttons and they are not the same action: "Reanudar"
+ * (Resume) continues the work (the title and the task), "Reiniciar"
+ * (Restart) repeats it exactly as it was (the client, the type and the
+ * category come along).
+ */
+async function onResume(item: TimerRun) {
+  await startRun(item, { taskId: item.taskId });
+}
+
 async function onRestart(item: TimerRun) {
+  await startRun(item, {
+    taskId: item.taskId,
+    clientId: item.clientId,
+    typeId: item.typeId,
+    categoryId: item.categoryId,
+  });
+}
+
+async function startRun(item: TimerRun, context: Partial<TimerRun>) {
   busy.value = true;
   try {
     await start({
       title: item.title,
-      taskId: item.taskId,
-      clientId: item.clientId,
-      typeId: item.typeId,
-      categoryId: item.categoryId,
+      taskId: context.taskId ?? null,
+      clientId: context.clientId ?? null,
+      typeId: context.typeId ?? null,
+      categoryId: context.categoryId ?? null,
       origin: "resumed",
     });
   } catch {
@@ -189,10 +210,6 @@ async function onRestart(item: TimerRun) {
     busy.value = false;
   }
 }
-
-watch(range, () => {
-  // El filtro es local (el historial ya está cargado).
-});
 </script>
 
 <template>
@@ -262,7 +279,7 @@ watch(range, () => {
       </article>
     </div>
 
-    <!-- Gráfica: el tiempo del rango por tipo (PRD-v4 §8.5). -->
+    <!-- Chart: the time of the range by type (PRD-v4 §8.5). -->
     <article class="mt-5 rounded-[var(--radius)] border border-border bg-surface p-6">
       <h2 class="text-base font-semibold text-text">
         {{ t("schedules.chart.title") }}
@@ -272,8 +289,8 @@ watch(range, () => {
       </div>
     </article>
 
-    <!-- Detalle por día (PRD-v2 §8.4.3): buscador + filtros por tipo,
-         categoría y tarea. -->
+    <!-- Detail by day (PRD-v2 §8.4.3): search + filters by type,
+         category and task. -->
     <article class="mt-5 rounded-[var(--radius)] border border-border bg-surface p-6">
       <div class="flex flex-wrap items-center justify-between gap-3">
         <h2 class="text-base font-semibold text-text">
@@ -450,7 +467,7 @@ watch(range, () => {
             class="grid size-8 shrink-0 place-items-center rounded-full bg-primary-50 text-primary-700 transition-transform duration-100 ease-out hover:opacity-90 active:scale-95 disabled:opacity-60"
             :aria-label="t('schedules.history.resume')"
             :data-testid="`schedule-resume-${item.id}`"
-            @click="onRestart(item)"
+            @click="onResume(item)"
           >
             <PhPlay :size="14" weight="fill" />
           </button>

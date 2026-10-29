@@ -2,12 +2,12 @@
 import { computed, onMounted, ref } from "vue";
 import { stateNameOf } from "~/domain/task/dashboard";
 import { formatRelativeTime, recentActivity } from "~/domain/dashboard/summary";
-import { PhCheckSquare, PhClock, PhTimer } from "~/shared/vendor/icons";
+import { PhCheckSquare, PhTimer } from "~/shared/vendor/icons";
 import { useDashboard } from "~/shared/composables/use-dashboard";
 import { useTimer } from "~/shared/composables/use-timer";
 import TimerBar from "~/ui/molecules/timer-bar.vue";
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const {
   tallies,
   recentTasks,
@@ -26,8 +26,8 @@ const {
   formatMoney,
 } = useDashboard();
 
-// El timer: el MISMO composable que /schedules, para que el reloj del
-// dashboard no pueda quedar desfasado (PRD-v4 §8.3: card "Timer activo").
+// The timer: the SAME composable as /schedules, so the dashboard clock
+// cannot get out of sync (PRD-v4 §8.3: the "Timer activo" (active timer) card).
 const { run, history, elapsedSeconds, sync, stop } = useTimer();
 const activity = computed(() => recentActivity(history.value));
 
@@ -38,7 +38,7 @@ onMounted(async () => {
 });
 
 const today = computed(() =>
-  new Intl.DateTimeFormat("es", { dateStyle: "long" }).format(new Date()),
+  new Intl.DateTimeFormat(locale.value, { dateStyle: "long" }).format(new Date()),
 );
 
 function stateName(stateId: string) {
@@ -89,8 +89,8 @@ async function onStop() {
       {{ t(error) }}
     </p>
 
-    <!-- Timer activo (CONDICIONAL: sólo cuando hay un timer corriendo,
-         PRD-v4 §8.3 — ausencia de dato, no placeholder). -->
+    <!-- Active timer (CONDITIONAL: only when there is a running timer,
+         PRD-v4 §8.3 — absence of data, not a placeholder). -->
     <article
       v-if="run"
       class="mt-6"
@@ -111,7 +111,7 @@ async function onStop() {
       />
     </article>
 
-    <!-- Stat cards (PRD-v4 §8.3: ingresos, gastos, tareas activas, clientes). -->
+    <!-- Stat cards (PRD-v4 §8.3: income, expenses, active tasks, clients). -->
     <div
       class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
       data-testid="dashboard-stats"
@@ -166,7 +166,7 @@ async function onStop() {
     </div>
 
     <div class="mt-6 grid gap-4 lg:grid-cols-3">
-      <!-- Próximas tareas (2/3 del ancho). -->
+      <!-- Upcoming tasks (2/3 of the width). -->
       <section class="lg:col-span-2" aria-labelledby="dashboard-recent-title">
         <div class="flex items-baseline justify-between gap-4">
           <h2
@@ -224,7 +224,7 @@ async function onStop() {
         </div>
       </section>
 
-      <!-- Actividad reciente (1/3 del ancho). -->
+      <!-- Recent activity (1/3 of the width). -->
       <section aria-labelledby="dashboard-activity-title">
         <h2
           id="dashboard-activity-title"
@@ -265,7 +265,7 @@ async function onStop() {
       </section>
     </div>
 
-    <!-- Task counts per column: el resumen por estado del dashboard (PRD-v2 §8.2). -->
+    <!-- Task counts per column: the dashboard summary by state (PRD-v2 §8.2). -->
     <section class="mt-6" aria-labelledby="dashboard-states-title">
       <div class="flex items-baseline justify-between gap-4">
         <h2
@@ -298,7 +298,7 @@ async function onStop() {
       </div>
     </section>
 
-    <!-- Estado vacío (PRD-v2 §8.2: nunca una pantalla en blanco). -->
+    <!-- Empty state (PRD-v2 §8.2: never a blank screen). -->
     <div
       v-if="!isLoading && isEmpty"
       class="mt-6 rounded-lg border border-border bg-surface p-8 text-center"

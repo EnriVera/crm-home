@@ -48,9 +48,9 @@ export const routes: RouteRecordRaw[] = [
     meta: { auth: true },
   },
   {
-    // PRD-v2 §8.3: `/tasks-config` es la configuración de tareas, y hoy
-    // esa pantalla es el tab "Estados" de /config. Se redirige ahí en vez
-    // de dejar una vista que no renderiza nada.
+    // PRD-v2 §8.3: `/tasks-config` is the task configuration and today
+    // that screen is the "Estados" tab of /config. It redirects there
+    // instead of leaving a view that renders nothing.
     path: "/tasks-config",
     name: "tasks-config",
     redirect: () => "/config?tab=estados",
@@ -93,10 +93,10 @@ export const routes: RouteRecordRaw[] = [
     meta: { auth: true },
   },
   {
-    // PRD-v4 §12.2: las páginas legales son públicas. `guest` las marca como
-    // tales y `public` dice que se leen igual con la sesión abierta: el
-    // footer del shell las linkea, así que rebotar al dashboard dejaría al
-    // usuario sin poder leerlas.
+    // PRD-v4 §12.2: the legal pages are public. `guest` marks them as
+    // such and `public` says they are readable with the session open: the
+    // shell links them, so bouncing to the dashboard would leave the
+    // visitor unable to read them.
     path: "/terms",
     name: "terms",
     component: () => import("~/ui/views/terms.vue"),

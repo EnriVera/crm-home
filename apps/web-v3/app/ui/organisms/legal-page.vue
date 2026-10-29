@@ -1,11 +1,11 @@
 <script setup lang="ts">
 /**
- * Página legal honesta para los textos que todavía no existen.
+ * An honest legal page for the texts that do not exist yet.
  *
- * Los textos legales (términos, privacidad, cookies) se redactan antes
- * de la salida a producción. Un "En construcción" sin contexto deja al
- * usuario en una pantalla muerta; esto dice qué está y qué no está en
- * vigor, sin inventar cláusulas.
+ * The legal texts (terms, privacy, cookies) are written before the
+ * production release. A bare "under construction" leaves the visitor on a
+ * dead screen: this one says what is and is not in force, without
+ * inventing clauses.
  */
 defineProps<{ title: string; body: string }>();
 </script>

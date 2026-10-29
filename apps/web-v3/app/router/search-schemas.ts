@@ -5,12 +5,12 @@ import { z } from "zod";
  * Every field is optional so a bare route always parses.
  */
 export const configSearchSchema = z.object({
-  // Los tabs que /config implementa contra la API (PRD-v4 §8.8).
+  // The tabs that /config implements against the API (PRD-v4 §8.8).
   tab: z
     .enum(["perfil", "estados", "tipos", "categorias", "apps", "monedas"])
     .optional(),
-  // El drawer de creación/edición vive en la URL (PRD-v4 §9.1):
-  // `?tab=tipos&drawer=new` para crear, `?tab=tipos&edit=<id>` para editar.
+  // The create/edit drawer lives in the URL (PRD-v4 §9.1):
+  // `?tab=tipos&drawer=new` to create, `?tab=tipos&edit=<id>` to edit.
   drawer: z.string().min(1).optional(),
   edit: z.string().min(1).optional(),
 });
@@ -26,11 +26,11 @@ export const schedulesSearchSchema = z.object({
 });
 
 export const clientsSearchSchema = z.object({
-  // El drawer de creación/edición vive en la URL (PRD-v4 §9.1).
-  // `delete=1` abre el drawer en modo confirmación de borrado (lo usa el
-  // botón de borrar de la card).
-  // NO hay filtros por estado: la tabla de clientes no tiene columna de
-  // estado (el catálogo los muestra, la DB no los tiene).
+  // The create/edit drawer lives in the URL (PRD-v4 §9.1).
+  // `delete=1` opens the drawer in delete-confirmation mode (used by the
+  // card's delete button).
+  // There are NO state filters: the clients table has no state column
+  // (the catalog shows them, the DB does not have them).
   drawer: z.string().min(1).optional(),
   edit: z.string().min(1).optional(),
   delete: z.string().optional(),

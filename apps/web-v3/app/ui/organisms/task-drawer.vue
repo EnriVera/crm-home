@@ -22,7 +22,7 @@ import EditDrawer from "~/ui/organisms/edit-drawer.vue";
  *
  * NOT in this drawer, per I-05: "Estado inicial" (tasks are always born
  * Pendiente — the kanban column "+" places them via task_tast_id), "Fecha
- * límite" (the wire has no due date field) and Adjuntos (Fase 2).
+ * limit" (the wire has no due date field) and Attachments (Phase 2).
  */
 const props = defineProps<{
   open: boolean;
@@ -64,8 +64,8 @@ watch(
     title.value = props.initial?.title ?? "";
     description.value = props.initial?.description ?? null;
     clientId.value = props.initial?.clientId ?? null;
-    // El tipo es OBLIGATORIO (PRD-v2 §8.3): la API rechaza la task sin
-    // `task_type_id`. En alta se preselecciona el primer tipo disponible.
+    // The type is REQUIRED (PRD-v2 §8.3): the API rejects a task without
+    // `task_type_id`. On create the first available type is preselected.
     typeId.value = props.initial?.typeId ?? props.types[0]?.id ?? null;
     categoryId.value = props.initial?.categoryId ?? null;
     categories.value = [];
@@ -82,8 +82,8 @@ const canSubmit = computed(
 watch(
   () => props.types,
   (types) => {
-    // Los tipos llegan con el load asíncrono: si el drawer ya está abierto
-    // sin tipo elegido, se preselecciona el primero.
+    // The types arrive with the async load: if the drawer is already open
+    // without a type chosen, the first one is preselected.
     if (!props.open || typeId.value !== null || types.length === 0) return;
     typeId.value = types[0]!.id;
     void loadCategories(typeId.value);

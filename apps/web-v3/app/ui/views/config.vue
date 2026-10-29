@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from "vue";
+import type { Component } from "vue";
 import type { ThemePreference, TypeModule } from "~/domain/config/entities";
 import { categoryTypeName } from "~/domain/config/entities";
 import { useConfig } from "~/shared/composables/use-config";
@@ -17,6 +18,7 @@ import {
   PhCheck,
   PhGear,
   PhInfo,
+  PhMonitor,
   PhMoon,
   PhPencilSimple,
   PhPlus,
@@ -50,6 +52,7 @@ const {
   addState,
   editState,
   deleteState,
+  moveState,
   addCategory,
   editCategory,
   deleteCategory,
@@ -64,19 +67,21 @@ interface Tab {
   subtitle: string;
 }
 
-const tabs: Tab[] = [
+// A computed and not a fixed array: the labels are translated and have to
+// follow the locale when it changes.
+const tabs = computed<Tab[]>(() => [
   { id: "perfil", label: t("config.tabs.perfil"), subtitle: t("config.tabs.perfilSubtitle") },
   { id: "estados", label: t("config.tabs.estados"), subtitle: t("config.tabs.estadosSubtitle") },
   { id: "tipos", label: t("config.tabs.tipos"), subtitle: t("config.tabs.tiposSubtitle") },
   { id: "categorias", label: t("config.tabs.categorias"), subtitle: t("config.tabs.categoriasSubtitle") },
   { id: "apps", label: t("config.tabs.apps"), subtitle: t("config.tabs.appsSubtitle") },
   { id: "monedas", label: t("config.tabs.monedas"), subtitle: t("config.tabs.monedasSubtitle") },
-];
+]);
 
 const activeTab = computed(() => params.value.tab ?? "perfil");
 
 const activeTabMeta = computed(
-  () => tabs.find((tab) => tab.id === activeTab.value) ?? tabs[0]!,
+  () => tabs.value.find((tab) => tab.id === activeTab.value) ?? tabs.value[0]!,
 );
 
 /** The tabs that list records through BaseView. */
@@ -139,7 +144,14 @@ async function submitState(values: { name: string; position: number }) {
   saving.value = true;
   try {
     if (editingState.value) {
-      await editState({ id: editingState.value.id, name: values.name });
+      const state = editingState.value;
+      await editState({ id: state.id, name: values.name });
+      // The update endpoint only takes the name: the position of a column
+      // is an order, and the order moves with the reorder endpoint.
+      const current = orderedStates.value.findIndex((item) => item.id === state.id);
+      if (current !== -1 && current !== values.position) {
+        await moveState(state.id, values.position);
+      }
     } else {
       await addState({ name: values.name, position: values.position });
     }
@@ -185,11 +197,13 @@ async function submitCurrency(values: {
   }
 }
 
-const themeOptions: { id: ThemePreference; label: string; icon: string }[] = [
-  { id: "light", label: t("config.theme.light"), icon: "sun" },
-  { id: "dark", label: t("config.theme.dark"), icon: "moon" },
-  { id: "system", label: t("config.theme.system"), icon: "monitor" },
-];
+const themeOptions = computed<{ id: ThemePreference; label: string; icon: Component }[]>(
+  () => [
+    { id: "light", label: t("config.theme.light"), icon: PhSun },
+    { id: "dark", label: t("config.theme.dark"), icon: PhMoon },
+    { id: "system", label: t("config.theme.system"), icon: PhMonitor },
+  ],
+);
 
 const initials = computed(() => {
   const name = auth.session?.name?.trim() ?? "";
@@ -227,20 +241,24 @@ function selectTab(id: Tab["id"]) {
 
     <!-- Tab bar: full-width pill segmented, active in green tint (PRD §8.8). -->
     <nav
-      class="mt-5 flex flex-wrap gap-1 rounded-full bg-surface-2 p-1"
+      class="mt-5 flex gap-1 overflow-x-auto rounded-full bg-surface-2 p-1 sm:flex-wrap"
       :aria-label="t('config.tabs.ariaLabel')"
+      role="tablist"
     >
       <button
         v-for="tab in tabs"
         :key="tab.id"
         type="button"
-        class="flex-1 whitespace-nowrap rounded-full px-3 py-2 text-sm transition-colors"
+        role="tab"
+        class="flex-none whitespace-nowrap rounded-full px-3 py-2 text-sm transition-colors sm:flex-1"
         :class="
           activeTab === tab.id
             ? 'bg-primary-50 font-medium text-primary-700'
             : 'text-text-2 hover:text-text'
         "
-        :aria-current="activeTab === tab.id ? 'page' : undefined"
+        :id="`config-tab-${tab.id}`"
+        :aria-selected="activeTab === tab.id"
+        :aria-controls="`config-panel-${tab.id}`"
         :data-testid="`config-tab-${tab.id}`"
         @click="selectTab(tab.id)"
       >
@@ -253,7 +271,10 @@ function selectTab(id: Tab["id"]) {
     </p>
 
     <!-- ── Perfil ─────────────────────────────────────────────── -->
-    <div v-if="activeTab === 'perfil'" class="mt-6 space-y-6" data-testid="config-perfil">
+    <div v-if="activeTab === 'perfil'" role="tabpanel"
+      :id="`config-panel-perfil`"
+      :aria-labelledby="`config-tab-perfil`"
+      class="mt-6 space-y-6" data-testid="config-perfil">
       <article class="rounded-lg border border-border bg-surface p-6">
         <h2 class="text-base font-semibold text-text">
           {{ t("config.profile.title") }}
@@ -309,11 +330,7 @@ function selectTab(id: Tab["id"]) {
             :data-testid="`config-theme-${option.id}`"
             @click="setTheme(option.id)"
           >
-            <component
-              :is="option.icon === 'sun' ? PhSun : PhMoon"
-              :size="18"
-              weight="regular"
-            />
+            <component :is="option.icon" :size="18" weight="regular" />
             <span>{{ option.label }}</span>
             <PhCheck
               v-if="theme.theme === option.id"
@@ -347,7 +364,10 @@ function selectTab(id: Tab["id"]) {
     </div>
 
     <!-- ── Tipos ──────────────────────────────────────────────── -->
-    <div v-else-if="activeTab === 'tipos'" class="mt-6" data-testid="config-tipos">
+    <div v-else-if="activeTab === 'tipos'" role="tabpanel"
+      :id="`config-panel-tipos`"
+      :aria-labelledby="`config-tab-tipos`"
+      class="mt-6" data-testid="config-tipos">
       <BaseView
         id="config-tipos"
         v-model:search="search"
@@ -424,6 +444,9 @@ function selectTab(id: Tab["id"]) {
     <!-- ── Estados de tarea ───────────────────────────────────── -->
     <div
       v-else-if="activeTab === 'estados'"
+      role="tabpanel"
+      :id="`config-panel-estados`"
+      :aria-labelledby="`config-tab-estados`"
       class="mt-6"
       data-testid="config-estados"
     >
@@ -503,6 +526,9 @@ function selectTab(id: Tab["id"]) {
     <!-- ── Categorías ─────────────────────────────────────────── -->
     <div
       v-else-if="activeTab === 'categorias'"
+      role="tabpanel"
+      :id="`config-panel-categorias`"
+      :aria-labelledby="`config-tab-categorias`"
       class="mt-6"
       data-testid="config-categorias"
     >
@@ -583,7 +609,10 @@ function selectTab(id: Tab["id"]) {
     </div>
 
     <!-- ── Apps ───────────────────────────────────────────────── -->
-    <div v-else-if="activeTab === 'apps'" class="mt-6" data-testid="config-apps">
+    <div v-else-if="activeTab === 'apps'" role="tabpanel"
+      :id="`config-panel-apps`"
+      :aria-labelledby="`config-tab-apps`"
+      class="mt-6" data-testid="config-apps">
       <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <article
           v-for="app in apps"
@@ -610,6 +639,9 @@ function selectTab(id: Tab["id"]) {
     <!-- ── Monedas ─────────────────────────────────────────────── -->
     <div
       v-else-if="activeTab === 'monedas'"
+      role="tabpanel"
+      :id="`config-panel-monedas`"
+      :aria-labelledby="`config-tab-monedas`"
       class="mt-6"
       data-testid="config-monedas"
     >

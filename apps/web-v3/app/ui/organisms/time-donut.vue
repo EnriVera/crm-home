@@ -2,15 +2,15 @@
 import { computed } from "vue";
 
 /**
- * Donut de tiempo por tipo (PRD-v4 §8.5).
+ * Time donut by type (PRD-v4 §8.5).
  *
- * Implementado en SVG propio y no con unovis: el wrapper Vue de unovis
- * (v1.7) no renderizaba los arcos del donut en esta app (quedaba el
- * anillo de fondo vacío). El SVG propio se controla entero, usa la paleta
- * de datos de los tokens (PRD-v4 §11.3) y no depende de la librería.
+ * Implemented with its own SVG and not with unovis: unovis' Vue wrapper
+ * (v1.7) did not render the donut arcs in this app (the background ring was
+ * left empty). The custom SVG is fully controlled, uses the data palette of
+ * the tokens (PRD-v4 §11.3) and does not depend on the library.
  */
 const props = defineProps<{
-  /** Una porción por tipo: { id, label, seconds, color }. */
+  /** One slice per type: { id, label, seconds, color }. */
   slices: { id: string; label: string; seconds: number; color: string }[];
 }>();
 
@@ -26,8 +26,8 @@ const total = computed(() =>
 );
 
 /**
- * Cada porción como un tramo del anillo: el `stroke-dasharray` recorta
- * el círculo y el `stroke-dashoffset` lo desplaza al lugar que le toca.
+ * Each slice as a segment of the ring: the `stroke-dasharray` cuts the
+ * circle and the `stroke-dashoffset` shifts it to the place it belongs to.
  */
 const arcs = computed(() => {
   let consumed = 0;
@@ -48,7 +48,7 @@ const arcs = computed(() => {
     });
 });
 
-/** "2h 10m" — el tiempo de la porción. */
+/** "2h 10m" — the time of the slice. */
 function formatSlice(seconds: number): string {
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
@@ -97,7 +97,7 @@ function formatSlice(seconds: number): string {
       </span>
     </div>
 
-    <!-- Leyenda propia: el tiempo real de cada porción. -->
+    <!-- Own legend: the real time of each slice. -->
     <ul class="min-w-0 flex-1 space-y-2" data-testid="time-donut-legend">
       <li
         v-for="slice in slices"

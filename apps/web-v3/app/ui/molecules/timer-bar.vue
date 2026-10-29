@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, ref, useId, watch } from "vue";
 import type { TimerRun } from "~/domain/schedule/entities";
 import { formatDuration } from "~/domain/schedule/entities";
 import { PhClock, PhPlay, PhSquare } from "~/shared/vendor/icons";
 
 /**
- * Barra de timer (PRD-v4 §8.5).
+ * The timer bar (PRD-v4 §8.5).
  *
- * En reposo es un campo para escribir qué estás haciendo (timer libre) con
- * las tareas del usuario como autocompletado; corriendo muestra el
- * título, los chips de tipo/categoría, el reloj grande y el botón de
- * parar. El borde verde de 2px marca el estado activo.
+ * At rest it is a field to write what you are doing (free timer) with the
+ * user's tasks as autocomplete; running it shows the title, the
+ * type/category chips, the big clock and the stop button. The 2px green
+ * border marks the active state.
  */
 const props = defineProps<{
   run: TimerRun | null;
@@ -31,6 +31,8 @@ const emit = defineEmits<{
 const { t } = useI18n();
 
 const title = ref("");
+/** The datalist id is per instance: two bars would collide on a static one. */
+const taskListId = useId();
 
 watch(
   () => props.run?.id,
@@ -41,7 +43,7 @@ watch(
 
 const isRunning = computed(() => props.run !== null);
 
-/** "01:24:36" — the big clock of the bar. */
+/** The clock of the bar: hours are unbounded and the total is clamped at 0. */
 const clock = computed(() => {
   const total = Math.max(0, props.elapsedSeconds);
   const hours = String(Math.floor(total / 3600)).padStart(2, "0");
@@ -70,7 +72,7 @@ function onStart() {
       aria-hidden="true"
     />
 
-    <!-- Corriendo: el título y sus chips. -->
+    <!-- Running: the title and its chips. -->
     <template v-if="isRunning">
       <p class="min-w-0 flex-1 truncate text-sm font-medium text-text">
         {{ run?.title }}
@@ -108,21 +110,21 @@ function onStart() {
       </button>
     </template>
 
-    <!-- En reposo: qué vas a hacer. -->
+    <!-- At rest: what you are about to do. -->
     <template v-else>
       <label class="min-w-0 flex-1">
         <span class="sr-only">{{ t("schedules.start") }}</span>
         <input
           v-model="title"
           type="text"
-          list="timer-task-titles"
+          :list="taskListId"
           :placeholder="t('schedules.startPlaceholder')"
           class="h-9 w-full rounded-full border border-border bg-surface px-4 text-sm text-text outline-none transition-colors placeholder:text-text-2 focus:border-accent"
           data-testid="timer-title-input"
           @keydown.enter.prevent="onStart"
         />
       </label>
-      <datalist id="timer-task-titles">
+      <datalist :id="taskListId">
         <option v-for="taskTitle in taskTitles" :key="taskTitle" :value="taskTitle" />
       </datalist>
       <button

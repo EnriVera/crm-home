@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
-import type { Client } from "~/domain/client/entities";
 import { useClients } from "~/shared/composables/use-clients";
 import { useRouteSearch } from "~/shared/composables/use-route-search";
 import BaseView from "~/ui/organisms/base-view.vue";
@@ -40,7 +39,7 @@ onMounted(() => {
 
 function openCreate() {
   drawerError.value = null;
-  void set({ drawer: "new", edit: "" });
+  void set({ drawer: "new", edit: "", delete: "" });
 }
 
 function openEdit(id: string) {
@@ -73,7 +72,7 @@ async function submitClient(values: {
     }
     await closeDrawer();
   } catch {
-    drawerError.value = "config.drawer.saveError";
+    drawerError.value = "clients.drawer.saveError";
   } finally {
     saving.value = false;
   }
@@ -200,7 +199,6 @@ async function removeClient(id: string) {
 
       <template #empty>
         <p
-          v-if="visibleClients.length === 0"
           class="rounded-[var(--radius)] border border-dashed border-border px-4 py-10 text-center text-sm text-text-2"
           data-testid="clients-empty"
         >
