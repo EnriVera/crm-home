@@ -28,11 +28,14 @@ const props = withDefaults(
     title: string;
     /** Disables the primary button while the save is in flight. */
     submitting?: boolean | undefined;
+    /** Disables the primary button without the "saving" label. */
+    saveDisabled?: boolean | undefined;
     /** Error shown above the footer (form inline errors, §11.5 matrix). */
     error?: string | null | undefined;
   }>(),
   {
     submitting: false,
+    saveDisabled: false,
     error: null,
   },
 );
@@ -248,7 +251,7 @@ function startResize(event: PointerEvent) {
               </button>
               <button
                 type="submit"
-                :disabled="submitting"
+                :disabled="submitting || saveDisabled"
                 class="rounded-[var(--radius)] bg-accent px-4 py-2 text-sm font-semibold text-accent-fg transition-colors hover:bg-accent-hover disabled:opacity-60"
                 data-testid="drawer-save"
               >

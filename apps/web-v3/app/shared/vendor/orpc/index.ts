@@ -1,15 +1,26 @@
-export { callAuth, callConfig, callTasks } from "./client";
+export {
+  callAuth,
+  callCategoriesByType,
+  callClients,
+  callConfig,
+  callTasks,
+} from "./client";
 export type {
   AppWire,
   AuthProcedure,
   AuthProcedureMap,
   CategoryWire,
+  ClientProcedure,
+  ClientProcedureMap,
+  ClientWire,
   ConfigProcedure,
   ConfigProcedureMap,
   CurrencyWire,
   TaskProcedure,
   TaskProcedureMap,
   TaskStateConfigWire,
+  TaskStateWire,
+  TaskWire,
   TypeWire,
 } from "./client";
 

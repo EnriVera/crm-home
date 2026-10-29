@@ -11,6 +11,21 @@ import { RPCLink } from "@orpc/client/fetch";
 import type { SessionUser } from "@crm/contract/auth";
 import type { TaskStateWire, TaskWire } from "@crm/contract/task";
 
+/**
+ * The wire shape of a client, as the API returns it.
+ *
+ * The `Client` entity of `@crm/contract/client` is camelCase (id, name…);
+ * the wire is snake_case, so the shape is spelled out here.
+ */
+export interface ClientWire {
+  client_id: string;
+  client_name: string;
+  client_email: string | null;
+  client_phone: string | null;
+}
+
+export type { TaskStateWire, TaskWire } from "@crm/contract/task";
+
 /** The auth procedures this app talks to (PRD-v4 §11.1). */
 export type AuthProcedure =
   | "requestOtp"
@@ -43,16 +58,67 @@ export interface AuthProcedureMap {
 }
 
 /** The task procedures this app talks to (PRD-v4 §8.4). */
-export type TaskProcedure = "list" | "states.list";
+export type TaskProcedure =
+  | "list"
+  | "create"
+  | "update"
+  | "move"
+  | "remove"
+  | "states.list";
 
 export interface TaskProcedureMap {
   list: {
     input: { search?: string };
     output: TaskWire[];
   };
+  create: {
+    input: {
+      task_title: string;
+      task_description?: string | null;
+      task_tast_id?: string;
+      task_type_id?: string | null;
+      task_cate_id?: string | null;
+      task_clie_id?: string | null;
+    };
+    output: TaskWire;
+  };
+  update: {
+    input: {
+      task_id: string;
+      task_title?: string;
+      task_description?: string | null;
+      task_type_id?: string | null;
+      task_cate_id?: string | null;
+      task_clie_id?: string | null;
+    };
+    output: TaskWire;
+  };
+  move: {
+    input: {
+      task_id: string;
+      target_state_id: string;
+      prev_task_id?: string;
+      next_task_id?: string;
+    };
+    output: TaskWire;
+  };
+  remove: {
+    input: { task_id: string };
+    output: { ok: true };
+  };
   "states.list": {
     input: undefined;
     output: TaskStateWire[];
+  };
+}
+
+/** The client procedures this app talks to (task drawer select). */
+export type ClientProcedure = "list";
+
+export interface ClientProcedureMap {
+  list: {
+    input: { search?: string; limit?: number };
+    output: ClientWire[];
   };
 }
 
@@ -257,6 +323,40 @@ export function callTasks<P extends TaskProcedure>(
       ? ["tasks", "states", "list"]
       : ["tasks", procedure];
   return callProcedure<TaskProcedureMap[P]["output"]>(segments, input);
+}
+
+/** Calls one client procedure (the `clients` context of the orpc router). */
+export function callClients<P extends ClientProcedure>(
+  procedure: P,
+  input: ClientProcedureMap[P]["input"],
+): Promise<ClientProcedureMap[P]["output"]> {
+  return callProcedure<ClientProcedureMap[P]["output"]>(
+    ["clients", procedure],
+    input,
+  );
+}
+
+/**
+ * Calls the legacy `tasks/categories-by-type` endpoint. It is not in the
+ * orpc contract: the handler reads its input from the QUERY STRING (not
+ * the `{json}` body), so the regular callProcedure cannot reach it and
+ * this raw fetch lives here, inside the vendor wrapper (PRD-v4 §10.3).
+ */
+export async function callCategoriesByType(typeId: string): Promise<
+  { cate_id: string; cate_name: string; cate_type_id: string }[]
+> {
+  const response = await fetch(
+    `${baseURL}/rpc/tasks/categories-by-type?type_id=${encodeURIComponent(typeId)}`,
+    { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: "{}" },
+  );
+  if (!response.ok) {
+    throw new Error(`categories-by-type failed: ${response.status}`);
+  }
+  return (await response.json()) as {
+    cate_id: string;
+    cate_name: string;
+    cate_type_id: string;
+  }[];
 }
 
 /**

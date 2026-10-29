@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, useId, watch } from "vue";
+import { computed, onMounted, ref, useId, watch } from "vue";
 import { PhList, PhMagnifyingGlass, PhSquaresFour } from "~/shared/vendor/icons";
 
 /**
@@ -22,17 +22,31 @@ const props = withDefaults(
     search?: string | undefined;
     /** Loading state: shows a skeleton grid instead of the slots. */
     loading?: boolean | undefined;
+    /**
+     * Controlled view: when set, the parent owns the active view (and the
+     * internal switcher + persistence stay off). Used by screens whose
+     * switcher has more options than grid/list (e.g. /tasks adds kanban).
+     */
+    view?: "grid" | "list" | undefined;
+    /** Hides the search input when the page renders its own. */
+    searchable?: boolean | undefined;
+    /** Hides the whole toolbar (the page renders its own). */
+    toolbar?: boolean | undefined;
   }>(),
   {
     id: undefined,
     views: () => ["grid", "list"],
     search: "",
     loading: false,
+    view: undefined,
+    searchable: true,
+    toolbar: true,
   },
 );
 
 const emit = defineEmits<{
   "update:search": [value: string];
+  "update:view": [value: "grid" | "list"];
 }>();
 
 const instanceId = props.id ?? useId();
@@ -41,16 +55,20 @@ const storageKey = `baseview:${instanceId}`;
 type ViewMode = "grid" | "list";
 
 /** The persisted view, validated against what this instance offers. */
-const view = ref<ViewMode>("grid");
+const internalView = ref<ViewMode>("grid");
+
+const isControlled = computed(() => props.view !== undefined);
+const activeView = computed<ViewMode>(() => props.view ?? internalView.value);
 
 const searchModel = ref(props.search);
 
 watch(searchModel, (value) => {
   emit("update:search", value);
-  persist({ view: view.value, search: value });
+  persist({ view: activeView.value, search: value });
 });
 
 function persist(state: { view: ViewMode; search: string }) {
+  if (isControlled.value) return;
   try {
     localStorage.setItem(storageKey, JSON.stringify(state));
   } catch {
@@ -59,6 +77,7 @@ function persist(state: { view: ViewMode; search: string }) {
 }
 
 onMounted(() => {
+  if (isControlled.value) return;
   try {
     const raw = localStorage.getItem(storageKey);
     if (!raw) return;
@@ -67,7 +86,7 @@ onMounted(() => {
       typeof saved.view === "string" &&
       (props.views as string[]).includes(saved.view)
     ) {
-      view.value = saved.view as ViewMode;
+      internalView.value = saved.view as ViewMode;
     }
     if (typeof saved.search === "string") {
       searchModel.value = saved.search;
@@ -79,7 +98,11 @@ onMounted(() => {
 });
 
 function selectView(next: ViewMode) {
-  view.value = next;
+  if (isControlled.value) {
+    emit("update:view", next);
+    return;
+  }
+  internalView.value = next;
   persist({ view: next, search: searchModel.value });
 }
 
@@ -94,8 +117,8 @@ const VIEW_META: { id: ViewMode; labelKey: string; icon: typeof PhList }[] = [
 <template>
   <div>
     <!-- Toolbar: pill search (PRD-DESIGN §7.5) + segmented view switcher. -->
-    <div class="flex flex-wrap items-center justify-between gap-3">
-      <label class="relative block w-full max-w-sm">
+    <div v-if="toolbar" class="flex flex-wrap items-center justify-between gap-3">
+      <label v-if="searchable" class="relative block w-full max-w-sm">
         <span class="sr-only">{{ searchPlaceholder }}</span>
         <PhMagnifyingGlass
           :size="16"
@@ -108,9 +131,10 @@ const VIEW_META: { id: ViewMode; labelKey: string; icon: typeof PhList }[] = [
           class="h-10 w-full rounded-full border border-border bg-surface pl-9 pr-3 text-sm text-text outline-none transition-colors placeholder:text-text-2 focus:border-accent"
         />
       </label>
+      <slot v-else name="toolbar-start" />
 
       <div
-        v-if="views.length > 1"
+        v-if="views.length > 1 && !isControlled"
         class="flex gap-1 rounded-full bg-surface-2 p-1"
         role="group"
         :aria-label="t('baseview.switcher')"
@@ -123,11 +147,11 @@ const VIEW_META: { id: ViewMode; labelKey: string; icon: typeof PhList }[] = [
           type="button"
           class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm transition-colors"
           :class="
-            view === meta.id
+            activeView === meta.id
               ? 'bg-surface font-medium text-accent shadow-sm'
               : 'text-text-2 hover:text-text'
           "
-          :aria-pressed="view === meta.id"
+          :aria-pressed="activeView === meta.id"
           :data-testid="`baseview-${meta.id}`"
           @click="selectView(meta.id)"
         >
@@ -135,6 +159,7 @@ const VIEW_META: { id: ViewMode; labelKey: string; icon: typeof PhList }[] = [
           <span class="hidden sm:inline">{{ t(meta.labelKey) }}</span>
         </button>
       </div>
+      <slot v-if="isControlled" name="toolbar-end" />
     </div>
 
     <!-- Loading: skeleton in the shape of the grid (PRD-v4 §11.5 #9). -->
@@ -152,7 +177,7 @@ const VIEW_META: { id: ViewMode; labelKey: string; icon: typeof PhList }[] = [
     </div>
 
     <div v-else class="mt-5">
-      <div v-if="view === 'grid'" data-testid="baseview-grid-view">
+      <div v-if="activeView === 'grid'" data-testid="baseview-grid-view">
         <slot name="grid" />
       </div>
       <div v-else data-testid="baseview-list-view">

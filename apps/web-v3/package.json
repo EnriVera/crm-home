@@ -20,6 +20,7 @@
     "@phosphor-icons/vue": "2.2.1",
     "@pinia/nuxt": "^1.0.3",
     "@tanstack/vue-query": "5.104.1",
+    "@tiptap/extension-link": "^2.11.0",
     "@tiptap/starter-kit": "^2.11.0",
     "@tiptap/vue-3": "^2.11.0",
     "@unovis/vue": "^1.5.0",
@@ -31,6 +32,7 @@
     "clsx": "2.1.1",
     "nuxt": "^4.0.0",
     "pinia": "4.1.0",
+    "splitpanes": "^4.1.2",
     "tailwind-merge": "3.0.2",
     "tailwindcss-animate": "1.0.7",
     "vee-validate": "4.15.1",
@@ -39,8 +41,7 @@
     "vue-router": "^4.5.0",
     "vue-sonner": "2.0.9",
     "xstate": "5.32.6",
-    "zod": "4.6.5",
-    "splitpanes": "^4.1.2"
+    "zod": "4.6.5"
   },
   "devDependencies": {
     "@playwright/test": "^1.50.0",
