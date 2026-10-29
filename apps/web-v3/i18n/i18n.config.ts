@@ -278,9 +278,9 @@ export default defineI18nConfig(() => ({
           name: "Nombre o empresa",
           namePlaceholder: "Acme Studio",
           email: "Email",
-          // El placeholder no puede llevar "@": el tokenizador de vue-i18n
-          // lo lee como inicio de un mensaje enlazado y revienta el render
-          // (mismo criterio que en auth.emailPlaceholder).
+          // The placeholder cannot carry an "@": the vue-i18n tokenizer
+          // reads it as the start of a linked message and breaks the render
+          // (same rule as auth.emailPlaceholder).
           emailPlaceholder: "nombre en estudio.com",
           phone: "Teléfono",
           phonePlaceholder: "+54 9 11 0000-1111",

@@ -1,5 +1,4 @@
-import { storeToRefs } from "pinia";
-import type { Pinia } from "pinia";
+import { storeToRefs, type Pinia } from "pinia";
 import { ref } from "vue";
 import type { SessionUser } from "@crm/contract/auth";
 import { useAuthStore } from "~/stores/auth";

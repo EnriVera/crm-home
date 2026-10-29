@@ -22,8 +22,8 @@ export class KyselyClientLookupRepository implements ClientLookupRepository {
   }): Promise<ClientRow[]> {
     const query = params.query.trim();
     const cappedLimit = Math.min(Math.max(params.limit, 1), 100);
-    // Una query vacía (o solo espacios) matchea todos los clientes del
-    // usuario: el filtro se omite en vez de escanear con `%   %`.
+    // Una query vacía matchea todos los clientes del usuario: el filtro
+    // se omite en vez de escanear con `%   %`.
     const base = this.db
       .selectFrom("client")
       .selectAll()

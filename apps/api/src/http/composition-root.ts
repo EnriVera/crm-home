@@ -486,7 +486,10 @@ function startEmailDrainLoop(env: AppEnv): void {
 
 if (
   process.env.DATABASE_URL &&
-  process.env.EMAIL_DRAIN_LOOP_ENABLED !== "false"
+  process.env.EMAIL_DRAIN_LOOP_ENABLED !== "false" &&
+  // En los tests el loop no corre: comparte la base con los tests de
+  // integración y los dos escriben a la vez.
+  process.env.NODE_ENV !== "test"
 ) {
   startEmailDrainLoop(process.env as AppEnv);
 }

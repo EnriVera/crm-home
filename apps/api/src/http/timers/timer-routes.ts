@@ -1,10 +1,10 @@
 import type { H3Event } from "h3";
 import { readValidatedBody } from "h3";
 import {
-  startTimerInputSchema as startTimerInputSchemaContract,
-  stopTimerInputSchema as stopTimerInputSchemaContract,
-  heartbeatTimerInputSchema as heartbeatTimerInputSchemaContract,
-  listTimerRunsInputSchema as listTimerRunsInputSchemaContract,
+  startTimerInputSchema,
+  stopTimerInputSchema,
+  heartbeatTimerInputSchema,
+  listTimerRunsInputSchema,
 } from "@crm/contract/schedule";
 import type { StartTimer } from "../../application/timers/start-timer";
 import type { StopTimer } from "../../application/timers/stop-timer";
@@ -12,8 +12,6 @@ import type { HeartbeatTimer } from "../../application/timers/heartbeat-timer";
 import type { GetCurrentTimer } from "../../application/timers/get-current-timer";
 import type { ListTimerRuns } from "../../application/timers/list-timer-runs";
 import type { TimerRunRow } from "../../domain/ports/timer-run-repository";
-import { InvalidTimerInput, TimerNotFound } from "../../application/timers/errors";
-import { TimerAlreadyRunningError } from "../../domain/timers/errors";
 import { mapDomainErrorToStatus } from "../error-mapping";
 import { readUserId } from "../request-user";
 
@@ -33,10 +31,6 @@ export interface TimerRouteDependencies {
 
 // Los schemas de entrada vienen del contrato (`@crm/contract/schedule`): la
 // API no re-declara lo que el contrato ya define.
-const startTimerInputSchema = startTimerInputSchemaContract;
-const stopTimerInputSchema = stopTimerInputSchemaContract;
-const heartbeatTimerInputSchema = heartbeatTimerInputSchemaContract;
-const listTimerRunsInputSchema = listTimerRunsInputSchemaContract;
 
 function mapTimerRunToContract(row: TimerRunRow) {
   return {

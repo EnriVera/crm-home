@@ -5,13 +5,14 @@ import type { ClientRow } from "../types";
  *
  * Distinto de `ClientLookupRepository` (que es read-only y soporta búsqueda
  * por prefijo de nombre para los autocompletes del form de tasks). Acá
- * tenemos las 4 operaciones del CRUD de /clients: list paginado/filtrado
+ * tenemos las 5 operaciones del CRUD de /clients: list paginado/filtrado
  * por user, get por id, insert, update, soft-delete (set
- * `client_deleted_at`).
+ * `clie_deleted_at`).
  *
  * El repo SIEMPRE filtra por `userId` (multi-tenant isolation): los métodos
- * que reciben `clientId` además validan ownership en el use case, no acá,
- * para mantener el port libre de reglas de negocio.
+ * que reciben `clientId` filtran por user en la query, así que una fila
+ * de otro usuario no existe para el repo. El port queda libre de reglas
+ * de negocio.
  */
 export interface ClientRepository {
   /** Lista los clients del user, opcionalmente filtrados por search. */

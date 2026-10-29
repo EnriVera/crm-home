@@ -162,16 +162,41 @@ export function useTimer() {
     history.value = await listTimerRuns({ limit: 200 });
   }
 
-  /** The catalog totals: today, this week and the task with the most hours. */
-  const todaySeconds = computed(() =>
-    totalSeconds(history.value, startOfDay(now.value), now.value, now.value),
-  );
-  const weekSeconds = computed(() =>
-    totalSeconds(history.value, startOfWeek(now.value), now.value, now.value),
-  );
-  const longest = computed(() =>
-    longestRun(history.value, startOfWeek(now.value), now.value, now.value),
-  );
+  /**
+   * The catalog totals: today, this week and the task with the most hours.
+   *
+   * The end of the range is a fresh timestamp and not `now.value`: the
+   * clock only ticks while a timer is running, so with no timer open the
+   * totals were computed against the moment the composable was created
+   * and a run that ended later was not counted.
+   */
+  const todaySeconds = computed(() => {
+    const current = new Date();
+    return totalSeconds(
+      history.value,
+      startOfDay(current),
+      current,
+      current,
+    );
+  });
+  const weekSeconds = computed(() => {
+    const current = new Date();
+    return totalSeconds(
+      history.value,
+      startOfWeek(current),
+      current,
+      current,
+    );
+  });
+  const longest = computed(() => {
+    const current = new Date();
+    return longestRun(
+      history.value,
+      startOfWeek(current),
+      current,
+      current,
+    );
+  });
 
   onBeforeUnmount(() => {
     stopTicking();

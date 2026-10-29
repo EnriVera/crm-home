@@ -46,14 +46,15 @@ function litModules(modules: TypeModules): string[] {
  *
  * Multi-módulo (migration 007):
  * - `type_modules TEXT[]` reemplaza al viejo `type_module TEXT`.
- * - Filter "module" usa el operador `@>` de Postgres: `type_modules @> ARRAY[module]`
- *   matchea cualquier array que CONTENGA ese módulo.
- * - Filter `module === null` matchea los "all modules" (`type_modules = '{}'`).
+ * - El filtro por módulos usa el operador `&&` de Postgres (overlap):
+ *   matchea cualquier type que tenga AL MENOS uno de los módulos pedidos.
+ *   Sin filtro (`modules` vacío) el listado trae todos los types.
  *
- * Set cerrado enforced a dos niveles:
+ * Set cerrado enforced a tres niveles:
  *   1. CHECK constraint en la DB (migration 007).
  *   2. Validación en el use case `CreateType` / `UpdateType`.
- * El adapter no re-valida; confía en que el caller ya pasó por el use case.
+ *   3. Allowlist en el adapter (`litModules`), que es el nivel que hace
+ *      seguro el `sql.lit` del filtro.
  */
 export class KyselyTypeRepository implements TypeRepository {
   constructor(private readonly db: Database) {}
@@ -84,10 +85,10 @@ export class KyselyTypeRepository implements TypeRepository {
       // en un single-module flow anterior). La diferencia con el
       // filtro viejo: ahora es multi-módulo con OR (no AND).
       //
-      // IMPORTANTE: kysely no tiene helper directo para `&&` con un
-      // array bind — usamos sql.lit por cada elemento (los valores
-      // del set cerrado son conocidos y no vienen del user input, así
-      // que sql.lit es seguro contra injection).
+      // kysely no tiene bind para el array overlap `&&`: los valores
+      // entran con `sql.lit`, y por eso `litModules` valida el set
+      // cerrado antes (sin esa allowlist, un valor fuera del set
+      // sería SQL crudo).
       const modulesArray = sql<string[]>`ARRAY[${sql.join(
         litModules(params.modules).map((m) => sql.lit(m)),
       )}]::TEXT[]`;
@@ -167,7 +168,9 @@ export class KyselyTypeRepository implements TypeRepository {
     }> = {};
     if (params.name !== undefined) setValues.type_name = params.name;
     if (params.modules !== undefined) {
-      setValues.type_modules = Array.from(params.modules);
+      // El mismo set cerrado que valida el insert: el update escribe el
+      // array entero, así que también necesita la allowlist.
+      setValues.type_modules = litModules(params.modules);
     }
 
     // Un PATCH sin campos para cambiar es un no-op: se devuelve la fila

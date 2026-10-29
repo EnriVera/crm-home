@@ -10,7 +10,8 @@ import { elapsedSeconds, type TimerRun } from "~/domain/schedule/entities";
  *
  * - `idle`: no timer is running.
  * - `running`: there is an open run; the elapsed is recalculated on every
- *   tick against the server time.
+ *   tick from the server's `start` with the local clock (the server owns
+ *   the start instant, the browser owns the ticking).
  */
 export interface TimerContext {
   run: TimerRun | null;

@@ -16,8 +16,8 @@ import { mapClientRow, type ClientDbRow } from "./_mappers";
  *  - `insert`: genera UUID vía `gen_random_uuid()`, setea timestamps via
  *    `DEFAULT NOW()`. Retorna la fila creada.
  *  - `update`: solo actualiza los campos provistos (los `undefined` se
- *    omiten del UPDATE). Si no se pasa ningún campo, es no-op y retorna
- *    la fila sin cambios.
+ *    omiten del UPDATE). Si no se pasa ningún campo, no cambia el nombre,
+ *    el email ni el teléfono: solo se refresca `clie_updated_at`.
  *  - `softDelete`: setea `clie_deleted_at = NOW()`. Idempotente.
  *
  * Multi-tenant isolation: TODAS las queries filtran por `clie_user_id`
@@ -79,7 +79,9 @@ export class KyselyClientRepository implements ClientRepository {
         clie_email: params.email,
         clie_phone: params.phone,
         clie_areaphone: null,
-        clie_updated_at: sql<Date>`NOW()`,
+        // El mismo reloj que usa el update: el default `NOW()` de la base
+        // y el reloj de la app no tienen por qué coincidir.
+        clie_updated_at: new Date(),
       })
       .returningAll()
       .executeTakeFirstOrThrow();

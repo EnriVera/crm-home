@@ -63,14 +63,15 @@ export class KyselyTimerRunRepository implements TimerRunRepository {
   constructor(private readonly db: Database) {}
 
   async lockUserTimers(userId: string, trx: Transaction): Promise<void> {
-    // Lock de advice a nivel de transacción: se toma y se suelta con la
+    // Advisory lock a nivel de transacción: se toma y se suelta con la
     // transacción, así que un arranque fallido no deja el usuario
-    // bloqueado. `hashtext` deriva el id del usuario a una clave de 32
-    // bits (el advisory lock trabaja con int4).
+    // bloqueado. `hashtextextended` deriva el id del usuario a una clave
+    // de 64 bits: con `hashtext` (32 bits) dos usuarios distintos podían
+    // caer en la misma clave y serializarse entre sí.
     //
     // La transacción es obligatoria: sin ella el lock se suelta al
     // terminar la llamada y la serialización se pierde.
-    await sql`SELECT pg_advisory_xact_lock(hashtext(${userId}))`.execute(
+    await sql`SELECT pg_advisory_xact_lock(hashtextextended(${userId}, 0))`.execute(
       this.resolve(trx),
     );
   }
@@ -215,6 +216,9 @@ export class KyselyTimerRunRepository implements TimerRunRepository {
       })
       .where("timr_user_id", "=", params.userId)
       .where("timr_id", "=", params.timerId)
+      // Una corrida cerrada no se vuelve a cerrar: sin esta guarda el
+      // `end` y la duración se recalculaban sobre una corrida vieja.
+      .where("timr_end", "is", null)
       .where("timr_deleted_at", "is", null)
       .returningAll()
       .executeTakeFirstOrThrow();

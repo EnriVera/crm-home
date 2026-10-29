@@ -15,10 +15,7 @@ import { CreateClient } from "../../application/clients/create-client";
 import { UpdateClient } from "../../application/clients/update-client";
 import { DeleteClient } from "../../application/clients/delete-client";
 import { ListClientDependencies } from "../../application/clients/list-client-dependencies";
-import {
-  ClientNotFound,
-  InvalidClientInput,
-} from "../../application/clients/errors";
+import type { ClientRow } from "../../domain/types";
 import { mapDomainErrorToStatus } from "../error-mapping";
 import { readUserId } from "../request-user";
 
@@ -64,14 +61,7 @@ const updateClientInputSchema = z.object({
 
 const removeClientInputSchema = z.object({ client_id: uuidSchema });
 
-function mapClientRowToContract(row: {
-  id: string;
-  name: string;
-  email: string | null;
-  phone: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-}) {
+function mapClientRowToContract(row: ClientRow) {
   return {
     client_id: row.id,
     client_name: row.name,

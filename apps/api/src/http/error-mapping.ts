@@ -61,20 +61,23 @@ function isDomainError(
 /**
  * Traduce una excepción a la respuesta HTTP que el cliente recibe.
  *
- * - 400: la validación de zod (h3 ya trae el status) o un error de
- *   dominio con input inválido.
- * - 401/404/409/429: el `code` del error de dominio.
+ * - Los `HTTPError` de h3 (validación de zod, método no permitido)
+ *   conservan su status: el status ya viene bien calculado por h3.
+ * - 401/404/409/429: el `code` del error de dominio, según la tabla.
+ * - 400: un error de dominio con un `code` que la tabla no conoce (un
+ *   error de dominio es un problema del pedido, no del server).
  * - 500: cualquier otra cosa (no es un error de dominio).
  */
 export function mapDomainErrorToStatus(error: unknown): DomainErrorResponse {
-  // Validación de zod (h3): el status ya viene bien calculado por h3.
-  if (HTTPError.isError(error) && error.status === 400) {
+  // Errores de h3 (validación de zod, método no permitido): el status ya
+  // viene bien calculado por h3.
+  if (HTTPError.isError(error)) {
     return {
-      status: 400,
+      status: error.status,
       body: {
         defined: true,
-        code: "VALIDATION_ERROR",
-        message: "Validation failed",
+        code: error.status === 400 ? "VALIDATION_ERROR" : "HTTP_ERROR",
+        message: error.status === 400 ? "Validation failed" : error.message,
       },
     };
   }

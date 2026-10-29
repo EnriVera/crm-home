@@ -1,4 +1,5 @@
 import type {
+  TimerOrigin,
   TimerRunRepository,
   TimerRunRow,
 } from "../../domain/ports/timer-run-repository";
@@ -15,7 +16,7 @@ export interface StartTimerInput {
   typeId: string | null;
   categoryId: string | null;
   /** Reanuda una corrida del historial (origin 'resumed'). */
-  origin?: "manual" | "resumed";
+  origin?: TimerOrigin;
 }
 
 export interface StartTimerDependencies {

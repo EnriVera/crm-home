@@ -732,11 +732,13 @@ export function createRpcHandler(
         );
       }
       console.error("[rpc] unexpected error:", err);
+      // El mensaje del error interno no se filtra al cliente: puede traer
+      // detalle de SQL o de rutas. El log del server lo tiene.
       return new Response(
         JSON.stringify({
           defined: true,
           code: "INTERNAL_SERVER_ERROR",
-          message: err instanceof Error ? err.message : "Internal Server Error",
+          message: "Internal Server Error",
         }),
         {
           status: 500,
@@ -792,7 +794,7 @@ async function resolveUserIdFromSession(
  *
  * El body Blob se pasa como stream (no se consume en la clonación) para
  * no romper la lectura posterior del body por `readValidatedBody` en el
- * handler. El cast `as never` es necesario porque `event.node`/`res` no
+ * handler. El cast a `H3Event` es necesario porque `event.node`/`res` no
  * son shapes oficialmente opcionales en `H3Event`.
  */
 function withRequestHeader(

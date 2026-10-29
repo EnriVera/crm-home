@@ -1,28 +1,26 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from "vue";
+import { onUnmounted, ref } from "vue";
 import { PhCheck } from "~/shared/vendor/icons";
 
 const { t } = useI18n();
 
-const prefersDark = ref(false);
-let schemeQuery: MediaQueryList | undefined;
-
 const highlights = ["brand.task", "brand.timer", "brand.finance"];
+
+// Public pages follow the operating system preference (PRD-v4 §6.8); the
+// rest of the app follows the preference stored in the account.
+const schemeQuery = window.matchMedia("(prefers-color-scheme: dark)");
+// Read in setup and not in onMounted: the app is a SPA, so the first paint
+// already knows the preference and a dark OS does not see a white flash.
+const prefersDark = ref(schemeQuery.matches);
 
 function onSchemeChange(event: MediaQueryListEvent) {
   prefersDark.value = event.matches;
 }
 
-onMounted(() => {
-  // Public pages follow the operating system preference (PRD-v4 §6.8); the
-  // rest of the app follows the preference stored in the account.
-  schemeQuery = window.matchMedia("(prefers-color-scheme: dark)");
-  prefersDark.value = schemeQuery.matches;
-  schemeQuery.addEventListener("change", onSchemeChange);
-});
+schemeQuery.addEventListener("change", onSchemeChange);
 
 onUnmounted(() => {
-  schemeQuery?.removeEventListener("change", onSchemeChange);
+  schemeQuery.removeEventListener("change", onSchemeChange);
 });
 </script>
 
