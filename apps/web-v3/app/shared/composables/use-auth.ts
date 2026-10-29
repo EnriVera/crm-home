@@ -1,7 +1,9 @@
 import { storeToRefs } from "pinia";
 import type { Pinia } from "pinia";
 import { ref } from "vue";
+import type { SessionUser } from "@crm/contract/auth";
 import { useAuthStore } from "~/stores/auth";
+import { useThemeStore } from "~/stores/theme";
 import {
   AuthCallError,
   fetchSession,
@@ -46,9 +48,22 @@ const VERDICT_ERROR_KEY = {
 export function useAuth(pinia?: Pinia) {
   const store = useAuthStore(pinia);
   const { session, hasSession } = storeToRefs(store);
+  const theme = useThemeStore(pinia);
 
   const isLoading = ref(false);
   const errorMessage = ref<string | null>(null);
+
+  /**
+   * The account is the source of truth for the theme (PRD-v2 §8.7): the
+   * session carries the user's `userTheme`, so it travels with the account
+   * across devices. Without this the preference only lived in this
+   * browser's localStorage and the account value was fetched and dropped.
+   */
+  function applyAccountTheme(user: SessionUser) {
+    if (user.userTheme === "light" || user.userTheme === "dark" || user.userTheme === "system") {
+      theme.setTheme(user.userTheme);
+    }
+  }
 
   function clearError() {
     errorMessage.value = null;
@@ -86,7 +101,16 @@ export function useAuth(pinia?: Pinia) {
       // verifyOtp set the session cookie, so the identity the API sees is read
       // back before the guard lets the visitor into the app.
       const user = await fetchSession();
-      if (user) store.setSession(user);
+      if (!user) {
+        // El código se consumió pero no hay sesión: sin ella el guard
+        // rebota a /login y el código ya no sirve (loop). Se reporta como
+        // fallo en vez de devolver un éxito que no se puede sostener.
+        store.clear();
+        errorMessage.value = "auth.errors.unknown";
+        return false;
+      }
+      store.setSession(user);
+      applyAccountTheme(user);
       return true;
     } catch (error) {
       errorMessage.value =
@@ -104,6 +128,7 @@ export function useAuth(pinia?: Pinia) {
       const user = await fetchSession();
       if (user) {
         store.setSession(user);
+        applyAccountTheme(user);
       } else {
         store.clear();
       }

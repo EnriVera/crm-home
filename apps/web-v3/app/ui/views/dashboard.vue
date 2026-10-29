@@ -2,7 +2,6 @@
 import { computed, onMounted, ref } from "vue";
 import { stateNameOf } from "~/domain/task/dashboard";
 import { formatRelativeTime, recentActivity } from "~/domain/dashboard/summary";
-import { formatDuration } from "~/domain/schedule/entities";
 import { PhCheckSquare, PhClock, PhTimer } from "~/shared/vendor/icons";
 import { useDashboard } from "~/shared/composables/use-dashboard";
 import { useTimer } from "~/shared/composables/use-timer";
@@ -29,7 +28,7 @@ const {
 
 // El timer: el MISMO composable que /schedules, para que el reloj del
 // dashboard no pueda quedar desfasado (PRD-v4 §8.3: card "Timer activo").
-const { run, history, elapsedSeconds, weekSeconds, sync, stop } = useTimer();
+const { run, history, elapsedSeconds, sync, stop } = useTimer();
 const activity = computed(() => recentActivity(history.value));
 
 const stopping = ref(false);
@@ -161,7 +160,7 @@ async function onStop() {
           {{ clients.length }}
         </p>
         <p class="mt-1 text-xs text-text-2">
-          {{ t("dashboard.stats.hoursHint", { time: formatDuration(weekSeconds) }) }}
+          {{ t("dashboard.stats.clientsHint") }}
         </p>
       </article>
     </div>

@@ -50,6 +50,8 @@ const mode = ref<"form" | "confirm">("form");
 const dependencyList = ref<{ taskId: string; taskTitle: string }[]>([]);
 const dependencyTotal = ref(0);
 const loadingDependencies = ref(false);
+/** Las dependencias no se pudieron cargar: el borrado queda bloqueado. */
+const dependenciesError = ref(false);
 
 watch(
   () => props.open,
@@ -89,6 +91,7 @@ function onSubmit() {
 async function requestDelete() {
   if (!props.initial) return;
   loadingDependencies.value = true;
+  dependenciesError.value = false;
   try {
     const result = props.loadDependencies
       ? await props.loadDependencies(props.initial.id)
@@ -96,8 +99,12 @@ async function requestDelete() {
     dependencyList.value = result.dependencies;
     dependencyTotal.value = result.total;
   } catch {
+    // No se puede affirmar que el cliente no tiene dependencias: si la
+    // carga falla, el borrado queda bloqueado en vez de confirmar un
+    // borrado sin Listar lo que se rompe.
     dependencyList.value = [];
     dependencyTotal.value = 0;
+    dependenciesError.value = true;
   } finally {
     loadingDependencies.value = false;
   }
@@ -144,6 +151,13 @@ function confirmDelete() {
           {{ dependency.taskTitle }}
         </li>
       </ul>
+      <p
+        v-if="dependenciesError"
+        class="mt-3 text-sm text-error"
+        data-testid="client-dependencies-error"
+      >
+        {{ t("clients.drawer.dependenciesError") }}
+      </p>
     </div>
 
     <!-- The fields. -->
@@ -202,7 +216,7 @@ function confirmDelete() {
         </button>
         <button
           type="button"
-          :disabled="saving || loadingDependencies"
+          :disabled="saving || loadingDependencies || dependenciesError"
           class="rounded-[var(--radius)] bg-error px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
           data-testid="client-delete-confirm-button"
           @click="confirmDelete"

@@ -69,6 +69,12 @@ export const timerMachine = setup({
     },
     running: {
       on: {
+        // Un START mientras ya corre REEMPLAZA la corrida: el server cierra
+        // la anterior y abre la nueva (regla "un timer abierto"), así que la
+        // UI tiene que adoptar la nueva. Sin esta transición el `START`
+        // se ignoraba y la barra seguía mostrando la corrida ya cerrada,
+        // con su reloj corriendo y sin forma de pararla.
+        START: { actions: "setRun" },
         TICK: { actions: "tick" },
         STOPPED: { target: "idle", actions: "clearRun" },
         SYNC: [

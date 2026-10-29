@@ -90,19 +90,19 @@ onUnmounted(() => {
           to="/terms"
           class="text-text-2 transition-colors hover:text-accent"
         >
-          {{ t('legal.terms') }}
+          {{ t('legal.terms.label') }}
         </NuxtLink>
         <NuxtLink
           to="/privacy"
           class="text-text-2 transition-colors hover:text-accent"
         >
-          {{ t('legal.privacy') }}
+          {{ t('legal.privacy.label') }}
         </NuxtLink>
         <NuxtLink
           to="/cookies"
           class="text-text-2 transition-colors hover:text-accent"
         >
-          {{ t('legal.cookies') }}
+          {{ t('legal.cookies.label') }}
         </NuxtLink>
       </nav>
     </footer>

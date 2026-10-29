@@ -205,7 +205,7 @@ watch(range, () => {
     </header>
 
     <p v-if="error" class="mt-4 text-sm text-error" data-testid="schedules-error">
-      {{ error }}
+      {{ t(error) }}
     </p>
 
     <div class="mt-5">
@@ -254,7 +254,7 @@ watch(range, () => {
           {{ t("schedules.stats.longest") }}
         </p>
         <p class="mt-2 text-2xl font-semibold tabular-nums text-text">
-          {{ longest ? formatDuration(longest.durationSeconds ?? 0) : "—" }}
+          {{ longest ? formatDuration(longest.durationSeconds ?? 0) : "0m 00s" }}
         </p>
         <p class="mt-1 truncate text-xs text-text-2">
           {{ longest?.title ?? t("schedules.stats.noRuns") }}

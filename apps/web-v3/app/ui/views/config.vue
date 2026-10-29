@@ -272,17 +272,17 @@ function selectTab(id: Tab["id"]) {
         </div>
 
         <dl class="mt-5 grid gap-4 sm:grid-cols-3">
-          <div>
+          <div v-if="auth.session?.name">
             <dt class="text-xs font-medium text-text-2">
               {{ t("config.profile.name") }}
             </dt>
-            <dd class="mt-1 text-sm text-text">{{ auth.session?.name ?? "—" }}</dd>
+            <dd class="mt-1 text-sm text-text">{{ auth.session.name }}</dd>
           </div>
-          <div>
+          <div v-if="auth.session?.email">
             <dt class="text-xs font-medium text-text-2">
               {{ t("config.profile.email") }}
             </dt>
-            <dd class="mt-1 text-sm text-text">{{ auth.session?.email ?? "—" }}</dd>
+            <dd class="mt-1 text-sm text-text">{{ auth.session.email }}</dd>
           </div>
         </dl>
       </article>

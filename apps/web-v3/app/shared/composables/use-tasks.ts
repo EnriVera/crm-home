@@ -140,13 +140,25 @@ export function useTasks() {
     // Optimistic rebuild: the target column is rebuilt around the moved
     // task and every other task stays in place. The rebuild works by ID
     // (not by column), so a task can never end up in two columns.
+    //
+    // The optimistic order must be strictly between the neighbours: taking
+    // `prev + 1` collides with the order of the card below (the orders are
+    // contiguous), and the tie was broken by id, so the card landed on the
+    // wrong side half the time.
+    const previous = input.columnTasks[input.index - 1];
+    const next = input.columnTasks[input.index];
+    const optimisticOrder =
+      previous && next
+        ? (previous.kanbanOrder + next.kanbanOrder) / 2
+        : previous
+          ? previous.kanbanOrder + 1
+          : next
+            ? next.kanbanOrder - 1
+            : 1;
     const optimistic: Task = {
       ...moved,
       stateId: input.targetStateId,
-      kanbanOrder:
-        input.index === 0
-          ? (input.columnTasks[0]?.kanbanOrder ?? 2) - 1
-          : (input.columnTasks[input.index - 1]?.kanbanOrder ?? 0) + 1,
+      kanbanOrder: optimisticOrder,
     };
     const columnIds = new Set(input.columnTasks.map((task) => task.id));
     const rest = snapshot.filter(

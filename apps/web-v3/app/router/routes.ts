@@ -42,9 +42,12 @@ export const routes: RouteRecordRaw[] = [
     meta: { auth: true },
   },
   {
+    // PRD-v2 §8.3: `/tasks-config` es la configuración de tareas, y hoy
+    // esa pantalla es el tab "Estados" de /config. Se redirige ahí en vez
+    // de dejar una vista que no renderiza nada.
     path: "/tasks-config",
     name: "tasks-config",
-    component: () => import("~/ui/views/tasks-config.vue"),
+    redirect: () => "/config?tab=estados",
     meta: { auth: true },
   },
   {
@@ -84,6 +87,8 @@ export const routes: RouteRecordRaw[] = [
     meta: { auth: true },
   },
   {
+    // PRD-v4 §12.2: las páginas legales son `guest` (públicas, y con
+    // sesión abierta el guard manda al dashboard).
     path: "/terms",
     name: "terms",
     component: () => import("~/ui/views/terms.vue"),

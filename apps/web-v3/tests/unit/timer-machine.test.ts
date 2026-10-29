@@ -87,4 +87,29 @@ describe("timer machine", () => {
     expect(actor.getSnapshot().context.elapsedSeconds).toBe(0);
     actor.stop();
   });
+
+  it("adopts a new run when a START arrives while running", () => {
+    // El server cierra la corrida anterior y abre la nueva al reanudar
+    // desde el historial. Sin esta transición, la UI seguía mostrando la
+    // corrida vieja: el reloj corría para un timer ya cerrado y la nueva
+    // quedaba sin forma de pararse desde la pantalla.
+    const actor = createActor(timerMachine).start();
+    actor.send({
+      type: "START",
+      run: run("2026-06-28T09:00:00"),
+      now: new Date("2026-06-28T10:00:00"),
+    });
+    expect(actor.getSnapshot().context.run?.id).toBe("t1");
+
+    actor.send({
+      type: "START",
+      run: { ...run("2026-06-28T10:00:00"), id: "t2" },
+      now: new Date("2026-06-28T10:00:00"),
+    });
+    const snapshot = actor.getSnapshot();
+    expect(snapshot.matches("running")).toBe(true);
+    expect(snapshot.context.run?.id).toBe("t2");
+    expect(snapshot.context.elapsedSeconds).toBe(0);
+    actor.stop();
+  });
 });

@@ -1,10 +1,8 @@
 <script setup lang="ts">
-const { t } = useI18n()
+// Ingresos (PRD-v4 §8.7, Fase 2): la API existe, la pantalla todavía no.
+import ComingSoon from "~/ui/views/coming-soon.vue";
 </script>
 
 <template>
-  <section>
-    <h1 class="text-2xl font-semibold text-text">Ingresos</h1>
-    <p class="mt-2 text-text-2">{{ t('scaffold.placeholder') }}</p>
-  </section>
+  <ComingSoon />
 </template>

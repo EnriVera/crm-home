@@ -131,6 +131,33 @@ describe("use-tasks", () => {
     expect(board.value.get("s2")).toEqual([]);
   });
 
+  it("lands the optimistic card between its neighbours, never on top of one", async () => {
+    // El orden optimista tomaba `prev + 1`, que en una columna con órdenes
+    // contiguos es el orden de la card siguiente: el desempate por id la
+    // dejaba en el slot equivocado la mitad de las veces.
+    const tasks = [task("a", "s1", 1), task("b", "s2", 1), task("c", "s2", 2)];
+    adapterMock.listTasks.mockResolvedValue(tasks);
+    adapterMock.moveTask.mockImplementation(async (input: { id: string; targetStateId: string }) => ({
+      ...task(input.id, input.targetStateId, 1.5),
+    }));
+
+    const { load, move, board } = useTasks();
+    await load();
+
+    await move({
+      id: "a",
+      targetStateId: "s2",
+      index: 1,
+      columnTasks: [task("b", "s2", 1), task("c", "s2", 2)],
+    });
+
+    const column = board.value.get("s2") ?? [];
+    expect(column.map((t) => t.id)).toContain("a");
+    const orders = column.map((t) => t.kanbanOrder);
+    // Ningún par de órdenes queda empatado: el orden es inequívoco.
+    expect(new Set(orders).size).toBe(orders.length);
+  });
+
   it("creates a task in the first column when no column is given", async () => {
     adapterMock.createTask.mockImplementation(async (input: { title: string; stateId: string }) =>
       task("new", input.stateId, 1),

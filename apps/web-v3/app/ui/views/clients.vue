@@ -168,8 +168,11 @@ async function removeClient(id: string) {
                 <p class="truncate text-sm font-medium text-text">
                   {{ client.name }}
                 </p>
-                <p class="truncate text-xs text-text-2">
-                  {{ client.email ?? client.phone ?? "—" }}
+                <p
+                  v-if="client.email ?? client.phone"
+                  class="truncate text-xs text-text-2"
+                >
+                  {{ client.email ?? client.phone }}
                 </p>
               </div>
             </div>

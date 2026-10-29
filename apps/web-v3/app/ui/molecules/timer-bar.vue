@@ -74,7 +74,7 @@ function onStart() {
     <template v-if="isRunning">
       <p class="min-w-0 flex-1 truncate text-sm font-medium text-text">
         {{ run?.title }}
-        <span v-if="clientName" class="text-text-2">— {{ clientName }}</span>
+        <span v-if="clientName" class="text-text-2">· {{ clientName }}</span>
       </p>
       <span
         v-if="typeName"

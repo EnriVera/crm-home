@@ -42,6 +42,17 @@ watch(
   { immediate: true },
 );
 
+// Los tipos llegan por async: si el drawer se abrió antes de que cargaran,
+// el select quedaba vacío y "Guardar" no hacía nada (el submit aborta sin
+// typeId). Cuando llegan, se preselecciona el primero.
+watch(
+  () => props.types,
+  (types) => {
+    if (!props.open || typeId.value !== "" || types.length === 0) return;
+    typeId.value = types[0]!.id;
+  },
+);
+
 function onSubmit() {
   const trimmed = name.value.trim();
   if (!trimmed || !typeId.value) return;

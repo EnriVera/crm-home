@@ -53,6 +53,9 @@ export function useTimer() {
 
   let tickTimer: ReturnType<typeof setInterval> | undefined;
   let beatTimer: ReturnType<typeof setInterval> | undefined;
+  // Guardián contra respuestas fuera de orden: cada sync y cada
+  // start/stop toman un número y el que llega tarde lo descarta.
+  let syncGeneration = 0;
 
   function startTicking() {
     if (tickTimer) return;
@@ -85,11 +88,17 @@ export function useTimer() {
   async function sync() {
     isLoading.value = true;
     error.value = null;
+    // Cada sync toma un número de generación. Si mientras tanto el usuario
+    // arrancó o paró un timer, el sync que vuelve atrás descarta su
+    // respuesta: si no, un SYNC tardío resucitaba en la UI un timer ya
+    // parado (o borraba uno recién arrancado).
+    const generation = ++syncGeneration;
     try {
       const [current, runs] = await Promise.all([
         getCurrentTimer(),
         listTimerRuns({ limit: 200 }),
       ]);
+      if (generation !== syncGeneration) return;
       history.value = runs;
       actor.send({ type: "SYNC", run: current, now: new Date() });
       if (current) {
@@ -100,9 +109,10 @@ export function useTimer() {
         stopHeartbeat();
       }
     } catch {
+      if (generation !== syncGeneration) return;
       error.value = "schedules.loadError";
     } finally {
-      isLoading.value = false;
+      if (generation === syncGeneration) isLoading.value = false;
     }
   }
 
@@ -116,6 +126,8 @@ export function useTimer() {
     origin?: "manual" | "resumed";
   }): Promise<TimerRun> {
     error.value = null;
+    // Un start invalida cualquier sync en vuelo: su respuesta es anterior.
+    ++syncGeneration;
     const started = await startTimerRequest({
       title: input.title,
       taskId: input.taskId ?? null,
@@ -136,6 +148,8 @@ export function useTimer() {
     const current = run.value;
     if (!current) return null;
     error.value = null;
+    // Un stop invalida cualquier sync en vuelo: su respuesta es anterior.
+    ++syncGeneration;
     const closed = await stopTimerRequest(current.id);
     actor.send({ type: "STOPPED", run: closed });
     stopTicking();

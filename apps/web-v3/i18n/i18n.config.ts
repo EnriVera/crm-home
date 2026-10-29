@@ -11,7 +11,7 @@ export default defineI18nConfig(() => ({
         dashboard: "Dashboard",
         tasks: "Tareas",
         tasksConfig: "Configuración de tareas",
-        schedules: "Schedule",
+        schedules: "Temporizador",
         clients: "Clientes",
         incomes: "Ingresos",
         expenses: "Gastos",
@@ -19,9 +19,21 @@ export default defineI18nConfig(() => ({
         config: "Configuración",
       },
       legal: {
-        terms: "Términos",
-        privacy: "Privacidad",
-        cookies: "Cookies",
+        terms: {
+          label: "Términos",
+          title: "Términos y condiciones",
+          body: "CRM-HOME está en desarrollo: todavía no hay términos en vigor. El texto definitivo se publica antes de la salida a producción.",
+        },
+        privacy: {
+          label: "Privacidad",
+          title: "Política de privacidad",
+          body: "CRM-HOME está en desarrollo: todavía no hay una política de privacidad en vigor. Los datos que guardamos hoy son los que usás en la app.",
+        },
+        cookies: {
+          label: "Cookies",
+          title: "Política de cookies",
+          body: "CRM-HOME está en desarrollo: todavía no hay una política de cookies en vigor. La sesión se guarda en una cookie de sesión httpOnly.",
+        },
       },
       dashboard: {
         title: "Dashboard",
@@ -35,10 +47,10 @@ export default defineI18nConfig(() => ({
           incomeHint: "Movimientos de este mes",
           expense: "Gastos del mes",
           expenseHint: "Movimientos de este mes",
-          activeTasks: "Tareas activas",
+          activeTasks: "Tareas",
           tasksHint: "Tareas en total",
           clients: "Clientes",
-          hoursHint: "{time} registradas esta semana",
+          clientsHint: "Clientes registrados",
         },
         upcomingTitle: "Próximas tareas",
         activityTitle: "Actividad reciente",
@@ -192,7 +204,7 @@ export default defineI18nConfig(() => ({
           tasks: "Tareas",
           incomes: "Ingresos",
           expenses: "Gastos",
-          schedules: "Schedule",
+          schedules: "Temporizador",
         },
       },
       baseview: {
@@ -202,7 +214,7 @@ export default defineI18nConfig(() => ({
         kanban: "Kanban",
       },
       schedules: {
-        title: "Schedules",
+        title: "Temporizador",
         subtitle: "Registrá tu tiempo y ligalo a una tarea",
         start: "Empezar a contar",
         startPlaceholder: "¿Qué estás haciendo?",
@@ -276,6 +288,8 @@ export default defineI18nConfig(() => ({
           deleteWithDependencies:
             "Este cliente tiene {count} tarea | Este cliente tiene {count} tareas. Si lo eliminás, quedan sin cliente.",
           deleteConfirmButton: "Eliminar igual",
+          dependenciesError:
+            "No pudimos verificar las dependencias. Reintentá antes de eliminar.",
         },
       },
       tasks: {
@@ -310,8 +324,16 @@ export default defineI18nConfig(() => ({
           delete: "Eliminar tarea",
         },
       },
-      scaffold: {
-        placeholder: "En construcción",
+      comingSoon: {
+        title: "Módulo en construcción",
+        subtitle: "Esta pantalla llega en la Fase 2.",
+        body: "La API ya está lista; falta la pantalla. Por ahora los movimientos del mes se ven en el dashboard.",
+        cta: "Ir al dashboard",
+      },
+      notFound: {
+        title: "Página no encontrada",
+        body: "La dirección no corresponde a ninguna pantalla.",
+        back: "Volver al dashboard",
       },
       common: {
         loading: "Cargando…",
