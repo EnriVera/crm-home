@@ -43,6 +43,9 @@ const GUEST_PATHS = [
   "/:pathMatch(.*)*",
 ];
 
+/** Las páginas legales se leen también con la sesión abierta. */
+const PUBLIC_PATHS = ["/terms", "/privacy", "/cookies"];
+
 const driftMessage =
   "The route table drifted from PRD-v4 §7.2: update §7.2 and app/router/routes.ts together.";
 
@@ -71,5 +74,12 @@ describe("route table (PRD-v4 §7.2, §12.6)", () => {
 
   it("keeps the catch-all last", () => {
     expect(routes.at(-1)?.path, driftMessage).toBe("/:pathMatch(.*)*");
+  });
+
+  it("keeps the legal pages readable with a session open", () => {
+    for (const path of PUBLIC_PATHS) {
+      const route = routes.find((candidate) => candidate.path === path);
+      expect(route?.meta?.public, driftMessage).toBe(true);
+    }
   });
 });

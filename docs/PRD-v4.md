@@ -577,9 +577,9 @@ export const routes: RouteRecordRaw[] = [
   { path: '/transfers', name: 'transfers', component: () => import('~/ui/views/transfers.vue'), meta: { auth: true } },
   { path: '/config', name: 'config', component: () => import('~/ui/views/config.vue'), meta: { auth: true } },
 
-  { path: '/terms', name: 'terms', component: () => import('~/ui/views/legal/terms.vue'), meta: { layout: 'legal', guest: true } },
-  { path: '/privacy', name: 'privacy', component: () => import('~/ui/views/legal/privacy.vue'), meta: { layout: 'legal', guest: true } },
-  { path: '/cookies', name: 'cookies', component: () => import('~/ui/views/legal/cookies.vue'), meta: { layout: 'legal', guest: true } },
+  { path: '/terms', name: 'terms', component: () => import('~/ui/views/legal/terms.vue'), meta: { layout: 'legal', guest: true, public: true } },
+  { path: '/privacy', name: 'privacy', component: () => import('~/ui/views/legal/privacy.vue'), meta: { layout: 'legal', guest: true, public: true } },
+  { path: '/cookies', name: 'cookies', component: () => import('~/ui/views/legal/cookies.vue'), meta: { layout: 'legal', guest: true, public: true } },
 
   { path: '/:pathMatch(.*)*', name: 'not-found', component: () => import('~/ui/views/not-found.vue'), meta: { layout: 'auth', guest: true } },
 ]
@@ -607,7 +607,7 @@ Como `<NuxtPage />` no resuelve, `<NuxtLayout />` tampoco interviene y el pages 
 
 ### 12.4 Guards como middleware de ruta
 
-Un único middleware global, `app/middleware/auth.global.ts`, corre en cada navegación y lee el `meta` de la fila (los `RouteRecordRaw` de §12.2 no declaran `meta.middleware`, y un middleware *nombrado* sin esa declaración jamás se ejecuta — por eso un solo `.global.ts`, sin `guest.ts` aparte): si `to.meta.auth` y no hay sesión (Pinia `auth` store hidratado + verificación orpc), redirige a `/login` preservando `?redirect=`; si `to.meta.guest` y ya hay sesión, redirige a `/dashboard`.
+Un único middleware global, `app/middleware/auth.global.ts`, corre en cada navegación y lee el `meta` de la fila (los `RouteRecordRaw` de §12.2 no declaran `meta.middleware`, y un middleware *nombrado* sin esa declaración jamás se ejecuta — por eso un solo `.global.ts`, sin `guest.ts` aparte): si `to.meta.auth` y no hay sesión (Pinia `auth` store hidratado + verificación orpc), redirige a `/login` preservando `?redirect=`; si `to.meta.guest` y ya hay sesión, redirige a `/dashboard`, **salvo que la fila marque `meta.public`** (las tres páginas legales): se leen igual con la sesión abierta porque el footer del shell las linkea y el visitante tiene que poder leerlas.
 
 ### 12.5 Search params tipados (sucesor de nuqs)
 
@@ -615,7 +615,7 @@ Drawers, tabs y filtros viven en la URL. Cada ruta declara su schema zod en `app
 
 ### 12.6 Anti-regresión
 
-Un test de integración (vitest) importa `routes` y la tabla §7.2 y verifica: misma cantidad de rutas, mismos paths, toda ruta autenticada tiene `meta.auth`, toda pública tiene `meta.guest` + layout adecuado. Si alguien crea `pages/` en el futuro, el test de estructura falla (`pages/` debe estar ausente).
+Un test de integración (vitest) importa `routes` y la tabla §7.2 y verifica: misma cantidad de rutas, mismos paths, toda ruta autenticada tiene `meta.auth`, toda pública tiene `meta.guest` + layout adecuado, y las tres páginas legales tienen `meta.public`. Si alguien crea `pages/` en el futuro, el test de estructura falla (`pages/` debe estar ausente).
 
 ## 13. Estructura de BD (schema corregido — inherited from PRD-v2 §11 + deltas v4)
 

@@ -10,7 +10,9 @@ export default defineNuxtRouteMiddleware((to) => {
     return navigateTo({ path: "/login", query: { redirect: to.fullPath } });
   }
 
-  if (to.meta.guest && auth.hasSession) {
+  // `public` (las páginas legales) se leen igual con la sesión abierta: el
+  // shell las linkea y el visitante tiene que poder leerlas.
+  if (to.meta.guest && auth.hasSession && !to.meta.public) {
     return navigateTo("/dashboard");
   }
 });

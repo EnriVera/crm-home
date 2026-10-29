@@ -6,6 +6,12 @@ declare module "vue-router" {
     auth?: boolean;
     /** The route is public and redirects an authenticated user (PRD-v4 §12.4). */
     guest?: boolean;
+    /**
+     * The route is readable with or without a session: a logged-in visitor
+     * is not bounced to the dashboard (the legal pages must be readable
+     * from inside the app, and the PRD's shell links them).
+     */
+    public?: boolean;
     /** Layout selected in app.vue from app/layouts/. */
     layout?: "default" | "auth" | "legal";
   }
@@ -87,24 +93,26 @@ export const routes: RouteRecordRaw[] = [
     meta: { auth: true },
   },
   {
-    // PRD-v4 §12.2: las páginas legales son `guest` (públicas, y con
-    // sesión abierta el guard manda al dashboard).
+    // PRD-v4 §12.2: las páginas legales son públicas. `guest` las marca como
+    // tales y `public` dice que se leen igual con la sesión abierta: el
+    // footer del shell las linkea, así que rebotar al dashboard dejaría al
+    // usuario sin poder leerlas.
     path: "/terms",
     name: "terms",
     component: () => import("~/ui/views/terms.vue"),
-    meta: { layout: "legal", guest: true },
+    meta: { layout: "legal", guest: true, public: true },
   },
   {
     path: "/privacy",
     name: "privacy",
     component: () => import("~/ui/views/privacy.vue"),
-    meta: { layout: "legal", guest: true },
+    meta: { layout: "legal", guest: true, public: true },
   },
   {
     path: "/cookies",
     name: "cookies",
     component: () => import("~/ui/views/cookies.vue"),
-    meta: { layout: "legal", guest: true },
+    meta: { layout: "legal", guest: true, public: true },
   },
   {
     path: "/:pathMatch(.*)*",
