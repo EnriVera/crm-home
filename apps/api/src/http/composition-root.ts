@@ -428,6 +428,23 @@ export function createAppFetch(
 const fetchHandler = createAppFetch();
 export default fromWebHandler(fetchHandler);
 
+// Descripción del transporte para logs: sin userinfo (la contraseña vive
+// en SMTP_URL) y sin el valor crudo si no parece un host parseable.
+export function describeSmtpTarget(target: string | undefined): string {
+  if (!target) return "console-fallback";
+  const withoutUserinfo = target.replace(/^[^@]*@/, "");
+  try {
+    const parsed = new URL(
+      withoutUserinfo.includes("://")
+        ? withoutUserinfo
+        : `smtp://${withoutUserinfo}`,
+    );
+    return `${parsed.protocol}//${parsed.host}`;
+  } catch {
+    return "configurado (target no parseable)";
+  }
+}
+
 /**
  * Loop de drenaje de la cola `email_sending`. Corre en dev y prod para
  * que los emails se envíen sin intervención manual (nitro no levanta
@@ -452,7 +469,7 @@ function startEmailDrainLoop(env: AppEnv): void {
       ? parsedInterval
       : 60_000;
   console.log(
-    `[email-drain] starting loop (interval=${intervalMs}ms, db=${env.DATABASE_URL ? "yes" : "no"}, smtp=${env.SMTP_HOST ?? env.SMTP_URL ?? "console-fallback"})`,
+    `[email-drain] starting loop (interval=${intervalMs}ms, db=${env.DATABASE_URL ? "yes" : "no"}, smtp=${describeSmtpTarget(env.SMTP_HOST ?? env.SMTP_URL)})`,
   );
 
   const tick = async (): Promise<void> => {

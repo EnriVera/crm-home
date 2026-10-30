@@ -44,6 +44,19 @@ describe("parseSmtpUrl", () => {
     expect(() => parseSmtpUrl("http://smtp.example.com")).toThrow();
   });
 
+  test("el error de URL inválida no filtra las credenciales", () => {
+    const url = "smtp://audituser:aud1tpass@mail.invalid:not-a-port";
+    let message = "";
+    try {
+      parseSmtpUrl(url);
+    } catch (err) {
+      message = err instanceof Error ? err.message : String(err);
+    }
+    expect(message).not.toContain("aud1tpass");
+    expect(message).not.toContain("audituser");
+    expect(message).toContain("mail.invalid");
+  });
+
   test("rechaza puertos inválidos", () => {
     expect(() => parseSmtpUrl("smtp://smtp.example.com:abc")).toThrow();
     expect(() => parseSmtpUrl("smtp://smtp.example.com:70000")).toThrow();
