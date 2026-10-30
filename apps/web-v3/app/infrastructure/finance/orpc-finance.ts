@@ -6,7 +6,12 @@
  * so the mapping lives here and nowhere else (PRD-v4 §11.4).
  */
 import { callAccounts, callFinance } from "~/shared/vendor/orpc";
-import type { Account, Income } from "~/domain/finance/entities";
+import type {
+  Account,
+  Expense,
+  Income,
+  Transfer,
+} from "~/domain/finance/entities";
 
 /* ------------------------------------------------------------------ */
 /*  Incomes                                                            */
@@ -86,29 +91,170 @@ export async function removeIncome(id: string): Promise<void> {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Expenses (solo lo que el dashboard consume hoy)                    */
+/*  Expenses                                                           */
 /* ------------------------------------------------------------------ */
 
-/** A movement of money as the dashboard uses it (income or expense). */
-export interface Movement {
-  id: string;
-  amount: number;
+function toExpense(wire: {
+  expe_id: string;
+  expe_account_id: string;
+  expe_amount: string;
+  expe_currency_id: string;
+  expe_description: string | null;
+  expe_category: string | null;
+  expe_date: string;
+  expe_receipt_url: string | null;
+  expe_created_at: string;
+}): Expense {
+  return {
+    id: wire.expe_id,
+    accountId: wire.expe_account_id,
+    amount: Number(wire.expe_amount),
+    currencyId: wire.expe_currency_id,
+    description: wire.expe_description,
+    category: wire.expe_category,
+    receiptUrl: wire.expe_receipt_url,
+    date: wire.expe_date,
+    createdAt: new Date(wire.expe_created_at),
+  };
+}
+
+export async function listExpenses(): Promise<Expense[]> {
+  const wire = await callFinance("expense.list", { limit: 100 });
+  return wire.map(toExpense);
+}
+
+export interface ExpenseInput {
+  accountId: string;
+  /** Decimal > 0 con hasta 4 decimales (string decimal-safe). */
+  amount: string;
   currencyId: string;
   description: string | null;
   category: string | null;
+  receiptUrl: string | null;
+  /** "YYYY-MM-DD" */
   date: string;
 }
 
-export async function listExpenses(): Promise<Movement[]> {
-  const wire = await callFinance("expense.list", { limit: 100 });
-  return wire.map((expense) => ({
-    id: expense.expe_id,
-    amount: Number(expense.expe_amount),
-    currencyId: expense.expe_currency_id,
-    description: expense.expe_description,
-    category: expense.expe_category,
-    date: expense.expe_date,
-  }));
+export async function createExpense(input: ExpenseInput): Promise<Expense> {
+  const wire = await callFinance("expense.create", {
+    expe_account_id: input.accountId,
+    expe_amount: input.amount,
+    expe_currency_id: input.currencyId,
+    expe_description: input.description,
+    expe_category: input.category,
+    expe_receipt_url: input.receiptUrl,
+    expe_date: input.date,
+  });
+  return toExpense(wire);
+}
+
+export async function updateExpense(
+  input: Partial<ExpenseInput> & { id: string },
+): Promise<Expense> {
+  const wire = await callFinance("expense.update", {
+    expe_id: input.id,
+    ...(input.accountId !== undefined
+      ? { expe_account_id: input.accountId }
+      : {}),
+    ...(input.amount !== undefined ? { expe_amount: input.amount } : {}),
+    ...(input.currencyId !== undefined
+      ? { expe_currency_id: input.currencyId }
+      : {}),
+    ...(input.description !== undefined
+      ? { expe_description: input.description }
+      : {}),
+    ...(input.category !== undefined ? { expe_category: input.category } : {}),
+    ...(input.receiptUrl !== undefined
+      ? { expe_receipt_url: input.receiptUrl }
+      : {}),
+    ...(input.date !== undefined ? { expe_date: input.date } : {}),
+  });
+  return toExpense(wire);
+}
+
+export async function removeExpense(id: string): Promise<void> {
+  await callFinance("expense.remove", { expe_id: id });
+}
+
+/* ------------------------------------------------------------------ */
+/*  Transfers                                                          */
+/* ------------------------------------------------------------------ */
+
+function toTransfer(wire: {
+  tran_id: string;
+  tran_from_account_id: string;
+  tran_to_account_id: string;
+  tran_amount: string;
+  tran_currency_id: string;
+  tran_description: string | null;
+  tran_date: string;
+  tran_created_at: string;
+}): Transfer {
+  return {
+    id: wire.tran_id,
+    fromAccountId: wire.tran_from_account_id,
+    toAccountId: wire.tran_to_account_id,
+    amount: Number(wire.tran_amount),
+    currencyId: wire.tran_currency_id,
+    description: wire.tran_description,
+    date: wire.tran_date,
+    createdAt: new Date(wire.tran_created_at),
+  };
+}
+
+export async function listTransfers(): Promise<Transfer[]> {
+  const wire = await callFinance("transfer.list", { limit: 100 });
+  return wire.map(toTransfer);
+}
+
+export interface TransferInput {
+  fromAccountId: string;
+  toAccountId: string;
+  /** Decimal > 0 con hasta 4 decimales (string decimal-safe). */
+  amount: string;
+  currencyId: string;
+  description: string | null;
+  /** "YYYY-MM-DD" */
+  date: string;
+}
+
+export async function createTransfer(input: TransferInput): Promise<Transfer> {
+  const wire = await callFinance("transfer.create", {
+    tran_from_account_id: input.fromAccountId,
+    tran_to_account_id: input.toAccountId,
+    tran_amount: input.amount,
+    tran_currency_id: input.currencyId,
+    tran_description: input.description,
+    tran_date: input.date,
+  });
+  return toTransfer(wire);
+}
+
+export async function updateTransfer(
+  input: Partial<TransferInput> & { id: string },
+): Promise<Transfer> {
+  const wire = await callFinance("transfer.update", {
+    tran_id: input.id,
+    ...(input.fromAccountId !== undefined
+      ? { tran_from_account_id: input.fromAccountId }
+      : {}),
+    ...(input.toAccountId !== undefined
+      ? { tran_to_account_id: input.toAccountId }
+      : {}),
+    ...(input.amount !== undefined ? { tran_amount: input.amount } : {}),
+    ...(input.currencyId !== undefined
+      ? { tran_currency_id: input.currencyId }
+      : {}),
+    ...(input.description !== undefined
+      ? { tran_description: input.description }
+      : {}),
+    ...(input.date !== undefined ? { tran_date: input.date } : {}),
+  });
+  return toTransfer(wire);
+}
+
+export async function removeTransfer(id: string): Promise<void> {
+  await callFinance("transfer.remove", { tran_id: id });
 }
 
 /* ------------------------------------------------------------------ */

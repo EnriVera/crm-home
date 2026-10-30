@@ -4,20 +4,20 @@
  * The dashboard shows real numbers (money, tasks, hours, activity); these
  * helpers turn the raw lists into what the cards display.
  */
-import type { Movement } from "~/infrastructure/finance/orpc-finance";
+import type { MoneyRecord } from "~/domain/finance/entities";
 import type { TimerRun } from "~/domain/schedule/entities";
 
 /** The movements of the current month (the wire dates are "YYYY-MM-DD"). */
 export function monthMovements(
-  movements: Movement[],
+  movements: MoneyRecord[],
   now: Date = new Date(),
-): Movement[] {
+): MoneyRecord[] {
   const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
   return movements.filter((movement) => movement.date.startsWith(month));
 }
 
 /** The sum of the amounts of a list of movements. */
-export function sumAmount(movements: Movement[]): number {
+export function sumAmount(movements: MoneyRecord[]): number {
   return movements.reduce((total, movement) => total + movement.amount, 0);
 }
 

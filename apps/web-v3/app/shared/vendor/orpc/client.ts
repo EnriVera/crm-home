@@ -120,7 +120,14 @@ export type FinanceProcedure =
   | "income.create"
   | "income.update"
   | "income.remove"
-  | "expense.list";
+  | "expense.list"
+  | "expense.create"
+  | "expense.update"
+  | "expense.remove"
+  | "transfer.list"
+  | "transfer.create"
+  | "transfer.update"
+  | "transfer.remove";
 
 export interface FinanceProcedureMap {
   "income.list": {
@@ -166,6 +173,71 @@ export interface FinanceProcedureMap {
     };
     output: ExpenseWire[];
   };
+  "expense.create": {
+    input: {
+      expe_account_id: string;
+      expe_amount: string;
+      expe_currency_id: string;
+      expe_description?: string | null;
+      expe_category?: string | null;
+      expe_receipt_url?: string | null;
+      expe_date: string;
+    };
+    output: ExpenseWire;
+  };
+  "expense.update": {
+    input: {
+      expe_id: string;
+      expe_account_id?: string;
+      expe_amount?: string;
+      expe_currency_id?: string;
+      expe_description?: string | null;
+      expe_category?: string | null;
+      expe_receipt_url?: string | null;
+      expe_date?: string;
+    };
+    output: ExpenseWire;
+  };
+  "expense.remove": {
+    input: { expe_id: string };
+    output: { ok: true };
+  };
+  "transfer.list": {
+    input: {
+      search?: string;
+      date_from?: string | null;
+      date_to?: string | null;
+      limit?: number;
+    };
+    output: TransferWire[];
+  };
+  "transfer.create": {
+    input: {
+      tran_from_account_id: string;
+      tran_to_account_id: string;
+      tran_amount: string;
+      tran_currency_id: string;
+      tran_description?: string | null;
+      tran_date: string;
+    };
+    output: TransferWire;
+  };
+  "transfer.update": {
+    input: {
+      tran_id: string;
+      tran_from_account_id?: string;
+      tran_to_account_id?: string;
+      tran_amount?: string;
+      tran_currency_id?: string;
+      tran_description?: string | null;
+      tran_date?: string;
+    };
+    output: TransferWire;
+  };
+  "transfer.remove": {
+    input: { tran_id: string };
+    output: { ok: true };
+  };
 }
 
 /** The wire shape of an income, as the API returns it. */
@@ -204,8 +276,22 @@ export interface ExpenseWire {
   expe_description: string | null;
   expe_category: string | null;
   expe_date: string;
+  expe_receipt_url: string | null;
   expe_created_at: string;
   expe_updated_at: string;
+}
+
+/** The wire shape of a transfer, as the API returns it. */
+export interface TransferWire {
+  tran_id: string;
+  tran_from_account_id: string;
+  tran_to_account_id: string;
+  tran_amount: string;
+  tran_currency_id: string;
+  tran_description: string | null;
+  tran_date: string;
+  tran_created_at: string;
+  tran_updated_at: string;
 }
 
 /** The timer procedures this app talks to (PRD-v4 §8.5). */
@@ -520,6 +606,13 @@ const FINANCE_SEGMENTS: Record<FinanceProcedure, readonly string[]> = {
   "income.update": ["incomes", "update"],
   "income.remove": ["incomes", "remove"],
   "expense.list": ["expenses", "list"],
+  "expense.create": ["expenses", "create"],
+  "expense.update": ["expenses", "update"],
+  "expense.remove": ["expenses", "remove"],
+  "transfer.list": ["transfers", "list"],
+  "transfer.create": ["transfers", "create"],
+  "transfer.update": ["transfers", "update"],
+  "transfer.remove": ["transfers", "remove"],
 };
 
 export function callFinance<P extends FinanceProcedure>(

@@ -7,13 +7,12 @@ import {
   type TaskSummary,
 } from "~/domain/task/dashboard";
 import { monthMovements, sumAmount } from "~/domain/dashboard/summary";
-import { formatMoney } from "~/domain/finance/entities";
+import { formatMoney, type MoneyRecord } from "~/domain/finance/entities";
 import { listTaskStates, listTasks } from "~/infrastructure/tasks/orpc-tasks";
 import { listClients } from "~/infrastructure/client/orpc-client";
 import {
   listExpenses,
   listIncomes,
-  type Movement,
 } from "~/infrastructure/finance/orpc-finance";
 import { listCurrencies } from "~/infrastructure/config/orpc-config";
 import {
@@ -37,8 +36,10 @@ export function useDashboard() {
   const tasks = ref<TaskSummary[]>([]);
   const states = ref<TaskState[]>([]);
   const clients = ref<{ id: string; name: string }[]>([]);
-  const incomes = ref<Movement[]>([]);
-  const expenses = ref<Movement[]>([]);
+  // El dashboard sólo necesita monto, fecha, categoría y concepto: el
+  // adapter devuelve las entidades completas y acá se toman esos campos.
+  const incomes = ref<MoneyRecord[]>([]);
+  const expenses = ref<MoneyRecord[]>([]);
   const currencies = ref<{ id: string; symbol: string }[]>([]);
   const types = ref<{ id: string; name: string }[]>([]);
   const categories = ref<{ id: string; name: string }[]>([]);

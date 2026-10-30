@@ -1,40 +1,44 @@
 import { computed, ref } from "vue";
 import {
-  createAccount,
   createIncome,
-  listAccounts,
   listIncomes,
   removeIncome,
   updateIncome,
-  type AccountInput,
   type IncomeInput,
 } from "~/infrastructure/finance/orpc-finance";
-import { listCurrencies } from "~/infrastructure/config/orpc-config";
-import type { Currency } from "~/domain/config/entities";
 import {
   averageAmount,
   countOfMonth,
   distinctCategories,
   totalOfMonth,
-  type Account,
   type Income,
 } from "~/domain/finance/entities";
+import { useFinanceCatalogs } from "~/shared/composables/use-finance-catalogs";
 
 /**
  * useIncomes: el estado de la pantalla /incomes (PRD-v4 §8.7).
  *
  * La lista se carga una vez y se filtra local (el volumen es chico y el
  * buscador se queda instantáneo, mismo criterio que useClients). Las
- * cuentas viajan acá porque el drawer de alta/edición necesita el select
- * de "Cuenta destino" y el alta de una cuenta nueva recarga la lista.
+ * cuentas y las monedas vienen del composable compartido de finanzas.
  */
 export function useIncomes() {
   const incomes = ref<Income[]>([]);
-  const accounts = ref<Account[]>([]);
-  const currencies = ref<Currency[]>([]);
   const search = ref("");
   const isLoading = ref(false);
   const error = ref<string | null>(null);
+
+  const {
+    accounts,
+    currencies,
+    error: catalogError,
+    loadCatalogs,
+    accountName,
+    accountIconOf,
+    accountColorOf,
+    symbolOf,
+    addAccount,
+  } = useFinanceCatalogs();
 
   const visibleIncomes = computed(() => {
     const needle = search.value.trim().toLowerCase();
@@ -52,48 +56,15 @@ export function useIncomes() {
   /** Las categorías distintas, para el datalist del drawer. */
   const categories = computed(() => distinctCategories(incomes.value));
 
-  /** Nombre de una cuenta (para la columna Cuenta de la tabla). */
-  function accountName(accountId: string): string | null {
-    return (
-      accounts.value.find((account) => account.id === accountId)?.name ?? null
-    );
-  }
-
-  /** El ícono de una cuenta (para el punto de color de la tabla). */
-  function accountIconOf(accountId: string): string | null {
-    return (
-      accounts.value.find((account) => account.id === accountId)?.icon ?? null
-    );
-  }
-
-  /** El color de una cuenta. */
-  function accountColorOf(accountId: string): string | null {
-    return (
-      accounts.value.find((account) => account.id === accountId)?.color ?? null
-    );
-  }
-
   async function load() {
     isLoading.value = true;
     error.value = null;
     try {
-      [incomes.value, accounts.value] = await Promise.all([
-        listIncomes(),
-        listAccounts(),
-      ]);
+      incomes.value = await listIncomes();
     } catch {
       error.value = "incomes.loadError";
     } finally {
       isLoading.value = false;
-    }
-  }
-
-  /** Las monedas salen del endpoint global de currencies (config). */
-  async function loadCurrencies() {
-    try {
-      currencies.value = await listCurrencies();
-    } catch {
-      // Sin monedas no se puede crear nada: el error ya está en pantalla.
     }
   }
 
@@ -118,12 +89,6 @@ export function useIncomes() {
     incomes.value = incomes.value.filter((income) => income.id !== id);
   }
 
-  async function addAccount(input: AccountInput): Promise<Account> {
-    const created = await createAccount(input);
-    accounts.value = [...accounts.value, created];
-    return created;
-  }
-
   return {
     incomes,
     accounts,
@@ -135,12 +100,13 @@ export function useIncomes() {
     ticketAverage,
     categories,
     isLoading,
-    error,
+    error: computed(() => error.value ?? catalogError.value),
     accountName,
     accountIconOf,
     accountColorOf,
+    symbolOf,
     load,
-    loadCurrencies,
+    loadCatalogs,
     add,
     edit,
     deleteIncome,

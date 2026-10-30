@@ -20,6 +20,50 @@ export interface Income {
   createdAt: Date;
 }
 
+/** Un egreso: plata que salió de una cuenta del usuario. */
+export interface Expense {
+  id: string;
+  accountId: string;
+  amount: number;
+  currencyId: string;
+  description: string | null;
+  /** Categoría libre (texto); la DB no la liga a la tabla de categorías. */
+  category: string | null;
+  /** Comprobante (URL) opcional. */
+  receiptUrl: string | null;
+  /** "2026-06-28" */
+  date: string;
+  createdAt: Date;
+}
+
+/** Una transferencia entre dos cuentas del usuario. */
+export interface Transfer {
+  id: string;
+  fromAccountId: string;
+  toAccountId: string;
+  amount: number;
+  currencyId: string;
+  description: string | null;
+  /** "2026-06-28" */
+  date: string;
+  createdAt: Date;
+}
+
+/** Lo que las tarjetas del mes necesitan de cualquier movimiento. */
+export interface MoneyMovement {
+  amount: number;
+  /** "2026-06-28" */
+  date: string;
+}
+
+/** Un movimiento de dinero con lo que muestra el dashboard. */
+export interface MoneyRecord extends MoneyMovement {
+  id: string;
+  currencyId: string;
+  description: string | null;
+  category: string | null;
+}
+
 /** Una cuenta de dinero del usuario, con su balance calculado. */
 export interface Account {
   id: string;
@@ -103,31 +147,64 @@ export function todayWireDate(): string {
   return `${now.getFullYear()}-${month}-${day}`;
 }
 
-/** Las categorías distintas de un conjunto de ingresos (para el datalist). */
-export function distinctCategories(incomes: Income[]): string[] {
+/** Las categorías distintas de un conjunto de movimientos (para el datalist). */
+export function distinctCategories(
+  movements: { category: string | null }[],
+): string[] {
   const set = new Set<string>();
-  for (const income of incomes) {
-    if (income.category) set.add(income.category);
+  for (const movement of movements) {
+    if (movement.category) set.add(movement.category);
   }
   return [...set].sort();
 }
 
-/** Suma de los montos de los ingresos del mes corriente. */
-export function totalOfMonth(incomes: Income[]): number {
+/** Suma de los montos del mes corriente. */
+export function totalOfMonth(movements: MoneyMovement[]): number {
   const prefix = todayWireDate().slice(0, 7);
-  return incomes
-    .filter((income) => income.date.startsWith(prefix))
-    .reduce((total, income) => total + income.amount, 0);
+  return movements
+    .filter((movement) => movement.date.startsWith(prefix))
+    .reduce((total, movement) => total + movement.amount, 0);
 }
 
-/** Cuántos ingresos hay en el mes corriente. */
-export function countOfMonth(incomes: Income[]): number {
+/** Cuántos movimientos hay en el mes corriente. */
+export function countOfMonth(movements: MoneyMovement[]): number {
   const prefix = todayWireDate().slice(0, 7);
-  return incomes.filter((income) => income.date.startsWith(prefix)).length;
+  return movements.filter((movement) => movement.date.startsWith(prefix)).length;
 }
 
-/** Promedio de los montos; 0 si no hay ingresos. */
-export function averageAmount(incomes: Income[]): number {
-  if (incomes.length === 0) return 0;
-  return incomes.reduce((total, income) => total + income.amount, 0) / incomes.length;
+/** Promedio de los montos; 0 si no hay movimientos. */
+export function averageAmount(movements: MoneyMovement[]): number {
+  if (movements.length === 0) return 0;
+  return (
+    movements.reduce((total, movement) => total + movement.amount, 0) /
+    movements.length
+  );
+}
+
+/**
+ * La categoría que más plata concentra (la card "Mayor categoría").
+ *
+ * Null si no hay movimientos con categoría: la card muestra "Sin
+ * categorías" en vez de un porcentaje sin contexto.
+ */
+export function largestCategory(
+  movements: { amount: number; category: string | null }[],
+): { name: string; amount: number; share: number } | null {
+  const totals = new Map<string, number>();
+  let sum = 0;
+  for (const movement of movements) {
+    if (!movement.category) continue;
+    totals.set(
+      movement.category,
+      (totals.get(movement.category) ?? 0) + movement.amount,
+    );
+    sum += movement.amount;
+  }
+  let best: { name: string; amount: number; share: number } | null = null;
+  for (const [name, amount] of totals) {
+    if (!best || amount > best.amount) {
+      best = { name, amount, share: sum > 0 ? amount / sum : 0 };
+    }
+  }
+  return best;
 }

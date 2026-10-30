@@ -34,6 +34,7 @@ export type {
   TimerProcedure,
   TimerProcedureMap,
   TimerWire,
+  TransferWire,
   TypeWire,
 } from "./client";
 

@@ -2,7 +2,7 @@ import { cleanup, render, screen, waitFor } from "@testing-library/vue";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import IncomesView from "~/ui/views/incomes.vue";
 
-const { incomesState, actionMocks, loadMock, loadCurrenciesMock, setMock } =
+const { incomesState, actionMocks, loadMock, loadCatalogsMock, setMock } =
   await vi.hoisted(async () => {
     const { ref } = await import("vue");
     return {
@@ -29,7 +29,7 @@ const { incomesState, actionMocks, loadMock, loadCurrenciesMock, setMock } =
         accountColorOf: vi.fn(() => "#64748b"),
       },
       loadMock: vi.fn(),
-      loadCurrenciesMock: vi.fn(),
+      loadCatalogsMock: vi.fn(),
       setMock: vi.fn(),
     };
   });
@@ -39,7 +39,7 @@ vi.mock("~/shared/composables/use-incomes", () => ({
     ...incomesState,
     ...actionMocks,
     load: loadMock,
-    loadCurrencies: loadCurrenciesMock,
+    loadCatalogs: loadCatalogsMock,
   }),
 }));
 
@@ -118,7 +118,7 @@ vi.stubGlobal("useI18n", () => ({
 describe("incomes view", () => {
   beforeEach(() => {
     loadMock.mockReset();
-    loadCurrenciesMock.mockReset();
+    loadCatalogsMock.mockReset();
     setMock.mockReset();
     for (const mock of Object.values(actionMocks)) mock.mockReset();
     routeState.params.value = {};
@@ -135,7 +135,7 @@ describe("incomes view", () => {
   it("carga los ingresos y las monedas al montar", async () => {
     render(IncomesView);
     await waitFor(() => expect(loadMock).toHaveBeenCalled());
-    expect(loadCurrenciesMock).toHaveBeenCalled();
+    expect(loadCatalogsMock).toHaveBeenCalled();
   });
 
   it("muestra el título y las tres tarjetas del mes", () => {

@@ -41,7 +41,7 @@ const {
   accountIconOf,
   accountColorOf,
   load,
-  loadCurrencies,
+  loadCatalogs,
   add,
   edit,
   deleteIncome,
@@ -155,8 +155,7 @@ async function remove(id: string) {
 }
 
 onMounted(async () => {
-  await load();
-  await loadCurrencies();
+  await Promise.all([load(), loadCatalogs()]);
 });
 </script>
 
