@@ -1,5 +1,11 @@
 import type { ExpenseRepository } from "../../domain/ports/expense-repository";
+import type { AccountRepository } from "../../domain/ports/account-repository";
+import type { CurrencyRepository } from "../../domain/ports/currency-repository";
 import type { ExpenseRow } from "../../domain/types";
+import {
+  assertCurrencyExists,
+  assertOwnedAccount,
+} from "../shared/finance-validation";
 import { ExpenseNotFound, InvalidExpenseInput } from "./errors";
 
 export interface UpdateExpenseInput {
@@ -16,6 +22,8 @@ export interface UpdateExpenseInput {
 
 export interface UpdateExpenseDependencies {
   expenseRepository: ExpenseRepository;
+  accountRepository: AccountRepository;
+  currencyRepository: CurrencyRepository;
 }
 
 export class UpdateExpense {
@@ -50,6 +58,19 @@ export class UpdateExpense {
       input.receiptUrl.length > 2000
     ) {
       throw new InvalidExpenseInput("receipt_url exceeds 2000 chars");
+    }
+
+    if (input.accountId !== undefined) {
+      await assertOwnedAccount(
+        this.deps,
+        { userId: input.userId, accountId: input.accountId },
+        (message) => new InvalidExpenseInput(message),
+      );
+    }
+    if (input.currencyId !== undefined) {
+      await assertCurrencyExists(this.deps, input.currencyId, (message) =>
+        new InvalidExpenseInput(message),
+      );
     }
 
     try {

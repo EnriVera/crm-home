@@ -2,6 +2,9 @@ import type {
   IncomeRepository,
   IncomeRow,
 } from "../../domain/ports/income-repository";
+import type { AccountRepository } from "../../domain/ports/account-repository";
+import type { CurrencyRepository } from "../../domain/ports/currency-repository";
+import { validateAccountAndCurrency } from "../shared/finance-validation";
 import { InvalidIncomeInput } from "./errors";
 
 export interface CreateIncomeInput {
@@ -16,6 +19,8 @@ export interface CreateIncomeInput {
 
 export interface CreateIncomeDependencies {
   incomeRepository: IncomeRepository;
+  accountRepository: AccountRepository;
+  currencyRepository: CurrencyRepository;
 }
 
 /**
@@ -49,6 +54,16 @@ export class CreateIncome {
     if (input.category !== null && input.category.length > 100) {
       throw new InvalidIncomeInput("category exceeds 100 chars");
     }
+
+    await validateAccountAndCurrency(
+      this.deps,
+      {
+        userId: input.userId,
+        accountId: input.accountId,
+        currencyId: input.currencyId,
+      },
+      (message) => new InvalidIncomeInput(message),
+    );
 
     return this.deps.incomeRepository.insert({
       userId: input.userId,

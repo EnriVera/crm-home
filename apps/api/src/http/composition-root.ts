@@ -197,6 +197,8 @@ export function createCompositionRoot(
     const clientLookupRepository = new KyselyClientLookupRepository(db);
     const clientRepository = new KyselyClientRepository(db);
     const incomeRepository = new KyselyIncomeRepository(db);
+    const currencyRepository = new KyselyCurrencyRepository(db);
+    const accountRepository = new KyselyAccountRepository(db);
     const typeLookupRepository = new KyselyTypeLookupRepository(db);
     const categoryLookupRepository = new KyselyCategoryLookupRepository(db);
 
@@ -273,25 +275,23 @@ export function createCompositionRoot(
       taskRepository,
     });
     const listIncomes = new ListIncomes({ incomeRepository });
-    const createIncomeUseCase = new CreateIncome({ incomeRepository });
-    const updateIncomeUseCase = new UpdateIncome({ incomeRepository });
+    const createIncomeUseCase = new CreateIncome({ incomeRepository, accountRepository, currencyRepository });
+    const updateIncomeUseCase = new UpdateIncome({ incomeRepository, accountRepository, currencyRepository });
     const removeIncomeUseCase = new RemoveIncome({ incomeRepository });
     const expenseRepository = new KyselyExpenseRepository(db);
     const transferRepository = new KyselyTransferRepository(db);
     const scheduleRepository = new KyselyScheduleRepository(db);
     const appRepository = new KyselyAppRepository(db);
-    const currencyRepository = new KyselyCurrencyRepository(db);
-    const accountRepository = new KyselyAccountRepository(db);
     const typeRepository = new KyselyTypeRepository(db);
     const categoryRepository = new KyselyCategoryRepository(db);
     const timerRunRepository = new KyselyTimerRunRepository(db);
     const listExpenses = new ListExpenses({ expenseRepository });
-    const createExpenseUseCase = new CreateExpense({ expenseRepository });
-    const updateExpenseUseCase = new UpdateExpense({ expenseRepository });
+    const createExpenseUseCase = new CreateExpense({ expenseRepository, accountRepository, currencyRepository });
+    const updateExpenseUseCase = new UpdateExpense({ expenseRepository, accountRepository, currencyRepository });
     const removeExpenseUseCase = new RemoveExpense({ expenseRepository });
     const listTransfers = new ListTransfers({ transferRepository });
-    const createTransferUseCase = new CreateTransfer({ transferRepository });
-    const updateTransferUseCase = new UpdateTransfer({ transferRepository });
+    const createTransferUseCase = new CreateTransfer({ transferRepository, accountRepository, currencyRepository });
+    const updateTransferUseCase = new UpdateTransfer({ transferRepository, accountRepository, currencyRepository });
     const removeTransferUseCase = new RemoveTransfer({ transferRepository });
     const listSchedules = new ListSchedules({ scheduleRepository });
     const createScheduleUseCase = new CreateSchedule({ scheduleRepository });

@@ -2,6 +2,12 @@ import type {
   IncomeRepository,
   IncomeRow,
 } from "../../domain/ports/income-repository";
+import type { AccountRepository } from "../../domain/ports/account-repository";
+import type { CurrencyRepository } from "../../domain/ports/currency-repository";
+import {
+  assertCurrencyExists,
+  assertOwnedAccount,
+} from "../shared/finance-validation";
 import { IncomeNotFound, InvalidIncomeInput } from "./errors";
 
 export interface UpdateIncomeInput {
@@ -17,6 +23,8 @@ export interface UpdateIncomeInput {
 
 export interface UpdateIncomeDependencies {
   incomeRepository: IncomeRepository;
+  accountRepository: AccountRepository;
+  currencyRepository: CurrencyRepository;
 }
 
 /**
@@ -55,6 +63,21 @@ export class UpdateIncome {
       input.category.length > 100
     ) {
       throw new InvalidIncomeInput("category exceeds 100 chars");
+    }
+
+    // Si la cuenta o la moneda cambian, se validan igual: la cuenta
+    // tiene que seguir siendo del usuario.
+    if (input.accountId !== undefined) {
+      await assertOwnedAccount(
+        this.deps,
+        { userId: input.userId, accountId: input.accountId },
+        (message) => new InvalidIncomeInput(message),
+      );
+    }
+    if (input.currencyId !== undefined) {
+      await assertCurrencyExists(this.deps, input.currencyId, (message) =>
+        new InvalidIncomeInput(message),
+      );
     }
 
     try {

@@ -1,5 +1,11 @@
 import type { TransferRepository } from "../../domain/ports/transfer-repository";
+import type { AccountRepository } from "../../domain/ports/account-repository";
+import type { CurrencyRepository } from "../../domain/ports/currency-repository";
 import type { TransferRow } from "../../domain/types";
+import {
+  assertCurrencyExists,
+  assertOwnedAccount,
+} from "../shared/finance-validation";
 import { InvalidTransferInput, TransferNotFound } from "./errors";
 
 export interface UpdateTransferInput {
@@ -15,6 +21,8 @@ export interface UpdateTransferInput {
 
 export interface UpdateTransferDependencies {
   transferRepository: TransferRepository;
+  accountRepository: AccountRepository;
+  currencyRepository: CurrencyRepository;
 }
 
 export class UpdateTransfer {
@@ -35,6 +43,20 @@ export class UpdateTransfer {
       input.description.length > 500
     ) {
       throw new InvalidTransferInput("description exceeds 500 chars");
+    }
+
+    for (const accountId of [input.fromAccountId, input.toAccountId]) {
+      if (accountId === undefined) continue;
+      await assertOwnedAccount(
+        this.deps,
+        { userId: input.userId, accountId },
+        (message) => new InvalidTransferInput(message),
+      );
+    }
+    if (input.currencyId !== undefined) {
+      await assertCurrencyExists(this.deps, input.currencyId, (message) =>
+        new InvalidTransferInput(message),
+      );
     }
 
     try {
