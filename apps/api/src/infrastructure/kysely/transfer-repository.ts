@@ -1,4 +1,4 @@
-import { sql } from "kysely";
+import { sql, type RawBuilder } from "kysely";
 import type { TransferRepository } from "../../domain/ports/transfer-repository";
 import type { Database } from "./database";
 import { mapTransferRow, type TransferDbRow } from "./_mappers";
@@ -32,10 +32,18 @@ export class KyselyTransferRepository implements TransferRepository {
       query = query.where("tran_description", "ilike", like);
     }
     if (params.dateFrom !== null) {
-      query = query.where("tran_date", ">=", params.dateFrom);
+      query = query.where(
+        "tran_date",
+        ">=",
+        sql<Date>`${params.dateFrom}::date`,
+      );
     }
     if (params.dateTo !== null) {
-      query = query.where("tran_date", "<=", params.dateTo);
+      query = query.where(
+        "tran_date",
+        "<=",
+        sql<Date>`${params.dateTo}::date`,
+      );
     }
 
     const rows = await query
@@ -76,7 +84,9 @@ export class KyselyTransferRepository implements TransferRepository {
         tran_amount: params.amount,
         tran_currency_id: params.currencyId,
         tran_description: params.description,
-        tran_date: params.date,
+        // El literal "YYYY-MM-DD" casteado a date: un Date (medianoche
+        // UTC) se correría un día en las zonas horarias negativas.
+        tran_date: sql<Date>`${params.date}::date`,
       })
       .returningAll()
       .executeTakeFirstOrThrow();
@@ -99,7 +109,7 @@ export class KyselyTransferRepository implements TransferRepository {
       tran_amount: string;
       tran_currency_id: string;
       tran_description: string | null;
-      tran_date: string;
+      tran_date: Date | RawBuilder<Date>;
     }> = {};
     if (params.fromAccountId !== undefined)
       setValues.tran_from_acco_id = params.fromAccountId;
@@ -110,7 +120,8 @@ export class KyselyTransferRepository implements TransferRepository {
       setValues.tran_currency_id = params.currencyId;
     if (params.description !== undefined)
       setValues.tran_description = params.description;
-    if (params.date !== undefined) setValues.tran_date = params.date;
+    if (params.date !== undefined)
+      setValues.tran_date = sql<Date>`${params.date}::date`;
 
     const row = await this.db
       .updateTable("transfer")

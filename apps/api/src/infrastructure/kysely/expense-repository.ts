@@ -1,4 +1,4 @@
-import { sql } from "kysely";
+import { sql, type RawBuilder } from "kysely";
 import type { ExpenseRepository } from "../../domain/ports/expense-repository";
 import type { Database } from "./database";
 import { mapExpenseRow, type ExpenseDbRow } from "./_mappers";
@@ -37,10 +37,18 @@ export class KyselyExpenseRepository implements ExpenseRepository {
       );
     }
     if (params.dateFrom !== null) {
-      query = query.where("expe_date", ">=", params.dateFrom);
+      query = query.where(
+        "expe_date",
+        ">=",
+        sql<Date>`${params.dateFrom}::date`,
+      );
     }
     if (params.dateTo !== null) {
-      query = query.where("expe_date", "<=", params.dateTo);
+      query = query.where(
+        "expe_date",
+        "<=",
+        sql<Date>`${params.dateTo}::date`,
+      );
     }
 
     const rows = await query
@@ -82,7 +90,9 @@ export class KyselyExpenseRepository implements ExpenseRepository {
         expe_currency_id: params.currencyId,
         expe_description: params.description,
         expe_category: params.category,
-        expe_date: params.date,
+        // El literal "YYYY-MM-DD" casteado a date: un Date (medianoche
+        // UTC) se correría un día en las zonas horarias negativas.
+        expe_date: sql<Date>`${params.date}::date`,
         expe_receipt_url: params.receiptUrl,
         expe_updated_at: sql<Date>`NOW()`,
       })
@@ -108,7 +118,7 @@ export class KyselyExpenseRepository implements ExpenseRepository {
       expe_currency_id: string;
       expe_description: string | null;
       expe_category: string | null;
-      expe_date: string;
+      expe_date: Date | RawBuilder<Date>;
       expe_receipt_url: string | null;
       expe_updated_at: Date;
     }> = {};
@@ -121,7 +131,8 @@ export class KyselyExpenseRepository implements ExpenseRepository {
       setValues.expe_description = params.description;
     if (params.category !== undefined)
       setValues.expe_category = params.category;
-    if (params.date !== undefined) setValues.expe_date = params.date;
+    if (params.date !== undefined)
+      setValues.expe_date = sql<Date>`${params.date}::date`;
     if (params.receiptUrl !== undefined)
       setValues.expe_receipt_url = params.receiptUrl;
     setValues.expe_updated_at = new Date();

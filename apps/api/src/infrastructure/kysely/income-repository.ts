@@ -1,4 +1,4 @@
-import { sql } from "kysely";
+import { sql, type RawBuilder } from "kysely";
 import type {
   IncomeRepository,
   IncomeRow,
@@ -50,10 +50,18 @@ export class KyselyIncomeRepository implements IncomeRepository {
       );
     }
     if (params.dateFrom !== null) {
-      query = query.where("inco_date", ">=", params.dateFrom);
+      query = query.where(
+        "inco_date",
+        ">=",
+        sql<Date>`${params.dateFrom}::date`,
+      );
     }
     if (params.dateTo !== null) {
-      query = query.where("inco_date", "<=", params.dateTo);
+      query = query.where(
+        "inco_date",
+        "<=",
+        sql<Date>`${params.dateTo}::date`,
+      );
     }
 
     const rows = await query
@@ -97,7 +105,9 @@ export class KyselyIncomeRepository implements IncomeRepository {
         inco_currency_id: params.currencyId,
         inco_description: params.description,
         inco_category: params.category,
-        inco_date: params.date,
+        // El literal "YYYY-MM-DD" casteado a date: un Date (medianoche
+        // UTC) se correría un día en las zonas horarias negativas.
+        inco_date: sql<Date>`${params.date}::date`,
         inco_updated_at: sql<Date>`NOW()`,
       })
       .returningAll()
@@ -121,7 +131,7 @@ export class KyselyIncomeRepository implements IncomeRepository {
       inco_currency_id: string;
       inco_description: string | null;
       inco_category: string | null;
-      inco_date: string;
+      inco_date: Date | RawBuilder<Date>;
       inco_updated_at: Date;
     }> = {};
     if (params.accountId !== undefined)
@@ -133,7 +143,8 @@ export class KyselyIncomeRepository implements IncomeRepository {
       setValues.inco_description = params.description;
     if (params.category !== undefined)
       setValues.inco_category = params.category;
-    if (params.date !== undefined) setValues.inco_date = params.date;
+    if (params.date !== undefined)
+      setValues.inco_date = sql<Date>`${params.date}::date`;
     setValues.inco_updated_at = new Date();
 
     const row = await this.db

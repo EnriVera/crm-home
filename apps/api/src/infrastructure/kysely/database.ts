@@ -128,7 +128,7 @@ export interface IncomeTable {
  inco_currency_id: string;
  inco_description: string | null;
  inco_category: string | null;
- inco_date: string; // DATE → string (formato YYYY-MM-DD)
+ inco_date: Date; // pg devuelve las columnas DATE como Date
  inco_created_at: Generated<Date>;
  inco_updated_at: Generated<Date>;
  inco_deleted_at: Date | null;
@@ -142,7 +142,7 @@ export interface ExpenseTable {
  expe_currency_id: string;
  expe_description: string | null;
  expe_category: string | null;
- expe_date: string;
+ expe_date: Date; // pg devuelve las columnas DATE como Date
  expe_receipt_url: string | null;
  expe_created_at: Generated<Date>;
  expe_updated_at: Generated<Date>;
@@ -157,7 +157,7 @@ export interface TransferTable {
  tran_amount: string;
  tran_currency_id: string;
  tran_description: string | null;
- tran_date: string;
+ tran_date: Date; // pg devuelve las columnas DATE como Date
  tran_created_at: Generated<Date>;
  tran_deleted_at: Date | null;
 }

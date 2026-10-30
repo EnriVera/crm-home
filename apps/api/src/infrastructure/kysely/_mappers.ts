@@ -110,6 +110,18 @@ export function mapClientRow(row: ClientDbRow): ClientRow {
 
 // ─── IncomeRow ──────────────────────────────────────────────────────────────
 
+/**
+ * The DATE columns arrive from pg as a `Date` (local midnight) but the wire
+ * speaks "YYYY-MM-DD". The date is formatted in LOCAL time: in UTC a user
+ * with a negative offset would see the day before.
+ */
+export function toDateString(value: Date | string): string {
+  if (typeof value === "string") return value;
+  const month = String(value.getMonth() + 1).padStart(2, "0");
+  const day = String(value.getDate()).padStart(2, "0");
+  return `${value.getFullYear()}-${month}-${day}`;
+}
+
 export interface IncomeDbRow {
   inco_id: string;
   inco_user_id: string;
@@ -118,7 +130,7 @@ export interface IncomeDbRow {
   inco_currency_id: string;
   inco_description: string | null;
   inco_category: string | null;
-  inco_date: string; // pg DATE → "YYYY-MM-DD"
+  inco_date: Date; // pg devuelve las columnas DATE como Date
   inco_created_at: Date;
   inco_updated_at: Date;
   inco_deleted_at: Date | null;
@@ -133,7 +145,7 @@ export function mapIncomeRow(row: IncomeDbRow): IncomeRow {
     currencyId: row.inco_currency_id,
     description: row.inco_description,
     category: row.inco_category,
-    date: row.inco_date,
+    date: toDateString(row.inco_date),
     createdAt: row.inco_created_at,
     updatedAt: row.inco_updated_at,
     deletedAt: row.inco_deleted_at,
@@ -150,7 +162,7 @@ export interface ExpenseDbRow {
   expe_currency_id: string;
   expe_description: string | null;
   expe_category: string | null;
-  expe_date: string;
+  expe_date: Date;
   expe_receipt_url: string | null;
   expe_created_at: Date;
   expe_updated_at: Date;
@@ -166,7 +178,7 @@ export function mapExpenseRow(row: ExpenseDbRow): ExpenseRow {
     currencyId: row.expe_currency_id,
     description: row.expe_description,
     category: row.expe_category,
-    date: row.expe_date,
+    date: toDateString(row.expe_date),
     receiptUrl: row.expe_receipt_url,
     createdAt: row.expe_created_at,
     updatedAt: row.expe_updated_at,
@@ -184,7 +196,7 @@ export interface TransferDbRow {
   tran_amount: string;
   tran_currency_id: string;
   tran_description: string | null;
-  tran_date: string;
+  tran_date: Date;
   tran_created_at: Date;
   tran_deleted_at: Date | null;
 }
@@ -198,7 +210,7 @@ export function mapTransferRow(row: TransferDbRow): TransferRow {
     amount: row.tran_amount,
     currencyId: row.tran_currency_id,
     description: row.tran_description,
-    date: row.tran_date,
+    date: toDateString(row.tran_date),
     createdAt: row.tran_created_at,
     deletedAt: row.tran_deleted_at,
   };
