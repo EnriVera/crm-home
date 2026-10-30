@@ -138,9 +138,9 @@
     "semantic_hash": "432d0cb5704cfc42e2dddf2c849c9830"
   },
   "apps/api/src/application/expenses/create-expense.ts": {
-    "mtime": 1793316466.3105004,
-    "seen": 1793316919.2312634,
-    "ast_hash": "30b5688241bb20226e93ba8a6720c7cb",
+    "mtime": 1793371041.4888985,
+    "seen": 1793372184.6714897,
+    "ast_hash": "a9fc230845f1c2ad6497b8d98d73e59f",
     "semantic_hash": ""
   },
   "apps/api/src/application/expenses/errors.ts": {
@@ -162,9 +162,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/application/expenses/update-expense.ts": {
-    "mtime": 1793316466.3123238,
-    "seen": 1793316919.2312677,
-    "ast_hash": "81d40a3317a65efd59154224a8fa363e",
+    "mtime": 1793371041.4891016,
+    "seen": 1793372184.6714952,
+    "ast_hash": "b677fdee24b4195a92338d5acce6f6ac",
     "semantic_hash": ""
   },
   "apps/api/src/application/health/get-health.ts": {
@@ -174,10 +174,10 @@
     "semantic_hash": "161d76c10f72d39e77cbf6d53d027fec"
   },
   "apps/api/src/application/incomes/create-income.ts": {
-    "mtime": 1790473182.035108,
-    "seen": 1793071102.1037383,
-    "ast_hash": "fee6a84c926c08479cacb7c3431c32ae",
-    "semantic_hash": "fee6a84c926c08479cacb7c3431c32ae"
+    "mtime": 1793370999.5612798,
+    "seen": 1793372184.6714993,
+    "ast_hash": "c01aee754dddccb8870aac72b5cab28e",
+    "semantic_hash": ""
   },
   "apps/api/src/application/incomes/errors.ts": {
     "mtime": 1790473907.655694,
@@ -204,10 +204,10 @@
     "semantic_hash": "dbd55a00efec31ce28b75cbcf517ce53"
   },
   "apps/api/src/application/incomes/update-income.ts": {
-    "mtime": 1790473908.05023,
-    "seen": 1793071102.1037428,
-    "ast_hash": "b1bcbd8caecc14448fdc5df0765b9d5a",
-    "semantic_hash": "b1bcbd8caecc14448fdc5df0765b9d5a"
+    "mtime": 1793371025.2854028,
+    "seen": 1793372184.671506,
+    "ast_hash": "fd6395b3f7ef4f0a2c69e383be07c96e",
+    "semantic_hash": ""
   },
   "apps/api/src/application/schedules/create-schedule.ts": {
     "mtime": 1793316466.3153284,
@@ -450,9 +450,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/application/transfers/create-transfer.ts": {
-    "mtime": 1793316466.3332334,
-    "seen": 1793316919.2313254,
-    "ast_hash": "f787d6738da57cea6ba135c0db391d89",
+    "mtime": 1793371041.4892886,
+    "seen": 1793372184.6715574,
+    "ast_hash": "353da6586e5eedd02b113f5c0c896f19",
     "semantic_hash": ""
   },
   "apps/api/src/application/transfers/errors.ts": {
@@ -474,9 +474,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/application/transfers/update-transfer.ts": {
-    "mtime": 1793316466.3349643,
-    "seen": 1793316919.2313294,
-    "ast_hash": "3a5bceedd1faaec402a3b94cd2f48c63",
+    "mtime": 1793371041.4894738,
+    "seen": 1793372184.6715612,
+    "ast_hash": "ae1a9a9658ffa21f1a1a070ffebfe435",
     "semantic_hash": ""
   },
   "apps/api/src/application/types/create-type.test.ts": {
@@ -756,9 +756,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/http/composition-root.ts": {
-    "mtime": 1793323132.6095607,
-    "seen": 1793370870.1512253,
-    "ast_hash": "8669b99f721b46c9f0f4ccadefdd6b1f",
+    "mtime": 1793371074.4768717,
+    "seen": 1793372184.6716208,
+    "ast_hash": "60ad25f43d9ff01d327d6c023e24cbee",
     "semantic_hash": ""
   },
   "apps/api/src/http/config/config-routes.ts": {
@@ -3012,9 +3012,9 @@
     "semantic_hash": ""
   },
   "apps/web-v3/app/domain/dashboard/summary.ts": {
-    "mtime": 1793323725.5884087,
-    "seen": 1793370870.15146,
-    "ast_hash": "e74194e5e8983c6c630bb1e5db3a40bd",
+    "mtime": 1793371220.9646754,
+    "seen": 1793372184.6718316,
+    "ast_hash": "05ce2f953d6ec8c5d94b99ecd31238d5",
     "semantic_hash": ""
   },
   "apps/web-v3/app/domain/schedule/entities.ts": {
@@ -3054,9 +3054,9 @@
     "semantic_hash": ""
   },
   "apps/web-v3/app/infrastructure/finance/orpc-finance.ts": {
-    "mtime": 1793323807.0748713,
-    "seen": 1793370870.1514702,
-    "ast_hash": "8daa4daae024bc6beb46a904215657f1",
+    "mtime": 1793371188.0898943,
+    "seen": 1793372184.67184,
+    "ast_hash": "1e2bf8449c212c9435b78a5bb760b15f",
     "semantic_hash": ""
   },
   "apps/web-v3/app/infrastructure/schedule/orpc-timer.ts": {
@@ -3156,9 +3156,9 @@
     "semantic_hash": ""
   },
   "apps/web-v3/app/shared/composables/use-dashboard.ts": {
-    "mtime": 1793323749.7587018,
-    "seen": 1793370870.1514902,
-    "ast_hash": "3d5ecb0b0522f31d6025dd2e1348bc8d",
+    "mtime": 1793371220.9650352,
+    "seen": 1793372184.671857,
+    "ast_hash": "6ecf2a816f323acbbe1cabe7b1eb3734",
     "semantic_hash": ""
   },
   "apps/web-v3/app/shared/composables/use-route-search.ts": {
@@ -3192,15 +3192,15 @@
     "semantic_hash": ""
   },
   "apps/web-v3/app/shared/vendor/orpc/client.ts": {
-    "mtime": 1793323549.9197066,
-    "seen": 1793370870.1514986,
-    "ast_hash": "7eec77521024bf2743f0960d298296ec",
+    "mtime": 1793371203.423739,
+    "seen": 1793372184.6718693,
+    "ast_hash": "b0c86c089b73e9d16a6d221af03a3afe",
     "semantic_hash": ""
   },
   "apps/web-v3/app/shared/vendor/orpc/index.ts": {
-    "mtime": 1793323586.6371653,
-    "seen": 1793370870.1514997,
-    "ast_hash": "9a9b501dd3cf5bdb48afbf9b9f5520ec",
+    "mtime": 1793371203.4239168,
+    "seen": 1793372184.67187,
+    "ast_hash": "252c25627d8cd13b0c9cd6da8010b027",
     "semantic_hash": ""
   },
   "apps/web-v3/app/shared/vendor/otp-input/OtpInput.vue": {
@@ -3360,15 +3360,15 @@
     "semantic_hash": ""
   },
   "apps/web-v3/app/ui/views/expenses.vue": {
-    "mtime": 1793318095.335521,
-    "seen": 1793370870.151534,
-    "ast_hash": "b902834d453a9f5fe8a020b0267dffb3",
+    "mtime": 1793372142.1307225,
+    "seen": 1793372184.6719043,
+    "ast_hash": "2ccc07a375068b8cccf0663b3306ab26",
     "semantic_hash": ""
   },
   "apps/web-v3/app/ui/views/incomes.vue": {
-    "mtime": 1793370782.0450358,
-    "seen": 1793370870.1515348,
-    "ast_hash": "2f2837e86e45a8b724bee6e650040f43",
+    "mtime": 1793371258.3937278,
+    "seen": 1793372184.671905,
+    "ast_hash": "a0e242b2a00511e694076fa370bc163a",
     "semantic_hash": ""
   },
   "apps/web-v3/app/ui/views/login-verification.vue": {
@@ -3414,9 +3414,9 @@
     "semantic_hash": ""
   },
   "apps/web-v3/app/ui/views/transfers.vue": {
-    "mtime": 1793318095.3360221,
-    "seen": 1793370870.1515431,
-    "ast_hash": "a5b263de0586e29f7498a13a565403e2",
+    "mtime": 1793371652.6998158,
+    "seen": 1793372184.671913,
+    "ast_hash": "53c6dd0c784dc1247b57e30d7df3c580",
     "semantic_hash": ""
   },
   "apps/web-v3/components.json": {
@@ -3432,9 +3432,9 @@
     "semantic_hash": ""
   },
   "apps/web-v3/i18n/i18n.config.ts": {
-    "mtime": 1793370102.5968802,
-    "seen": 1793370870.151546,
-    "ast_hash": "5095e3159e125977436eb3a1b057fbf4",
+    "mtime": 1793371336.492515,
+    "seen": 1793372184.6719155,
+    "ast_hash": "d8bf131337d36099853a4f47c738f400",
     "semantic_hash": ""
   },
   "apps/web-v3/nuxt.config.ts": {
@@ -6174,15 +6174,15 @@
     "semantic_hash": ""
   },
   "apps/web-v3/app/domain/finance/entities.ts": {
-    "mtime": 1793370624.137635,
-    "seen": 1793370870.1514611,
-    "ast_hash": "c8b230c48254230e154687cfd62b7b20",
+    "mtime": 1793371577.8240209,
+    "seen": 1793372184.6718328,
+    "ast_hash": "370ef05d2bc6f4e0c1699c0642aadfa8",
     "semantic_hash": ""
   },
   "apps/web-v3/app/shared/composables/use-incomes.ts": {
-    "mtime": 1793370081.9395041,
-    "seen": 1793370870.1514916,
-    "ast_hash": "a3e7c1563f4d59f0210cadc5740d5d16",
+    "mtime": 1793371243.105262,
+    "seen": 1793372184.6718607,
+    "ast_hash": "baa403c2ac01ae5ee2569ad45d94228b",
     "semantic_hash": ""
   },
   "apps/web-v3/app/shared/composables/use-schedule-filters.ts": {
@@ -6228,9 +6228,9 @@
     "semantic_hash": ""
   },
   "apps/web-v3/tests/unit/incomes.test.ts": {
-    "mtime": 1793370692.6651268,
-    "seen": 1793370870.1515598,
-    "ast_hash": "be6c564543b49bb9aa216707647149ec",
+    "mtime": 1793371293.330306,
+    "seen": 1793372184.6719308,
+    "ast_hash": "f41d8c8ce2f6905956701d5247178a82",
     "semantic_hash": ""
   },
   "packages/contract/src/schedule/web-v2-shapes.ts": {
@@ -6243,6 +6243,72 @@
     "mtime": 1793370717.2694151,
     "seen": 1793370870.1519744,
     "ast_hash": "eee3af457667b41117426d73406b6ebc",
+    "semantic_hash": ""
+  },
+  "apps/api/src/application/incomes/create-income.test.ts": {
+    "mtime": 1793371130.59441,
+    "seen": 1793372184.6714978,
+    "ast_hash": "4e63279c45ccad050c49dba93096e334",
+    "semantic_hash": ""
+  },
+  "apps/api/src/application/shared/finance-validation.ts": {
+    "mtime": 1793371019.528069,
+    "seen": 1793372184.6715126,
+    "ast_hash": "0de345a07e925f03a02ff8e193eee396",
+    "semantic_hash": ""
+  },
+  "apps/web-v3/app/shared/composables/use-expenses.ts": {
+    "mtime": 1793371307.665959,
+    "seen": 1793372184.671858,
+    "ast_hash": "b9584a4436a58c1c94fa0e3de6dff926",
+    "semantic_hash": ""
+  },
+  "apps/web-v3/app/shared/composables/use-finance-catalogs.ts": {
+    "mtime": 1793371235.9111001,
+    "seen": 1793372184.6718593,
+    "ast_hash": "29bdd05874afc3a5a0b1bb1ab50561e6",
+    "semantic_hash": ""
+  },
+  "apps/web-v3/app/shared/composables/use-transfers.ts": {
+    "mtime": 1793371314.6082191,
+    "seen": 1793372184.6718664,
+    "ast_hash": "6ccbf98aea55d893f580c2ad317df8f6",
+    "semantic_hash": ""
+  },
+  "apps/web-v3/app/ui/organisms/finance-drawers/expense-drawer.vue": {
+    "mtime": 1793371767.2458346,
+    "seen": 1793372184.671893,
+    "ast_hash": "23eeb373d1cb0cbcb0239a72fd932185",
+    "semantic_hash": ""
+  },
+  "apps/web-v3/app/ui/organisms/finance-drawers/transfer-drawer.vue": {
+    "mtime": 1793371921.1461504,
+    "seen": 1793372184.6718953,
+    "ast_hash": "82fac6326eb66a1fa1b1b75ca4e14afe",
+    "semantic_hash": ""
+  },
+  "apps/web-v3/tests/unit/expenses.test.ts": {
+    "mtime": 1793372043.3480868,
+    "seen": 1793372184.6719277,
+    "ast_hash": "8a437c4499e3c4e54ecfe38ca8562287",
+    "semantic_hash": ""
+  },
+  "apps/web-v3/tests/unit/tmp-expenses-verify.test.ts": {
+    "mtime": 1793372183.1546001,
+    "seen": 1793372184.671942,
+    "ast_hash": "2470b9492acd79d463445cf4bb23f59d",
+    "semantic_hash": ""
+  },
+  "apps/web-v3/tests/unit/transfers.test.ts": {
+    "mtime": 1793372065.6850996,
+    "seen": 1793372184.6719427,
+    "ast_hash": "aa1587a48306a6c32402e6435fed4ea8",
+    "semantic_hash": ""
+  },
+  "odd/tasks/web-v3-expenses-transfers.md": {
+    "mtime": 1793371493.526086,
+    "seen": 1793372184.672307,
+    "ast_hash": "372bef5a1f28c2715970fab9e27c6359",
     "semantic_hash": ""
   }
 }
