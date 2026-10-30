@@ -79,7 +79,7 @@ export interface AccountsTable {
  acco_icon: string | null;
  acco_color: string | null;
  acco_curr_id: string;
- acco_initial_amount: number;
+ acco_initial_amount: string; // NUMERIC(19,4) llega como string de pg driver
  acco_created_at: Generated<Date>;
  acco_deleted_at: Date | null;
 }

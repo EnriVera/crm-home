@@ -74,6 +74,9 @@ import { KyselyExpenseRepository } from "../infrastructure/kysely/expense-reposi
 import { KyselyTransferRepository } from "../infrastructure/kysely/transfer-repository";
 import { KyselyAppRepository } from "../infrastructure/kysely/app-repository";
 import { KyselyCurrencyRepository } from "../infrastructure/kysely/currency-repository";
+import { KyselyAccountRepository } from "../infrastructure/kysely/account-repository";
+import { ListAccounts } from "../application/accounts/list-accounts";
+import { CreateAccount } from "../application/accounts/create-account";
 import { KyselyTypeRepository } from "../infrastructure/kysely/type-repository";
 import { KyselyCategoryRepository } from "../infrastructure/kysely/category-repository";
 import { KyselyTimerRunRepository } from "../infrastructure/kysely/timer-run-repository";
@@ -278,6 +281,7 @@ export function createCompositionRoot(
     const scheduleRepository = new KyselyScheduleRepository(db);
     const appRepository = new KyselyAppRepository(db);
     const currencyRepository = new KyselyCurrencyRepository(db);
+    const accountRepository = new KyselyAccountRepository(db);
     const typeRepository = new KyselyTypeRepository(db);
     const categoryRepository = new KyselyCategoryRepository(db);
     const timerRunRepository = new KyselyTimerRunRepository(db);
@@ -296,6 +300,11 @@ export function createCompositionRoot(
     const listApps = new ListApps({ appRepository });
     const listCurrencies = new ListCurrencies({ currencyRepository });
     const createCurrency = new CreateCurrency({ currencyRepository });
+    const listAccounts = new ListAccounts({ accountRepository });
+    const createAccount = new CreateAccount({
+      accountRepository,
+      currencyRepository,
+    });
     const listTypes = new ListTypes({ typeRepository });
     const createType = new CreateType({ typeRepository });
     const updateType = new UpdateType({ typeRepository });
@@ -374,6 +383,8 @@ export function createCompositionRoot(
       listApps,
       listCurrencies,
       createCurrency,
+      listAccounts,
+      createAccount,
       listTypes,
       createType,
       updateType,

@@ -220,3 +220,52 @@ export const transfersContract = oc
   });
 
 export type TransfersContract = typeof transfersContract;
+
+/* ============================================================== */
+/*  Accounts                                                        */
+/* ============================================================== */
+
+/**
+ * Wire de una cuenta. El `acco_balance` NUNCA se guarda: lo calcula la
+ * API en el list (PRD-v2 §8.6 "Saldos calculados, no mutados"):
+ * initial + ingresos − gastos + transferencias entrantes − salientes.
+ */
+export const accountSchema = z.object({
+  acco_id: uuidSchema,
+  acco_name: z.string(),
+  acco_icon: z.union([z.string(), z.null()]),
+  acco_color: z.union([z.string(), z.null()]),
+  acco_currency_id: uuidSchema,
+  /** NUMERIC(19,4) como string (decimal-safe). */
+  acco_initial_amount: z.string(),
+  acco_balance: z.string(),
+  acco_created_at: z.coerce.date(),
+});
+
+export const createAccountInputSchema = z.object({
+  acco_name: z.string().min(1).max(100),
+  acco_icon: z.union([z.string(), z.null()]).default(null),
+  acco_color: z.union([z.string(), z.null()]).default(null),
+  acco_currency_id: uuidSchema,
+  /** Decimal ≥ 0 con hasta 4 decimales (mismo formato que los montos). */
+  acco_initial_amount: z
+    .string()
+    .regex(amountRegex, {
+      message:
+        "initial amount must be a decimal string with up to 4 fraction digits",
+    })
+    .refine((v) => Number(v) >= 0, { message: "initial amount must be >= 0" }),
+});
+
+export const accountsContract = oc
+  .errors({
+    UNAUTHORIZED: { message: "Authentication required" },
+    NOT_FOUND: { message: "Account not found" },
+    VALIDATION: { message: "Invalid input" },
+  })
+  .router({
+    list: oc.output(z.array(accountSchema)),
+    create: oc.input(createAccountInputSchema).output(accountSchema),
+  });
+
+export type AccountsContract = typeof accountsContract;

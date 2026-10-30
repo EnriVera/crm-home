@@ -21,6 +21,9 @@ export interface CurrencyRepository {
   /** Lista todas las monedas (sin paginación — el seed actual es chico). */
   list(trx?: Transaction): Promise<Currency[]>;
 
+  /** Busca una moneda por id. `null` si no existe. */
+  findById(id: string, trx?: Transaction): Promise<Currency | null>;
+
   /** Crea una moneda en la tabla global (lo que un user crea lo ven todos). */
   insert(params: {
     name: string;

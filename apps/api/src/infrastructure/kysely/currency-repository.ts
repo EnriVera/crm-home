@@ -19,6 +19,16 @@ export class KyselyCurrencyRepository implements CurrencyRepository {
     return rows.map(this.mapRow);
   }
 
+  async findById(id: string, trx?: Transaction): Promise<Currency | null> {
+    const db = this.resolve(trx);
+    const row = await db
+      .selectFrom("currency")
+      .select(["curr_id", "curr_name", "curr_symbol", "curr_decimals"])
+      .where("curr_id", "=", id)
+      .executeTakeFirst();
+    return row ? this.mapRow(row) : null;
+  }
+
   async insert(params: {
     name: string;
     symbol: string;

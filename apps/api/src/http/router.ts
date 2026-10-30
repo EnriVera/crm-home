@@ -99,6 +99,11 @@ import {
   createStopTimerHandler,
   type TimerRouteDependencies,
 } from "./timers/timer-routes";
+import {
+  createAccountHandler,
+  createListAccountsHandler,
+  type AccountsRouteDependencies,
+} from "./accounts/accounts-routes";
 
 export interface RouterDependencies
   extends AuthRouteDependencies,
@@ -111,7 +116,8 @@ export interface RouterDependencies
     ConfigRouteDependencies,
     TypesRouteDependencies,
     CategoriesRouteDependencies,
-    TimerRouteDependencies {
+    TimerRouteDependencies,
+    AccountsRouteDependencies {
   getHealth: GetHealth;
 }
 
@@ -213,6 +219,8 @@ export function createRpcHandler(
   const updateExpenseH3 = asBridgeHandler(updateExpenseHandler(deps));
   const removeExpenseH3 = asBridgeHandler(removeExpenseHandler(deps));
 
+  const listAccountsH3 = asBridgeHandler(createListAccountsHandler(deps));
+  const createAccountH3 = asBridgeHandler(createAccountHandler(deps));
   const listTransfersH3 = asBridgeHandler(createListTransfersHandler(deps));
   const getTransferH3 = asBridgeHandler(createGetTransferHandler(deps));
   const createTransferH3 = asBridgeHandler(createTransferHandler(deps));
@@ -467,6 +475,16 @@ export function createRpcHandler(
       method: "POST",
       path: "/expenses/remove",
       run: wrapPost(removeExpenseH3, "/expenses/remove"),
+    },
+    {
+      method: "POST",
+      path: "/accounts/list",
+      run: wrapPost(listAccountsH3, "/accounts/list"),
+    },
+    {
+      method: "POST",
+      path: "/accounts/create",
+      run: wrapPost(createAccountH3, "/accounts/create"),
     },
     {
       method: "POST",

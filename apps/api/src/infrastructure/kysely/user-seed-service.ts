@@ -72,7 +72,7 @@ export class KyselyUserSeedService implements UserSeedService {
         acco_icon: "wallet",
         acco_color: "#64748b",
         acco_curr_id: ars.curr_id,
-        acco_initial_amount: 0,
+        acco_initial_amount: "0",
       })
       .execute();
 
