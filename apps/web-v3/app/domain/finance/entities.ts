@@ -81,6 +81,37 @@ export interface Account {
 /** El color de fallback de una cuenta sin color (gris de la paleta). */
 export const ACCOUNT_FALLBACK_COLOR = "#64748b";
 
+/**
+ * La paleta de 8 colores de dato (PRD-v4 §8.2: color de dato, nunca
+ * decoración). Se usa para las categorías de los gastos.
+ */
+export const DATA_COLORS = [
+  "#3b82f6",
+  "#22c55e",
+  "#ec4899",
+  "#06b6d4",
+  "#f59e0b",
+  "#8b5cf6",
+  "#ef4444",
+  "#64748b",
+] as const;
+
+/**
+ * El color estable de una categoría.
+ *
+ * La categoría es texto libre (la DB no la liga a la tabla de categorías),
+ * así que el color sale de un hash del texto: la misma categoría es
+ * siempre del mismo color y cada una tiene uno distinto.
+ */
+export function categoryColor(category: string | null): string {
+  if (!category) return ACCOUNT_FALLBACK_COLOR;
+  let hash = 0;
+  for (const char of category) {
+    hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
+  }
+  return DATA_COLORS[hash % DATA_COLORS.length] ?? ACCOUNT_FALLBACK_COLOR;
+}
+
 /** Los tipos de cuenta del drawer (valores del `acco_icon` libre). */
 export const ACCOUNT_ICONS = ["bank", "wallet", "cash"] as const;
 export type AccountIcon = (typeof ACCOUNT_ICONS)[number];
