@@ -5,6 +5,11 @@
  * `Category` in `./index.js` is camelCase and aspirational — the DB stores
  * only id, user, name, type and soft-delete. Multi-tenant: every procedure
  * filters by the session user.
+ *
+ * Field convention: output rows mirror the DB columns (`cate_*`); input
+ * filter params are logical camelCase names (`typeId`, `search`, `limit`).
+ * That is the convention the API speaks; renaming either side breaks the
+ * wire.
  */
 import { oc } from "@orpc/contract";
 import { z } from "zod";

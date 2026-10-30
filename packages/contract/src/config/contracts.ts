@@ -16,7 +16,10 @@ import { App } from "./index.js";
 /**
  * Wire real de una moneda (DB `currency`: curr_id, curr_name, curr_symbol,
  * curr_decimals). La entidad `Currency` de `./index.js` (title/code/decimal)
- * es aspiracional y drifted; este schema es lo que la API de vuelta.
+ * es aspiracional y drifted; este schema es lo que la API devuelve. Los
+ * campos son camelCase sin prefijo porque así habla el endpoint desde
+ * antes de documentarse el prefijo `curr_*`: renombrarlos rompería la
+ * API y el adapter de web-v3, así que la convención queda fija acá.
  */
 export const currencyWireSchema = z.object({
   id: z.string().uuid(),

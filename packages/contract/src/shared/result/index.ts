@@ -10,10 +10,10 @@ export const ok = <T>(value: T): Result<T, never> => ({ ok: true, value });
 export const err = <E>(error: E): Result<never, E> => ({ ok: false, error });
 
 export const ResultSchema = <T extends z.ZodTypeAny, E extends z.ZodTypeAny>(
- value: T,
- error: E,
+  value: T,
+  error: E,
 ) =>
- z.discriminatedUnion("ok", [
-  z.object({ ok: z.literal(true), value }),
-  z.object({ ok: z.literal(false), error }),
- ]);
+  z.discriminatedUnion("ok", [
+   z.object({ ok: z.literal(true), value }),
+   z.object({ ok: z.literal(false), error }),
+  ]);

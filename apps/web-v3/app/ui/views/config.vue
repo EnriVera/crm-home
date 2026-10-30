@@ -14,6 +14,7 @@ import ConfigCurrencyDrawer from "~/ui/organisms/config-drawers/config-currency-
 import ConfigStateDrawer from "~/ui/organisms/config-drawers/config-state-drawer.vue";
 import ConfigTypeDrawer from "~/ui/organisms/config-drawers/config-type-drawer.vue";
 import ConfigCard from "~/ui/molecules/config-card.vue";
+import ConfigDeleteAction from "~/ui/molecules/config-delete-action.vue";
 import {
   PhCheck,
   PhGear,
@@ -24,7 +25,6 @@ import {
   PhPlus,
   PhSignOut,
   PhSun,
-  PhTrash,
 } from "~/shared/vendor/icons";
 
 const { t } = useI18n();
@@ -134,6 +134,16 @@ function openEdit(tab: (typeof LIST_TABS)[number], id: string) {
 
 function closeDrawer() {
   return set({ drawer: "", edit: "" });
+}
+
+/** The labels of the delete confirmation for one record. */
+function deleteLabels(name: string) {
+  return {
+    action: t("config.card.delete"),
+    question: t("config.card.deleteConfirm", { name }),
+    confirm: t("config.card.confirm"),
+    cancel: t("config.drawer.cancel"),
+  };
 }
 
 /**
@@ -412,7 +422,7 @@ function selectTab(id: Tab["id"]) {
               :name="type.name"
               :subtitle="modulesLabel(type.modules)"
               :edit-label="t('config.drawer.editType')"
-              :delete-label="t('config.types.delete')"
+              :delete-labels="deleteLabels(type.name)"
               @edit="openEdit('tipos', type.id)"
               @remove="removeRecord(deleteType, type.id)"
             />
@@ -449,14 +459,13 @@ function selectTab(id: Tab["id"]) {
                 >
                   <PhPencilSimple :size="15" weight="regular" />
                 </button>
-                <button
-                  type="button"
-                  class="rounded p-1 text-text-2 transition-colors hover:bg-surface-2 hover:text-error"
-                  :aria-label="t('config.types.delete')"
-                  @click="removeRecord(deleteType, type.id)"
-                >
-                  <PhTrash :size="15" weight="regular" />
-                </button>
+                <ConfigDeleteAction
+                  :delete-label="t('config.card.delete')"
+                  :delete-confirm="t('config.card.deleteConfirm', { name: type.name })"
+                  :confirm-label="t('config.card.confirm')"
+                  :cancel-label="t('config.drawer.cancel')"
+                  @remove="removeRecord(deleteType, type.id)"
+                />
               </div>
             </li>
           </ul>
@@ -493,7 +502,7 @@ function selectTab(id: Tab["id"]) {
               :name="state.name"
               :subtitle="t('config.states.position', { n: statePosition(state) })"
               :edit-label="t('config.drawer.editState')"
-              :delete-label="t('config.states.delete')"
+              :delete-labels="deleteLabels(state.name)"
               @edit="openEdit('estados', state.id)"
               @remove="removeRecord(deleteState, state.id)"
             />
@@ -530,14 +539,13 @@ function selectTab(id: Tab["id"]) {
                 >
                   <PhPencilSimple :size="15" weight="regular" />
                 </button>
-                <button
-                  type="button"
-                  class="rounded p-1 text-text-2 transition-colors hover:bg-surface-2 hover:text-error"
-                  :aria-label="t('config.states.delete')"
-                  @click="removeRecord(deleteState, state.id)"
-                >
-                  <PhTrash :size="15" weight="regular" />
-                </button>
+                <ConfigDeleteAction
+                  :delete-label="t('config.card.delete')"
+                  :delete-confirm="t('config.card.deleteConfirm', { name: state.name })"
+                  :confirm-label="t('config.card.confirm')"
+                  :cancel-label="t('config.drawer.cancel')"
+                  @remove="removeRecord(deleteState, state.id)"
+                />
               </div>
             </li>
           </ul>
@@ -577,7 +585,7 @@ function selectTab(id: Tab["id"]) {
                 t('config.drawer.type')
               "
               :edit-label="t('config.drawer.editCategory')"
-              :delete-label="t('config.categorias.delete')"
+              :delete-labels="deleteLabels(category.name)"
               @edit="openEdit('categorias', category.id)"
               @remove="removeRecord(deleteCategory, category.id)"
             />
@@ -614,14 +622,13 @@ function selectTab(id: Tab["id"]) {
                 >
                   <PhPencilSimple :size="15" weight="regular" />
                 </button>
-                <button
-                  type="button"
-                  class="rounded p-1 text-text-2 transition-colors hover:bg-surface-2 hover:text-error"
-                  :aria-label="t('config.categorias.delete')"
-                  @click="removeRecord(deleteCategory, category.id)"
-                >
-                  <PhTrash :size="15" weight="regular" />
-                </button>
+                <ConfigDeleteAction
+                  :delete-label="t('config.card.delete')"
+                  :delete-confirm="t('config.card.deleteConfirm', { name: category.name })"
+                  :confirm-label="t('config.card.confirm')"
+                  :cancel-label="t('config.drawer.cancel')"
+                  @remove="removeRecord(deleteCategory, category.id)"
+                />
               </div>
             </li>
           </ul>

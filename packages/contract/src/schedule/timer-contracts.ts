@@ -13,65 +13,65 @@ import { z } from "zod";
 import { uuidSchema } from "../shared/identifiers/index.js";
 
 export const timerTitleSchema = z
-  .string()
-  .min(1, { message: "timerTitle is required" })
-  .max(255, { message: "timerTitle exceeds 255 chars" });
+   .string()
+   .min(1, { message: "timerTitle is required" })
+   .max(255, { message: "timerTitle exceeds 255 chars" });
 
 export const timerRunSchema = z.object({
-  timer_id: uuidSchema,
-  timer_title: z.string(),
-  timer_task_id: uuidSchema.nullable(),
-  timer_client_id: uuidSchema.nullable(),
-  timer_type_id: uuidSchema.nullable(),
-  timer_category_id: uuidSchema.nullable(),
-  timer_start: z.coerce.date(),
-  timer_end: z.coerce.date().nullable(),
-  timer_duration_seconds: z.number().int().nullable(),
-  timer_origin: z.enum(["manual", "resumed"]),
-  timer_last_heartbeat: z.coerce.date().nullable(),
+   timer_id: uuidSchema,
+   timer_title: z.string(),
+   timer_task_id: uuidSchema.nullable(),
+   timer_client_id: uuidSchema.nullable(),
+   timer_type_id: uuidSchema.nullable(),
+   timer_category_id: uuidSchema.nullable(),
+   timer_start: z.coerce.date(),
+   timer_end: z.coerce.date().nullable(),
+   timer_duration_seconds: z.number().int().nullable(),
+   timer_origin: z.enum(["manual", "resumed"]),
+   timer_last_heartbeat: z.coerce.date().nullable(),
 });
 
 export const startTimerInputSchema = z.object({
-  timer_title: timerTitleSchema,
-  timer_task_id: uuidSchema.nullable().default(null),
-  timer_client_id: uuidSchema.nullable().default(null),
-  timer_type_id: uuidSchema.nullable().default(null),
-  timer_category_id: uuidSchema.nullable().default(null),
-  /** 'resumed' cuando se reinicia una corrida del historial. */
-  timer_origin: z.enum(["manual", "resumed"]).default("manual"),
+   timer_title: timerTitleSchema,
+   timer_task_id: uuidSchema.nullable().default(null),
+   timer_client_id: uuidSchema.nullable().default(null),
+   timer_type_id: uuidSchema.nullable().default(null),
+   timer_category_id: uuidSchema.nullable().default(null),
+   /** 'resumed' cuando se reinicia una corrida del historial. */
+   timer_origin: z.enum(["manual", "resumed"]).default("manual"),
 });
 
 export const stopTimerInputSchema = z.object({ timer_id: uuidSchema });
 
 export const heartbeatTimerInputSchema = z.object({
-  timer_id: uuidSchema,
-  timer_at: z.coerce.date().optional(),
+   timer_id: uuidSchema,
+   timer_at: z.coerce.date().optional(),
 });
 
 export const listTimerRunsInputSchema = z.object({
-  timer_from: z.coerce.date().optional(),
-  timer_to: z.coerce.date().optional(),
-  timer_type_id: uuidSchema.optional(),
-  timer_category_id: uuidSchema.optional(),
-  timer_task_id: uuidSchema.optional(),
-  timer_search: z.string().max(100).optional(),
-  timer_limit: z.number().int().min(1).max(500).default(100),
+   timer_from: z.coerce.date().optional(),
+   timer_to: z.coerce.date().optional(),
+   timer_type_id: uuidSchema.optional(),
+   timer_category_id: uuidSchema.optional(),
+   timer_task_id: uuidSchema.optional(),
+   timer_search: z.string().max(100).optional(),
+   timer_limit: z.number().int().min(1).max(500).default(100),
 });
 
 export const timerContract = oc
-  .errors({
-    UNAUTHORIZED: { message: "Authentication required" },
-    NOT_FOUND: { message: "Timer not found" },
-    VALIDATION: { message: "Invalid input" },
-  })
-  .router({
-    /** The run that is running right now (null when there is none). */
-    current: oc.output(timerRunSchema.nullable()),
-    start: oc.input(startTimerInputSchema).output(timerRunSchema),
-    stop: oc.input(stopTimerInputSchema).output(timerRunSchema),
-    heartbeat: oc.input(heartbeatTimerInputSchema).output(timerRunSchema),
-    history: oc.input(listTimerRunsInputSchema).output(z.array(timerRunSchema)),
-  });
+   .errors({
+     UNAUTHORIZED: { message: "Authentication required" },
+     NOT_FOUND: { message: "Timer not found" },
+     VALIDATION: { message: "Invalid input" },
+   })
+   .router({
+     /** The run that is running right now (null when there is none). */
+     current: oc.output(timerRunSchema.nullable()),
+     start: oc.input(startTimerInputSchema).output(timerRunSchema),
+     stop: oc.input(stopTimerInputSchema).output(timerRunSchema),
+     heartbeat: oc.input(heartbeatTimerInputSchema).output(timerRunSchema),
+     history: oc.input(listTimerRunsInputSchema).output(z.array(timerRunSchema)),
+   });
 
 export type TimerRunWire = z.infer<typeof timerRunSchema>;
 export type TimerContract = typeof timerContract;

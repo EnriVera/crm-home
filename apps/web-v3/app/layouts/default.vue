@@ -31,7 +31,9 @@ interface NavGroup {
   items: NavItem[]
 }
 
-const navGroups: NavGroup[] = [
+// A computed and not a fixed array: the labels are translated and have
+// to follow the locale when it changes.
+const navGroups = computed<NavGroup[]>(() => [
   {
     label: t('nav.general'),
     items: [
@@ -56,9 +58,11 @@ const navGroups: NavGroup[] = [
       { label: t('nav.config'), to: '/config', icon: PhGear },
     ],
   },
-]
+])
 
-const navItems = navGroups.flatMap((group) => group.items)
+const navItems = computed(() =>
+  navGroups.value.flatMap((group) => group.items),
+)
 
 // Exact match keeps a single item active, /tasks must not light up /tasks-config.
 function isActive(path: string) {
@@ -66,7 +70,7 @@ function isActive(path: string) {
 }
 
 const currentSection = computed(
-  () => navItems.find((item) => item.to === route.path)?.label ?? t('app.name'),
+  () => navItems.value.find((item) => item.to === route.path)?.label ?? t('app.name'),
 )
 
 function toggleTheme() {

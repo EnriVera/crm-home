@@ -16,9 +16,9 @@ import { SessionId, UserId } from "../shared/identifiers";
 /* ------------------------------------------------------------------ */
 
 export const OtpDigits = z
- .string()
- .regex(/^\d{6}$/, "OTP must be 6 digits")
- .refine((s) => s.length === 6, "OTP must be 6 digits");
+  .string()
+  .regex(/^\d{6}$/, "OTP must be 6 digits")
+  .refine((s) => s.length === 6, "OTP must be 6 digits");
 export type OtpDigits = z.infer<typeof OtpDigits>;
 
 /* ------------------------------------------------------------------ */
@@ -26,10 +26,10 @@ export type OtpDigits = z.infer<typeof OtpDigits>;
 /* ------------------------------------------------------------------ */
 
 export const Session = z.object({
- id: SessionId,
- userId: UserId,
- expiresAt: z.string().datetime(),
- createdAt: z.string().datetime(),
+  id: SessionId,
+  userId: UserId,
+  expiresAt: z.string().datetime(),
+  createdAt: z.string().datetime(),
 });
 export type Session = z.infer<typeof Session>;
 
@@ -45,11 +45,11 @@ export type UserTheme = z.infer<typeof UserTheme>;
 /* ------------------------------------------------------------------ */
 
 export const UserProfile = z.object({
- id: UserId,
- name: z.string(),
- email: z.string().email(),
- theme: UserTheme,
- acceptedTermsAt: z.string().datetime().nullable(),
- termsVersion: z.string().nullable(),
+  id: UserId,
+  name: z.string(),
+  email: z.string().email(),
+  theme: UserTheme,
+  acceptedTermsAt: z.string().datetime().nullable(),
+  termsVersion: z.string().nullable(),
 });
 export type UserProfile = z.infer<typeof UserProfile>;
