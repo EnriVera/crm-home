@@ -207,7 +207,7 @@ onMounted(async () => {
       </article>
       <article class="rounded-[var(--radius)] border border-border bg-surface p-5">
         <p class="text-xs font-medium uppercase tracking-wide text-text-2">
-          {{ t("dashboard.stats.expenseHint") }}
+          {{ t("expenses.cards.movements") }}
         </p>
         <p class="mt-2 text-2xl font-semibold tabular-nums text-text">
           {{ monthCount }}

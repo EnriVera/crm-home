@@ -415,6 +415,8 @@ export default defineI18nConfig(() => ({
         cards: {
           monthTotal: "Gastos del mes",
           monthTotalHint: "{count} movimiento | {count} movimientos",
+          movements: "Movimientos del mes",
+          movementsHint: "Gastos cargados este mes",
           topCategory: "Mayor categoría",
           topCategoryHint: "{share} del total",
           noCategories: "Sin categorías cargadas",
