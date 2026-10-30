@@ -115,7 +115,12 @@ export interface TaskProcedureMap {
 }
 
 /** The finance procedures this app talks to (dashboard money cards). */
-export type FinanceProcedure = "income.list" | "expense.list";
+export type FinanceProcedure =
+  | "income.list"
+  | "income.create"
+  | "income.update"
+  | "income.remove"
+  | "expense.list";
 
 export interface FinanceProcedureMap {
   "income.list": {
@@ -126,6 +131,31 @@ export interface FinanceProcedureMap {
       limit?: number;
     };
     output: IncomeWire[];
+  };
+  "income.create": {
+    input: {
+      inco_account_id: string;
+      inco_amount: string;
+      inco_currency_id: string;
+      inco_description?: string | null;
+      inco_date: string;
+    };
+    output: IncomeWire;
+  };
+  "income.update": {
+    input: {
+      inco_id: string;
+      inco_account_id?: string;
+      inco_amount?: string;
+      inco_currency_id?: string;
+      inco_description?: string | null;
+      inco_date?: string;
+    };
+    output: IncomeWire;
+  };
+  "income.remove": {
+    input: { inco_id: string };
+    output: { ok: true };
   };
   "expense.list": {
     input: {
@@ -149,6 +179,20 @@ export interface IncomeWire {
   inco_date: string;
   inco_created_at: string;
   inco_updated_at: string;
+}
+
+/** The wire shape of an account, as the API returns it. */
+export interface AccountWire {
+  acco_id: string;
+  acco_name: string;
+  acco_icon: string | null;
+  acco_color: string | null;
+  acco_currency_id: string;
+  /** NUMERIC(19,4) como string (decimal-safe). */
+  acco_initial_amount: string;
+  /** Balance calculado por la API (PRD-v2 §8.6). */
+  acco_balance: string;
+  acco_created_at: string;
 }
 
 /** The wire shape of an expense, as the API returns it. */
@@ -470,12 +514,51 @@ export function callTasks<P extends TaskProcedure>(
  * Calls one finance procedure. Incomes live under `incomes` and expenses
  * under `expenses` in the orpc router.
  */
+const FINANCE_SEGMENTS: Record<FinanceProcedure, readonly string[]> = {
+  "income.list": ["incomes", "list"],
+  "income.create": ["incomes", "create"],
+  "income.update": ["incomes", "update"],
+  "income.remove": ["incomes", "remove"],
+  "expense.list": ["expenses", "list"],
+};
+
 export function callFinance<P extends FinanceProcedure>(
   procedure: P,
   input: FinanceProcedureMap[P]["input"],
 ): Promise<FinanceProcedureMap[P]["output"]> {
-  const segments = procedure === "income.list" ? ["incomes", "list"] : ["expenses", "list"];
-  return callProcedure<FinanceProcedureMap[P]["output"]>(segments, input);
+  return callProcedure<FinanceProcedureMap[P]["output"]>(
+    FINANCE_SEGMENTS[procedure],
+    input,
+  );
+}
+
+/** Calls one accounts procedure. */
+export type AccountProcedure = "accounts.list" | "accounts.create";
+
+export interface AccountProcedureMap {
+  "accounts.list": {
+    input: undefined;
+    output: AccountWire[];
+  };
+  "accounts.create": {
+    input: {
+      acco_name: string;
+      acco_icon?: string | null;
+      acco_color?: string | null;
+      acco_currency_id: string;
+      acco_initial_amount: string;
+    };
+    output: AccountWire;
+  };
+}
+
+export function callAccounts<P extends AccountProcedure>(
+  procedure: P,
+  input: AccountProcedureMap[P]["input"],
+): Promise<AccountProcedureMap[P]["output"]> {
+  const segments =
+    procedure === "accounts.list" ? ["accounts", "list"] : ["accounts", "create"];
+  return callProcedure<AccountProcedureMap[P]["output"]>(segments, input);
 }
 
 /**

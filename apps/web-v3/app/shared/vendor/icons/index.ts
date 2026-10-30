@@ -1,9 +1,12 @@
 export {
   PhArrowCounterClockwise,
   PhArrowsLeftRight,
+  PhBank,
+  PhCashRegister,
   PhCheck,
   PhCheckSquare,
   PhClock,
+  PhCoins,
   PhDotsThree,
   PhEnvelope,
   PhGear,
@@ -32,5 +35,6 @@ export {
   PhTrendUp,
   PhUser,
   PhUsers,
+  PhWallet,
   PhX,
 } from '@phosphor-icons/vue'

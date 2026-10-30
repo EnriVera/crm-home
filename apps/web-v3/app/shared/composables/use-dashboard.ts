@@ -6,11 +6,8 @@ import {
   type TaskState,
   type TaskSummary,
 } from "~/domain/task/dashboard";
-import {
-  formatMoney,
-  monthMovements,
-  sumAmount,
-} from "~/domain/dashboard/summary";
+import { monthMovements, sumAmount } from "~/domain/dashboard/summary";
+import { formatMoney } from "~/domain/finance/entities";
 import { listTaskStates, listTasks } from "~/infrastructure/tasks/orpc-tasks";
 import { listClients } from "~/infrastructure/client/orpc-client";
 import {

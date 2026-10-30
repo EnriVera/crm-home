@@ -21,19 +21,7 @@ export function sumAmount(movements: Movement[]): number {
   return movements.reduce((total, movement) => total + movement.amount, 0);
 }
 
-/**
- * "1.840.000" — the money format of the catalogue (es-AR, sin decimales).
- */
-export function formatAmount(amount: number): string {
-  return new Intl.NumberFormat("es-AR", {
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
 
-/** "$ 1.840.000" — the amount with its currency symbol. */
-export function formatMoney(amount: number, symbol: string): string {
-  return `${symbol} ${formatAmount(amount)}`;
-}
 
 /** An item of the "actividad reciente" feed. */
 export interface ActivityItem {

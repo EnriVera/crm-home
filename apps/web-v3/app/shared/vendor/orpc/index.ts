@@ -1,4 +1,5 @@
 export {
+  callAccounts,
   callAuth,
   callCategoriesByType,
   callClients,
@@ -8,6 +9,9 @@ export {
   callTimers,
 } from "./client";
 export type {
+  AccountProcedure,
+  AccountProcedureMap,
+  AccountWire,
   AppWire,
   AuthProcedure,
   AuthProcedureMap,
