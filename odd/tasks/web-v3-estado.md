@@ -2,6 +2,28 @@
 
 > Actualizado al cierre de la sesión del 2026-10-28/29. Para seguir mañana.
 
+## Sesión 2026-10-30/31 (seguridad, QA visual y contrato)
+
+| Cambio | Commit | Qué cambió |
+| --- | --- | --- |
+| Credencial SMTP fuera de los logs | `8afa8e3` | El banner del drain loop y el error de `parseSmtpUrl` ya no filtran el userinfo de `SMTP_URL` (hallazgo medium del audit) |
+| Empty state fantasma | `a1ce67f` | `clients`, `incomes`, `expenses` y `transfers` mostraban el mensaje de estado vacío junto a la grilla poblada (faltaba el `v-if` que sí tenía `tasks`) |
+| 404 visible con sesión | `3a1255a` | Cambio de contrato en PRD-v4 §7.2/§12.2/§12.4/§12.6: la ruta catch-all pasa a `public`, así que una URL inválida muestra la pantalla de "no encontrada" en vez de rebotar a `/dashboard`. ODD en `odd/not-found-public/tasks.md` |
+| Seed de datos QA | `1f800c7` | `scripts/seed-qa-data.ts` genera un usuario QA con datos realistas vía la API real, para inspeccionar la SPA con moli |
+
+**Auditoría de seguridad** (`~/security-audit-skill/crm-home/run-1/`): 3 hallazgos
+confirmados (1 medium ya corregido, 2 low), 4 candidatos rechazados como
+defectos de producto same-principal, y 1 candidato (stop del timer contra el
+id espejado) reproducido en runtime: el browser manda el id de una corrida
+ya cerrada, el server lo devuelve idempotente y la UI queda sin timer
+mientras el servidor sigue con la corrida abierta (se auto-cierra a las 12h
+con 43200s).
+
+**Inspección visual con moli** (Chrome CDP, 11 rutas + flujos + móvil 390px):
+consola limpia (solo los warnings intencionales de Nuxt `NUXT_E4011`/`E4007`
+por el diseño RouterView-in-layouts, PRD §12.3), cero requests fallidos, sin
+overflow horizontal en móvil.
+
 ## Qué está entregado (todo commiteado y verificado en runtime)
 
 | Módulo | Commit | Qué se puede hacer |
