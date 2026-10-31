@@ -378,6 +378,7 @@ onMounted(async () => {
 
       <template #empty>
         <p
+          v-if="visibleExpenses.length === 0"
           class="rounded-[var(--radius)] border border-dashed border-border px-4 py-10 text-center text-sm text-text-2"
           data-testid="expenses-empty"
         >
