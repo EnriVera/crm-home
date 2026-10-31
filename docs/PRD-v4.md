@@ -134,11 +134,13 @@ Una sola aplicación web donde las tareas, el tiempo trackeado y los movimientos
 | Términos | `/terms` | — (pública, footer) | 1 | — | — |
 | Privacidad | `/privacy` | — (pública, footer) | 1 | — | — |
 | Cookies | `/cookies` | — (pública, footer) | 1 | — | — |
+| No encontrada | `/:pathMatch(.*)*` | — | 1 | — | — |
 
 **Reglas:**
 
 - Una **única acción primaria por pantalla** (botón verde sólido, pill). Todo lo demás es ghost/secondary.
 - El footer del login y del shell linkean las tres páginas legales.
+- La pantalla "no encontrada" responde a cualquier ruta desconocida con la sesión abierta o cerrada (`meta.public`, §12.4).
 - Tabs, drawers y filtros se reflejan en la URL (deep-linking) con search params validados por zod (§12.5).
 
 ---
@@ -581,7 +583,7 @@ export const routes: RouteRecordRaw[] = [
   { path: '/privacy', name: 'privacy', component: () => import('~/ui/views/legal/privacy.vue'), meta: { layout: 'legal', guest: true, public: true } },
   { path: '/cookies', name: 'cookies', component: () => import('~/ui/views/legal/cookies.vue'), meta: { layout: 'legal', guest: true, public: true } },
 
-  { path: '/:pathMatch(.*)*', name: 'not-found', component: () => import('~/ui/views/not-found.vue'), meta: { layout: 'auth', guest: true } },
+  { path: '/:pathMatch(.*)*', name: 'not-found', component: () => import('~/ui/views/not-found.vue'), meta: { layout: 'auth', guest: true, public: true } },
 ]
 ```
 
@@ -607,7 +609,7 @@ Como `<NuxtPage />` no resuelve, `<NuxtLayout />` tampoco interviene y el pages 
 
 ### 12.4 Guards como middleware de ruta
 
-Un único middleware global, `app/middleware/auth.global.ts`, corre en cada navegación y lee el `meta` de la fila (los `RouteRecordRaw` de §12.2 no declaran `meta.middleware`, y un middleware *nombrado* sin esa declaración jamás se ejecuta — por eso un solo `.global.ts`, sin `guest.ts` aparte): si `to.meta.auth` y no hay sesión (Pinia `auth` store hidratado + verificación orpc), redirige a `/login` preservando `?redirect=`; si `to.meta.guest` y ya hay sesión, redirige a `/dashboard`, **salvo que la fila marque `meta.public`** (las tres páginas legales): se leen igual con la sesión abierta porque el footer del shell las linkea y el visitante tiene que poder leerlas.
+Un único middleware global, `app/middleware/auth.global.ts`, corre en cada navegación y lee el `meta` de la fila (los `RouteRecordRaw` de §12.2 no declaran `meta.middleware`, y un middleware *nombrado* sin esa declaración jamás se ejecuta — por eso un solo `.global.ts`, sin `guest.ts` aparte): si `to.meta.auth` y no hay sesión (Pinia `auth` store hidratado + verificación orpc), redirige a `/login` preservando `?redirect=`; si `to.meta.guest` y ya hay sesión, redirige a `/dashboard`, **salvo que la fila marque `meta.public`** (las tres páginas legales y la ruta 404): se leen igual con la sesión abierta porque el footer del shell las linkea y el visitante tiene que poder leerlas. La 404 también es `public`: una URL inválida con la sesión abierta tiene que mostrar la pantalla de "no encontrada" y su link de vuelta, no rebotar al dashboard en silencio (un rebote esconde el error de tipeo del link y deja al usuario creyendo que la URL era válida).
 
 ### 12.5 Search params tipados (sucesor de nuqs)
 
@@ -615,7 +617,7 @@ Drawers, tabs y filtros viven en la URL. Cada ruta declara su schema zod en `app
 
 ### 12.6 Anti-regresión
 
-Un test de integración (vitest) importa `routes` y la tabla §7.2 y verifica: misma cantidad de rutas, mismos paths, toda ruta autenticada tiene `meta.auth`, toda pública tiene `meta.guest` + layout adecuado, y las tres páginas legales tienen `meta.public`. Si alguien crea `pages/` en el futuro, el test de estructura falla (`pages/` debe estar ausente).
+Un test de integración (vitest) importa `routes` y la tabla §7.2 y verifica: misma cantidad de rutas, mismos paths, toda ruta autenticada tiene `meta.auth`, toda pública tiene `meta.guest` + layout adecuado, y las tres páginas legales y la ruta 404 tienen `meta.public`. Si alguien crea `pages/` en el futuro, el test de estructura falla (`pages/` debe estar ausente).
 
 ## 13. Estructura de BD (schema corregido — inherited from PRD-v2 §11 + deltas v4)
 

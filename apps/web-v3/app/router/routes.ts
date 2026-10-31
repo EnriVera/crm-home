@@ -118,6 +118,6 @@ export const routes: RouteRecordRaw[] = [
     path: "/:pathMatch(.*)*",
     name: "not-found",
     component: () => import("~/ui/views/not-found.vue"),
-    meta: { layout: "auth", guest: true },
+    meta: { layout: "auth", guest: true, public: true },
   },
 ];
