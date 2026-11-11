@@ -1,5 +1,6 @@
 import type { ScheduleRepository } from "../../domain/ports/schedule-repository";
 import type { ScheduleRow } from "../../domain/types";
+import { normalizeAmount } from "../shared/money";
 import { InvalidScheduleInput, ScheduleNotFound } from "./errors";
 
 export interface UpdateScheduleInput {
@@ -31,11 +32,7 @@ export class UpdateSchedule {
       input = { ...input, name: trimmed };
     }
     if (input.amount !== undefined) {
-      const numAmount = Number(input.amount.trim());
-      if (!Number.isFinite(numAmount) || numAmount <= 0) {
-        throw new InvalidScheduleInput("amount must be a positive number");
-      }
-      input = { ...input, amount: numAmount.toFixed(4) };
+      input = { ...input, amount: normalizeAmount(input.amount.trim()) };
     }
 
     try {

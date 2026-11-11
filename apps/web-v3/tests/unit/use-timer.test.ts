@@ -43,6 +43,7 @@ describe("useTimer: respuestas fuera de orden", () => {
     stopTimer.mockReset();
     heartbeatTimer.mockReset();
     listTimerRuns.mockResolvedValue([]);
+    getCurrentTimer.mockResolvedValue(null);
   });
 
   afterEach(() => {
@@ -82,8 +83,10 @@ describe("useTimer: respuestas fuera de orden", () => {
     expect(timer.run.value?.id).toBe("t1");
 
     // El segundo sync se queda en el aire y el usuario para el timer.
-    getCurrentTimer.mockReturnValue(current.promise);
+    getCurrentTimer.mockReturnValueOnce(current.promise);
     const syncing = timer.sync();
+    // El stop vuelve a leer el servidor: ya no hay corrida abierta.
+    getCurrentTimer.mockResolvedValueOnce(null);
     await timer.stop();
     expect(timer.run.value).toBeNull();
 
@@ -108,5 +111,60 @@ describe("useTimer: respuestas fuera de orden", () => {
 
     expect(timer.error.value).toBeNull();
     expect(timer.run.value?.id).toBe("nueva");
+  });
+});
+
+describe("useTimer: el stop se re-sincroniza con el servidor", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    getCurrentTimer.mockReset();
+    listTimerRuns.mockReset();
+    startTimer.mockReset();
+    stopTimer.mockReset();
+    heartbeatTimer.mockReset();
+    listTimerRuns.mockResolvedValue([]);
+    getCurrentTimer.mockResolvedValue(null);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("tras un stop con id desactualizado, muestra lo que dice el servidor", async () => {
+    // El navegador espeja una corrida que el servidor ya cerró; el
+    // servidor tiene otra abierta y el stop la cierra.
+    getCurrentTimer.mockResolvedValueOnce(run({ id: "espejo" }));
+    stopTimer.mockResolvedValue(
+      run({ id: "abierta", end: new Date(), durationSeconds: 30 }),
+    );
+
+    const timer = useTimer();
+    await timer.sync();
+    expect(timer.run.value?.id).toBe("espejo");
+
+    // El servidor ya no tiene ninguna corrida abierta.
+    getCurrentTimer.mockResolvedValueOnce(null);
+    const closed = await timer.stop();
+
+    expect(closed?.id).toBe("abierta");
+    expect(timer.run.value).toBeNull();
+    expect(timer.isRunning.value).toBe(false);
+  });
+
+  it("adopta la corrida que el servidor tiene abierta", async () => {
+    // Otra pestaña arrancó una corrida mientras este browser paraba la
+    // espejada: el servidor manda y el browser lo refleja.
+    getCurrentTimer.mockResolvedValueOnce(run({ id: "espejo" }));
+    stopTimer.mockResolvedValue(
+      run({ id: "espejo", end: new Date(), durationSeconds: 30 }),
+    );
+    getCurrentTimer.mockResolvedValueOnce(run({ id: "de-otra-pestana" }));
+
+    const timer = useTimer();
+    await timer.sync();
+    await timer.stop();
+
+    expect(timer.run.value?.id).toBe("de-otra-pestana");
+    expect(timer.isRunning.value).toBe(true);
   });
 });

@@ -93,7 +93,7 @@ Una sola aplicación web donde las tareas, el tiempo trackeado y los movimientos
 3. **Borrado lógico universal:** toda tabla tiene `created_at`, `updated_at`, `deleted_at` (ver excepciones §13).
 4. **Saldos calculados, no mutados:** `acco_initial_amount + ingresos − gastos ± transferencias` (excluyendo `deleted_at`).
 5. **Modelo de sincronización:** CRUD por HTTP (orpc + TanStack Query con cache de nitro). Websocket ÚNICAMENTE para (a) invalidación `{entity, id, action}` y (b) heartbeat del timer. Ningún CRUD depende del websocket.
-6. **Moneda:** una cuenta tiene una sola moneda. Transferencias entre cuentas de distinta moneda fuera del MVP (la UI lo bloquea con mensaje claro).
+6. **Moneda:** una cuenta tiene una sola moneda. Un movimiento (ingreso, gasto o transferencia) tiene que estar en la moneda de su cuenta: lo valida la API, no sólo la UI, y una transferencia entre cuentas de distinta moneda está fuera del MVP (la UI lo bloquea con mensaje claro). Los totales de dinero se agrupan por moneda: nunca se suman importes de monedas distintas bajo un único símbolo.
 7. **Aislamiento de herramientas (ports & adapters):** ninguna librería de terceros se importa directamente desde la lógica de negocio, ni en backend ni en frontend (ver §10.3).
 8. **Tema claro/oscuro:** `user_theme` en la cuenta del usuario; páginas públicas usan preferencia del SO.
 9. **Telemetría vendor-neutral:** OpenTelemetry + OTLP por entorno. MVP: trazas + métricas de backend únicamente; el frontend solo propaga W3C `traceparent`.
@@ -198,6 +198,8 @@ Referencia: `schedule.png`. Funcional: PRD-v2 §8.4 (timer libre o ligado a tare
 - Fila de 3 stat cards: HOY `4h 35m` "Timer corriendo ahora" (verde), ESTA SEMANA `26h 10m`, TAREA CON MÁS HORAS `8h 20m` + nombre.
 - Card "Historial de hoy" con filtro de rango (dropdown "Esta semana"): filas con punto de color, título, subtítulo "Cliente · Tipo · Categoría", rango horario `09:12 – 10:50`, duración, botón restart (circular arrow) y botón play (círculo tintado verde). Footer derecho en verde: "Total registrado hoy: 4h 37m".
 - Gráfico (PRD-v2 §8.4.3) y detalle por día con filtros: donut `unovis` + tabla con buscador y filtros tipo/categoría/tarea.
+- **El reloj es del servidor:** el heartbeat sólo lleva el `timer_id`; el instante del latido lo decide la API. El cliente no puede declarar el reloj de su propia corrida, así que no puede alterar el abandono por 12 hs ni el momento de cierre.
+- **Parar es parar el timer del usuario:** el `stop` cierra la corrida abierta del usuario en el servidor, no la que el navegador tenga espejada. El navegador puede estar desfasado (otra pestaña, otro cliente o dos arranques solapados); por eso, después de parar, el cliente re-sincroniza contra `/rpc/timers/current` en lugar de confiar en su espejo local.
 
 ### 8.6 Clients (`/clients`)
 
@@ -218,6 +220,7 @@ Referencias: `ingresos.png`, `gastos.png`, `trasferencias.png`. Funcional y regl
 - **Expenses:** cards GASTOS DEL MES / POR PAGAR / MAYOR CATEGORÍA. Tabla FECHA · CONCEPTO · CATEGORÍA (chip pill con color) · CUENTA · MONTO · ESTADO (Pagado/Pendiente).
 - **Transfers:** cards TRANSFERIDO ESTE MES ("3 movimientos") / CUENTAS ACTIVAS ("2 bancos · 2 billeteras") / ÚLTIMO MOVIMIENTO ("24 jun", "Banco Nación → Brubank"). Tabla FECHA · ORIGEN → DESTINO (chip origen con ícono en círculo tintado + flecha → + chip destino) · NOTA · MONTO · ESTADO (Completada verde).
 - Drawers: §9.2.
+- **Validación de montos y fechas (contrato):** un monto es un string decimal de hasta 4 decimales y hasta 15 dígitos enteros (el rango de la columna `NUMERIC(19,4)`, §13), mayor que cero; la validación compara el string, nunca un double, así que el valor validado es el que se guarda. Una fecha es `YYYY-MM-DD` y tiene que ser una fecha real del calendario (el `2024-02-31` se rechaza en el contrato, no en la base).
 
 ### 8.8 Config (`/config`)
 

@@ -10,24 +10,18 @@
 import { oc } from "@orpc/contract";
 import { z } from "zod";
 import { uuidSchema } from "../shared/identifiers/index.js";
+import {
+  calendarDateSchema,
+  decimalAmountSchema,
+} from "../shared/money/index.js";
 
 /* ============================================================== */
 /*  Common                                                          */
 /* ============================================================== */
 
-const amountRegex = /^\d+(\.\d{1,4})?$/;
-const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+const amountSchema = decimalAmountSchema("amount", false);
 
-const amountSchema = z
-  .string()
-  .regex(amountRegex, {
-    message: "amount must be a decimal string with up to 4 fraction digits",
-  })
-  .refine((v) => Number(v) > 0, { message: "amount must be > 0" });
-
-const dateSchema = z
-  .string()
-  .regex(dateRegex, { message: "date must be YYYY-MM-DD" });
+const dateSchema = calendarDateSchema();
 
 const descriptionSchema = z
   .string()
@@ -44,7 +38,13 @@ const categorySchema = z
 const searchSchema = z.string().max(100).default("");
 const limitSchema = z.number().int().min(1).max(100).default(50);
 
-const listDateFilter = z.object({
+/**
+ * Filtro de listado de movimientos (ingresos, gastos y transferencias).
+ *
+ * El rango de fechas usa la MISMA validación de fecha que la alta: una
+ * ventana inválida se rechaza en el contrato, no en la base.
+ */
+export const listMovementsInputSchema = z.object({
   search: searchSchema,
   date_from: dateSchema.nullable().default(null),
   date_to: dateSchema.nullable().default(null),
@@ -97,7 +97,7 @@ export const incomesContract = oc
     VALIDATION: { message: "Invalid input" },
   })
   .router({
-    list: oc.input(listDateFilter).output(z.array(incomeSchema)),
+    list: oc.input(listMovementsInputSchema).output(z.array(incomeSchema)),
     get: oc.input(z.object({ inco_id: uuidSchema })).output(incomeSchema),
     create: oc.input(createIncomeInputSchema).output(incomeSchema),
     update: oc.input(updateIncomeInputSchema).output(incomeSchema),
@@ -160,7 +160,7 @@ export const expensesContract = oc
     VALIDATION: { message: "Invalid input" },
   })
   .router({
-    list: oc.input(listDateFilter).output(z.array(expenseSchema)),
+    list: oc.input(listMovementsInputSchema).output(z.array(expenseSchema)),
     get: oc.input(z.object({ expe_id: uuidSchema })).output(expenseSchema),
     create: oc.input(createExpenseInputSchema).output(expenseSchema),
     update: oc.input(updateExpenseInputSchema).output(expenseSchema),
@@ -212,7 +212,7 @@ export const transfersContract = oc
     VALIDATION: { message: "Invalid input" },
   })
   .router({
-    list: oc.input(listDateFilter).output(z.array(transferSchema)),
+    list: oc.input(listMovementsInputSchema).output(z.array(transferSchema)),
     get: oc.input(z.object({ tran_id: uuidSchema })).output(transferSchema),
     create: oc.input(createTransferInputSchema).output(transferSchema),
     update: oc.input(updateTransferInputSchema).output(transferSchema),
@@ -247,14 +247,8 @@ export const createAccountInputSchema = z.object({
   acco_icon: z.union([z.string(), z.null()]).default(null),
   acco_color: z.union([z.string(), z.null()]).default(null),
   acco_currency_id: uuidSchema,
-  /** Decimal ≥ 0 con hasta 4 decimales (mismo formato que los montos). */
-  acco_initial_amount: z
-    .string()
-    .regex(amountRegex, {
-      message:
-        "initial amount must be a decimal string with up to 4 fraction digits",
-    })
-    .refine((v) => Number(v) >= 0, { message: "initial amount must be >= 0" }),
+  /** Decimal ≥ 0 con hasta 4 decimales (mismo formato y rango que los montos). */
+  acco_initial_amount: decimalAmountSchema("initial amount", true),
 });
 
 export const accountsContract = oc

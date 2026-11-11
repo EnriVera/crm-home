@@ -6,13 +6,18 @@ import {
   type TaskState,
   type TaskSummary,
 } from "~/domain/task/dashboard";
-import { monthMovements, sumAmount } from "~/domain/dashboard/summary";
+import {
+  monthWindow,
+  totalsByCurrency,
+  type CurrencyTotal,
+} from "~/domain/dashboard/summary";
+import type { Currency } from "~/domain/config/entities";
 import { formatMoney, type MoneyRecord } from "~/domain/finance/entities";
 import { listTaskStates, listTasks } from "~/infrastructure/tasks/orpc-tasks";
 import { listClients } from "~/infrastructure/client/orpc-client";
 import {
-  listExpenses,
-  listIncomes,
+  listExpensesInWindow,
+  listIncomesInWindow,
 } from "~/infrastructure/finance/orpc-finance";
 import { listCurrencies } from "~/infrastructure/config/orpc-config";
 import {
@@ -40,7 +45,7 @@ export function useDashboard() {
   // adapter devuelve las entidades completas y acá se toman esos campos.
   const incomes = ref<MoneyRecord[]>([]);
   const expenses = ref<MoneyRecord[]>([]);
-  const currencies = ref<{ id: string; symbol: string }[]>([]);
+  const currencies = ref<Currency[]>([]);
   const types = ref<{ id: string; name: string }[]>([]);
   const categories = ref<{ id: string; name: string }[]>([]);
   const isLoading = ref(false);
@@ -58,38 +63,24 @@ export function useDashboard() {
   const isEmpty = computed(() => totalTasks.value === 0);
 
   /**
-   * The currency symbol.
+   * The month totals, one figure per currency.
    *
-   * The API has no "default currency": `currency` is a global table without
-   * a flag. The currency of the user's latest movement is used and, when
-   * there are no movements, the first one by id (the one seeded when the
-   * account was created).
+   * Two currencies are never added together: each one keeps its own
+   * symbol, and a user with no movements has no figure at all (there is
+   * no total to show, and no currency to label it with).
    */
-  const currencySymbol = computed(() => {
-    const latest = [...incomes.value, ...expenses.value].sort((a, b) =>
-      b.date.localeCompare(a.date),
-    )[0];
-    const byId = [...currencies.value].sort((a, b) => a.id.localeCompare(b.id));
-    if (latest) {
-      const symbol = currencies.value.find(
-        (currency) => currency.id === latest.currencyId,
-      )?.symbol;
-      if (symbol) return symbol;
-    }
-    return byId[0]?.symbol ?? "$";
-  });
-
-  const monthIncome = computed(() =>
-    sumAmount(monthMovements(incomes.value)),
+  const incomeTotals = computed<CurrencyTotal[]>(() =>
+    totalsByCurrency(incomes.value, currencies.value),
   );
-  const monthExpense = computed(() =>
-    sumAmount(monthMovements(expenses.value)),
+  const expenseTotals = computed<CurrencyTotal[]>(() =>
+    totalsByCurrency(expenses.value, currencies.value),
   );
 
   async function load() {
     isLoading.value = true;
     error.value = null;
     try {
+      const window = monthWindow();
       const [
         loadedTasks,
         loadedStates,
@@ -103,8 +94,8 @@ export function useDashboard() {
         listTasks(),
         listTaskStates(),
         listClients(),
-        listIncomes(),
-        listExpenses(),
+        listIncomesInWindow(window),
+        listExpensesInWindow(window),
         listCurrencies(),
         listTaskTypes(),
         listAllCategories(),
@@ -136,9 +127,8 @@ export function useDashboard() {
     recentTasks,
     totalTasks,
     isEmpty,
-    currencySymbol,
-    monthIncome,
-    monthExpense,
+    incomeTotals,
+    expenseTotals,
     isLoading,
     error,
     load,

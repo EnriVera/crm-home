@@ -1,5 +1,11 @@
 import type { H3Event } from "h3";
 import { readValidatedBody } from "h3";
+import {
+  listMovementsInputSchema,
+  createExpenseInputSchema,
+  updateExpenseInputSchema,
+  removeExpenseInputSchema,
+} from "@crm/contract/finance";
 import { z } from "zod";
 import { ListExpenses } from "../../application/expenses/list-expenses";
 import { CreateExpense } from "../../application/expenses/create-expense";
@@ -23,50 +29,7 @@ export interface ExpensesRouteDependencies {
   removeExpense: RemoveExpense;
 }
 
-const amountSchema = z
-  .string()
-  .regex(/^\d+(\.\d{1,4})?$/, {
-    message: "amount must be decimal with up to 4 fraction digits",
-  })
-  .refine((v) => Number(v) > 0, { message: "amount must be > 0" });
-
-const dateSchema = z
-  .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/, { message: "date must be YYYY-MM-DD" });
-
-const listExpensesInputSchema = z.object({
-  search: z.string().max(100).default(""),
-  date_from: dateSchema.nullable().default(null),
-  date_to: dateSchema.nullable().default(null),
-  limit: z.number().int().min(1).max(100).default(50),
-});
-
 const getExpenseInputSchema = z.object({
-  expe_id: z.string().uuid(),
-});
-
-const createExpenseInputSchema = z.object({
-  expe_account_id: z.string().uuid(),
-  expe_amount: amountSchema,
-  expe_currency_id: z.string().uuid(),
-  expe_description: z.string().max(500).nullable().default(null),
-  expe_category: z.string().max(100).nullable().default(null),
-  expe_date: dateSchema,
-  expe_receipt_url: z.string().url().max(2000).nullable().default(null),
-});
-
-const updateExpenseInputSchema = z.object({
-  expe_id: z.string().uuid(),
-  expe_account_id: z.string().uuid().optional(),
-  expe_amount: amountSchema.optional(),
-  expe_currency_id: z.string().uuid().optional(),
-  expe_description: z.string().max(500).nullable().optional(),
-  expe_category: z.string().max(100).nullable().optional(),
-  expe_date: dateSchema.optional(),
-  expe_receipt_url: z.string().url().max(2000).nullable().optional(),
-});
-
-const removeExpenseInputSchema = z.object({
   expe_id: z.string().uuid(),
 });
 
@@ -102,7 +65,7 @@ export function createListExpensesHandler(deps: ExpensesRouteDependencies) {
       const userId = readUserId(event);
       const body = await readValidatedBody(
         event,
-        listExpensesInputSchema.parse,
+        listMovementsInputSchema.parse,
       );
       const rows = await deps.listExpenses.execute({
         userId,

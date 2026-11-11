@@ -43,9 +43,13 @@ export const startTimerInputSchema = z.object({
 
 export const stopTimerInputSchema = z.object({ timer_id: uuidSchema });
 
+/**
+ * El latido lleva solo el id de la corrida: el instante lo decide el
+ * servidor. Si el cliente declarara el reloj, podría alterar su propio
+ * abandono por 12 hs y el momento de cierre de su corrida.
+ */
 export const heartbeatTimerInputSchema = z.object({
    timer_id: uuidSchema,
-   timer_at: z.coerce.date().optional(),
 });
 
 export const listTimerRunsInputSchema = z.object({

@@ -1,5 +1,11 @@
 import type { H3Event } from "h3";
 import { readValidatedBody } from "h3";
+import {
+  listMovementsInputSchema,
+  createTransferInputSchema,
+  updateTransferInputSchema,
+  removeTransferInputSchema,
+} from "@crm/contract/finance";
 import { z } from "zod";
 import { ListTransfers } from "../../application/transfers/list-transfers";
 import { CreateTransfer } from "../../application/transfers/create-transfer";
@@ -19,48 +25,7 @@ export interface TransfersRouteDependencies {
   removeTransfer: RemoveTransfer;
 }
 
-const amountSchema = z
-  .string()
-  .regex(/^\d+(\.\d{1,4})?$/, {
-    message: "amount must be decimal with up to 4 fraction digits",
-  })
-  .refine((v) => Number(v) > 0, { message: "amount must be > 0" });
-
-const dateSchema = z
-  .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/, { message: "date must be YYYY-MM-DD" });
-
-const listTransfersInputSchema = z.object({
-  search: z.string().max(100).default(""),
-  date_from: dateSchema.nullable().default(null),
-  date_to: dateSchema.nullable().default(null),
-  limit: z.number().int().min(1).max(100).default(50),
-});
-
 const getTransferInputSchema = z.object({
-  tran_id: z.string().uuid(),
-});
-
-const createTransferInputSchema = z.object({
-  tran_from_account_id: z.string().uuid(),
-  tran_to_account_id: z.string().uuid(),
-  tran_amount: amountSchema,
-  tran_currency_id: z.string().uuid(),
-  tran_description: z.string().max(500).nullable().default(null),
-  tran_date: dateSchema,
-});
-
-const updateTransferInputSchema = z.object({
-  tran_id: z.string().uuid(),
-  tran_from_account_id: z.string().uuid().optional(),
-  tran_to_account_id: z.string().uuid().optional(),
-  tran_amount: amountSchema.optional(),
-  tran_currency_id: z.string().uuid().optional(),
-  tran_description: z.string().max(500).nullable().optional(),
-  tran_date: dateSchema.optional(),
-});
-
-const removeTransferInputSchema = z.object({
   tran_id: z.string().uuid(),
 });
 
@@ -92,7 +57,7 @@ export function createListTransfersHandler(deps: TransfersRouteDependencies) {
       const userId = readUserId(event);
       const body = await readValidatedBody(
         event,
-        listTransfersInputSchema.parse,
+        listMovementsInputSchema.parse,
       );
       const rows = await deps.listTransfers.execute({
         userId,

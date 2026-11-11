@@ -1,5 +1,6 @@
 import type { ScheduleRepository } from "../../domain/ports/schedule-repository";
 import type { ScheduleRow } from "../../domain/types";
+import { normalizeAmount } from "../shared/money";
 import { InvalidScheduleInput } from "./errors";
 
 export interface CreateScheduleInput {
@@ -27,10 +28,6 @@ export class CreateSchedule {
       throw new InvalidScheduleInput("name must be 1-100 chars");
     }
     const amount = input.amount.trim();
-    const numAmount = Number(amount);
-    if (!Number.isFinite(numAmount) || numAmount <= 0) {
-      throw new InvalidScheduleInput("amount must be a positive number");
-    }
     if (input.description !== null && input.description.length > 500) {
       throw new InvalidScheduleInput("description exceeds 500 chars");
     }
@@ -39,7 +36,7 @@ export class CreateSchedule {
       userId: input.userId,
       name,
       accountId: input.accountId,
-      amount: numAmount.toFixed(4),
+      amount: normalizeAmount(amount),
       currencyId: input.currencyId,
       frequency: input.frequency,
       nextRunDate: input.nextRunDate,

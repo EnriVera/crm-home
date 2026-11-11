@@ -22,9 +22,8 @@ const { dashboardState, loadMock, timerState, stopMock } = await vi.hoisted(
         isEmpty: ref(true),
         isLoading: ref(false),
         error: ref(null),
-        currencySymbol: ref("$"),
-        monthIncome: ref(0),
-        monthExpense: ref(0),
+        incomeTotals: ref([]),
+        expenseTotals: ref([]),
         weekSeconds: ref(0),
         activity: ref([]),
       },
@@ -139,9 +138,8 @@ describe("dashboard view", () => {
     dashboardState.isEmpty.value = true;
     dashboardState.isLoading.value = false;
     dashboardState.error.value = null;
-    dashboardState.currencySymbol.value = "$";
-    dashboardState.monthIncome.value = 0;
-    dashboardState.monthExpense.value = 0;
+    dashboardState.incomeTotals.value = [];
+    dashboardState.expenseTotals.value = [];
     dashboardState.weekSeconds.value = 0;
     dashboardState.activity.value = [];
     timerState.elapsedSeconds.value = 0;
@@ -172,8 +170,12 @@ describe("dashboard view", () => {
   });
 
   it("shows the money and count cards with real numbers", async () => {
-    dashboardState.monthIncome.value = 1840000;
-    dashboardState.monthExpense.value = 486000;
+    dashboardState.incomeTotals.value = [
+      { currencyId: "curr-1", symbol: "$", amount: 1840000 },
+    ];
+    dashboardState.expenseTotals.value = [
+      { currencyId: "curr-1", symbol: "$", amount: 486000 },
+    ];
     dashboardState.totalTasks.value = 12;
     dashboardState.clients.value = [
       { id: "c1", name: "Acme Studio" },
@@ -188,6 +190,37 @@ describe("dashboard view", () => {
     expect(stats.textContent).toContain("$ 486000");
     expect(stats.textContent).toContain("12");
     expect(stats.textContent).toContain("2");
+  });
+
+  it("shows one figure per currency, each with its own symbol", async () => {
+    dashboardState.incomeTotals.value = [
+      { currencyId: "curr-ars", symbol: "$", amount: 950 },
+      { currencyId: "curr-eur", symbol: "€", amount: 2500 },
+    ];
+    dashboardState.expenseTotals.value = [];
+    dashboardState.totalTasks.value = 3;
+    dashboardState.isEmpty.value = false;
+
+    renderDashboard();
+
+    const totals = screen.getAllByTestId("dashboard-income-total");
+    expect(totals).toHaveLength(2);
+    expect(totals[0]?.textContent).toContain("$ 950");
+    expect(totals[1]?.textContent).toContain("€ 2500");
+    // The two currencies are never added together.
+    expect(screen.getByTestId("dashboard-stats").textContent).not.toContain(
+      "3450",
+    );
+  });
+
+  it("shows no money figure when the user has no movements", async () => {
+    dashboardState.totalTasks.value = 3;
+    dashboardState.isEmpty.value = false;
+
+    renderDashboard();
+
+    expect(screen.queryAllByTestId("dashboard-income-total")).toHaveLength(0);
+    expect(screen.queryAllByTestId("dashboard-expense-total")).toHaveLength(0);
   });
 
   it("does NOT render the timer card when there is no running timer", async () => {

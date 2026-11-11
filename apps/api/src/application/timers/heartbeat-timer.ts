@@ -7,11 +7,11 @@ import { TimerNotFound } from "./errors";
 export interface HeartbeatTimerInput {
   userId: string;
   timerId: string;
-  at?: Date;
 }
 
 export interface HeartbeatTimerDependencies {
   timerRunRepository: TimerRunRepository;
+  now?: () => Date;
 }
 
 /**
@@ -20,6 +20,10 @@ export interface HeartbeatTimerDependencies {
  * El frontend pinguea cada minuto mientras el timer corre; el `last_heartbeat`
  * sirve para saber que el timer sigue vivo (y para detectar timers
  * abandonados). PRD-v2 §8.4.
+ *
+ * El instante del latido lo decide el servidor, nunca el cliente: un latido
+ * con reloj propio podría dejar la corrida viva más allá del límite de 12 hs
+ * o cerrarla con una duración inventada.
  */
 export class HeartbeatTimer {
   constructor(private readonly deps: HeartbeatTimerDependencies) {}
@@ -39,7 +43,7 @@ export class HeartbeatTimer {
     return this.deps.timerRunRepository.heartbeat({
       userId: input.userId,
       timerId: input.timerId,
-      at: input.at ?? new Date(),
+      at: this.deps.now?.() ?? new Date(),
     });
   }
 }

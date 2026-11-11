@@ -243,16 +243,15 @@ for (const [title, desc, state, type, cat] of tasksSpec) {
 }
 
 // ---------- historial de timer ----------
-for (const [daysAgo, title] of [
-  [1, "Desarrollo landing"],
-  [2, "Soporte Andamio"],
-  [0, "Facturación"],
-] as const) {
+// El reloj es del servidor (PRD-v4 §8.5): el seed no puede sembrar
+// corridas en el pasado, así que el historial queda con las corridas de
+// hoy.
+for (const title of ["Desarrollo landing", "Soporte Andamio", "Facturación"]) {
   const start = (await rpc("/timers/start", { timer_title: title })) as TimerStartWire | null;
   if (!start) continue;
   const runId = start.timer_id ?? start.timr_id ?? start.id;
   if (!runId) continue;
-  await rpc("/timers/heartbeat", { timer_id: runId, timer_at: new Date(Date.now() - daysAgo * 86400000).toISOString() });
+  await rpc("/timers/heartbeat", { timer_id: runId });
   await rpc("/timers/stop", { timer_id: runId });
 }
 

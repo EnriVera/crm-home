@@ -84,21 +84,25 @@ export function useTimer() {
     beatTimer = undefined;
   }
 
-  /** Syncs with the server (when opening the screen). */
-  async function sync() {
-    isLoading.value = true;
-    error.value = null;
-    // Every sync takes a generation number. If the user started or stopped a
-    // timer meanwhile, the sync that arrives late discards its response:
-    // otherwise a late SYNC resurrected in the UI a timer that was already
-    // stopped (or erased one that had just been started).
+  /**
+   * Reads the server state (the open run and the history) and applies it.
+   *
+   * Every read takes a generation number. If the user started or stopped a
+   * timer meanwhile, the read that arrives late discards its response:
+   * otherwise a late SYNC resurrected in the UI a timer that was already
+   * stopped (or erased one that had just been started).
+   *
+   * Returns the generation the read took, so the caller can tell whether it
+   * was still the latest one.
+   */
+  async function readServerState(): Promise<number> {
     const generation = ++syncGeneration;
     try {
       const [current, runs] = await Promise.all([
         getCurrentTimer(),
         listTimerRuns({ limit: 200 }),
       ]);
-      if (generation !== syncGeneration) return;
+      if (generation !== syncGeneration) return generation;
       history.value = runs;
       actor.send({ type: "SYNC", run: current, now: new Date() });
       if (current) {
@@ -109,11 +113,18 @@ export function useTimer() {
         stopHeartbeat();
       }
     } catch {
-      if (generation !== syncGeneration) return;
+      if (generation !== syncGeneration) return generation;
       error.value = "schedules.loadError";
-    } finally {
-      if (generation === syncGeneration) isLoading.value = false;
     }
+    return generation;
+  }
+
+  /** Syncs with the server (when opening the screen). */
+  async function sync() {
+    isLoading.value = true;
+    error.value = null;
+    const generation = await readServerState();
+    if (generation === syncGeneration) isLoading.value = false;
   }
 
   /** Starts a timer (free or linked to a task). */
@@ -154,7 +165,11 @@ export function useTimer() {
     actor.send({ type: "STOPPED", run: closed });
     stopTicking();
     stopHeartbeat();
-    await refreshHistory();
+    // The server closes the run that is actually open, which may not be the
+    // one this tab was mirroring (another tab, another client). The state is
+    // read again from the server instead of trusting the local mirror
+    // (PRD-v4 §8.5).
+    await readServerState();
     return closed;
   }
 

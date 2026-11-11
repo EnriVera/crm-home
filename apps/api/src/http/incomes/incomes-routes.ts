@@ -1,5 +1,11 @@
 import type { H3Event } from "h3";
 import { readValidatedBody } from "h3";
+import {
+  listMovementsInputSchema,
+  createIncomeInputSchema,
+  updateIncomeInputSchema,
+  removeIncomeInputSchema,
+} from "@crm/contract/finance";
 import { z } from "zod";
 import { ListIncomes } from "../../application/incomes/list-incomes";
 import { CreateIncome } from "../../application/incomes/create-income";
@@ -28,49 +34,7 @@ export interface IncomesRouteDependencies {
   removeIncome: RemoveIncome;
 }
 
-// amount: NUMERIC(19,4) como string decimal-safe
-const amountSchema = z
-  .string()
-  .regex(/^\d+(\.\d{1,4})?$/, {
-    message: "amount must be decimal with up to 4 fraction digits",
-  })
-  .refine((v) => Number(v) > 0, { message: "amount must be > 0" });
-
-const dateSchema = z
-  .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/, { message: "date must be YYYY-MM-DD" });
-
-const listIncomesInputSchema = z.object({
-  search: z.string().max(100).default(""),
-  date_from: dateSchema.nullable().default(null),
-  date_to: dateSchema.nullable().default(null),
-  limit: z.number().int().min(1).max(100).default(50),
-});
-
 const getIncomeInputSchema = z.object({
-  inco_id: z.string().uuid(),
-});
-
-const createIncomeInputSchema = z.object({
-  inco_account_id: z.string().uuid(),
-  inco_amount: amountSchema,
-  inco_currency_id: z.string().uuid(),
-  inco_description: z.string().max(500).nullable().default(null),
-  inco_category: z.string().max(100).nullable().default(null),
-  inco_date: dateSchema,
-});
-
-const updateIncomeInputSchema = z.object({
-  inco_id: z.string().uuid(),
-  inco_account_id: z.string().uuid().optional(),
-  inco_amount: amountSchema.optional(),
-  inco_currency_id: z.string().uuid().optional(),
-  inco_description: z.string().max(500).nullable().optional(),
-  inco_category: z.string().max(100).nullable().optional(),
-  inco_date: dateSchema.optional(),
-});
-
-const removeIncomeInputSchema = z.object({
   inco_id: z.string().uuid(),
 });
 
@@ -102,7 +66,7 @@ export function createListIncomesHandler(deps: IncomesRouteDependencies) {
   return async (event: H3Event): Promise<Response> => {
     try {
       const userId = readUserId(event);
-      const body = await readValidatedBody(event, listIncomesInputSchema.parse);
+      const body = await readValidatedBody(event, listMovementsInputSchema.parse);
       const rows = await deps.listIncomes.execute({
         userId,
         search: body.search,

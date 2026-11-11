@@ -2,10 +2,8 @@ import type { TransferRepository } from "../../domain/ports/transfer-repository"
 import type { AccountRepository } from "../../domain/ports/account-repository";
 import type { CurrencyRepository } from "../../domain/ports/currency-repository";
 import type { TransferRow } from "../../domain/types";
-import {
-  assertCurrencyExists,
-  assertOwnedAccount,
-} from "../shared/finance-validation";
+import { validateTransferCurrencyChange } from "../shared/finance-validation";
+import { normalizeAmount } from "../shared/money";
 import { InvalidTransferInput, TransferNotFound } from "./errors";
 
 export interface UpdateTransferInput {
@@ -30,12 +28,7 @@ export class UpdateTransfer {
 
   async execute(input: UpdateTransferInput): Promise<TransferRow> {
     if (input.amount !== undefined) {
-      const trimmed = input.amount.trim();
-      const numAmount = Number(trimmed);
-      if (!Number.isFinite(numAmount) || numAmount <= 0) {
-        throw new InvalidTransferInput("amount must be a positive number");
-      }
-      input = { ...input, amount: numAmount.toFixed(4) };
+      input = { ...input, amount: normalizeAmount(input.amount.trim()) };
     }
     if (
       input.description !== undefined &&
@@ -45,17 +38,33 @@ export class UpdateTransfer {
       throw new InvalidTransferInput("description exceeds 500 chars");
     }
 
-    for (const accountId of [input.fromAccountId, input.toAccountId]) {
-      if (accountId === undefined) continue;
-      await assertOwnedAccount(
+    // La transferencia tiene que quedar en la moneda de SUS DOS cuentas:
+    // el balance de cada una suma sus movimientos, así que una
+    // transferencia en otra moneda lo dejaría en una suma sin sentido.
+    if (
+      input.fromAccountId !== undefined ||
+      input.toAccountId !== undefined ||
+      input.currencyId !== undefined
+    ) {
+      const current = await this.deps.transferRepository.findById({
+        userId: input.userId,
+        transferId: input.transferId,
+      });
+      if (!current) {
+        throw new TransferNotFound();
+      }
+      await validateTransferCurrencyChange(
         this.deps,
-        { userId: input.userId, accountId },
+        {
+          userId: input.userId,
+          currentFromAccountId: current.fromAccountId,
+          currentToAccountId: current.toAccountId,
+          currentCurrencyId: current.currencyId,
+          fromAccountId: input.fromAccountId,
+          toAccountId: input.toAccountId,
+          currencyId: input.currencyId,
+        },
         (message) => new InvalidTransferInput(message),
-      );
-    }
-    if (input.currencyId !== undefined) {
-      await assertCurrencyExists(this.deps, input.currencyId, (message) =>
-        new InvalidTransferInput(message),
       );
     }
 

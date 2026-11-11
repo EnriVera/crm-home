@@ -1,5 +1,10 @@
 import type { H3Event } from "h3";
 import { readValidatedBody } from "h3";
+import {
+  createScheduleInputSchema,
+  removeScheduleInputSchema,
+  updateScheduleInputSchema,
+} from "@crm/contract/schedule";
 import { z } from "zod";
 import { ListSchedules } from "../../application/schedules/list-schedules";
 import { CreateSchedule } from "../../application/schedules/create-schedule";
@@ -19,15 +24,6 @@ export interface SchedulesRouteDependencies {
   removeSchedule: RemoveSchedule;
 }
 
-const amountSchema = z
-  .string()
-  .regex(/^\d+(\.\d{1,4})?$/, { message: "amount must be decimal" })
-  .refine((v) => Number(v) > 0, { message: "amount must be > 0" });
-
-const dateSchema = z
-  .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/, { message: "date must be YYYY-MM-DD" });
-
 const frequencySchema = z.enum(["daily", "weekly", "monthly", "yearly"]);
 
 const listSchedulesInputSchema = z.object({
@@ -35,33 +31,6 @@ const listSchedulesInputSchema = z.object({
 });
 
 const getScheduleInputSchema = z.object({
-  sche_id: z.string().uuid(),
-});
-
-const createScheduleInputSchema = z.object({
-  sche_name: z.string().min(1).max(100),
-  sche_account_id: z.string().uuid(),
-  sche_amount: amountSchema,
-  sche_currency_id: z.string().uuid(),
-  sche_frequency: frequencySchema,
-  sche_next_run_date: dateSchema,
-  sche_is_active: z.boolean().default(true),
-  sche_description: z.string().max(500).nullable().default(null),
-});
-
-const updateScheduleInputSchema = z.object({
-  sche_id: z.string().uuid(),
-  sche_name: z.string().min(1).max(100).optional(),
-  sche_account_id: z.string().uuid().optional(),
-  sche_amount: amountSchema.optional(),
-  sche_currency_id: z.string().uuid().optional(),
-  sche_frequency: frequencySchema.optional(),
-  sche_next_run_date: dateSchema.optional(),
-  sche_is_active: z.boolean().optional(),
-  sche_description: z.string().max(500).nullable().optional(),
-});
-
-const removeScheduleInputSchema = z.object({
   sche_id: z.string().uuid(),
 });
 

@@ -4,10 +4,8 @@ import type {
 } from "../../domain/ports/income-repository";
 import type { AccountRepository } from "../../domain/ports/account-repository";
 import type { CurrencyRepository } from "../../domain/ports/currency-repository";
-import {
-  assertCurrencyExists,
-  assertOwnedAccount,
-} from "../shared/finance-validation";
+import { validateMovementCurrencyChange } from "../shared/finance-validation";
+import { normalizeAmount } from "../shared/money";
 import { IncomeNotFound, InvalidIncomeInput } from "./errors";
 
 export interface UpdateIncomeInput {
@@ -43,12 +41,7 @@ export class UpdateIncome {
 
   async execute(input: UpdateIncomeInput): Promise<IncomeRow> {
     if (input.amount !== undefined) {
-      const trimmed = input.amount.trim();
-      const numAmount = Number(trimmed);
-      if (!Number.isFinite(numAmount) || numAmount <= 0) {
-        throw new InvalidIncomeInput("amount must be a positive number");
-      }
-      input = { ...input, amount: numAmount.toFixed(4) };
+      input = { ...input, amount: normalizeAmount(input.amount.trim()) };
     }
     if (
       input.description !== undefined &&
@@ -65,18 +58,27 @@ export class UpdateIncome {
       throw new InvalidIncomeInput("category exceeds 100 chars");
     }
 
-    // Si la cuenta o la moneda cambian, se validan igual: la cuenta
-    // tiene que seguir siendo del usuario.
-    if (input.accountId !== undefined) {
-      await assertOwnedAccount(
+    // La cuenta y la moneda del movimiento tienen que quedar emparejadas:
+    // el balance de la cuenta suma sus movimientos, así que un ingreso en
+    // otra moneda dejaría el balance en una suma sin sentido.
+    if (input.accountId !== undefined || input.currencyId !== undefined) {
+      const current = await this.deps.incomeRepository.findById({
+        userId: input.userId,
+        incomeId: input.incomeId,
+      });
+      if (!current) {
+        throw new IncomeNotFound();
+      }
+      await validateMovementCurrencyChange(
         this.deps,
-        { userId: input.userId, accountId: input.accountId },
+        {
+          userId: input.userId,
+          currentAccountId: current.accountId,
+          currentCurrencyId: current.currencyId,
+          accountId: input.accountId,
+          currencyId: input.currencyId,
+        },
         (message) => new InvalidIncomeInput(message),
-      );
-    }
-    if (input.currencyId !== undefined) {
-      await assertCurrencyExists(this.deps, input.currencyId, (message) =>
-        new InvalidIncomeInput(message),
       );
     }
 

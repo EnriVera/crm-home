@@ -45,6 +45,91 @@ export async function listIncomes(): Promise<Income[]> {
   return wire.map(toIncome);
 }
 
+/**
+ * The API caps a page at 100 movements and orders them by date desc, so a
+ * window with more movements than the cap comes back with only the newest
+ * ones. Asking again for each half of the window returns every movement:
+ * the halves are disjoint date ranges, so none is counted twice.
+ */
+const PAGE_SIZE = 100;
+
+/** The date range a movement list is filtered by (inclusive on both ends). */
+export interface MovementWindow {
+  dateFrom: string;
+  dateTo: string;
+}
+
+/** The day number of a wire date ("YYYY-MM-DD"), in UTC. */
+function dayNumber(date: string): number {
+  const year = Number(date.slice(0, 4));
+  const month = Number(date.slice(5, 7));
+  const day = Number(date.slice(8, 10));
+  return Date.UTC(year, month - 1, day) / 86_400_000;
+}
+
+/** The wire date of a day number, in UTC. */
+function dateOfDay(day: number): string {
+  return new Date(day * 86_400_000).toISOString().slice(0, 10);
+}
+
+/**
+ * Splits a window in two disjoint halves.
+ *
+ * `null` when the window is a single day: the API filters by date, so a
+ * day cannot be split any further.
+ */
+function splitWindow(
+  window: MovementWindow,
+): [MovementWindow, MovementWindow] | null {
+  const from = dayNumber(window.dateFrom);
+  const to = dayNumber(window.dateTo);
+  if (to <= from) return null;
+  const middle = from + Math.floor((to - from) / 2);
+  return [
+    { dateFrom: window.dateFrom, dateTo: dateOfDay(middle) },
+    { dateFrom: dateOfDay(middle + 1), dateTo: window.dateTo },
+  ];
+}
+
+/**
+ * Every movement of a window, complete.
+ *
+ * A window that comes back with a full page may be truncated: it is split
+ * in halves and each half is asked again.
+ */
+async function listCompleteWindow<T>(
+  fetchPage: (window: MovementWindow) => Promise<T[]>,
+  window: MovementWindow,
+): Promise<T[]> {
+  const rows = await fetchPage(window);
+  if (rows.length < PAGE_SIZE) return rows;
+  const halves = splitWindow(window);
+  // A single day that fills the page can't be split further: the API has
+  // no cursor to walk the movements of one day.
+  if (!halves) return rows;
+  const [first, second] = await Promise.all([
+    listCompleteWindow(fetchPage, halves[0]),
+    listCompleteWindow(fetchPage, halves[1]),
+  ]);
+  return [...first, ...second];
+}
+
+/** Every income of the user inside a date window. */
+export async function listIncomesInWindow(
+  window: MovementWindow,
+): Promise<Income[]> {
+  const wire = await listCompleteWindow(
+    (part) =>
+      callFinance("income.list", {
+        date_from: part.dateFrom,
+        date_to: part.dateTo,
+        limit: PAGE_SIZE,
+      }),
+    window,
+  );
+  return wire.map(toIncome);
+}
+
 export interface IncomeInput {
   accountId: string;
   /** Decimal > 0 con hasta 4 decimales (string decimal-safe). */
@@ -120,6 +205,22 @@ function toExpense(wire: {
 
 export async function listExpenses(): Promise<Expense[]> {
   const wire = await callFinance("expense.list", { limit: 100 });
+  return wire.map(toExpense);
+}
+
+/** Every expense of the user inside a date window. */
+export async function listExpensesInWindow(
+  window: MovementWindow,
+): Promise<Expense[]> {
+  const wire = await listCompleteWindow(
+    (part) =>
+      callFinance("expense.list", {
+        date_from: part.dateFrom,
+        date_to: part.dateTo,
+        limit: PAGE_SIZE,
+      }),
+    window,
+  );
   return wire.map(toExpense);
 }
 

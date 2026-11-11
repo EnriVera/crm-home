@@ -16,7 +16,13 @@ export interface DomainErrorResponse {
   body: { defined: true; code: string; message: string };
 }
 
-/** `code` del error de dominio → status HTTP. */
+/**
+ * `code` del error de dominio → status HTTP.
+ *
+ * Esta tabla es además la allow-list de códigos de dominio: un error cuyo
+ * `code` no está acá no es un error de esta API (por ejemplo, el SQLSTATE
+ * de Postgres) y se responde como 500 genérico.
+ */
 const STATUS_BY_CODE: Record<string, number> = {
   // 401: no hay sesión o la sesión no habilita la operación.
   UNAUTHORIZED: 401,
@@ -51,13 +57,28 @@ const STATUS_BY_CODE: Record<string, number> = {
   RATE_LIMITED: 429,
 };
 
-function isDomainError(
+/**
+ * Status de un error de dominio, o `undefined` si el error no es de
+ * dominio.
+ *
+ * La tabla `STATUS_BY_CODE` es la allow-list: un `code` que esta API no
+ * reconoce no es un error de dominio (por ejemplo, el SQLSTATE y el texto
+ * que devuelve el driver de Postgres, que traen nombre de relación y de
+ * constraint). Esos se tratan como falla del server, no como error del
+ * cliente.
+ */
+function toDomainError(
   error: unknown,
-): error is { code: string; message: string } {
-  if (typeof error !== "object" || error === null) return false;
-  if (!("code" in error) || typeof error.code !== "string") return false;
-  if (!("message" in error) || typeof error.message !== "string") return false;
-  return true;
+): { code: string; message: string; status: number } | undefined {
+  if (typeof error !== "object" || error === null) return undefined;
+  if (!("code" in error) || typeof error.code !== "string") return undefined;
+  if (!("message" in error) || typeof error.message !== "string") return undefined;
+  if (!Object.hasOwn(STATUS_BY_CODE, error.code)) return undefined;
+  return {
+    code: error.code,
+    message: error.message,
+    status: STATUS_BY_CODE[error.code] ?? 500,
+  };
 }
 
 /**
@@ -66,9 +87,10 @@ function isDomainError(
  * - Los `HTTPError` de h3 (validación de zod, método no permitido)
  *   conservan su status: el status ya viene bien calculado por h3.
  * - 401/404/409/429: el `code` del error de dominio, según la tabla.
- * - 400: un error de dominio con un `code` que la tabla no conoce (un
- *   error de dominio es un problema del pedido, no del server).
- * - 500: cualquier otra cosa (no es un error de dominio).
+ * - 500: cualquier otra cosa, incluido un error cuyo `code` la tabla no
+ *   conoce (por ejemplo, un error crudo del driver de Postgres). No se
+ *   filtra su mensaje al cliente: puede traer SQLSTATE, nombres de
+ *   relación y de constraint.
  */
 export function mapDomainErrorToStatus(error: unknown): DomainErrorResponse {
   // Errores de h3 (validación de zod, método no permitido): el status ya
@@ -84,19 +106,27 @@ export function mapDomainErrorToStatus(error: unknown): DomainErrorResponse {
     };
   }
 
-  if (isDomainError(error)) {
-    const status = STATUS_BY_CODE[error.code] ?? 400;
+  const domainError = toDomainError(error);
+  if (domainError !== undefined) {
     return {
-      status,
-      body: { defined: true, code: error.code, message: error.message },
+      status: domainError.status,
+      body: {
+        defined: true,
+        code: domainError.code,
+        message: domainError.message,
+      },
     };
   }
+
+  // El mensaje del error interno no se filtra al cliente: puede traer
+  // detalle de SQL, SQLSTATE o nombres de relación y de constraint.
+  console.error("[http] unexpected error:", error);
 
   return {
     status: 500,
     body: {
       defined: true,
-      code: "INTERNAL_ERROR",
+      code: "INTERNAL_SERVER_ERROR",
       message: "Internal Server Error",
     },
   };

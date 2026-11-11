@@ -5,6 +5,7 @@ import type {
 import type { AccountRepository } from "../../domain/ports/account-repository";
 import type { CurrencyRepository } from "../../domain/ports/currency-repository";
 import { validateAccountAndCurrency } from "../shared/finance-validation";
+import { normalizeAmount } from "../shared/money";
 import { InvalidIncomeInput } from "./errors";
 
 export interface CreateIncomeInput {
@@ -41,12 +42,7 @@ export class CreateIncome {
 
   async execute(input: CreateIncomeInput): Promise<IncomeRow> {
     const amount = input.amount.trim();
-    const numAmount = Number(amount);
-    if (!Number.isFinite(numAmount) || numAmount <= 0) {
-      throw new InvalidIncomeInput("amount must be a positive number");
-    }
-    // Re-normalizar el amount a 4 decimales (estilo NUMERIC(19,4) de Postgres)
-    const normalized = numAmount.toFixed(4);
+    const normalized = normalizeAmount(amount);
 
     if (input.description !== null && input.description.length > 500) {
       throw new InvalidIncomeInput("description exceeds 500 chars");

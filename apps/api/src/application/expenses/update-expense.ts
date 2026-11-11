@@ -2,10 +2,8 @@ import type { ExpenseRepository } from "../../domain/ports/expense-repository";
 import type { AccountRepository } from "../../domain/ports/account-repository";
 import type { CurrencyRepository } from "../../domain/ports/currency-repository";
 import type { ExpenseRow } from "../../domain/types";
-import {
-  assertCurrencyExists,
-  assertOwnedAccount,
-} from "../shared/finance-validation";
+import { validateMovementCurrencyChange } from "../shared/finance-validation";
+import { normalizeAmount } from "../shared/money";
 import { ExpenseNotFound, InvalidExpenseInput } from "./errors";
 
 export interface UpdateExpenseInput {
@@ -31,12 +29,7 @@ export class UpdateExpense {
 
   async execute(input: UpdateExpenseInput): Promise<ExpenseRow> {
     if (input.amount !== undefined) {
-      const trimmed = input.amount.trim();
-      const numAmount = Number(trimmed);
-      if (!Number.isFinite(numAmount) || numAmount <= 0) {
-        throw new InvalidExpenseInput("amount must be a positive number");
-      }
-      input = { ...input, amount: numAmount.toFixed(4) };
+      input = { ...input, amount: normalizeAmount(input.amount.trim()) };
     }
     if (
       input.description !== undefined &&
@@ -60,16 +53,27 @@ export class UpdateExpense {
       throw new InvalidExpenseInput("receipt_url exceeds 2000 chars");
     }
 
-    if (input.accountId !== undefined) {
-      await assertOwnedAccount(
+    // La cuenta y la moneda del movimiento tienen que quedar emparejadas:
+    // el balance de la cuenta suma sus movimientos, así que un gasto en
+    // otra moneda dejaría el balance en una suma sin sentido.
+    if (input.accountId !== undefined || input.currencyId !== undefined) {
+      const current = await this.deps.expenseRepository.findById({
+        userId: input.userId,
+        expenseId: input.expenseId,
+      });
+      if (!current) {
+        throw new ExpenseNotFound();
+      }
+      await validateMovementCurrencyChange(
         this.deps,
-        { userId: input.userId, accountId: input.accountId },
+        {
+          userId: input.userId,
+          currentAccountId: current.accountId,
+          currentCurrencyId: current.currencyId,
+          accountId: input.accountId,
+          currencyId: input.currencyId,
+        },
         (message) => new InvalidExpenseInput(message),
-      );
-    }
-    if (input.currencyId !== undefined) {
-      await assertCurrencyExists(this.deps, input.currencyId, (message) =>
-        new InvalidExpenseInput(message),
       );
     }
 

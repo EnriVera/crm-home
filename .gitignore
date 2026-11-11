@@ -1,5 +1,7 @@
-# Local Pi runtime state
+# Local agent runtime state
 .atl/
+.hermes/
+.omh/
 
 # Dependencies
 node_modules/

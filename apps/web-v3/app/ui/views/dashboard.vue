@@ -20,9 +20,8 @@ const {
   isLoading,
   error,
   load,
-  currencySymbol,
-  monthIncome,
-  monthExpense,
+  incomeTotals,
+  expenseTotals,
   formatMoney,
 } = useDashboard();
 
@@ -150,9 +149,16 @@ async function onStop() {
         <p class="text-xs font-medium uppercase tracking-wide text-text-2">
           {{ t("dashboard.stats.income") }}
         </p>
-        <p class="mt-2 text-2xl font-semibold tabular-nums text-text">
-          {{ formatMoney(monthIncome, currencySymbol) }}
-        </p>
+        <div class="mt-2 space-y-1">
+          <p
+            v-for="total in incomeTotals"
+            :key="total.currencyId"
+            class="text-2xl font-semibold tabular-nums text-text"
+            data-testid="dashboard-income-total"
+          >
+            {{ formatMoney(total.amount, total.symbol) }}
+          </p>
+        </div>
         <p class="mt-1 text-xs text-text-2">
           {{ t("dashboard.stats.incomeHint") }}
         </p>
@@ -162,9 +168,16 @@ async function onStop() {
         <p class="text-xs font-medium uppercase tracking-wide text-text-2">
           {{ t("dashboard.stats.expense") }}
         </p>
-        <p class="mt-2 text-2xl font-semibold tabular-nums text-text">
-          {{ formatMoney(monthExpense, currencySymbol) }}
-        </p>
+        <div class="mt-2 space-y-1">
+          <p
+            v-for="total in expenseTotals"
+            :key="total.currencyId"
+            class="text-2xl font-semibold tabular-nums text-text"
+            data-testid="dashboard-expense-total"
+          >
+            {{ formatMoney(total.amount, total.symbol) }}
+          </p>
+        </div>
         <p class="mt-1 text-xs text-text-2">
           {{ t("dashboard.stats.expenseHint") }}
         </p>

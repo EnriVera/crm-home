@@ -8,6 +8,7 @@ import {
 } from "../application/tasks/errors";
 import { ClientNotFound, InvalidClientInput } from "../application/clients/errors";
 import { InvalidTimerInput, TimerNotFound } from "../application/timers/errors";
+import { InvalidIncomeInput } from "../application/incomes/errors";
 import { TimerAlreadyRunningError } from "../domain/timers/errors";
 import { Unauthorized } from "../domain/errors";
 import { mapDomainErrorToStatus } from "./error-mapping";
@@ -76,9 +77,63 @@ describe("mapDomainErrorToStatus", () => {
     expect(r.body.code).toBe("VALIDATION_ERROR");
   });
 
-  test("Unknown error → 500 INTERNAL_ERROR", () => {
+  test("Unknown error → 500 INTERNAL_SERVER_ERROR", () => {
     const r = mapDomainErrorToStatus(new Error("boom"));
     expect(r.status).toBe(500);
-    expect(r.body.code).toBe("INTERNAL_ERROR");
+    expect(r.body.code).toBe("INTERNAL_SERVER_ERROR");
+  });
+
+  test("error crudo del driver de Postgres → 500 sin filtrar detalle", () => {
+    const driverError = {
+      code: "22003",
+      message:
+        'numeric field overflow: value "99999999999999999999" for column inco_amount is out of range',
+      severity: "ERROR",
+      table: "inco_incomes",
+      constraint: "inco_incomes_amount_check",
+    };
+
+    const r = mapDomainErrorToStatus(driverError);
+
+    expect(r.status).toBe(500);
+    expect(r.body.code).toBe("INTERNAL_SERVER_ERROR");
+    expect(r.body.message).toBe("Internal Server Error");
+    expect(r.body.message).not.toContain("22003");
+    expect(r.body.message).not.toContain("numeric field overflow");
+    expect(r.body.message).not.toContain("inco_incomes");
+    expect(r.body.message).not.toContain("inco_incomes_amount_check");
+  });
+
+  test("SQLSTATE de fecha inválida → 500 sin filtrar detalle", () => {
+    const driverError = {
+      code: "22008",
+      message: 'date/time field value out of range: "2024-02-31"',
+      table: "inco_incomes",
+    };
+
+    const r = mapDomainErrorToStatus(driverError);
+
+    expect(r.status).toBe(500);
+    expect(r.body.code).toBe("INTERNAL_SERVER_ERROR");
+    expect(r.body.message).not.toContain("22008");
+    expect(r.body.message).not.toContain("2024-02-31");
+    expect(r.body.message).not.toContain("inco_incomes");
+  });
+
+  test("código de dominio conocido → status de la tabla y su mensaje", () => {
+    const r = mapDomainErrorToStatus(new InvalidIncomeInput("monto inválido"));
+    expect(r.status).toBe(400);
+    expect(r.body.code).toBe("INVALID_INCOME_INPUT");
+    expect(r.body.message).toBe("monto inválido");
+  });
+
+  test("código de dominio no registrado → 500 INTERNAL_SERVER_ERROR", () => {
+    const r = mapDomainErrorToStatus({
+      code: "CODE_NOT_IN_TABLE",
+      message: "algo que el server no debería filtrar",
+    });
+    expect(r.status).toBe(500);
+    expect(r.body.code).toBe("INTERNAL_SERVER_ERROR");
+    expect(r.body.message).not.toContain("algo que el server no debería filtrar");
   });
 });

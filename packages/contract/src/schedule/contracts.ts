@@ -9,6 +9,10 @@
 import { oc } from "@orpc/contract";
 import { z } from "zod";
 import { uuidSchema } from "../shared/identifiers/index.js";
+import {
+  calendarDateSchema,
+  decimalAmountSchema,
+} from "../shared/money/index.js";
 
 export const scheduleFrequencySchema = z.enum([
    "daily",
@@ -16,13 +20,8 @@ export const scheduleFrequencySchema = z.enum([
    "monthly",
    "yearly",
 ]);
-export const scheduleAmountSchema = z
-   .string()
-   .regex(/^\d+(\.\d{1,4})?$/, { message: "amount must be decimal" })
-   .refine((v) => Number(v) > 0, { message: "amount must be > 0" });
-export const scheduleDateSchema = z
-   .string()
-   .regex(/^\d{4}-\d{2}-\d{2}$/, { message: "date must be YYYY-MM-DD" });
+export const scheduleAmountSchema = decimalAmountSchema("amount", false);
+export const scheduleDateSchema = calendarDateSchema();
 export const scheduleNameSchema = z.string().min(1).max(100);
 export const scheduleDescriptionSchema = z
    .string()

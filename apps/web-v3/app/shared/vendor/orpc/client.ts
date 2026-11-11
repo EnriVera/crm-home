@@ -318,7 +318,7 @@ export interface TimerProcedureMap {
     output: TimerWire;
   };
   heartbeat: {
-    input: { timer_id: string; timer_at?: string };
+    input: { timer_id: string };
     output: TimerWire;
   };
   history: {

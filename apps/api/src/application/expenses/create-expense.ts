@@ -7,6 +7,7 @@ import {
   assertOwnedAccount,
   validateAccountAndCurrency,
 } from "../shared/finance-validation";
+import { normalizeAmount } from "../shared/money";
 import { InvalidExpenseInput } from "./errors";
 
 export interface CreateExpenseInput {
@@ -31,11 +32,7 @@ export class CreateExpense {
 
   async execute(input: CreateExpenseInput): Promise<ExpenseRow> {
     const amount = input.amount.trim();
-    const numAmount = Number(amount);
-    if (!Number.isFinite(numAmount) || numAmount <= 0) {
-      throw new InvalidExpenseInput("amount must be a positive number");
-    }
-    const normalized = numAmount.toFixed(4);
+    const normalized = normalizeAmount(amount);
 
     if (input.description !== null && input.description.length > 500) {
       throw new InvalidExpenseInput("description exceeds 500 chars");

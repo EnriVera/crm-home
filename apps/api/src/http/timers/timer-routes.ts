@@ -108,7 +108,6 @@ export function createHeartbeatTimerHandler(deps: TimerRouteDependencies) {
       const row = await deps.heartbeatTimer.execute({
         userId,
         timerId: body.timer_id,
-        ...(body.timer_at ? { at: body.timer_at } : {}),
       });
       return Response.json(mapTimerRunToContract(row));
     } catch (err) {
