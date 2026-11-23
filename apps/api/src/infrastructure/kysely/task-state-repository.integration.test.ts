@@ -1,18 +1,19 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { sql } from "kysely";
 import { cleanupAuthTables, cleanupTasksTables } from "./test-cleanup";
-import { createDatabase, type Database } from "./database";
+import { describeIntegration, openTestDatabase } from "./test-db.helper";
+import { resolveTestDatabaseUrl } from "./test-db";
+import type { Database } from "./database";
 import { KyselyTaskStateRepository } from "./task-state-repository";
 
-const databaseUrl = process.env.TEST_DATABASE_URL;
+const databaseUrl = resolveTestDatabaseUrl();
 
-describe.skipIf(!databaseUrl)("KyselyTaskStateRepository (integration)", () => {
+describeIntegration("KyselyTaskStateRepository (integration)", () => {
   let db: Database;
   let repository: KyselyTaskStateRepository;
 
   beforeAll(async () => {
-    if (!databaseUrl) return;
-    db = createDatabase(databaseUrl);
+    db = await openTestDatabase();
     repository = new KyselyTaskStateRepository(db);
   });
 

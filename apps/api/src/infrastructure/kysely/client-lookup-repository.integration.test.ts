@@ -1,25 +1,25 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { sql } from "kysely";
 import { cleanupAuthTables, cleanupTasksTables } from "./test-cleanup";
-import { createDatabase, type Database } from "./database";
+import { describeIntegration, openTestDatabase } from "./test-db.helper";
+import { resolveTestDatabaseUrl } from "./test-db";
+import type { Database } from "./database";
 import { KyselyClientLookupRepository } from "./client-lookup-repository";
 
-const databaseUrl = process.env.TEST_DATABASE_URL;
+const databaseUrl = resolveTestDatabaseUrl();
 
-describe.skipIf(!databaseUrl)(
+describeIntegration(
   "KyselyClientLookupRepository (integration) — multi-user isolation",
   () => {
     let db: Database;
     let repository: KyselyClientLookupRepository;
 
     beforeAll(async () => {
-      if (!databaseUrl) return;
-      db = createDatabase(databaseUrl);
+      db = await openTestDatabase();
       repository = new KyselyClientLookupRepository(db);
     });
 
     afterAll(async () => {
-      if (!db) return;
       await cleanupTasksTables(db);
       await cleanupAuthTables(db);
       await db.destroy();

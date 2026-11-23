@@ -3,6 +3,8 @@ import {
   cleanupAuthTables,
   cleanupTasksTables,
 } from "../../infrastructure/kysely/test-cleanup";
+import { resolveTestDatabaseUrl } from "../../infrastructure/kysely/test-db";
+import { describeIntegration, openTestDatabase } from "../../infrastructure/kysely/test-db.helper";
 import { createAppFetch } from "../composition-root";
 
 /**
@@ -17,7 +19,9 @@ import { createAppFetch } from "../composition-root";
  *   calcula la duración desde el `start` del servidor).
  * - Iniciar un schedule desde el historial cierra el que estaba corriendo.
  */
-const databaseUrl = process.env.TEST_DATABASE_URL;
+// Resuelve y valida la URL al importar el archivo: si falta o apunta a la
+// base de desarrollo, el archivo falla de inmediato (no se saltea en silencio).
+const databaseUrl = resolveTestDatabaseUrl();
 
 const fixedOtpGenerator = {
   generate(): string {
@@ -43,7 +47,7 @@ interface TimerWire {
   timer_last_heartbeat: string | null;
 }
 
-describe.skipIf(!databaseUrl)("timer HTTP endpoints (integration)", () => {
+describeIntegration("timer HTTP endpoints (integration)", () => {
   let fetchApp: (request: Request) => Promise<Response>;
   let sessionCookie = "";
 
@@ -61,7 +65,6 @@ describe.skipIf(!databaseUrl)("timer HTTP endpoints (integration)", () => {
   }
 
   beforeAll(async () => {
-    if (!databaseUrl) return;
     process.env.DATABASE_URL = databaseUrl;
     fetchApp = createAppFetch(
       { DATABASE_URL: databaseUrl, SESSION_COOKIE_SECURE: "false" },
@@ -83,11 +86,7 @@ describe.skipIf(!databaseUrl)("timer HTTP endpoints (integration)", () => {
   });
 
   afterAll(async () => {
-    if (!databaseUrl) return;
-    const { createDatabase } = await import(
-      "../../infrastructure/kysely/database"
-    );
-    const db = createDatabase(databaseUrl);
+    const db = await openTestDatabase();
     await db.deleteFrom("timer_run").execute();
     await cleanupTasksTables(db);
     await cleanupAuthTables(db);

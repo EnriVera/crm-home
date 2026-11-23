@@ -1,6 +1,25 @@
 import type { Database } from "./database";
+import { assertConnectedDatabaseIsTest } from "./test-db";
+
+/**
+ * Limpieza de tablas para los tests de integración.
+ *
+ * REGLA DURA: estos borradores solo pueden correr contra la base de test.
+ * Antes de borrar nada se verifica con `current_database()` que la conexión
+ * real está en una base cuyo nombre termina en `_test`. Si no, se aborta
+ * con un error — nunca se vacía la base de desarrollo.
+ *
+ * El borrado es total (sin filtro por usuario) a propósito: los tests
+ * siembran usuarios de prueba con ids fijos y un borrado parcial dejaría
+ * basura que rompe la corrida siguiente.
+ */
+
+async function assertSafeToClean(db: Database): Promise<void> {
+  await assertConnectedDatabaseIsTest(db);
+}
 
 export async function cleanupAuthTables(db: Database): Promise<void> {
+  await assertSafeToClean(db);
   await db.deleteFrom("email_sending").execute();
   await db.deleteFrom("session").execute();
   await db.deleteFrom("login").execute();
@@ -18,6 +37,7 @@ export async function cleanupAuthTables(db: Database): Promise<void> {
 }
 
 export async function cleanupTasksTables(db: Database): Promise<void> {
+  await assertSafeToClean(db);
   // Orden inverso de FKs (hijo → padre), sin tocar cleanupAuthTables.
   await db.deleteFrom("task_attachments").execute();
   await db.deleteFrom("attachments").execute();

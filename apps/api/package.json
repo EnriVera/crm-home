@@ -8,6 +8,7 @@
     "build": "nitro build",
     "test": "bun test",
     "test:db": "bun test --env-file .env.test",
+    "test:db:setup": "bun --env-file .env.test scripts/setup-test-db.ts",
     "db:migrate": "bun src/infrastructure/kysely/migrate.ts",
     "lint": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json"

@@ -1,10 +1,12 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { sql, type Kysely } from "kysely";
-import { createDatabase, type Database } from "./database";
+import type { Database } from "./database";
 import { cleanupTasksTables } from "./test-cleanup";
+import { describeIntegration, openTestDatabase } from "./test-db.helper";
+import { resolveTestDatabaseUrl } from "./test-db";
 import { down, up } from "./migrations/002_tasks";
 
-const databaseUrl = process.env.TEST_DATABASE_URL;
+const databaseUrl = resolveTestDatabaseUrl();
 
 interface ForeignKeyRow {
   table_name: string;
@@ -84,18 +86,16 @@ function expectForeignKey(
   expect(found).toBe(true);
 }
 
-describe.skipIf(!databaseUrl)("002_tasks migration (integration)", () => {
+describeIntegration("002_tasks migration (integration)", () => {
   let db: Database;
   let unknownDb: Kysely<unknown>;
 
   beforeAll(async () => {
-    if (!databaseUrl) return;
-    db = createDatabase(databaseUrl);
+    db = await openTestDatabase();
     unknownDb = db as unknown as Kysely<unknown>;
   });
 
   afterAll(async () => {
-    if (!db) return;
     // Los tests de este archivo siembran usuarios con ids fijos: si quedan,
     // la próxima corrida del suite falla con "key already exists". Se
     // borran en orden inverso de FKs (hijo → padre).

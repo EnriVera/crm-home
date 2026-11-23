@@ -1,9 +1,12 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { createAppFetch } from "./composition-root";
-import { createDatabase } from "../infrastructure/kysely/database";
 import { cleanupAuthTables } from "../infrastructure/kysely/test-cleanup";
+import { resolveTestDatabaseUrl } from "../infrastructure/kysely/test-db";
+import { describeIntegration, openTestDatabase } from "../infrastructure/kysely/test-db.helper";
 
-const databaseUrl = process.env.TEST_DATABASE_URL;
+// Resuelve y valida la URL al importar el archivo: si falta o apunta a la
+// base de desarrollo, el archivo falla de inmediato (no se saltea en silencio).
+const databaseUrl = resolveTestDatabaseUrl();
 
 const fixedOtpGenerator = {
   generate(): string {
@@ -11,11 +14,10 @@ const fixedOtpGenerator = {
   },
 };
 
-describe.skipIf(!databaseUrl)("auth HTTP endpoints (integration)", () => {
+describeIntegration("auth HTTP endpoints (integration)", () => {
   let handler: ReturnType<typeof createAppFetch>;
 
   beforeAll(async () => {
-    if (!databaseUrl) return;
     handler = createAppFetch(
       {
         DATABASE_URL: databaseUrl,
@@ -26,8 +28,7 @@ describe.skipIf(!databaseUrl)("auth HTTP endpoints (integration)", () => {
   });
 
   afterAll(async () => {
-    if (!databaseUrl) return;
-    const db = createDatabase(databaseUrl);
+    const db = await openTestDatabase();
     await cleanupAuthTables(db);
     await db.destroy();
   });

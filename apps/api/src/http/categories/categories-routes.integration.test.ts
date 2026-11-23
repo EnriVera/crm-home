@@ -1,5 +1,7 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { cleanupAuthTables } from "../../infrastructure/kysely/test-cleanup";
+import { resolveTestDatabaseUrl } from "../../infrastructure/kysely/test-db";
+import { describeIntegration, openTestDatabase } from "../../infrastructure/kysely/test-db.helper";
 import { createAppFetch } from "../composition-root";
 
 /**
@@ -13,7 +15,9 @@ import { createAppFetch } from "../composition-root";
  *   4. config/createCurrency → la moneda nueva aparece en listCurrencies.
  */
 
-const databaseUrl = process.env.TEST_DATABASE_URL;
+// Resuelve y valida la URL al importar el archivo: si falta o apunta a la
+// base de desarrollo, el archivo falla de inmediato (no se saltea en silencio).
+const databaseUrl = resolveTestDatabaseUrl();
 
 const fixedOtpGenerator = {
   generate(): string {
@@ -25,9 +29,7 @@ interface OrpcEnvelope<T> {
   json: T;
 }
 
-describe.skipIf(!databaseUrl)(
-  "categories + createCurrency HTTP endpoints (integration)",
-  () => {
+describeIntegration("categories + createCurrency HTTP endpoints (integration)", () => {
     let fetchApp: (request: Request) => Promise<Response>;
     let sessionCookie = "";
     let typeId = "";
@@ -46,8 +48,7 @@ describe.skipIf(!databaseUrl)(
     }
 
     beforeAll(async () => {
-      if (!databaseUrl) return;
-      process.env.DATABASE_URL = databaseUrl;
+        process.env.DATABASE_URL = databaseUrl;
       fetchApp = createAppFetch(
         { DATABASE_URL: databaseUrl, SESSION_COOKIE_SECURE: "false" },
         { otpGenerator: fixedOtpGenerator },
@@ -78,11 +79,7 @@ describe.skipIf(!databaseUrl)(
     });
 
     afterAll(async () => {
-      if (!databaseUrl) return;
-      const { createDatabase } = await import(
-        "../../infrastructure/kysely/database"
-      );
-      const db = createDatabase(databaseUrl);
+      const db = await openTestDatabase();
       await cleanupAuthTables(db);
       await db.destroy();
     });

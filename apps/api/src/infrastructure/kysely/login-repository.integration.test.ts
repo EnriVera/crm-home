@@ -1,19 +1,20 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { KyselyLoginRepository } from "./login-repository";
 import { KyselyUserRepository } from "./user-repository";
-import { createDatabase, type Database } from "./database";
+import type { Database } from "./database";
 import { cleanupAuthTables } from "./test-cleanup";
+import { describeIntegration, openTestDatabase } from "./test-db.helper";
+import { resolveTestDatabaseUrl } from "./test-db";
 
-const databaseUrl = process.env.TEST_DATABASE_URL;
+const databaseUrl = resolveTestDatabaseUrl();
 
-describe.skipIf(!databaseUrl)("KyselyLoginRepository (integration)", () => {
+describeIntegration("KyselyLoginRepository (integration)", () => {
   let db: Database;
   let repository: KyselyLoginRepository;
   let userRepository: KyselyUserRepository;
 
   beforeAll(async () => {
-    if (!databaseUrl) return;
-    db = createDatabase(databaseUrl);
+    db = await openTestDatabase();
     repository = new KyselyLoginRepository(db);
     userRepository = new KyselyUserRepository(db);
   });
