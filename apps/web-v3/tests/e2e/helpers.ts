@@ -6,11 +6,12 @@
  * e2e necesita Mailpit (el job `e2e` del workflow lo levanta).
  */
 import { expect, type Page } from "@playwright/test";
+import { E2E_EMAIL_PREFIX } from "./constants";
 
 const MAILPIT_URL = process.env.MAILPIT_URL ?? "http://localhost:8025";
 
 /** Un email que no existe en la base: la API crea el usuario al verificar. */
-export function uniqueEmail(prefix: string): string {
+export function uniqueEmail(prefix: string = E2E_EMAIL_PREFIX): string {
   return `${prefix}-${Date.now()}-${Math.floor(Math.random() * 1e6)}@example.com`;
 }
 

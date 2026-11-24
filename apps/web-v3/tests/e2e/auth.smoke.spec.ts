@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { cleanupE2eData } from "./cleanup";
 import { login, uniqueEmail } from "./helpers";
 
 /**
@@ -9,8 +10,14 @@ import { login, uniqueEmail } from "./helpers";
  * entrar. Un smoke que no llega al dashboard no prueba nada.
  */
 test.describe("login", () => {
+  // El e2e crea un usuario real en la base para poder entrar: sin esta
+  // limpieza, cada corrida deja un usuario `e2e-*` en la base.
+  test.afterAll(async () => {
+    await cleanupE2eData();
+  });
+
   test("el código de acceso deja entrar al dashboard", async ({ page }) => {
-    const email = uniqueEmail("e2e");
+    const email = uniqueEmail();
 
     await page.goto("/login");
     // The auth layout brings its own h1 (the brand headline) next to the
