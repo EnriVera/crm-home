@@ -1,9 +1,8 @@
 name: CI
 
 # PRD-v4 §18: el repo no tenía CI. Este workflow corre la línea de base del
-# proyecto: typecheck + lint + tests de los paquetes vivos, y un job de
-# integración contra Postgres.
-
+# proyecto: typecheck + lint + tests de los paquetes vivos, la suite de
+# integración de la API contra Postgres, y un smoke e2e de web-v3.
 on:
   push:
     branches: [main, develop]
@@ -23,8 +22,9 @@ jobs:
   # ─── Linting + typecheck + tests unitarios (sin base de datos) ───────────
   #
   # `apps/web` (@crm/web) queda EXCLUIDO a propósito: es la app legacy
-  # congelada (la vigente es `apps/web-v3`) y su build ya no pasa. Incluirla
-  # haría que TODO el CI esté rojo por código que nadie va a tocar.
+  # congelada (la vigente es `apps/web-v3`) y su typecheck ya no pasa
+  # (123 errores TS). Incluirla haría que TODO el CI esté rojo por código que
+  # nadie va a tocar.
   # El filtro de turbo es explícito por paquete para que quede claro qué
   # se verifica.
   verify:
@@ -50,17 +50,28 @@ jobs:
       - name: Install dependencias
         run: bun install --frozen-lockfile
 
+      # `@crm/api` importa `@crm/email`, que se publica como `dist/`. Ese
+      # `dist/` está en `.gitignore` y `bun install` NO lo construye.
+      - name: Build de @crm/email
+        run: bun run build --filter=@crm/email
+
       - name: Typecheck
         run: |
-          bun run typecheck --filter=@crm/contract --filter=@crm/api --filter=@crm/email --filter=@crm/web-v3
+          bun run typecheck --filter=@crm/contract --filter=@crm/types --filter=@crm/email --filter=@crm/api --filter=@crm/web-v3
 
       - name: Lint
         run: |
-          bun run lint --filter=@crm/contract --filter=@crm/api --filter=@crm/web-v3
+          bun run lint --filter=@crm/contract --filter=@crm/types --filter=@crm/api --filter=@crm/web-v3
 
       - name: Test (unitarios)
         run: |
-          bun run test --filter=@crm/contract --filter=@crm/email --filter=@crm/web-v3
+          bun run test --filter=@crm/contract --filter=@crm/types --filter=@crm/email --filter=@crm/web-v3
+
+      # El typecheck de la app no ve `tests/e2e` (el tsconfig de Nuxt solo
+      # incluye `tests/nuxt`): el smoke e2e necesita su propio chequeo.
+      - name: Typecheck (e2e)
+        working-directory: apps/web-v3
+        run: bun run typecheck:e2e
 
   # ─── Integración de la API contra Postgres ───────────────────────────────
   #
@@ -127,31 +138,33 @@ jobs:
       - name: Install dependencias
         run: bun install --frozen-lockfile
 
-      - name: Crear la base de test
-        run: |
-          docker run --rm --network host -e PGPASSWORD=crm postgres:17-alpine \
-            psql -h localhost -U crm -d postgres -c 'CREATE DATABASE crm_home_test;'
+      # `@crm/api` importa `@crm/email`, que se publica como `dist/`. Ese
+      # `dist/` está en `.gitignore` y `bun install` NO lo construye: sin
+      # este paso la suite falla con "Cannot find module '@crm/email'".
+      - name: Build de @crm/email
+        run: bun run build --filter=@crm/email
 
-      - name: Aplicar migraciones en la base de test
-        working-directory: apps/api
-        env:
-          DATABASE_URL: postgres://crm:crm@localhost:5432/crm_home_test
-        run: bun run db:migrate
+      # `apps/api/.env.test` está en `.gitignore` (sólo existe el
+      # `.example`). `bun run test:db` lo pasa con `--env-file`, así que se
+      # copia el ejemplo: el sufijo `_test` de la URL y el `DATABASE_URL`
+      # vacío son los que el guardarraíl exige.
+      - name: Preparar apps/api/.env.test
+        run: cp apps/api/.env.test.example apps/api/.env.test
 
+      # La base de test la crea el propio bootstrap de la suite
+      # (`ensureTestSchema`), que además aplica las migraciones pendientes.
       - name: Test de integración (api)
         working-directory: apps/api
         run: bun run test:db
 
   # ─── E2E de web-v3 ───────────────────────────────────────────────────────
   #
-  # `apps/web-v3` NO tiene suite e2e (ni config de Playwright) en el repo:
-  # su cobertura es de unitarios (vitest) en el job `verify`. Este job queda
-  # como el lugar donde entra el e2e cuando exista, con la infra lista:
-  # Postgres + Mailpit + la API y la app levantadas.
+  # Smoke e2e del camino de login contra la app real: la API y el Nuxt de
+  # `apps/web-v3` levantados, con Postgres y Mailpit detrás.
   e2e:
     name: e2e (web-v3)
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     services:
       postgres:
         image: postgres:17-alpine
@@ -171,6 +184,23 @@ jobs:
         ports:
           - 1025:1025
           - 8025:8025
+        options: >-
+          --health-cmd "wget --spider -q http://localhost:8025/"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgres://crm:crm@localhost:5432/crm_home
+      SMTP_URL: smtp://localhost:1025
+      # La cookie de sesión va `secure` salvo que se lo diga lo contrario;
+      # en CI el browser habla http://localhost, así que tiene que bajar.
+      SESSION_COOKIE_SECURE: "false"
+      WEB_ORIGINS: http://localhost:5175
+      # La cola `email_sending` la drena la API cada 60 s por defecto: el
+      # código de acceso tardaría más de lo que espera el test. Con 2 s el
+      # correo llega antes del timeout.
+      EMAIL_DRAIN_INTERVAL_MS: "2000"
+      MAILPIT_URL: http://localhost:8025
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -180,36 +210,56 @@ jobs:
         with:
           bun-version: ${{ env.BUN_VERSION }}
 
+      - name: Cache de bun
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          restore-keys: ${{ runner.os }}-bun-
+
       - name: Install dependencias
         run: bun install --frozen-lockfile
 
+      - name: Build de @crm/email
+        run: bun run build --filter=@crm/email
+
       - name: Preparar la base
         working-directory: apps/api
-        env:
-          DATABASE_URL: postgres://crm:crm@localhost:5432/crm_home
         run: bun run db:migrate
 
+      - name: Install browsers de Playwright
+        working-directory: apps/web-v3
+        run: bunx playwright install --with-deps chromium
+
+      # `wait-on` no es dependencia del repo: se usa npx para no sumar un
+      # paquete al lockfile por una herramienta de CI.
       - name: Levantar la API
         working-directory: apps/api
-        env:
-          DATABASE_URL: postgres://crm:crm@localhost:5432/crm_home
-          SMTP_URL: smtp://localhost:1025
         run: |
-          bun run dev &
-          npx wait-on http://localhost:3000/health --timeout 120000
+          bun run dev > /tmp/api-dev.log 2>&1 &
+          npx --yes wait-on http://localhost:3000/health --timeout 120000
+          tail -20 /tmp/api-dev.log
 
       - name: Levantar web-v3
         working-directory: apps/web-v3
         run: |
-          bun run dev &
-          npx wait-on http://localhost:5175 --timeout 120000
+          bun run dev > /tmp/web-dev.log 2>&1 &
+          npx --yes wait-on http://localhost:5175 --timeout 180000
+          tail -20 /tmp/web-dev.log
 
       - name: E2E
         working-directory: apps/web-v3
-        run: |
-          if [ -f playwright.config.ts ]; then
-            bunx playwright test
-          else
-            echo "::notice::apps/web-v3 todavía no tiene suite e2e"
-            echo "::notice::(no hay playwright.config.ts). Se saltea hasta que exista."
-          fi
+        run: bunx playwright test
+
+      # El reporte de Playwright es lo único que sobrevive a la corrida:
+      # sin esto, un fallo deja sólo el log de la consola.
+      - name: Subir el reporte de Playwright
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            apps/web-v3/playwright-report
+            apps/web-v3/test-results
+          retention-days: 7
+          if-no-files-found: ignore

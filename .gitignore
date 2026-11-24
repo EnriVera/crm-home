@@ -25,6 +25,8 @@ dist/
 .env.local
 .env.test
 .playwright-cli/
+.playwright-report/
+test-results/
 .codegraph/
 tools/layerfs/lf.env
 

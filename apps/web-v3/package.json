@@ -9,7 +9,8 @@
     "postinstall": "nuxt prepare",
     "test": "vitest run",
     "lint": "eslint .",
-    "typecheck": "vue-tsc --noEmit"
+    "typecheck": "vue-tsc --noEmit",
+    "typecheck:e2e": "vue-tsc --noEmit -p tsconfig.tests.json"
   },
   "dependencies": {
     "@crm/contract": "workspace:*",
