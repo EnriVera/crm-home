@@ -183,4 +183,122 @@ describeIntegration("auth HTTP endpoints (integration)", () => {
     );
     expect(sessionResponse.status).toBe(401);
   });
+
+  // El módulo auth es el único que antes no mapeaba los errores de
+  // validación: el HTTPError de h3 escapaba del handler y terminaba en el
+  // catch genérico del router como 500 sin `status` en el body. Con ese body
+  // el codec ORPC v1.15 no puede parsear el error (exige `defined`, `code`,
+  // `status` y `message`), así que el cliente recibía un fallo ilegible en
+  // vez de un error de validación.
+  test("requestOtp con email inválido devuelve 400 VALIDATION_ERROR", async () => {
+    const response = await handler(
+      new Request("http://localhost/rpc/auth/requestOtp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ json: { email: "no-es-un-email" } }),
+      }),
+    );
+
+    expect(response.status).toBe(400);
+    const body = (await response.json()) as {
+      defined: boolean;
+      code: string;
+      status: number;
+      message: string;
+    };
+    expect(body.defined).toBe(true);
+    expect(body.code).toBe("VALIDATION_ERROR");
+    expect(body.status).toBe(400);
+  });
+
+  test("verifyOtp con código inválido devuelve 400 y no 500", async () => {
+    const email = `bad-code-${Date.now()}@example.com`;
+    const response = await handler(
+      new Request("http://localhost/rpc/auth/verifyOtp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ json: { email, code: "abc" } }),
+      }),
+    );
+
+    expect(response.status).toBe(400);
+    const body = (await response.json()) as { code: string; status: number };
+    expect(body.code).toBe("VALIDATION_ERROR");
+    expect(body.status).toBe(400);
+  });
+
+  test("updateProfile con nombre vacío devuelve 400 y no 500", async () => {
+    const email = `profile-${Date.now()}@example.com`;
+    await handler(
+      new Request("http://localhost/rpc/auth/requestOtp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ json: { email } }),
+      }),
+    );
+    const verifyResponse = await handler(
+      new Request("http://localhost/rpc/auth/verifyOtp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ json: { email, code: "041283" } }),
+      }),
+    );
+    const cookieMatch = /crm_session=([^;]+)/.exec(
+      verifyResponse.headers.get("Set-Cookie") ?? "",
+    );
+    expect(cookieMatch).toBeDefined();
+
+    const response = await handler(
+      new Request("http://localhost/rpc/auth/updateProfile", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: cookieMatch![0],
+        },
+        body: JSON.stringify({ json: { name: "   ", studio: "X" } }),
+      }),
+    );
+
+    expect(response.status).toBe(400);
+    const body = (await response.json()) as { code: string; status: number };
+    expect(body.code).toBe("VALIDATION_ERROR");
+    expect(body.status).toBe(400);
+  });
+
+  test("updateTheme con ajuste inválido devuelve 400 y no 500", async () => {
+    const email = `theme-${Date.now()}@example.com`;
+    await handler(
+      new Request("http://localhost/rpc/auth/requestOtp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ json: { email } }),
+      }),
+    );
+    const verifyResponse = await handler(
+      new Request("http://localhost/rpc/auth/verifyOtp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ json: { email, code: "041283" } }),
+      }),
+    );
+    const cookieMatch = /crm_session=([^;]+)/.exec(
+      verifyResponse.headers.get("Set-Cookie") ?? "",
+    );
+
+    const response = await handler(
+      new Request("http://localhost/rpc/auth/updateTheme", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: cookieMatch![0],
+        },
+        body: JSON.stringify({ json: { setting: "neon" } }),
+      }),
+    );
+
+    expect(response.status).toBe(400);
+    const body = (await response.json()) as { code: string; status: number };
+    expect(body.code).toBe("VALIDATION_ERROR");
+    expect(body.status).toBe(400);
+  });
 });

@@ -759,11 +759,16 @@ export function createRpcHandler(
       console.error("[rpc] unexpected error:", err);
       // El mensaje del error interno no se filtra al cliente: puede traer
       // detalle de SQL o de rutas. El log del server lo tiene.
+      // `status` va en el body (y no solo en el header) porque el codec
+      // ORPC v1.15 exige las keys `defined`, `code`, `status` y `message`
+      // para parsear el body como error: sin `status` el cliente no arma
+      // el ORPCError y el fallo se ve como cuerpo ilegible.
       return new Response(
         JSON.stringify({
           defined: true,
           code: "INTERNAL_SERVER_ERROR",
           message: "Internal Server Error",
+          status: 500,
         }),
         {
           status: 500,

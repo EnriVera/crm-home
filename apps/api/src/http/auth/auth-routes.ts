@@ -12,9 +12,7 @@ import type { RequestOtp } from "../../application/auth/request-otp";
 import type { UpdateProfile } from "../../application/auth/update-profile";
 import type { UpdateTheme } from "../../application/auth/update-theme";
 import type { VerifyOtp } from "../../application/auth/verify-otp";
-import { RateLimitedError } from "../../application/auth/errors";
-import { InvalidThemeError } from "../../application/auth/update-theme";
-import { InvalidProfileError } from "../../application/auth/update-profile";
+import { mapDomainErrorToStatus } from "../error-mapping";
 import {
   deleteSessionCookie,
   getSessionToken,
@@ -40,32 +38,31 @@ export interface AuthRouteDependencies {
 
 export function createRequestOtpHandler(deps: AuthRouteDependencies) {
   return async (event: H3Event) => {
-    const body = await readValidatedBody(event, requestOtpInputSchema.parse);
     try {
-      const result = await deps.requestOtp.execute(body);
-      return result;
-    } catch (error) {
-      if (error instanceof RateLimitedError) {
-        return new Response(
-          JSON.stringify({ code: error.code, message: error.message }),
-          { status: 429, headers: { "Content-Type": "application/json" } },
-        );
-      }
-      throw error;
+      const body = await readValidatedBody(event, requestOtpInputSchema.parse);
+      return await deps.requestOtp.execute(body);
+    } catch (err) {
+      const { status, body } = mapDomainErrorToStatus(err);
+      return Response.json(body, { status });
     }
   };
 }
 
 export function createVerifyOtpHandler(deps: AuthRouteDependencies) {
   return async (event: H3Event) => {
-    const body = await readValidatedBody(event, verifyOtpInputSchema.parse);
-    const result = await deps.verifyOtp.execute(body);
+    try {
+      const body = await readValidatedBody(event, verifyOtpInputSchema.parse);
+      const result = await deps.verifyOtp.execute(body);
 
-    if (result.verdict === "valid" && result.sessionToken) {
-      setSessionCookie(event, result.sessionToken);
+      if (result.verdict === "valid" && result.sessionToken) {
+        setSessionCookie(event, result.sessionToken);
+      }
+
+      return { verdict: result.verdict };
+    } catch (err) {
+      const { status, body } = mapDomainErrorToStatus(err);
+      return Response.json(body, { status });
     }
-
-    return { verdict: result.verdict };
   };
 }
 
@@ -102,13 +99,13 @@ export function createLogoutHandler(deps: AuthRouteDependencies) {
 
 export function createUpdateThemeHandler(deps: AuthRouteDependencies) {
   return async (event: H3Event) => {
-    const token = getSessionToken(event);
-    if (!token) {
-      return new Response(null, { status: 401 });
-    }
-
-    const body = await readValidatedBody(event, updateThemeInputSchema.parse);
     try {
+      const token = getSessionToken(event);
+      if (!token) {
+        return new Response(null, { status: 401 });
+      }
+
+      const body = await readValidatedBody(event, updateThemeInputSchema.parse);
       const result = await deps.updateTheme.execute({
         token,
         setting: body.setting,
@@ -118,13 +115,8 @@ export function createUpdateThemeHandler(deps: AuthRouteDependencies) {
       }
       return { user: result.user };
     } catch (err) {
-      if (err instanceof InvalidThemeError) {
-        return new Response(
-          JSON.stringify({ code: err.code, message: err.message }),
-          { status: 400, headers: { "Content-Type": "application/json" } },
-        );
-      }
-      throw err;
+      const { status, body } = mapDomainErrorToStatus(err);
+      return Response.json(body, { status });
     }
   };
 }
@@ -135,13 +127,13 @@ export function createUpdateThemeHandler(deps: AuthRouteDependencies) {
  */
 export function createUpdateProfileHandler(deps: AuthRouteDependencies) {
   return async (event: H3Event) => {
-    const token = getSessionToken(event);
-    if (!token) {
-      return new Response(null, { status: 401 });
-    }
-
-    const body = await readValidatedBody(event, updateProfileInputSchema.parse);
     try {
+      const token = getSessionToken(event);
+      if (!token) {
+        return new Response(null, { status: 401 });
+      }
+
+      const body = await readValidatedBody(event, updateProfileInputSchema.parse);
       const result = await deps.updateProfile.execute({
         token,
         name: body.name,
@@ -152,13 +144,8 @@ export function createUpdateProfileHandler(deps: AuthRouteDependencies) {
       }
       return result;
     } catch (err) {
-      if (err instanceof InvalidProfileError) {
-        return new Response(
-          JSON.stringify({ code: err.code, message: err.message }),
-          { status: 400, headers: { "Content-Type": "application/json" } },
-        );
-      }
-      throw err;
+      const { status, body } = mapDomainErrorToStatus(err);
+      return Response.json(body, { status });
     }
   };
 }
