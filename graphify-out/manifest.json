@@ -3444,9 +3444,9 @@
     "semantic_hash": ""
   },
   "apps/web-v3/package.json": {
-    "mtime": 1793232558.2612238,
-    "seen": 1793316919.23167,
-    "ast_hash": "d2a24567b4208dd8ff46f78d081a17ce",
+    "mtime": 1795483990.5986166,
+    "seen": 1795484986.3684483,
+    "ast_hash": "1b06431948939f0a5dd8ede33ae4289e",
     "semantic_hash": ""
   },
   "apps/web-v3/tests/unit/base-view.test.ts": {
@@ -6492,9 +6492,9 @@
     "semantic_hash": ""
   },
   ".github/workflows/ci.yml": {
-    "mtime": 1795478205.0610056,
-    "seen": 1795479039.3835151,
-    "ast_hash": "e71ceabe1b7cd6bf2049fdac944ff1fc",
+    "mtime": 1795484192.6717105,
+    "seen": 1795484986.3679087,
+    "ast_hash": "e809c8981c112c5721fa7b4ecc0d2b68",
     "semantic_hash": ""
   },
   "apps/api/src/application/auth/update-profile.test.ts": {
@@ -6540,9 +6540,27 @@
     "semantic_hash": ""
   },
   "apps/web-v3/tsconfig.tests.json": {
-    "mtime": 1795477707.2790072,
-    "seen": 1795479039.3840957,
-    "ast_hash": "6ee5d97b02627ded4a30dbce5a8ce0a2",
+    "mtime": 1795484022.4330328,
+    "seen": 1795484986.3684857,
+    "ast_hash": "166c9803993d8ed821c63fb3b1eec3df",
+    "semantic_hash": ""
+  },
+  "apps/web-v3/playwright.config.ts": {
+    "mtime": 1795484389.9444625,
+    "seen": 1795484986.3684497,
+    "ast_hash": "5bffa3808f556b5dc94f4a46b3f5b5f1",
+    "semantic_hash": ""
+  },
+  "apps/web-v3/tests/e2e/auth.smoke.spec.ts": {
+    "mtime": 1795483025.5088968,
+    "seen": 1795484986.3684516,
+    "ast_hash": "6ed64d62fbf744f307fa2064a3c356e2",
+    "semantic_hash": ""
+  },
+  "apps/web-v3/tests/e2e/helpers.ts": {
+    "mtime": 1795484394.6746364,
+    "seen": 1795484986.3684528,
+    "ast_hash": "9226ac3fa3c991c5b48860a99fda1936",
     "semantic_hash": ""
   }
 }
