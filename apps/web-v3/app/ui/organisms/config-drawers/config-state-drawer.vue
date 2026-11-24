@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import type { TaskState } from "~/domain/config/entities";
+import ColorSwatches from "~/ui/molecules/color-swatches.vue";
 import EditDrawer from "~/ui/organisms/edit-drawer.vue";
 
 /**
@@ -8,8 +9,8 @@ import EditDrawer from "~/ui/organisms/edit-drawer.vue";
  *
  * Position is a "Después de …" select over the existing columns → the
  * index where the new state lands in the board sequence. The catalogue
- * draws Color swatches; `task_state` has no color column, so the form
- * edits what persists (name + position).
+ * draws Color swatches; `task_state.tast_color` stores them (a data
+ * token), so the form edits name + position + color.
  */
 const props = defineProps<{
   open: boolean;
@@ -24,7 +25,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   close: [];
   // `position` is the index in the final sequence (0 = first column).
-  submit: [values: { name: string; position: number }];
+  submit: [values: { name: string; position: number; color: string | null }];
 }>();
 
 const { t } = useI18n();
@@ -32,6 +33,7 @@ const { t } = useI18n();
 const name = ref("");
 /** 0 = "Al principio"; i+1 = after the i-th existing state. */
 const position = ref(0);
+const color = ref<string | null>(null);
 
 /**
  * Fills the fields from the props.
@@ -43,6 +45,7 @@ const position = ref(0);
 function syncFields(): void {
   if (!props.open) return;
   name.value = props.initial?.name ?? "";
+  color.value = props.initial?.color ?? null;
   if (props.initial) {
     const ordered = props.states.filter((s) => s.id !== props.initial!.id);
     const index = ordered.findIndex((s) => s.order > props.initial!.order);
@@ -76,7 +79,11 @@ const positionOptions = computed(() => {
 function onSubmit() {
   const trimmed = name.value.trim();
   if (!trimmed) return;
-  emit("submit", { name: trimmed, position: position.value });
+  emit("submit", {
+    name: trimmed,
+    position: position.value,
+    color: color.value,
+  });
 }
 </script>
 
@@ -123,6 +130,8 @@ function onSubmit() {
           </option>
         </select>
       </div>
+
+      <ColorSwatches v-model="color" nullable />
     </div>
   </EditDrawer>
 </template>

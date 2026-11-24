@@ -12,6 +12,7 @@ function makeRow(overrides: Partial<TypeRow> = {}): TypeRow {
     userId: "u-1",
     name: "Desarrollo",
     modules: ["tasks"],
+    color: null,
     createdAt: new Date("2026-01-01T00:00:00Z"),
     ...overrides,
   };
@@ -44,6 +45,7 @@ function makeRepo(initial: TypeRow[]) {
         ...prev,
         ...(params.name === undefined ? {} : { name: params.name }),
         ...(params.modules === undefined ? {} : { modules: params.modules }),
+        ...(params.color === undefined ? {} : { color: params.color }),
       };
       rows[idx] = next;
       return next;

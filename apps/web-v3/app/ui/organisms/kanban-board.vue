@@ -2,6 +2,7 @@
 import { nextTick, reactive, ref, watch } from "vue";
 import DragList from "~/shared/vendor/dnd/DragList.vue";
 import { sortColumns, type Task, type TaskColumn } from "~/domain/task/entities";
+import { dataColorVar } from "~/domain/config/entities";
 import TaskCard from "~/ui/molecules/task-card.vue";
 import { PhPlus } from "~/shared/vendor/icons";
 
@@ -23,6 +24,8 @@ const props = defineProps<{
   board: Map<string | null, Task[]>;
   clientNameById: Map<string, string>;
   categoryNameById: Map<string, string>;
+  /** The data color of each category (the chip of the card). */
+  categoryColorById?: Map<string, string | null>;
 }>();
 
 const emit = defineEmits<{
@@ -119,6 +122,13 @@ function onEnd(event: DragEndEvent) {
       :data-testid="`kanban-column-${column.id}`"
     >
       <header class="flex items-center gap-2 px-1 py-2">
+        <span
+          v-if="column.color"
+          class="size-2.5 shrink-0 rounded-full"
+          :style="{ backgroundColor: dataColorVar(column.color) }"
+          data-testid="kanban-column-color"
+          aria-hidden="true"
+        />
         <p class="text-sm font-semibold text-text">{{ column.name }}</p>
         <span
           class="rounded-full bg-surface-2 px-2 py-0.5 text-xs text-text-2"
@@ -149,6 +159,7 @@ function onEnd(event: DragEndEvent) {
             :task="item"
             :client-name="item.clientId ? (clientNameById.get(item.clientId) ?? null) : null"
             :category-name="item.categoryId ? (categoryNameById.get(item.categoryId) ?? null) : null"
+            :category-color="item.categoryId ? (categoryColorById?.get(item.categoryId) ?? null) : null"
             @open="emit('open', $event)"
           />
         </template>

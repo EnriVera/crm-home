@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
 import { stateNameOf } from "~/domain/task/dashboard";
+import { dataColorFgVar, dataColorVar } from "~/domain/config/entities";
 import { formatRelativeTime, recentActivity } from "~/domain/dashboard/summary";
 import { PhCheckSquare, PhTimer } from "~/shared/vendor/icons";
 import { useDashboard } from "~/shared/composables/use-dashboard";
 import { useTimer } from "~/shared/composables/use-timer";
+import FinanceBars from "~/ui/organisms/finance-bars.vue";
 import TimerBar from "~/ui/molecules/timer-bar.vue";
 
 const { t, locale } = useI18n();
@@ -16,12 +18,14 @@ const {
   clients,
   types,
   categories,
+  categoryColorById,
   isEmpty,
   isLoading,
   error,
   load,
   incomeTotals,
   expenseTotals,
+  financeSeries,
   formatMoney,
 } = useDashboard();
 
@@ -208,6 +212,44 @@ async function onStop() {
       </article>
     </section>
 
+    <!-- Ingresos vs gastos (PRD-v2 §8.2, Fase 2). -->
+    <section
+      class="mt-6 rounded-[var(--radius)] border border-border bg-surface p-5"
+      aria-labelledby="dashboard-chart-title"
+      data-testid="dashboard-chart"
+    >
+      <div class="flex flex-wrap items-baseline justify-between gap-4">
+        <h2
+          id="dashboard-chart-title"
+          class="text-sm font-semibold uppercase tracking-wide text-text-2"
+        >
+          {{ t("dashboard.chart.title") }}
+        </h2>
+        <p class="text-xs text-text-2">{{ t("dashboard.chart.subtitle") }}</p>
+      </div>
+
+      <!-- One chart per money: two currencies are never added together. -->
+      <div
+        v-for="serie in financeSeries"
+        :key="serie.currencyId"
+        class="mt-4"
+        data-testid="dashboard-chart-series"
+      >
+        <p class="mb-1 text-sm font-medium text-text">
+          {{ serie.symbol }}
+        </p>
+        <FinanceBars :series="serie" />
+      </div>
+
+      <p
+        v-if="financeSeries.length === 0"
+        class="mt-4 text-sm text-text-2"
+        data-testid="dashboard-chart-empty"
+      >
+        {{ t("dashboard.chart.empty") }}
+      </p>
+    </section>
+
     <div class="mt-6 grid gap-4 lg:grid-cols-3">
       <!-- The tasks that come next (2/3 of the width). -->
       <section class="lg:col-span-2" aria-labelledby="dashboard-recent-title">
@@ -252,7 +294,24 @@ async function onStop() {
               </div>
               <span
                 v-if="task.categoryId"
-                class="shrink-0 rounded-full bg-primary-50 px-2 py-0.5 text-xs font-medium text-primary-700"
+                class="shrink-0 rounded-full px-2 py-0.5 text-xs font-medium"
+                :class="
+                  categoryColorById.get(task.categoryId)
+                    ? undefined
+                    : 'bg-primary-50 text-primary-700'
+                "
+                :style="
+                  categoryColorById.get(task.categoryId)
+                    ? {
+                        backgroundColor: dataColorVar(
+                          categoryColorById.get(task.categoryId) ?? null,
+                        ),
+                        color: dataColorFgVar(
+                          categoryColorById.get(task.categoryId) ?? null,
+                        ),
+                      }
+                    : undefined
+                "
               >
                 {{ categoryNameById.get(task.categoryId) }}
               </span>

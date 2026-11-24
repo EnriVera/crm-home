@@ -19,11 +19,52 @@ export const TYPE_MODULES = [
 
 export type TypeModule = (typeof TYPE_MODULES)[number];
 
+/**
+ * Los 8 colores de dato del design system (PRD-v4 §11.3).
+ *
+ * NO son hex: son tokens que el CSS resuelve a `var(--color-data-*)`.
+ * El contrato zod valida contra este mismo set cerrado, así que el
+ * frontend nunca inventa un color que la API no aceptaría.
+ */
+export const DATA_COLOR_TOKENS = [
+  "data-blue",
+  "data-green",
+  "data-pink",
+  "data-cyan",
+  "data-amber",
+  "data-purple",
+  "data-red",
+  "data-gray",
+] as const;
+
+export type DataColorToken = (typeof DATA_COLOR_TOKENS)[number];
+
+/** El token CSS de un color de dato ("data-blue" → "--color-data-blue"). */
+export function dataColorVar(token: string | null): string {
+  if (!token) return "var(--color-data-gray)";
+  return `var(--color-${token})`;
+}
+
+/**
+ * El color de texto de un chip con fondo sólido del color de dato.
+ *
+ * El blanco NO alcanza AA sobre 4 de los 8 tokens (blue 3.68, green 2.28,
+ * cyan 3.68, amber 3.19), así que cada token declara su propio
+ * foreground en `tokens.css` (`--color-data-*-fg`). El chip se dibuja con
+ * los dos: el fondo es el color de dato, el texto es su foreground.
+ */
+export function dataColorFgVar(token: string | null): string {
+  if (!token) return "var(--color-data-gray-fg)";
+  return `var(--color-${token}-fg)`;
+}
+
 /** A task type (PRD-v2 §8.7, tab `tipos`). */
 export interface TaskType {
   id: string;
   name: string;
   modules: TypeModule[];
+  /** Data color token; null = the type has no color. */
+  color: string | null;
   createdAt: Date;
 }
 
@@ -32,6 +73,8 @@ export interface TaskState {
   id: string;
   name: string;
   order: number;
+  /** Data color token; null = the column has no color. */
+  color: string | null;
 }
 
 /**
@@ -44,6 +87,8 @@ export interface Category {
   id: string;
   name: string;
   typeId: string;
+  /** Data color token; null = the category has no color. */
+  color: string | null;
   createdAt: Date;
 }
 

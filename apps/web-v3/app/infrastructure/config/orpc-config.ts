@@ -28,6 +28,7 @@ function toType(wire: TypeWire): TaskType {
     id: wire.type_id,
     name: wire.type_name,
     modules: wire.type_modules as TypeModule[],
+    color: wire.type_color ?? null,
     createdAt: new Date(wire.type_created_at),
   };
 }
@@ -37,6 +38,7 @@ function toState(wire: TaskStateConfigWire): TaskState {
     id: wire.tast_id,
     name: wire.tast_name,
     order: wire.tast_order,
+    color: wire.tast_color ?? null,
   };
 }
 
@@ -45,6 +47,7 @@ function toCategory(wire: CategoryWire): Category {
     id: wire.cate_id,
     name: wire.cate_name,
     typeId: wire.cate_type_id,
+    color: wire.cate_color ?? null,
     createdAt: new Date(wire.cate_created_at),
   };
 }
@@ -75,10 +78,12 @@ export async function listTypes(search = ""): Promise<TaskType[]> {
 export async function createType(input: {
   name: string;
   modules: TypeModule[];
+  color?: string | null;
 }): Promise<TaskType> {
   const wire = await callConfig("types.create", {
     type_name: input.name,
     type_modules: input.modules,
+    ...(input.color !== undefined ? { type_color: input.color } : {}),
   });
   return toType(wire);
 }
@@ -87,11 +92,13 @@ export async function updateType(input: {
   id: string;
   name?: string;
   modules?: TypeModule[];
+  color?: string | null;
 }): Promise<TaskType> {
   const wire = await callConfig("types.update", {
     type_id: input.id,
     ...(input.name !== undefined ? { type_name: input.name } : {}),
     ...(input.modules !== undefined ? { type_modules: input.modules } : {}),
+    ...(input.color !== undefined ? { type_color: input.color } : {}),
   });
   return toType(wire);
 }
@@ -110,10 +117,12 @@ export async function listTaskStates(): Promise<TaskState[]> {
 export async function createTaskState(input: {
   name: string;
   order: number;
+  color?: string | null;
 }): Promise<TaskState> {
   const wire = await callConfig("states.create", {
     tast_name: input.name,
     tast_order: input.order,
+    ...(input.color !== undefined ? { tast_color: input.color } : {}),
   });
   return toState(wire);
 }
@@ -122,11 +131,13 @@ export async function updateTaskState(input: {
   id: string;
   name?: string;
   order?: number;
+  color?: string | null;
 }): Promise<TaskState> {
   const wire = await callConfig("states.update", {
     tast_id: input.id,
     ...(input.name !== undefined ? { tast_name: input.name } : {}),
     ...(input.order !== undefined ? { tast_order: input.order } : {}),
+    ...(input.color !== undefined ? { tast_color: input.color } : {}),
   });
   return toState(wire);
 }
@@ -186,10 +197,12 @@ export async function listCategories(input?: {
 export async function createCategory(input: {
   name: string;
   typeId: string;
+  color?: string | null;
 }): Promise<Category> {
   const wire = await callConfig("categories.create", {
     cate_name: input.name,
     cate_type_id: input.typeId,
+    ...(input.color !== undefined ? { cate_color: input.color } : {}),
   });
   return toCategory(wire);
 }
@@ -198,11 +211,13 @@ export async function updateCategory(input: {
   id: string;
   name?: string;
   typeId?: string;
+  color?: string | null;
 }): Promise<Category> {
   const wire = await callConfig("categories.update", {
     cate_id: input.id,
     ...(input.name !== undefined ? { cate_name: input.name } : {}),
     ...(input.typeId !== undefined ? { cate_type_id: input.typeId } : {}),
+    ...(input.color !== undefined ? { cate_color: input.color } : {}),
   });
   return toCategory(wire);
 }

@@ -14,6 +14,8 @@ export interface GetSessionOutput {
     email: string;
     name: string;
     userTheme: string;
+    /** Estudio del usuario (perfil editable). `null` = sin definir. */
+    studio: string | null;
   };
   renewed?: boolean;
 }
@@ -65,6 +67,7 @@ export class GetSession {
         email: user.email,
         name: user.name,
         userTheme: user.theme,
+        studio: user.studio,
       },
       renewed,
     };

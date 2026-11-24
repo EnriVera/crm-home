@@ -32,6 +32,8 @@ export interface CategoryOption {
   id: string;
   name: string;
   typeId: string;
+  /** The data color token of the category (the chip of the card). */
+  color: string | null;
 }
 
 function toTask(wire: TaskWire): Task {
@@ -44,13 +46,19 @@ function toTask(wire: TaskWire): Task {
     categoryId: wire.task_cate_id,
     clientId: wire.task_clie_id,
     kanbanOrder: wire.task_kanban_order,
+    dueDate: wire.task_due_date ? new Date(wire.task_due_date) : null,
     createdAt: new Date(wire.task_created_at),
     updatedAt: new Date(wire.task_updated_at),
   };
 }
 
 function toColumn(wire: TaskStateWire): TaskColumn {
-  return { id: wire.tast_id, name: wire.tast_name, order: wire.tast_order };
+  return {
+    id: wire.tast_id,
+    name: wire.tast_name,
+    order: wire.tast_order,
+    color: wire.tast_color ?? null,
+  };
 }
 
 /** Every task of the user, optionally filtered server-side by title. */
@@ -78,6 +86,8 @@ export interface TaskInput {
   typeId: string;
   categoryId: string | null;
   clientId: string | null;
+  /** The deadline; null = the task has no deadline. */
+  dueDate?: Date | null;
 }
 
 export async function createTask(input: TaskInput): Promise<Task> {
@@ -88,6 +98,9 @@ export async function createTask(input: TaskInput): Promise<Task> {
     task_type_id: input.typeId,
     task_cate_id: input.categoryId,
     task_clie_id: input.clientId,
+    ...(input.dueDate !== undefined
+      ? { task_due_date: input.dueDate ? input.dueDate.toISOString() : null }
+      : {}),
   });
   return toTask(wire);
 }
@@ -103,6 +116,8 @@ export interface TaskUpdateInput {
   typeId?: string | null;
   categoryId?: string | null;
   clientId?: string | null;
+  /** The deadline; null clears it. */
+  dueDate?: Date | null;
 }
 
 export async function updateTask(input: TaskUpdateInput): Promise<Task> {
@@ -115,6 +130,9 @@ export async function updateTask(input: TaskUpdateInput): Promise<Task> {
     ...(input.typeId !== undefined ? { task_type_id: input.typeId } : {}),
     ...(input.categoryId !== undefined ? { task_cate_id: input.categoryId } : {}),
     ...(input.clientId !== undefined ? { task_clie_id: input.clientId } : {}),
+    ...(input.dueDate !== undefined
+      ? { task_due_date: input.dueDate ? input.dueDate.toISOString() : null }
+      : {}),
   });
   return toTask(wire);
 }
@@ -168,6 +186,7 @@ export async function listCategoriesForType(
     id: category.cate_id,
     name: category.cate_name,
     typeId: category.cate_type_id,
+    color: null,
   }));
 }
 
@@ -182,5 +201,6 @@ export async function listAllCategories(): Promise<CategoryOption[]> {
     id: category.cate_id,
     name: category.cate_name,
     typeId: category.cate_type_id,
+    color: category.cate_color ?? null,
   }));
 }

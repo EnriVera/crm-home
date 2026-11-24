@@ -4,6 +4,7 @@ import {
   createLogoutHandler,
   createRequestOtpHandler,
   createSessionHandler,
+  createUpdateProfileHandler,
   createUpdateThemeHandler,
   createVerifyOtpHandler,
   type AuthRouteDependencies,
@@ -183,6 +184,7 @@ export function createRpcHandler(
   const logoutH3 = asBridgeHandler(createLogoutHandler(deps));
   const sessionH3 = asBridgeHandler(createSessionHandler(deps));
   const updateThemeH3 = asBridgeHandler(createUpdateThemeHandler(deps));
+  const updateProfileH3 = asBridgeHandler(createUpdateProfileHandler(deps));
 
   const listTasksH3 = asBridgeHandler(createListTasksHandler(deps));
   const getTaskH3 = asBridgeHandler(createGetTaskHandler(deps));
@@ -332,6 +334,11 @@ export function createRpcHandler(
       method: "POST",
       path: "/auth/updateTheme",
       run: wrapPost(updateThemeH3, "/auth/updateTheme"),
+    },
+    {
+      method: "POST",
+      path: "/auth/updateProfile",
+      run: wrapPost(updateProfileH3, "/auth/updateProfile"),
     },
     // Tasks (procedimientos con input)
     {

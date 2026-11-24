@@ -43,15 +43,28 @@ const listTypesInputSchema = z.object({
   limit: z.number().int().min(1).max(100).default(50),
 });
 
+const DATA_COLORS = [
+  "data-blue",
+  "data-green",
+  "data-pink",
+  "data-cyan",
+  "data-amber",
+  "data-purple",
+  "data-red",
+  "data-gray",
+] as const;
+
 const createTypeInputSchema = z.object({
   type_name: z.string().min(1).max(100),
   type_modules: z.array(z.enum(TYPE_MODULES)).default([]),
+  type_color: z.enum(DATA_COLORS).nullable().optional(),
 });
 
 const updateTypeInputSchema = z.object({
   type_id: z.string().uuid(),
   type_name: z.string().min(1).max(100).optional(),
   type_modules: z.array(z.enum(TYPE_MODULES)).optional(),
+  type_color: z.enum(DATA_COLORS).nullable().optional(),
 });
 
 const removeTypeInputSchema = z.object({
@@ -63,12 +76,14 @@ function mapTypeRowToContract(row: {
   userId: string;
   name: string;
   modules: readonly string[];
+  color: string | null;
   createdAt: Date;
 }) {
   return {
     type_id: row.id,
     type_name: row.name,
     type_modules: [...row.modules],
+    type_color: row.color,
     type_created_at: row.createdAt,
   };
 }
@@ -101,6 +116,7 @@ export function createCreateTypeHandler(deps: TypesRouteDependencies) {
         userId,
         name: body.type_name,
         modules: body.type_modules,
+        color: body.type_color ?? null,
       });
       return Response.json(mapTypeRowToContract(row), { status: 201 });
     } catch (err) {
@@ -120,6 +136,7 @@ export function createUpdateTypeHandler(deps: TypesRouteDependencies) {
         typeId: body.type_id,
         name: body.type_name,
         modules: body.type_modules,
+        color: body.type_color,
       });
       return Response.json(mapTypeRowToContract(row));
     } catch (err) {

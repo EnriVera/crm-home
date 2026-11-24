@@ -118,6 +118,17 @@ class InMemoryUserRepository implements UserRepository {
       user.theme = theme;
     }
   }
+
+  async updateProfile(
+    id: string,
+    profile: { name: string; studio: string | null },
+  ): Promise<void> {
+    const user = this.users.find((u) => u.id === id);
+    if (user !== undefined) {
+      user.name = profile.name;
+      user.studio = profile.studio;
+    }
+  }
 }
 
 class FakeUserSeedService implements UserSeedService {
@@ -133,6 +144,7 @@ class FakeUserSeedService implements UserSeedService {
       theme: "system",
       emailVerified: true,
       acceptedTermsAt: new Date(),
+      studio: null,
       termsVersion: "1.0",
     };
     this.users.push(user);
@@ -364,6 +376,7 @@ describe("VerifyOtp", () => {
       theme: "system",
       emailVerified: true,
       acceptedTermsAt: now,
+      studio: null,
       termsVersion: "1.0",
     });
     const loginRepository = new InMemoryLoginRepository();

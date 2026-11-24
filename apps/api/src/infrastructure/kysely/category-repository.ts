@@ -1,6 +1,7 @@
 import { sql } from "kysely";
 import type { Database } from "./database";
 import { mapCategoryRow, type CategoryDbRow } from "./_mappers";
+import type { DataColor } from "../../domain/types";
 import type {
   CategoryRepository,
   CategoryRow,
@@ -57,6 +58,7 @@ export class KyselyCategoryRepository implements CategoryRepository {
     userId: string;
     name: string;
     typeId: string;
+    color?: DataColor | null;
   }): Promise<CategoryRow> {
     const row = await this.db
       .insertInto("categories")
@@ -65,6 +67,7 @@ export class KyselyCategoryRepository implements CategoryRepository {
         cate_user_id: params.userId,
         cate_name: params.name,
         cate_type_id: params.typeId,
+        cate_color: params.color ?? null,
       })
       .returningAll()
       .executeTakeFirstOrThrow();
@@ -76,10 +79,14 @@ export class KyselyCategoryRepository implements CategoryRepository {
     categoryId: string;
     name?: string;
     typeId?: string;
+    color?: DataColor | null;
   }): Promise<CategoryRow> {
     const values: Record<string, unknown> = {};
     if (params.name !== undefined) values.cate_name = params.name;
     if (params.typeId !== undefined) values.cate_type_id = params.typeId;
+    // `color` acepta `null` explícito (quitar el color) y el token.
+    // `undefined` = no tocar el campo.
+    if (params.color !== undefined) values.cate_color = params.color;
 
     // Un PATCH sin campos para cambiar es un no-op: se devuelve la fila
     // actual. Armar un `SET` vacío produce SQL inválido en Postgres

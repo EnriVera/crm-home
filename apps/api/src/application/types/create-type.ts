@@ -5,12 +5,15 @@ import {
   type TypeRepository,
   type TypeRow,
 } from "../../domain/ports/type-repository";
+import type { DataColor } from "../../domain/types";
 import { InvalidTypeInput } from "./errors";
 
 export interface CreateTypeInput {
   userId: string;
   name: string;
   modules: TypeModules;
+  /** Color de dato (token del design system). `null`/undefined = sin color. */
+  color?: DataColor | null;
 }
 
 export interface CreateTypeDependencies {
@@ -50,6 +53,7 @@ export class CreateType {
       userId: input.userId,
       name: trimmedName,
       modules: normalized,
+      color: input.color ?? null,
     });
   }
 }

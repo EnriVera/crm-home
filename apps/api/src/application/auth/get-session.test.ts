@@ -73,6 +73,17 @@ class InMemoryUserRepository implements UserRepository {
       user.theme = theme;
     }
   }
+
+  async updateProfile(
+    id: string,
+    profile: { name: string; studio: string | null },
+  ): Promise<void> {
+    const user = this.users.find((u) => u.id === id);
+    if (user !== undefined) {
+      user.name = profile.name;
+      user.studio = profile.studio;
+    }
+  }
 }
 
 function createUseCase(
@@ -160,6 +171,7 @@ describe("GetSession", () => {
       theme: "system",
       emailVerified: true,
       acceptedTermsAt: now,
+      studio: null,
       termsVersion: "1.0",
     });
     await sessionRepository.create({
@@ -181,6 +193,7 @@ describe("GetSession", () => {
         id: "user-1",
         email: "ana@example.com",
         name: "Ana",
+        studio: null,
         userTheme: "system",
       },
     });
@@ -197,6 +210,7 @@ describe("GetSession", () => {
       theme: "system",
       emailVerified: true,
       acceptedTermsAt: now,
+      studio: null,
       termsVersion: "1.0",
     });
     await sessionRepository.create({
@@ -230,6 +244,7 @@ describe("GetSession", () => {
       theme: "system",
       emailVerified: true,
       acceptedTermsAt: now,
+      studio: null,
       termsVersion: "1.0",
     });
     await sessionRepository.create({
@@ -271,6 +286,7 @@ describe("GetSession", () => {
       theme: "system",
       emailVerified: true,
       acceptedTermsAt: now,
+      studio: null,
       termsVersion: "1.0",
     });
     const originalExpiresAt = new Date(

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import type { Category, TaskType } from "~/domain/config/entities";
+import ColorSwatches from "~/ui/molecules/color-swatches.vue";
 import EditDrawer from "~/ui/organisms/edit-drawer.vue";
 
 /**
@@ -8,7 +9,8 @@ import EditDrawer from "~/ui/organisms/edit-drawer.vue";
  *
  * A category always belongs to a type (`cate_type_id NOT NULL`), so the
  * type select is required. The catalogue draws Color + Description; the
- * DB stores neither for categories, so the form edits what persists.
+ * DB stores the color (`cate_color`, a data token) but not the
+ * description, so the form edits what persists.
  */
 const props = defineProps<{
   open: boolean;
@@ -22,19 +24,21 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   close: [];
-  submit: [values: { name: string; typeId: string }];
+  submit: [values: { name: string; typeId: string; color: string | null }];
 }>();
 
 const { t } = useI18n();
 
 const name = ref("");
 const typeId = ref("");
+const color = ref<string | null>(null);
 
 watch(
   [() => props.open, () => props.initial],
   ([isOpen]) => {
     if (!isOpen) return;
     name.value = props.initial?.name ?? "";
+    color.value = props.initial?.color ?? null;
     typeId.value = props.initial?.typeId ?? props.types[0]?.id ?? "";
   },
   // `immediate` so a deep-link that mounts the drawer already open
@@ -57,7 +61,7 @@ watch(
 function onSubmit() {
   const trimmed = name.value.trim();
   if (!trimmed || !typeId.value) return;
-  emit("submit", { name: trimmed, typeId: typeId.value });
+  emit("submit", { name: trimmed, typeId: typeId.value, color: color.value });
 }
 </script>
 
@@ -108,6 +112,8 @@ function onSubmit() {
           {{ t("config.drawer.noTypes") }}
         </p>
       </div>
+
+      <ColorSwatches v-model="color" nullable />
     </div>
   </EditDrawer>
 </template>

@@ -42,6 +42,7 @@ export class KyselyTaskStateRepository implements TaskStateRepository {
         tast_user_id: state.userId,
         tast_name: state.name,
         tast_order: state.order,
+        tast_color: state.color,
         tast_created_at: state.createdAt,
       })
       .execute();
@@ -56,9 +57,13 @@ export class KyselyTaskStateRepository implements TaskStateRepository {
     const set: Partial<{
       tast_name: string;
       tast_order: number;
+      tast_color: string | null;
     }> = {};
     if (patch.name !== undefined) set.tast_name = patch.name;
     if (patch.order !== undefined) set.tast_order = patch.order;
+    // `color` acepta `null` explícito (quitar el color) y el token.
+    // `undefined` = no tocar el campo.
+    if (patch.color !== undefined) set.tast_color = patch.color;
     if (Object.keys(set).length === 0) return;
     await db
       .updateTable("task_state")

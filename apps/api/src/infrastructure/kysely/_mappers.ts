@@ -15,6 +15,7 @@ import type {
   AttachmentRow,
   CategoryRow,
   ClientRow,
+  DataColor,
   ExpenseRow,
   IncomeRow,
   ScheduleRow,
@@ -31,6 +32,8 @@ export interface TaskStateDbRow {
   tast_user_id: string;
   tast_name: string;
   tast_order: number;
+  /** Color de dato (token del design system). `null` = sin color. */
+  tast_color: string | null;
   tast_created_at: Date;
   tast_deleted_at: Date | null;
 }
@@ -41,6 +44,7 @@ export function mapTaskStateRow(row: TaskStateDbRow): TaskStateRow {
     userId: row.tast_user_id,
     name: row.tast_name,
     order: row.tast_order,
+    color: (row.tast_color as DataColor | null) ?? null,
     createdAt: row.tast_created_at,
     deletedAt: row.tast_deleted_at,
   };
@@ -58,6 +62,8 @@ export interface TaskDbRow {
   task_cate_id: string | null;
   task_tast_id: string;
   task_kanban_order: number;
+  /** Vencimiento (TIMESTAMPTZ). `null` = la task no vence. */
+  task_due_date: Date | null;
   task_created_at: Date;
   task_updated_at: Date;
   task_deleted_at: Date | null;
@@ -74,6 +80,7 @@ export function mapTaskRow(row: TaskDbRow): TaskRow {
     categoryId: row.task_cate_id,
     stateId: row.task_tast_id,
     kanbanOrder: row.task_kanban_order,
+    dueDate: row.task_due_date ?? null,
     createdAt: row.task_created_at,
     updatedAt: row.task_updated_at,
     deletedAt: row.task_deleted_at,
@@ -259,6 +266,8 @@ export interface CategoryDbRow {
   cate_user_id: string;
   cate_name: string;
   cate_type_id: string;
+  /** Color de dato (token del design system). `null` = sin color. */
+  cate_color: string | null;
   cate_created_at: Date;
   cate_deleted_at: Date | null;
 }
@@ -269,6 +278,7 @@ export function mapCategoryRow(row: CategoryDbRow): CategoryRow {
     userId: row.cate_user_id,
     name: row.cate_name,
     typeId: row.cate_type_id,
+    color: (row.cate_color as DataColor | null) ?? null,
     createdAt: row.cate_created_at,
     deletedAt: row.cate_deleted_at,
   };

@@ -9,8 +9,8 @@
  * - Tasks reference client/type/category by ID only — no names. The
  *   screens that show names (kanban cards, drawer selects) resolve them
  *   through lookup maps the caller loads separately.
- * - There is no due date and no color on the wire; the catalogue shows
- *   both, so neither renders until the API exposes them.
+ * - The due date is a `timestamptz`: it arrives as a Date and it can
+ *   carry a time, not only a day.
  */
 
 /** A task (PRD-v2 §8.3). */
@@ -23,6 +23,8 @@ export interface Task {
   categoryId: string | null;
   clientId: string | null;
   kanbanOrder: number;
+  /** The due date; null = the task has no deadline. */
+  dueDate: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -32,6 +34,8 @@ export interface TaskColumn {
   id: string;
   name: string;
   order: number;
+  /** Data color token of the column (PRD-v4 §8.4); null = none. */
+  color: string | null;
 }
 
 /**
@@ -72,6 +76,66 @@ export function filterTasks(tasks: Task[], search: string): Task[] {
   const needle = search.trim().toLowerCase();
   if (!needle) return tasks;
   return tasks.filter((task) => task.title.toLowerCase().includes(needle));
+}
+
+/**
+ * The due-date buckets of a task (PRD-v4 §8.3: la card muestra "vence
+ * <fecha>").
+ *
+ * `overdue` = the deadline already passed; `today` = it is due today;
+ * `upcoming` = it falls in the future; `none` = the task has no deadline
+ * (and those show nothing, per PRD-v4 §17).
+ *
+ * The comparison is by DAY, not by instant: a task that is due at 23:00
+ * today is still "today" at 22:00.
+ */
+export type DueBucket = "overdue" | "today" | "upcoming" | "none";
+
+/** How many days ahead count as "this week" in the toolbar filter. */
+export const UPCOMING_DAYS = 7;
+
+/** The day of a date, without the time (the local calendar day). */
+function dayKey(date: Date): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
+/** The bucket of a due date. */
+export function dueBucket(dueDate: Date | null, now: Date = new Date()): DueBucket {
+  if (!dueDate) return "none";
+  const today = dayKey(now);
+  const due = dayKey(dueDate);
+  if (due < today) return "overdue";
+  if (due === today) return "today";
+  return "upcoming";
+}
+
+/**
+ * Whether the deadline falls inside the next `days` days (the "esta
+ * semana" filter of the toolbar).
+ */
+export function isDueWithinDays(
+  dueDate: Date | null,
+  days: number = UPCOMING_DAYS,
+  now: Date = new Date(),
+): boolean {
+  if (!dueDate) return false;
+  const today = dayKey(now);
+  const due = dayKey(dueDate);
+  if (due < today) return false;
+  const horizon = new Date(now.getFullYear(), now.getMonth(), now.getDate() + days);
+  return due <= dayKey(horizon);
+}
+
+/** The tasks whose deadline falls in a bucket. */
+export function tasksByDueBucket(
+  tasks: Task[],
+  bucket: DueBucket,
+  now: Date = new Date(),
+): Task[] {
+  if (bucket === "none") {
+    return tasks.filter((task) => task.dueDate === null);
+  }
+  return tasks.filter((task) => dueBucket(task.dueDate, now) === bucket);
 }
 
 /**

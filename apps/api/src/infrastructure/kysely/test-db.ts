@@ -38,6 +38,25 @@ const FORBIDDEN_DATABASE_NAMES = new Set(["crm_home"]);
 /** Tablas cuyo existence prueba que el esquema está aplicado. */
 const REQUIRED_SCHEMA_TABLES = ["user", "task_state", "task", "kysely_migration"];
 
+/**
+ * Columnas cuyo existence prueba que el esquema está aplicado.
+ *
+ * Hace falta además de las tablas: un test de migración hace `down`/`up`
+ * sobre la tabla que crea (ej. `002_tasks` dropea y recrea `task`), y la
+ * versión recreada NO tiene las columnas que agregaron las migraciones
+ * posteriores (ej. `task_due_date` de la 010). El ledger de kysely dice
+ * "aplicado" — la fila existe — así que `migrateToLatest()` no las vuelve a
+ * agregar y el fallo aparece después como un confuso
+ * "column task_due_date does not exist".
+ */
+const REQUIRED_SCHEMA_COLUMNS: Record<string, string[]> = {
+  user: ["user_studio"],
+  task: ["task_due_date"],
+  task_state: ["tast_color"],
+  types: ["type_color"],
+  categories: ["cate_color"],
+};
+
 const SAFE_DATABASE_NAME = /^[A-Za-z0-9_]+$/;
 
 /** Nombre de la base extraído de una URL de postgres. */
@@ -198,16 +217,24 @@ export async function ensureTestSchema(url: string): Promise<void> {
  */
 async function assertSchemaPresent(db: Kysely<any>): Promise<void> {
   const missing = await listMissingTables(db);
-  if (missing.length === 0) return;
+  const missingColumns = await listMissingColumns(db);
+  if (missing.length === 0 && missingColumns.length === 0) return;
 
   console.log(
-    `[test-db] esquema incompleto (faltan: ${missing.join(", ")}): se re-aplican las migraciones`,
+    `[test-db] esquema incompleto (faltan: ${missing.join(", ")}${
+      missingColumns.length > 0 ? `, columnas: ${missingColumns.join(", ")}` : ""
+    }): se re-aplican las migraciones`,
   );
   await repairSchema(db);
   const stillMissing = await listMissingTables(db);
-  if (stillMissing.length > 0) {
+  const stillMissingColumns = await listMissingColumns(db);
+  if (stillMissing.length > 0 || stillMissingColumns.length > 0) {
     throw new Error(
-      `[test-db] el esquema de la base de test está incompleto (faltan: ${stillMissing.join(", ")}).\n` +
+      `[test-db] el esquema de la base de test está incompleto (faltan: ${stillMissing.join(", ")}${
+        stillMissingColumns.length > 0
+          ? `, columnas: ${stillMissingColumns.join(", ")}`
+          : ""
+      }).\n` +
         `         Recreá la base de test y aplicá las migraciones:\n` +
         `           DROP DATABASE crm_home_test; CREATE DATABASE crm_home_test;\n` +
         `           DATABASE_URL=postgres://crm:crm@localhost:5432/crm_home_test bun run db:migrate`,
@@ -221,6 +248,33 @@ async function listMissingTables(db: Kysely<any>): Promise<string[]> {
   `.execute(db);
   const present = new Set(result.rows.map((row) => row.table_name));
   return REQUIRED_SCHEMA_TABLES.filter((table) => !present.has(table));
+}
+
+/**
+ * Las columnas requeridas que no existen en la base de test.
+ *
+ * Se consulta `information_schema.columns` en vez de adivinar: una tabla
+ * que no existe no aporta columnas, y su error se reporta como tabla
+ * faltante (no como columna faltante).
+ */
+async function listMissingColumns(db: Kysely<any>): Promise<string[]> {
+  const result = await sql<{ table_name: string; column_name: string }>`
+    SELECT table_name, column_name
+      FROM information_schema.columns
+     WHERE table_schema = 'public'
+  `.execute(db);
+  const present = new Set(
+    result.rows.map((row) => `${row.table_name}.${row.column_name}`),
+  );
+  const missing: string[] = [];
+  for (const [table, columns] of Object.entries(REQUIRED_SCHEMA_COLUMNS)) {
+    for (const column of columns) {
+      if (!present.has(`${table}.${column}`)) {
+        missing.push(`${table}.${column}`);
+      }
+    }
+  }
+  return missing;
 }
 
 /**

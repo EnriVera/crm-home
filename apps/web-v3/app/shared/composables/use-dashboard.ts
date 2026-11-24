@@ -7,10 +7,15 @@ import {
   type TaskSummary,
 } from "~/domain/task/dashboard";
 import {
-  monthWindow,
   totalsByCurrency,
+  totalsForMonth,
   type CurrencyTotal,
 } from "~/domain/dashboard/summary";
+import {
+  buildFinanceSeries,
+  chartWindow,
+  type FinanceSeries,
+} from "~/domain/dashboard/finance-chart";
 import type { Currency } from "~/domain/config/entities";
 import { formatMoney, type MoneyRecord } from "~/domain/finance/entities";
 import { listTaskStates, listTasks } from "~/infrastructure/tasks/orpc-tasks";
@@ -47,7 +52,7 @@ export function useDashboard() {
   const expenses = ref<MoneyRecord[]>([]);
   const currencies = ref<Currency[]>([]);
   const types = ref<{ id: string; name: string }[]>([]);
-  const categories = ref<{ id: string; name: string }[]>([]);
+  const categories = ref<{ id: string; name: string; color: string | null }[]>([]);
   const isLoading = ref(false);
   const error = ref<string | null>(null);
 
@@ -59,6 +64,19 @@ export function useDashboard() {
   const recentTasks = computed<TaskSummary[]>(() => snapshot.value.recentTasks);
   const totalTasks = computed(() => snapshot.value.totalTasks);
 
+  /**
+   * El color de dato de cada categoría (PRD-v4 §8.3: el chip de categoría
+   * lleva su color). El dashboard carga las categorías, así que el chip
+   * no necesita un pedido extra.
+   */
+  const categoryColorById = computed(() => {
+    const map = new Map<string, string | null>();
+    for (const category of categories.value) {
+      map.set(category.id, category.color);
+    }
+    return map;
+  });
+
   /** A user with no tasks and no movements has nothing to show. */
   const isEmpty = computed(() => totalTasks.value === 0);
 
@@ -68,19 +86,40 @@ export function useDashboard() {
    * Two currencies are never added together: each one keeps its own
    * symbol, and a user with no movements has no figure at all (there is
    * no total to show, and no currency to label it with).
+   *
+   * The movements loaded cover several months (the chart needs them), so
+   * the totals filter by the month the movement belongs to: the cards
+   * show the CURRENT month, not the whole period.
    */
+  const currentMonthKey = computed(() => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+  });
   const incomeTotals = computed<CurrencyTotal[]>(() =>
-    totalsByCurrency(incomes.value, currencies.value),
+    totalsForMonth(incomes.value, currentMonthKey.value, currencies.value),
   );
   const expenseTotals = computed<CurrencyTotal[]>(() =>
-    totalsByCurrency(expenses.value, currencies.value),
+    totalsForMonth(expenses.value, currentMonthKey.value, currencies.value),
+  );
+
+  /**
+   * The series of the "ingresos vs gastos" chart (PRD-v2 §8.2, Fase 2).
+   *
+   * One series per currency: two currencies are never added together, so
+   * the chart has one axis per money and the screen picks which one it
+   * shows.
+   */
+  const financeSeries = computed<FinanceSeries[]>(() =>
+    buildFinanceSeries(incomes.value, expenses.value, currencies.value),
   );
 
   async function load() {
     isLoading.value = true;
     error.value = null;
     try {
-      const window = monthWindow();
+      // The chart needs the last months; the money cards filter the
+      // current one out of the same movements.
+      const window = chartWindow();
       const [
         loadedTasks,
         loadedStates,
@@ -123,12 +162,14 @@ export function useDashboard() {
     clients,
     types,
     categories,
+    categoryColorById,
     tallies,
     recentTasks,
     totalTasks,
     isEmpty,
     incomeTotals,
     expenseTotals,
+    financeSeries,
     isLoading,
     error,
     load,

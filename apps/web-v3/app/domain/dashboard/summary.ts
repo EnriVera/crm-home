@@ -40,6 +40,24 @@ export function monthWindow(now: Date = new Date()): DateWindow {
 }
 
 /**
+ * The totals of ONE month, one figure per currency.
+ *
+ * The dashboard loads several months (the chart needs them) but the money
+ * cards show the CURRENT month: the same movements filtered by the month
+ * they belong to.
+ */
+export function totalsForMonth(
+  movements: MoneyRecord[],
+  monthKey: string,
+  currencies: Currency[],
+): CurrencyTotal[] {
+  return totalsByCurrency(
+    movements.filter((movement) => movement.date.startsWith(monthKey)),
+    currencies,
+  );
+}
+
+/**
  * The totals of a list of movements, one figure per currency.
  *
  * Two currencies are never added together: 950 pesos and 2500 euros are

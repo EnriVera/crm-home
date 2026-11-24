@@ -39,6 +39,7 @@ const { configState, loadMock, setMock, themeMock, logoutMock, actionMocks } =
         editCategory: vi.fn(),
         deleteCategory: vi.fn(),
         addCurrency: vi.fn(),
+        saveProfile: vi.fn(),
       },
     };
   });
@@ -85,6 +86,8 @@ vi.mock("~/shared/composables/use-route-search", () => ({
 vi.mock("~/stores/auth", () => ({
   useAuthStore: () => ({
     session: { name: "Martin Gómez", email: "martin@estudio.ar" },
+    profile: { name: "Martin Gómez", studio: null },
+    setProfile: vi.fn(),
   }),
 }));
 
@@ -113,6 +116,15 @@ const MESSAGES: Record<string, string> = {
   "config.profile.subtitle": "Estos datos vienen de tu cuenta",
   "config.profile.name": "Nombre completo",
   "config.profile.email": "Email",
+  "config.profile.emailReadOnly": "No se puede cambiar: es tu identidad.",
+  "config.profile.studio": "Estudio",
+  "config.profile.studioPlaceholder": "Tu estudio o marca",
+  "config.profile.studioHint": "Opcional.",
+  "config.profile.save": "Guardar cambios",
+  "config.profile.saving": "Guardando…",
+  "config.profile.saved": "Listo, tus datos quedaron guardados.",
+  "config.profile.nameRequired": "El nombre no puede estar vacío.",
+  "config.profile.saveError": "No pudimos guardar tus datos. Probá de nuevo.",
   "config.appearance.title": "Apariencia",
   "config.appearance.subtitle": "Elegí cómo ver la interfaz",
   "config.theme.light": "Claro",
@@ -227,7 +239,11 @@ describe("config view", () => {
     render(ConfigView);
 
     const perfil = screen.getByTestId("config-perfil");
-    expect(perfil.textContent).toContain("Martin Gómez");
+    // The name is EDITABLE (PRD-v4 §8.8): it lives in the input, not in
+    // the text of the card.
+    expect(
+      (screen.getByTestId("config-profile-name") as HTMLInputElement).value,
+    ).toBe("Martin Gómez");
     expect(perfil.textContent).toContain("martin@estudio.ar");
     expect(screen.getByTestId("config-logout")).toBeDefined();
   });
@@ -309,6 +325,7 @@ describe("config view", () => {
       expect(actionMocks.addType).toHaveBeenCalledWith({
         name: "Consultoría",
         modules: ["tasks"],
+        color: null,
       }),
     );
     // closeDrawer clears the URL params.

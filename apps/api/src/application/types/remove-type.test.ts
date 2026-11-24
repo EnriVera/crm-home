@@ -13,6 +13,7 @@ function makeRepo() {
       userId: "u-1",
       name: "Desarrollo",
       modules: ["tasks"],
+      color: null,
       createdAt: new Date(),
     },
   ];

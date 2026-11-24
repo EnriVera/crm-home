@@ -6,12 +6,15 @@ import {
   type TypeRepository,
   type TypeRow,
 } from "../../domain/ports/type-repository";
+import type { DataColor } from "../../domain/types";
 
 interface TypeDbRow {
   type_id: string;
   type_user_id: string;
   type_name: string;
   type_modules: string[];
+  /** Color de dato (token del design system). `null` = sin color. */
+  type_color: string | null;
   type_created_at: Date;
 }
 
@@ -21,6 +24,7 @@ function mapTypeRow(row: TypeDbRow): TypeRow {
     userId: row.type_user_id,
     name: row.type_name,
     modules: row.type_modules as TypeModules,
+    color: (row.type_color as DataColor | null) ?? null,
     createdAt: row.type_created_at,
   };
 }
@@ -73,6 +77,7 @@ export class KyselyTypeRepository implements TypeRepository {
         "type_user_id",
         "type_name",
         "type_modules",
+        "type_color",
         "type_created_at",
       ])
       .where("type_user_id", "=", params.userId)
@@ -121,6 +126,7 @@ export class KyselyTypeRepository implements TypeRepository {
         "type_user_id",
         "type_name",
         "type_modules",
+        "type_color",
         "type_created_at",
       ])
       .where("type_user_id", "=", params.userId)
@@ -134,6 +140,7 @@ export class KyselyTypeRepository implements TypeRepository {
     userId: string;
     name: string;
     modules: TypeModules;
+    color?: DataColor | null;
   }): Promise<TypeRow> {
     const row = await this.db
       .insertInto("types")
@@ -144,12 +151,14 @@ export class KyselyTypeRepository implements TypeRepository {
         type_modules: sql<string[]>`ARRAY[${sql.join(
           litModules(params.modules).map((m) => sql.lit(m)),
         )}]::TEXT[]`,
+        type_color: params.color ?? null,
       })
       .returning([
         "type_id",
         "type_user_id",
         "type_name",
         "type_modules",
+        "type_color",
         "type_created_at",
       ])
       .executeTakeFirstOrThrow();
@@ -161,10 +170,12 @@ export class KyselyTypeRepository implements TypeRepository {
     typeId: string;
     name?: string;
     modules?: TypeModules;
+    color?: DataColor | null;
   }): Promise<TypeRow> {
     const setValues: Partial<{
       type_name: string;
       type_modules: string[];
+      type_color: string | null;
     }> = {};
     if (params.name !== undefined) setValues.type_name = params.name;
     if (params.modules !== undefined) {
@@ -172,6 +183,9 @@ export class KyselyTypeRepository implements TypeRepository {
       // array entero, así que también necesita la allowlist.
       setValues.type_modules = litModules(params.modules);
     }
+    // `color` acepta `null` explícito (quitar el color) y el token.
+    // `undefined` = no tocar el campo.
+    if (params.color !== undefined) setValues.type_color = params.color;
 
     // Un PATCH sin campos para cambiar es un no-op: se devuelve la fila
     // actual. Armar un `SET` vacío produce SQL inválido en Postgres
@@ -184,6 +198,7 @@ export class KyselyTypeRepository implements TypeRepository {
           "type_user_id",
           "type_name",
           "type_modules",
+          "type_color",
           "type_created_at",
         ])
         .where("type_user_id", "=", params.userId)
@@ -204,6 +219,7 @@ export class KyselyTypeRepository implements TypeRepository {
         "type_user_id",
         "type_name",
         "type_modules",
+        "type_color",
         "type_created_at",
       ])
       .executeTakeFirstOrThrow();
@@ -225,6 +241,7 @@ export class KyselyTypeRepository implements TypeRepository {
         "type_user_id",
         "type_name",
         "type_modules",
+        "type_color",
         "type_created_at",
       ])
       .executeTakeFirstOrThrow();

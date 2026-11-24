@@ -3,12 +3,15 @@ import type {
   CategoryRow,
 } from "../../domain/ports/category-repository";
 import type { TypeRepository } from "../../domain/ports/type-repository";
+import type { DataColor } from "../../domain/types";
 import { InvalidCategoryInput } from "./errors";
 
 export interface CreateCategoryInput {
   userId: string;
   name: string;
   typeId: string;
+  /** Color de dato (token del design system). `null`/undefined = sin color. */
+  color?: DataColor | null;
 }
 
 export interface CreateCategoryDependencies {
@@ -48,6 +51,7 @@ export class CreateCategory {
       userId: input.userId,
       name: trimmedName,
       typeId: input.typeId,
+      color: input.color ?? null,
     });
   }
 }

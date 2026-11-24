@@ -2,16 +2,19 @@ import { readValidatedBody } from "h3";
 import type { H3Event } from "h3";
 import {
   requestOtpInputSchema,
+  updateProfileInputSchema,
   updateThemeInputSchema,
   verifyOtpInputSchema,
 } from "@crm/contract/auth";
 import type { GetSession } from "../../application/auth/get-session";
 import type { Logout } from "../../application/auth/logout";
 import type { RequestOtp } from "../../application/auth/request-otp";
+import type { UpdateProfile } from "../../application/auth/update-profile";
 import type { UpdateTheme } from "../../application/auth/update-theme";
 import type { VerifyOtp } from "../../application/auth/verify-otp";
 import { RateLimitedError } from "../../application/auth/errors";
 import { InvalidThemeError } from "../../application/auth/update-theme";
+import { InvalidProfileError } from "../../application/auth/update-profile";
 import {
   deleteSessionCookie,
   getSessionToken,
@@ -32,6 +35,7 @@ export interface AuthRouteDependencies {
   logout: Logout;
   getSession: GetSession;
   updateTheme: UpdateTheme;
+  updateProfile: UpdateProfile;
 }
 
 export function createRequestOtpHandler(deps: AuthRouteDependencies) {
@@ -115,6 +119,40 @@ export function createUpdateThemeHandler(deps: AuthRouteDependencies) {
       return { user: result.user };
     } catch (err) {
       if (err instanceof InvalidThemeError) {
+        return new Response(
+          JSON.stringify({ code: err.code, message: err.message }),
+          { status: 400, headers: { "Content-Type": "application/json" } },
+        );
+      }
+      throw err;
+    }
+  };
+}
+
+/**
+ * Edita el perfil editable (nombre y estudio). El `email` NO se edita:
+ * la identidad del usuario es el email.
+ */
+export function createUpdateProfileHandler(deps: AuthRouteDependencies) {
+  return async (event: H3Event) => {
+    const token = getSessionToken(event);
+    if (!token) {
+      return new Response(null, { status: 401 });
+    }
+
+    const body = await readValidatedBody(event, updateProfileInputSchema.parse);
+    try {
+      const result = await deps.updateProfile.execute({
+        token,
+        name: body.name,
+        studio: body.studio,
+      });
+      if (!result) {
+        return new Response(null, { status: 401 });
+      }
+      return result;
+    } catch (err) {
+      if (err instanceof InvalidProfileError) {
         return new Response(
           JSON.stringify({ code: err.code, message: err.message }),
           { status: 400, headers: { "Content-Type": "application/json" } },

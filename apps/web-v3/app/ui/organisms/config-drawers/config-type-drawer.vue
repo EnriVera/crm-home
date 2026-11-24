@@ -2,14 +2,15 @@
 import { ref, watch } from "vue";
 import type { TaskType, TypeModule } from "~/domain/config/entities";
 import { TYPE_MODULES } from "~/domain/config/entities";
+import ColorSwatches from "~/ui/molecules/color-swatches.vue";
 import EditDrawer from "~/ui/organisms/edit-drawer.vue";
 
 /**
  * "Nuevo tipo" / "Editar tipo" (PRD-v4 §9.2 lateral-derecho-tipo).
  *
  * The catalogue draws Color swatches and a Description field; the API
- * stores neither for types (`type_name` + `type_modules` only), so the
- * form edits exactly what persists. The modules chips double as the
+ * stores the color (`type_color`, a data token) but not the description,
+ * so the form edits exactly what persists. The modules chips double as the
  * type's scope: empty = applies to every module.
  */
 const props = defineProps<{
@@ -22,19 +23,21 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   close: [];
-  submit: [values: { name: string; modules: TypeModule[] }];
+  submit: [values: { name: string; modules: TypeModule[]; color: string | null }];
 }>();
 
 const { t } = useI18n();
 
 const name = ref("");
 const modules = ref<TypeModule[]>([]);
+const color = ref<string | null>(null);
 
 watch(
   [() => props.open, () => props.initial],
   ([isOpen]) => {
     if (!isOpen) return;
     name.value = props.initial?.name ?? "";
+    color.value = props.initial?.color ?? null;
     // Edit keeps the stored modules; create defaults to the tasks module.
     modules.value = props.initial
       ? [...props.initial.modules]
@@ -56,7 +59,7 @@ function toggleModule(module: TypeModule) {
 function onSubmit() {
   const trimmed = name.value.trim();
   if (!trimmed) return;
-  emit("submit", { name: trimmed, modules: modules.value });
+  emit("submit", { name: trimmed, modules: modules.value, color: color.value });
 }
 </script>
 
@@ -110,6 +113,8 @@ function onSubmit() {
           {{ t("config.drawer.modulesEmpty") }}
         </p>
       </fieldset>
+
+      <ColorSwatches v-model="color" nullable />
     </div>
   </EditDrawer>
 </template>

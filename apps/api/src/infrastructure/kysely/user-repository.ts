@@ -1,6 +1,22 @@
-import type { User, UserRepository } from "../../domain/ports/user-repository";
+import type {
+  User,
+  UserProfilePatch,
+  UserRepository,
+} from "../../domain/ports/user-repository";
 import type { Transaction } from "../../domain/ports/transaction";
 import type { Database } from "./database";
+
+/** Columnas del perfil que se leen siempre (id, email, nombre, estudio). */
+const PROFILE_COLUMNS = [
+  "user_id",
+  "user_email",
+  "user_name",
+  "user_theme",
+  "user_studio",
+  "user_sino_emailverificado",
+  "user_accepted_terms_at",
+  "user_terms_version",
+] as const;
 
 export class KyselyUserRepository implements UserRepository {
   constructor(private readonly db: Database) {}
@@ -9,15 +25,7 @@ export class KyselyUserRepository implements UserRepository {
     const db = this.resolve(trx);
     const row = await db
       .selectFrom("user")
-      .select([
-        "user_id",
-        "user_email",
-        "user_name",
-        "user_theme",
-        "user_sino_emailverificado",
-        "user_accepted_terms_at",
-        "user_terms_version",
-      ])
+      .select([...PROFILE_COLUMNS])
       .where("user_id", "=", id)
       .where("user_deleted_at", "is", null)
       .executeTakeFirst();
@@ -32,15 +40,7 @@ export class KyselyUserRepository implements UserRepository {
     const db = this.resolve(trx);
     const row = await db
       .selectFrom("user")
-      .select([
-        "user_id",
-        "user_email",
-        "user_name",
-        "user_theme",
-        "user_sino_emailverificado",
-        "user_accepted_terms_at",
-        "user_terms_version",
-      ])
+      .select([...PROFILE_COLUMNS])
       .where("user_email", "=", email)
       .where("user_deleted_at", "is", null)
       .executeTakeFirst();
@@ -57,6 +57,7 @@ export class KyselyUserRepository implements UserRepository {
         user_email: user.email,
         user_name: user.name,
         user_theme: user.theme,
+        user_studio: user.studio,
         user_sino_emailverificado: user.emailVerified ? 1 : 0,
         user_accepted_terms_at: user.acceptedTermsAt,
         user_terms_version: user.termsVersion,
@@ -92,6 +93,28 @@ export class KyselyUserRepository implements UserRepository {
       .execute();
   }
 
+  /**
+   * Actualiza los campos editables del perfil (nombre y estudio).
+   * `user_email` NO se toca: es la identidad del usuario y hay una
+   * constraint UNIQUE sobre él.
+   */
+  async updateProfile(
+    id: string,
+    profile: UserProfilePatch,
+    trx?: Transaction,
+  ): Promise<void> {
+    const db = this.resolve(trx);
+    await db
+      .updateTable("user")
+      .set({
+        user_name: profile.name,
+        user_studio: profile.studio,
+        user_updated_at: new Date(),
+      })
+      .where("user_id", "=", id)
+      .execute();
+  }
+
   private resolve(trx?: Transaction): Database {
     // SAFETY: Transaction is an opaque domain token; only Kysely transaction
     // objects are ever passed from the transaction manager.
@@ -103,6 +126,7 @@ export class KyselyUserRepository implements UserRepository {
     user_email: string;
     user_name: string;
     user_theme: string;
+    user_studio: string | null;
     user_sino_emailverificado: number;
     user_accepted_terms_at: Date | null;
     user_terms_version: string | null;
@@ -112,6 +136,7 @@ export class KyselyUserRepository implements UserRepository {
       email: row.user_email,
       name: row.user_name,
       theme: row.user_theme,
+      studio: row.user_studio ?? null,
       emailVerified: row.user_sino_emailverificado === 1,
       acceptedTermsAt: row.user_accepted_terms_at ?? new Date(0),
       termsVersion: row.user_terms_version ?? "",

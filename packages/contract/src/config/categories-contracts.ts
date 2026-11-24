@@ -15,10 +15,27 @@ import { oc } from "@orpc/contract";
 import { z } from "zod";
 import { uuidSchema } from "../shared/identifiers/index.js";
 
+/**
+ * Color de dato — token del design system (PRD-v4 §11.3), NO un hex.
+ * El frontend lo resuelve a `var(--color-data-*)`.
+ */
+export const categoryDataColorSchema = z.enum([
+  "data-blue",
+  "data-green",
+  "data-pink",
+  "data-cyan",
+  "data-amber",
+  "data-purple",
+  "data-red",
+  "data-gray",
+]);
+export type CategoryDataColor = z.infer<typeof categoryDataColorSchema>;
+
 export const categorySchema = z.object({
   cate_id: uuidSchema,
   cate_name: z.string().min(1).max(255),
   cate_type_id: uuidSchema,
+  cate_color: z.union([z.string(), z.null()]),
   cate_created_at: z.coerce.date(),
 });
 
@@ -44,12 +61,14 @@ export const listCategoriesInputSchema = z.object({
 export const createCategoryInputSchema = z.object({
   cate_name: categoryNameSchema,
   cate_type_id: uuidSchema,
+  cate_color: categoryDataColorSchema.nullable().optional(),
 });
 
 export const updateCategoryInputSchema = z.object({
   cate_id: uuidSchema,
   cate_name: categoryNameSchema.optional(),
   cate_type_id: uuidSchema.optional(),
+  cate_color: categoryDataColorSchema.nullable().optional(),
 });
 
 export const removeCategoryInputSchema = z.object({ cate_id: uuidSchema });

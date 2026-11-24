@@ -1,0 +1,215 @@
+name: CI
+
+# PRD-v4 §18: el repo no tenía CI. Este workflow corre la línea de base del
+# proyecto: typecheck + lint + tests de los paquetes vivos, y un job de
+# integración contra Postgres.
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+# Cancela la corrida anterior del mismo ref: no hace falta esperar la cola.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  BUN_VERSION: "1.4.0"
+
+jobs:
+  # ─── Linting + typecheck + tests unitarios (sin base de datos) ───────────
+  #
+  # `apps/web` (@crm/web) queda EXCLUIDO a propósito: es la app legacy
+  # congelada (la vigente es `apps/web-v3`) y su build ya no pasa. Incluirla
+  # haría que TODO el CI esté rojo por código que nadie va a tocar.
+  # El filtro de turbo es explícito por paquete para que quede claro qué
+  # se verifica.
+  verify:
+    name: verify (typecheck + lint + test)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Cache de bun
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          restore-keys: ${{ runner.os }}-bun-
+
+      - name: Install dependencias
+        run: bun install --frozen-lockfile
+
+      - name: Typecheck
+        run: |
+          bun run typecheck --filter=@crm/contract --filter=@crm/api --filter=@crm/email --filter=@crm/web-v3
+
+      - name: Lint
+        run: |
+          bun run lint --filter=@crm/contract --filter=@crm/api --filter=@crm/web-v3
+
+      - name: Test (unitarios)
+        run: |
+          bun run test --filter=@crm/contract --filter=@crm/email --filter=@crm/web-v3
+
+  # ─── Integración de la API contra Postgres ───────────────────────────────
+  #
+  # La suite de integración de `apps/api` necesita un Postgres real: usa
+  # `TEST_DATABASE_URL` y su guardarraíl (`src/infrastructure/kysely/test-db.ts`)
+  # aborta si la base no termina en `_test` o si la conexión real no es la de
+  # test. Los tests BORRAN tablas, así que la base de desarrollo nunca puede
+  # ser el destino: acá se crea `crm_home_test` aparte.
+  integration:
+    name: integration (api + postgres)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: crm
+          POSTGRES_PASSWORD: crm
+          POSTGRES_DB: crm_home
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U crm -d crm_home"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+      # Mailpit: el test de integración del sender SMTP necesita un SMTP
+      # local (SMTP_URL=smtp://localhost:1025).
+      mailpit:
+        image: axllent/mailpit:v1.24
+        ports:
+          - 1025:1025
+          - 8025:8025
+        options: >-
+          --health-cmd "wget --spider -q http://localhost:8025/"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      # La base de TEST de la API. El sufijo `_test` es obligatorio: el
+      # guardarraíl aborta la suite si no lo tiene.
+      TEST_DATABASE_URL: postgres://crm:crm@localhost:5432/crm_home_test
+      # Vacía a propósito: durante los tests `DATABASE_URL` se apunta a la
+      # base de test en runtime. Si quedara con la URL de desarrollo, código
+      # que la lea por fuera de los tests tocaría `crm_home`.
+      DATABASE_URL: ""
+      SMTP_URL: smtp://localhost:1025
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Cache de bun
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          restore-keys: ${{ runner.os }}-bun-
+
+      - name: Install dependencias
+        run: bun install --frozen-lockfile
+
+      - name: Crear la base de test
+        run: |
+          docker run --rm --network host -e PGPASSWORD=crm postgres:17-alpine \
+            psql -h localhost -U crm -d postgres -c 'CREATE DATABASE crm_home_test;'
+
+      - name: Aplicar migraciones en la base de test
+        working-directory: apps/api
+        env:
+          DATABASE_URL: postgres://crm:crm@localhost:5432/crm_home_test
+        run: bun run db:migrate
+
+      - name: Test de integración (api)
+        working-directory: apps/api
+        run: bun run test:db
+
+  # ─── E2E de web-v3 ───────────────────────────────────────────────────────
+  #
+  # `apps/web-v3` NO tiene suite e2e (ni config de Playwright) en el repo:
+  # su cobertura es de unitarios (vitest) en el job `verify`. Este job queda
+  # como el lugar donde entra el e2e cuando exista, con la infra lista:
+  # Postgres + Mailpit + la API y la app levantadas.
+  e2e:
+    name: e2e (web-v3)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: crm
+          POSTGRES_PASSWORD: crm
+          POSTGRES_DB: crm_home
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U crm -d crm_home"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+      mailpit:
+        image: axllent/mailpit:v1.24
+        ports:
+          - 1025:1025
+          - 8025:8025
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Install dependencias
+        run: bun install --frozen-lockfile
+
+      - name: Preparar la base
+        working-directory: apps/api
+        env:
+          DATABASE_URL: postgres://crm:crm@localhost:5432/crm_home
+        run: bun run db:migrate
+
+      - name: Levantar la API
+        working-directory: apps/api
+        env:
+          DATABASE_URL: postgres://crm:crm@localhost:5432/crm_home
+          SMTP_URL: smtp://localhost:1025
+        run: |
+          bun run dev &
+          npx wait-on http://localhost:3000/health --timeout 120000
+
+      - name: Levantar web-v3
+        working-directory: apps/web-v3
+        run: |
+          bun run dev &
+          npx wait-on http://localhost:5175 --timeout 120000
+
+      - name: E2E
+        working-directory: apps/web-v3
+        run: |
+          if [ -f playwright.config.ts ]; then
+            bunx playwright test
+          else
+            echo "::notice::apps/web-v3 todavía no tiene suite e2e"
+            echo "::notice::(no hay playwright.config.ts). Se saltea hasta que exista."
+          fi

@@ -24,6 +24,7 @@ const { dashboardState, loadMock, timerState, stopMock } = await vi.hoisted(
         error: ref(null),
         incomeTotals: ref([]),
         expenseTotals: ref([]),
+        financeSeries: ref([]),
         weekSeconds: ref(0),
         activity: ref([]),
       },

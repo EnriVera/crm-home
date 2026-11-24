@@ -9,6 +9,7 @@ function makeCategory(overrides: Partial<CategoryRow>): CategoryRow {
     userId: "u1",
     name: "General",
     typeId: "type-1",
+    color: null,
     createdAt: new Date(0),
     deletedAt: null,
     ...overrides,

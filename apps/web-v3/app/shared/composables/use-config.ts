@@ -31,7 +31,7 @@ import {
   updateTaskState,
   updateType,
 } from "~/infrastructure/config/orpc-config";
-import { updateUserTheme } from "~/infrastructure/auth/orpc-auth";
+import { updateProfile, updateUserTheme } from "~/infrastructure/auth/orpc-auth";
 import { useAuthStore } from "~/stores/auth";
 import { useThemeStore } from "~/stores/theme";
 
@@ -126,7 +126,11 @@ export function useConfig() {
     }
   }
 
-  async function addType(input: { name: string; modules: TaskType["modules"] }) {
+  async function addType(input: {
+    name: string;
+    modules: TaskType["modules"];
+    color?: string | null;
+  }) {
     const created = await createType(input);
     types.value = [...types.value, created];
     return created;
@@ -136,6 +140,7 @@ export function useConfig() {
     id: string;
     name?: string;
     modules?: TaskType["modules"];
+    color?: string | null;
   }) {
     const updated = await updateType(input);
     types.value = types.value.map((type) =>
@@ -158,11 +163,16 @@ export function useConfig() {
    * is normalized: this keeps orders collision-free when the new column
    * lands in the middle.
    */
-  async function addState(input: { name: string; position?: number }) {
+  async function addState(input: {
+    name: string;
+    position?: number;
+    color?: string | null;
+  }) {
     const ordered = sortStates(states.value);
     const created = await createTaskState({
       name: input.name,
       order: ordered.length + 1,
+      ...(input.color !== undefined ? { color: input.color } : {}),
     });
     const sequence = [...ordered];
     const at = Math.min(
@@ -186,6 +196,7 @@ export function useConfig() {
     id: string;
     name?: string;
     order?: number;
+    color?: string | null;
   }) {
     const updated = await updateTaskState(input);
     states.value = states.value.map((state) =>
@@ -199,7 +210,11 @@ export function useConfig() {
     states.value = states.value.filter((state) => state.id !== id);
   }
 
-  async function addCategory(input: { name: string; typeId: string }) {
+  async function addCategory(input: {
+    name: string;
+    typeId: string;
+    color?: string | null;
+  }) {
     const created = await createCategory(input);
     categories.value = [...categories.value, created];
     return created;
@@ -209,6 +224,7 @@ export function useConfig() {
     id: string;
     name?: string;
     typeId?: string;
+    color?: string | null;
   }) {
     const updated = await updateCategory(input);
     categories.value = categories.value.map((category) =>
@@ -249,6 +265,17 @@ export function useConfig() {
         return order ? { ...state, order: order.tast_order } : state;
       })
       .sort((a, b) => a.order - b.order);
+  }
+
+  /**
+   * Saves the editable profile (name + studio) in the account.
+   *
+   * The email is not editable: it is the identity of the account.
+   */
+  async function saveProfile(input: { name: string; studio: string | null }) {
+    const updated = await updateProfile(input);
+    auth.setProfile({ name: updated.name, studio: updated.studio });
+    return updated;
   }
 
   /**
@@ -308,6 +335,7 @@ export function useConfig() {
     editCategory,
     deleteCategory,
     addCurrency,
+    saveProfile,
     setTheme,
     logout,
   };

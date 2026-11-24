@@ -37,6 +37,7 @@ describeIntegration("KyselyTaskStateRepository (integration)", () => {
       userId,
       name: "Pendiente",
       order: 0,
+      color: null,
       createdAt: new Date(),
       deletedAt: null,
     });
@@ -61,6 +62,7 @@ describeIntegration("KyselyTaskStateRepository (integration)", () => {
       userId,
       name: "Borrable",
       order: 0,
+      color: null,
       createdAt: new Date(),
       deletedAt: null,
     });
@@ -87,6 +89,7 @@ describeIntegration("KyselyTaskStateRepository (integration)", () => {
       userId,
       name: "Old",
       order: 0,
+      color: null,
       createdAt: new Date(),
       deletedAt: null,
     });

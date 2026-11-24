@@ -52,6 +52,11 @@ export function useTasks() {
     () =>
       new Map(categories.value.map((category) => [category.id, category.name])),
   );
+  /** The data color of each category (the chip of the card). */
+  const categoryColorById = computed(
+    () =>
+      new Map(categories.value.map((category) => [category.id, category.color])),
+  );
 
   async function load() {
     isLoading.value = true;
@@ -94,6 +99,7 @@ export function useTasks() {
     typeId: string;
     categoryId: string | null;
     clientId: string | null;
+    dueDate?: Date | null;
   }): Promise<Task> {
     const stateId = input.stateId ?? columns.value[0]?.id;
     if (!stateId) {
@@ -198,6 +204,7 @@ export function useTasks() {
     clientNameById,
     typeNameById,
     categoryNameById,
+    categoryColorById,
     load,
     add,
     edit,

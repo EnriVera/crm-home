@@ -61,6 +61,7 @@ describe("CreateTask", () => {
       categoryId: null,
       stateId: "state-1",
       kanbanOrder: 1024,
+      dueDate: null,
       createdAt: new Date(0),
       updatedAt: new Date(0),
       deletedAt: null,

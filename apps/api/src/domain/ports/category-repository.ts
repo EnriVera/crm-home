@@ -1,3 +1,4 @@
+import type { DataColor } from "../types";
 import type { Transaction } from "./transaction";
 
 /**
@@ -18,6 +19,8 @@ export interface CategoryRow {
   userId: string;
   name: string;
   typeId: string;
+  /** Color de dato (token del design system). `null` = sin color. */
+  color: DataColor | null;
   createdAt: Date;
 }
 
@@ -39,6 +42,7 @@ export interface CategoryRepository {
     userId: string;
     name: string;
     typeId: string;
+    color?: DataColor | null;
   }): Promise<CategoryRow>;
 
   update(params: {
@@ -46,6 +50,7 @@ export interface CategoryRepository {
     categoryId: string;
     name?: string;
     typeId?: string;
+    color?: DataColor | null;
   }): Promise<CategoryRow>;
 
   softDelete(params: {

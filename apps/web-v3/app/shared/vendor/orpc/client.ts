@@ -34,7 +34,8 @@ export type AuthProcedure =
   | "verifyOtp"
   | "session"
   | "logout"
-  | "updateTheme";
+  | "updateTheme"
+  | "updateProfile";
 
 export interface AuthProcedureMap {
   requestOtp: {
@@ -56,6 +57,16 @@ export interface AuthProcedureMap {
   updateTheme: {
     input: { setting: "light" | "dark" | "system" };
     output: { user: SessionUser };
+  };
+  updateProfile: {
+    input: { name: string; studio: string | null };
+    output: {
+      id: string;
+      email: string;
+      name: string;
+      studio: string | null;
+      userTheme: "light" | "dark" | "system";
+    };
   };
 }
 
@@ -81,6 +92,7 @@ export interface TaskProcedureMap {
       task_type_id?: string | null;
       task_cate_id?: string | null;
       task_clie_id?: string | null;
+      task_due_date?: string | null;
     };
     output: TaskWire;
   };
@@ -92,6 +104,7 @@ export interface TaskProcedureMap {
       task_type_id?: string | null;
       task_cate_id?: string | null;
       task_clie_id?: string | null;
+      task_due_date?: string | null;
     };
     output: TaskWire;
   };
@@ -422,6 +435,8 @@ export interface TypeWire {
   type_id: string;
   type_name: string;
   type_modules: string[];
+  /** The data color token of the type (PRD-v4 §11.3); null = no color. */
+  type_color: string | null;
   type_created_at: string;
 }
 
@@ -430,6 +445,8 @@ export interface TaskStateConfigWire {
   tast_id: string;
   tast_name: string;
   tast_order: number;
+  /** The data color token of the column; null = no color. */
+  tast_color: string | null;
 }
 
 /** The wire shape of an app, as the API returns it. */
@@ -451,6 +468,8 @@ export interface CategoryWire {
   cate_id: string;
   cate_name: string;
   cate_type_id: string;
+  /** The data color token of the category; null = no color. */
+  cate_color: string | null;
   cate_created_at: string;
 }
 
@@ -460,11 +479,20 @@ export interface ConfigProcedureMap {
     output: TypeWire[];
   };
   "types.create": {
-    input: { type_name: string; type_modules?: string[] };
+    input: {
+      type_name: string;
+      type_modules?: string[];
+      type_color?: string | null;
+    };
     output: TypeWire;
   };
   "types.update": {
-    input: { type_id: string; type_name?: string; type_modules?: string[] };
+    input: {
+      type_id: string;
+      type_name?: string;
+      type_modules?: string[];
+      type_color?: string | null;
+    };
     output: TypeWire;
   };
   "types.remove": {
@@ -476,11 +504,20 @@ export interface ConfigProcedureMap {
     output: TaskStateConfigWire[];
   };
   "states.create": {
-    input: { tast_name: string; tast_order: number };
+    input: {
+      tast_name: string;
+      tast_order: number;
+      tast_color?: string | null;
+    };
     output: TaskStateConfigWire;
   };
   "states.update": {
-    input: { tast_id: string; tast_name?: string; tast_order?: number };
+    input: {
+      tast_id: string;
+      tast_name?: string;
+      tast_order?: number;
+      tast_color?: string | null;
+    };
     output: TaskStateConfigWire;
   };
   "states.remove": {
@@ -496,11 +533,20 @@ export interface ConfigProcedureMap {
     output: CategoryWire[];
   };
   "categories.create": {
-    input: { cate_name: string; cate_type_id: string };
+    input: {
+      cate_name: string;
+      cate_type_id: string;
+      cate_color?: string | null;
+    };
     output: CategoryWire;
   };
   "categories.update": {
-    input: { cate_id: string; cate_name?: string; cate_type_id?: string };
+    input: {
+      cate_id: string;
+      cate_name?: string;
+      cate_type_id?: string;
+      cate_color?: string | null;
+    };
     output: CategoryWire;
   };
   "categories.remove": {

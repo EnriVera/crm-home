@@ -111,6 +111,32 @@ export async function fetchSession(): Promise<SessionUser | null> {
 }
 
 /**
+ * Saves the editable profile: name and studio.
+ *
+ * The email is NOT editable: it is the identity of the account (the OTP
+ * and the UNIQUE constraint live on it).
+ */
+export async function updateProfile(input: {
+  name: string;
+  studio: string | null;
+}): Promise<{
+  id: string;
+  email: string;
+  name: string;
+  studio: string | null;
+  userTheme: "light" | "dark" | "system";
+}> {
+  try {
+    return await callAuth("updateProfile", {
+      name: input.name,
+      studio: input.studio,
+    });
+  } catch (error) {
+    throw toAuthCallError(error);
+  }
+}
+
+/**
  * Saves the theme preference in the user's account (PRD-v2 §8.7).
  *
  * The account is the source of truth for the theme: the local copy in the

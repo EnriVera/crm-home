@@ -7,6 +7,21 @@
  * en el borde de infraestructura; dominio y aplicación nunca tocan `DatabaseSchema`.
  */
 
+/**
+ * Color de dato — NO es un hex: es un token del design system
+ * (PRD-v4 §11.3) que el frontend resuelve a `var(--color-data-*)`.
+ * `null` = sin color definido.
+ */
+export type DataColor =
+ | "data-blue"
+ | "data-green"
+ | "data-pink"
+ | "data-cyan"
+ | "data-amber"
+ | "data-purple"
+ | "data-red"
+ | "data-gray";
+
 export interface TaskRow {
  id: string;
  userId: string;
@@ -17,6 +32,8 @@ export interface TaskRow {
  categoryId: string | null;
  stateId: string;
  kanbanOrder: number;
+ /** Vencimiento (TIMESTAMPTZ). `null` = la task no vence. */
+ dueDate: Date | null;
  createdAt: Date;
  updatedAt: Date;
  deletedAt: Date | null;
@@ -27,6 +44,7 @@ export interface TaskStateRow {
  userId: string;
  name: string;
  order: number;
+ color: DataColor | null;
  createdAt: Date;
  deletedAt: Date | null;
 }
@@ -109,6 +127,7 @@ export interface TypeRow {
  userId: string;
  name: string;
  module: string;
+ color: DataColor | null;
  createdAt: Date;
  deletedAt: Date | null;
 }
@@ -118,6 +137,7 @@ export interface CategoryRow {
  userId: string;
  name: string;
  typeId: string;
+ color: DataColor | null;
  createdAt: Date;
  deletedAt: Date | null;
 }
@@ -152,11 +172,13 @@ export interface TaskPatch {
  typeId?: string;
  categoryId?: string | null;
  stateId?: string;
+ dueDate?: Date | null;
 }
 
 export interface TaskStatePatch {
  name?: string;
  order?: number;
+ color?: DataColor | null;
 }
 
 /** Parámetros para mover una task entre columnas / posiciones kanban. */

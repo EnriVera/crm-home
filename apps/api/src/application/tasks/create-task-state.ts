@@ -1,11 +1,13 @@
 import type { Clock } from "../../domain/ports/clock";
 import type { IdGenerator } from "../../domain/ports/id-generator";
 import type { TaskStateRepository } from "../../domain/ports/task-state-repository";
-import type { TaskStateRow } from "../../domain/types";
+import type { DataColor, TaskStateRow } from "../../domain/types";
 
 export interface CreateTaskStateInput {
   userId: string;
   name: string;
+  /** Color de dato (token del design system). `null`/undefined = sin color. */
+  color?: DataColor | null;
 }
 
 export interface CreateTaskStateDependencies {
@@ -37,6 +39,7 @@ export class CreateTaskState {
       userId: input.userId,
       name: input.name,
       order: maxOrder + 1,
+      color: input.color ?? null,
       createdAt: now,
       deletedAt: null,
     };

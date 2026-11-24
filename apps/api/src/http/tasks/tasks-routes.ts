@@ -104,6 +104,7 @@ function asTask(row: TaskRow): TaskWire {
     task_cate_id: row.categoryId,
     task_clie_id: row.clientId,
     task_kanban_order: row.kanbanOrder,
+    task_due_date: row.dueDate,
     task_created_at: row.createdAt,
     task_updated_at: row.updatedAt,
   };
@@ -114,6 +115,7 @@ function asTaskState(row: TaskStateRow): TaskStateWire {
     tast_id: row.id,
     tast_name: row.name,
     tast_order: row.order,
+    tast_color: row.color,
   };
 }
 
@@ -213,6 +215,7 @@ export function createCreateTaskHandler(deps: TasksRouteDependencies) {
           categoryId: body.task_cate_id ?? null,
           clientId: body.task_clie_id ?? null,
           stateId: body.task_tast_id,
+          dueDate: body.task_due_date ?? null,
         }),
       );
     });
@@ -233,6 +236,7 @@ export function createUpdateTaskHandler(deps: TasksRouteDependencies) {
             typeId: body.task_type_id ?? undefined,
             categoryId: body.task_cate_id ?? undefined,
             clientId: body.task_clie_id ?? undefined,
+            dueDate: body.task_due_date,
           },
         }),
       );
@@ -288,6 +292,7 @@ export function createCreateTaskStateHandler(deps: TasksRouteDependencies) {
       const row = await deps.createTaskState.execute({
         userId,
         name: body.tast_name,
+        color: body.tast_color ?? null,
       });
       return asTaskState(row);
     });
@@ -308,6 +313,7 @@ export function createUpdateTaskStateHandler(deps: TasksRouteDependencies) {
           patch: {
             name: body.tast_name,
             order: body.tast_order,
+            color: body.tast_color,
           },
         }),
       );

@@ -60,6 +60,7 @@ const {
   editCategory,
   deleteCategory,
   addCurrency,
+  saveProfile,
   setTheme,
   logout,
 } = useConfig();
@@ -164,7 +165,11 @@ async function removeRecord(
   }
 }
 
-async function submitType(values: { name: string; modules: TypeModule[] }) {
+async function submitType(values: {
+  name: string;
+  modules: TypeModule[];
+  color: string | null;
+}) {
   drawerError.value = null;
   saving.value = true;
   try {
@@ -181,13 +186,21 @@ async function submitType(values: { name: string; modules: TypeModule[] }) {
   }
 }
 
-async function submitState(values: { name: string; position: number }) {
+async function submitState(values: {
+  name: string;
+  position: number;
+  color: string | null;
+}) {
   drawerError.value = null;
   saving.value = true;
   try {
     if (editingState.value) {
       const state = editingState.value;
-      await editState({ id: state.id, name: values.name });
+      await editState({
+        id: state.id,
+        name: values.name,
+        color: values.color,
+      });
       // The update endpoint only takes the name: the position of a column
       // is an order, and the order moves with the reorder endpoint.
       const current = orderedStates.value.findIndex((item) => item.id === state.id);
@@ -195,7 +208,11 @@ async function submitState(values: { name: string; position: number }) {
         await moveState(state.id, values.position);
       }
     } else {
-      await addState({ name: values.name, position: values.position });
+      await addState({
+        name: values.name,
+        position: values.position,
+        color: values.color,
+      });
     }
     await closeDrawer();
   } catch {
@@ -205,7 +222,11 @@ async function submitState(values: { name: string; position: number }) {
   }
 }
 
-async function submitCategory(values: { name: string; typeId: string }) {
+async function submitCategory(values: {
+  name: string;
+  typeId: string;
+  color: string | null;
+}) {
   drawerError.value = null;
   saving.value = true;
   try {
@@ -252,6 +273,61 @@ const initials = computed(() => {
   const letters = name ? name.split(/\s+/).slice(0, 2) : [];
   return letters.map((part) => part[0]?.toUpperCase() ?? "").join("") || "?";
 });
+
+/* ------------------------------------------------------------------ */
+/*  Editable profile (PRD-v4 §8.8, tab `perfil`)                       */
+/* ------------------------------------------------------------------ */
+
+const profileName = ref("");
+const profileStudio = ref("");
+const savingProfile = ref(false);
+const profileError = ref<string | null>(null);
+const profileSaved = ref(false);
+
+/**
+ * Fills the form from the session.
+ *
+ * The session is the source of truth: it arrives when the app boots, and
+ * the API does not send the `studio` on the session, so the field starts
+ * empty unless the user saved one before (the store keeps it).
+ */
+function syncProfileFields(): void {
+  profileName.value = auth.profile?.name ?? auth.session?.name ?? "";
+  profileStudio.value = auth.profile?.studio ?? "";
+}
+
+watch(
+  () => [auth.session?.name, auth.profile?.studio] as const,
+  () => {
+    // Only while the user is not editing: a save rewrites the session and
+    // would wipe what is being typed.
+    if (!savingProfile.value) syncProfileFields();
+  },
+  { immediate: true },
+);
+
+async function submitProfile(): Promise<void> {
+  const name = profileName.value.trim();
+  if (!name) {
+    profileError.value = "config.profile.nameRequired";
+    return;
+  }
+  profileError.value = null;
+  profileSaved.value = false;
+  savingProfile.value = true;
+  try {
+    await saveProfile({
+      name,
+      studio: profileStudio.value.trim() || null,
+    });
+    profileSaved.value = true;
+  } catch {
+    profileError.value = "config.profile.saveError";
+  } finally {
+    savingProfile.value = false;
+    syncProfileFields();
+  }
+}
 
 /** Module ids of a type, translated, for the card subtitle. */
 function modulesLabel(modules: readonly string[]): string {
@@ -333,18 +409,88 @@ function selectTab(id: Tab["id"]) {
           </span>
         </div>
 
-        <dl class="mt-5 grid gap-4 sm:grid-cols-3">
-          <div v-if="auth.session?.name">
-            <dt class="text-xs font-medium text-text-2">
+        <!-- The editable profile: name + studio. The email is read-only:
+             it is the identity of the account (the OTP lives on it). -->
+        <form
+          class="mt-5 space-y-4"
+          data-testid="config-profile-form"
+          @submit.prevent="submitProfile"
+        >
+          <div>
+            <label
+              for="profile-name"
+              class="mb-1.5 block text-sm font-medium text-text"
+            >
               {{ t("config.profile.name") }}
-            </dt>
-            <dd class="mt-1 text-sm text-text">{{ auth.session.name }}</dd>
+            </label>
+            <input
+              id="profile-name"
+              v-model="profileName"
+              type="text"
+              required
+              maxlength="120"
+              class="h-10 w-full max-w-sm rounded-[var(--radius-sm)] border border-border bg-surface px-3 text-sm text-text outline-none transition-colors placeholder:text-text-2 focus:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              data-testid="config-profile-name"
+            />
           </div>
+
+          <div>
+            <label
+              for="profile-studio"
+              class="mb-1.5 block text-sm font-medium text-text"
+            >
+              {{ t("config.profile.studio") }}
+            </label>
+            <input
+              id="profile-studio"
+              v-model="profileStudio"
+              type="text"
+              maxlength="120"
+              class="h-10 w-full max-w-sm rounded-[var(--radius-sm)] border border-border bg-surface px-3 text-sm text-text outline-none transition-colors placeholder:text-text-2 focus:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              :placeholder="t('config.profile.studioPlaceholder')"
+              data-testid="config-profile-studio"
+            />
+            <p class="mt-1.5 text-xs text-text-2">
+              {{ t("config.profile.studioHint") }}
+            </p>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <button
+              type="submit"
+              :disabled="savingProfile"
+              class="rounded-[var(--radius)] bg-accent px-4 py-2 text-sm font-medium text-accent-fg transition-colors hover:bg-accent-hover disabled:opacity-60"
+              data-testid="config-profile-save"
+            >
+              {{ savingProfile ? t("config.profile.saving") : t("config.profile.save") }}
+            </button>
+            <p
+              v-if="profileSaved"
+              class="text-sm text-success"
+              data-testid="config-profile-saved"
+            >
+              {{ t("config.profile.saved") }}
+            </p>
+          </div>
+
+          <p
+            v-if="profileError"
+            class="text-sm text-error"
+            data-testid="config-profile-error"
+          >
+            {{ t(profileError) }}
+          </p>
+        </form>
+
+        <dl class="mt-5 grid gap-4 sm:grid-cols-3">
           <div v-if="auth.session?.email">
             <dt class="text-xs font-medium text-text-2">
               {{ t("config.profile.email") }}
             </dt>
             <dd class="mt-1 text-sm text-text">{{ auth.session.email }}</dd>
+            <dd class="mt-0.5 text-xs text-text-2">
+              {{ t("config.profile.emailReadOnly") }}
+            </dd>
           </div>
         </dl>
       </article>
@@ -421,6 +567,7 @@ function selectTab(id: Tab["id"]) {
               :key="type.id"
               :name="type.name"
               :subtitle="modulesLabel(type.modules)"
+              :color="type.color"
               :edit-label="t('config.drawer.editType')"
               :delete-labels="deleteLabels(type.name)"
               @edit="openEdit('tipos', type.id)"
@@ -501,6 +648,7 @@ function selectTab(id: Tab["id"]) {
               :key="state.id"
               :name="state.name"
               :subtitle="t('config.states.position', { n: statePosition(state) })"
+              :color="state.color"
               :edit-label="t('config.drawer.editState')"
               :delete-labels="deleteLabels(state.name)"
               @edit="openEdit('estados', state.id)"
@@ -584,6 +732,7 @@ function selectTab(id: Tab["id"]) {
                 categoryTypeName(category, types) ??
                 t('config.drawer.type')
               "
+              :color="category.color"
               :edit-label="t('config.drawer.editCategory')"
               :delete-labels="deleteLabels(category.name)"
               @edit="openEdit('categorias', category.id)"

@@ -34,6 +34,7 @@ describeIntegration("KyselyLoginRepository (integration)", () => {
       theme: "system",
       emailVerified: true,
       acceptedTermsAt: new Date(),
+      studio: null,
       termsVersion: "1.0",
     });
 

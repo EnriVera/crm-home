@@ -4,6 +4,7 @@ import { GetSession } from "../application/auth/get-session";
 import { Logout } from "../application/auth/logout";
 import { RequestOtp } from "../application/auth/request-otp";
 import { UpdateTheme } from "../application/auth/update-theme";
+import { UpdateProfile } from "../application/auth/update-profile";
 import { VerifyOtp } from "../application/auth/verify-otp";
 import { CreateTask } from "../application/tasks/create-task";
 import { CreateTaskState } from "../application/tasks/create-task-state";
@@ -236,6 +237,12 @@ export function createCompositionRoot(
       userRepository,
       tokenHasher,
     });
+    const updateProfile = new UpdateProfile({
+      clock,
+      sessionRepository,
+      userRepository,
+      tokenHasher,
+    });
 
     // Tasks use cases (PR-C)
     const listTasks = new ListTasks({ taskRepository });
@@ -366,6 +373,7 @@ export function createCompositionRoot(
       getSession,
       logout,
       updateTheme,
+      updateProfile,
       listTasks,
       getTask,
       createTask,

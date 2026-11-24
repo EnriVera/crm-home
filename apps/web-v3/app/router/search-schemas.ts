@@ -19,6 +19,9 @@ export const tasksSearchSchema = z.object({
  view: z.enum(["grilla", "lista", "kanban"]).optional(),
  drawer: z.string().min(1).optional(),
  edit: z.string().min(1).optional(),
+ // The due-date filter of the toolbar (PRD-v4 §8.4): which deadlines
+ // are on screen. `todas` = no filter.
+ due: z.enum(["todas", "vencidas", "hoy", "semana", "sin-fecha"]).optional(),
 });
 
 export const schedulesSearchSchema = z.object({

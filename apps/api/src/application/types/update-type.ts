@@ -5,6 +5,7 @@ import {
   type TypeRepository,
   type TypeRow,
 } from "../../domain/ports/type-repository";
+import type { DataColor } from "../../domain/types";
 import { InvalidTypeInput, TypeNotFound } from "./errors";
 
 export interface UpdateTypeInput {
@@ -12,6 +13,8 @@ export interface UpdateTypeInput {
   typeId: string;
   name?: string;
   modules?: TypeModules;
+  /** Color de dato (token del design system). `null` = quitar el color. */
+  color?: DataColor | null;
 }
 
 export interface UpdateTypeDependencies {

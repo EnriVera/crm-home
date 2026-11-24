@@ -66,6 +66,7 @@ export class KyselyTaskRepository implements TaskRepository {
         task_cate_id: task.categoryId,
         task_tast_id: task.stateId,
         task_kanban_order: task.kanbanOrder,
+        task_due_date: task.dueDate,
         task_created_at: task.createdAt,
         task_updated_at: task.updatedAt,
       })
@@ -81,6 +82,7 @@ export class KyselyTaskRepository implements TaskRepository {
       task_type_id: string;
       task_cate_id: string | null;
       task_tast_id: string;
+      task_due_date: Date | null;
     }> = {};
     if (patch.title !== undefined) set.task_title = patch.title;
     if (patch.description !== undefined)
@@ -89,6 +91,9 @@ export class KyselyTaskRepository implements TaskRepository {
     if (patch.typeId !== undefined) set.task_type_id = patch.typeId;
     if (patch.categoryId !== undefined) set.task_cate_id = patch.categoryId;
     if (patch.stateId !== undefined) set.task_tast_id = patch.stateId;
+    // `dueDate` acepta `null` explícito (quitar el vencimiento) y `Date`
+    // (ponerlo). `undefined` = no tocar el campo.
+    if (patch.dueDate !== undefined) set.task_due_date = patch.dueDate;
     if (Object.keys(set).length === 0) return;
     await db.updateTable("task").set(set).where("task_id", "=", id).execute();
   }

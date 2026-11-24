@@ -41,12 +41,38 @@ const listCategoriesInputSchema = z.object({
 const createCategoryInputSchema = z.object({
   cate_name: z.string().min(1).max(255),
   cate_type_id: z.string().uuid(),
+  cate_color: z
+    .enum([
+      "data-blue",
+      "data-green",
+      "data-pink",
+      "data-cyan",
+      "data-amber",
+      "data-purple",
+      "data-red",
+      "data-gray",
+    ])
+    .nullable()
+    .optional(),
 });
 
 const updateCategoryInputSchema = z.object({
   cate_id: z.string().uuid(),
   cate_name: z.string().min(1).max(255).optional(),
   cate_type_id: z.string().uuid().optional(),
+  cate_color: z
+    .enum([
+      "data-blue",
+      "data-green",
+      "data-pink",
+      "data-cyan",
+      "data-amber",
+      "data-purple",
+      "data-red",
+      "data-gray",
+    ])
+    .nullable()
+    .optional(),
 });
 
 const removeCategoryInputSchema = z.object({
@@ -57,12 +83,14 @@ function mapCategoryRowToContract(row: {
   id: string;
   name: string;
   typeId: string;
+  color: string | null;
   createdAt: Date;
 }) {
   return {
     cate_id: row.id,
     cate_name: row.name,
     cate_type_id: row.typeId,
+    cate_color: row.color,
     cate_created_at: row.createdAt,
   };
 }
@@ -101,6 +129,7 @@ export function createCreateCategoryHandler(deps: CategoriesRouteDependencies) {
         userId,
         name: body.cate_name,
         typeId: body.cate_type_id,
+        color: body.cate_color ?? null,
       });
       return Response.json(mapCategoryRowToContract(row), { status: 201 });
     } catch (err) {
@@ -123,6 +152,7 @@ export function createUpdateCategoryHandler(deps: CategoriesRouteDependencies) {
         categoryId: body.cate_id,
         name: body.cate_name,
         typeId: body.cate_type_id,
+        color: body.cate_color,
       });
       return Response.json(mapCategoryRowToContract(row));
     } catch (err) {

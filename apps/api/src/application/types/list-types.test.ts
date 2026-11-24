@@ -12,6 +12,7 @@ function makeType(overrides: Partial<TypeRow> = {}): TypeRow {
     userId: "u-1",
     name: "Desarrollo",
     modules: ["tasks"],
+    color: null,
     createdAt: new Date("2026-01-01T00:00:00Z"),
     ...overrides,
   };
@@ -52,12 +53,14 @@ class InMemoryTypeRepository implements TypeRepository {
     userId: string;
     name: string;
     modules: TypeRow["modules"];
+    color?: TypeRow["color"];
   }) {
     const row: TypeRow = {
       id: `t-${this.rows.length + 1}`,
       userId: params.userId,
       name: params.name,
       modules: params.modules,
+      color: params.color ?? null,
       createdAt: new Date(),
     };
     this.rows.push(row);

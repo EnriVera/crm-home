@@ -14,6 +14,8 @@ export interface CreateTaskInput {
   typeId: string;
   categoryId?: string | null;
   stateId: string;
+  /** Vencimiento (TIMESTAMPTZ). `null`/undefined = la task no vence. */
+  dueDate?: Date | null;
 }
 
 export interface CreateTaskDependencies {
@@ -67,6 +69,7 @@ export class CreateTask {
       categoryId: input.categoryId ?? null,
       stateId: input.stateId,
       kanbanOrder: order,
+      dueDate: input.dueDate ?? null,
       createdAt: now,
       updatedAt: now,
       deletedAt: null,

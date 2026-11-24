@@ -19,6 +19,7 @@
   --color-accent-fg: var(--color-accent-fg);
   --color-error: var(--color-error);
   --color-warning: var(--color-warning);
+  --color-success: var(--color-success);
   --color-info-bg: var(--color-info-bg);
 
   --color-primary-50: var(--color-primary-50);
@@ -52,6 +53,16 @@
   --color-data-purple: var(--color-data-purple);
   --color-data-red: var(--color-data-red);
   --color-data-gray: var(--color-data-gray);
+
+  /* Texto sobre un chip sólido del color de dato (ver tokens.css). */
+  --color-data-blue-fg: var(--color-data-blue-fg);
+  --color-data-green-fg: var(--color-data-green-fg);
+  --color-data-pink-fg: var(--color-data-pink-fg);
+  --color-data-cyan-fg: var(--color-data-cyan-fg);
+  --color-data-amber-fg: var(--color-data-amber-fg);
+  --color-data-purple-fg: var(--color-data-purple-fg);
+  --color-data-red-fg: var(--color-data-red-fg);
+  --color-data-gray-fg: var(--color-data-gray-fg);
 
   --radius-sm: var(--radius-sm);
   --radius: var(--radius);

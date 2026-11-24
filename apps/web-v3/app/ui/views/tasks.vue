@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from "vue";
-import { filterTasks, type Task } from "~/domain/task/entities";
+import {
+  dueBucket,
+  filterTasks,
+  isDueWithinDays,
+  type Task,
+} from "~/domain/task/entities";
 import { useTasks } from "~/shared/composables/use-tasks";
 import { useRouteSearch } from "~/shared/composables/use-route-search";
 import type { SearchParams } from "~/router/search-schemas";
@@ -28,6 +33,7 @@ const {
   error,
   clientNameById,
   categoryNameById,
+  categoryColorById,
   load,
   add,
   edit,
@@ -36,6 +42,7 @@ const {
 } = useTasks();
 
 type ViewMode = NonNullable<SearchParams<"tasks">["view"]>;
+type DueFilter = NonNullable<SearchParams<"tasks">["due"]>;
 
 const search = ref("");
 const saving = ref(false);
@@ -43,7 +50,59 @@ const drawerError = ref<string | null>(null);
 
 const view = computed<ViewMode>(() => params.value.view ?? "kanban");
 
-const visibleTasks = computed(() => filterTasks(tasks.value, search.value));
+/**
+ * The due-date filter (PRD-v4 §8.4, toolbar "Filtros").
+ *
+ * It lives in the URL: a filtered view can be shared and survives a
+ * reload (PRD-v4 §12.5).
+ */
+const dueFilter = computed<DueFilter>(() => params.value.due ?? "todas");
+
+const DUE_FILTERS: { id: DueFilter; labelKey: string }[] = [
+  { id: "todas", labelKey: "tasks.dueFilter.todas" },
+  { id: "vencidas", labelKey: "tasks.dueFilter.vencidas" },
+  { id: "hoy", labelKey: "tasks.dueFilter.hoy" },
+  { id: "semana", labelKey: "tasks.dueFilter.semana" },
+  { id: "sin-fecha", labelKey: "tasks.dueFilter.sinFecha" },
+];
+
+function selectDueFilter(next: DueFilter) {
+  void set({ due: next });
+}
+
+/**
+ * Whether a task passes the due-date filter.
+ *
+ * "Esta semana" is the only filter that is NOT a bucket: it is "today or
+ * within the next seven days", so a task that expires in a month is
+ * NOT in it.
+ */
+function matchesDueFilter(task: Task, filter: DueFilter): boolean {
+  switch (filter) {
+    case "todas":
+      return true;
+    case "vencidas":
+      return dueBucket(task.dueDate) === "overdue";
+    case "hoy":
+      return dueBucket(task.dueDate) === "today";
+    case "semana":
+      return isDueWithinDays(task.dueDate);
+    case "sin-fecha":
+      return task.dueDate === null;
+  }
+}
+
+/** The tasks that pass the search box AND the due-date filter. */
+const visibleTasks = computed(() => {
+  const searched = filterTasks(tasks.value, search.value);
+  if (dueFilter.value === "todas") return searched;
+  return searched.filter((task) => matchesDueFilter(task, dueFilter.value));
+});
+
+/** How many tasks each filter would show (the badge of the pill). */
+function dueFilterCount(filter: DueFilter): number {
+  return tasks.value.filter((task) => matchesDueFilter(task, filter)).length;
+}
 
 const activeCount = computed(() => tasks.value.length);
 
@@ -94,6 +153,7 @@ async function submitTask(values: {
   clientId: string | null;
   typeId: string | null;
   categoryId: string | null;
+  dueDate: Date | null;
 }) {
   drawerError.value = null;
   saving.value = true;
@@ -111,6 +171,7 @@ async function submitTask(values: {
         typeId: values.typeId,
         categoryId: values.categoryId,
         clientId: values.clientId,
+        dueDate: values.dueDate,
         ...(newTaskStateId.value ? { stateId: newTaskStateId.value } : {}),
       });
     }
@@ -148,6 +209,12 @@ function clientName(task: Task): string | null {
 function categoryName(task: Task): string | null {
   return task.categoryId
     ? (categoryNameById.value.get(task.categoryId) ?? null)
+    : null;
+}
+
+function categoryColor(task: Task): string | null {
+  return task.categoryId
+    ? (categoryColorById.value.get(task.categoryId) ?? null)
     : null;
 }
 </script>
@@ -220,6 +287,34 @@ function categoryName(task: Task): string | null {
       </div>
     </div>
 
+    <!-- Due-date filter (PRD-v4 §8.4, toolbar "Filtros"). -->
+    <div
+      class="mt-3 flex flex-wrap items-center gap-2"
+      role="group"
+      :aria-label="t('tasks.dueFilter.label')"
+      data-testid="tasks-due-filter"
+    >
+      <button
+        v-for="option in DUE_FILTERS"
+        :key="option.id"
+        type="button"
+        class="rounded-full border px-3 py-1.5 text-sm transition-colors"
+        :class="
+          dueFilter === option.id
+            ? 'border-primary-300 bg-primary-50 font-medium text-primary-700'
+            : 'border-border text-text-2 hover:bg-surface-2 hover:text-text'
+        "
+        :aria-pressed="dueFilter === option.id"
+        :data-testid="`tasks-due-filter-${option.id}`"
+        @click="selectDueFilter(option.id)"
+      >
+        {{ t(option.labelKey) }}
+        <span class="tabular-nums text-xs opacity-70">
+          {{ dueFilterCount(option.id) }}
+        </span>
+      </button>
+    </div>
+
     <!-- Kanban (default view of the catalogue). -->
     <div v-if="view === 'kanban'" class="mt-5">
       <div
@@ -240,6 +335,7 @@ function categoryName(task: Task): string | null {
         :board="board"
         :client-name-by-id="clientNameById"
         :category-name-by-id="categoryNameById"
+        :category-color-by-id="categoryColorById"
         @move="onMove"
         @add="openCreate"
         @open="openEdit"
@@ -263,6 +359,7 @@ function categoryName(task: Task): string | null {
             :task="task"
             :client-name="clientName(task)"
             :category-name="categoryName(task)"
+            :category-color="categoryColor(task)"
             @open="openEdit"
           />
         </div>

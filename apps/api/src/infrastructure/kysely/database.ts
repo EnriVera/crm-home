@@ -24,6 +24,8 @@ export interface UserTable {
  user_email: string;
  user_name: string;
  user_theme: string;
+ /** Estudio del usuario (perfil editable). NULL = sin definir. */
+ user_studio: string | null;
  user_sino_emailverificado: number;
  user_accepted_terms_at: Date | null;
  user_terms_version: string | null;
@@ -68,6 +70,8 @@ export interface TaskStateTable {
  tast_user_id: string;
  tast_name: string;
  tast_order: number;
+ /** Token de color del design system (data-blue…data-gray). NULL = sin definir. */
+ tast_color: string | null;
  tast_created_at: Generated<Date>;
  tast_deleted_at: Date | null;
 }
@@ -95,6 +99,8 @@ export interface TypesTable {
   * migration 007.
   */
  type_modules: string[];
+ /** Token de color del design system (data-blue…data-gray). NULL = sin definir. */
+ type_color: string | null;
  type_created_at: Generated<Date>;
  type_deleted_at: Date | null;
 }
@@ -104,6 +110,8 @@ export interface CategoriesTable {
  cate_user_id: string;
  cate_name: string;
  cate_type_id: string;
+ /** Token de color del design system (data-blue…data-gray). NULL = sin definir. */
+ cate_color: string | null;
  cate_created_at: Generated<Date>;
  cate_deleted_at: Date | null;
 }
@@ -216,6 +224,8 @@ export interface TaskTable {
  task_cate_id: string | null;
  task_tast_id: string;
  task_kanban_order: number;
+ /** Vencimiento (TIMESTAMPTZ). NULL = la task no vence. */
+ task_due_date: Date | null;
  task_created_at: Generated<Date>;
  task_updated_at: Generated<Date>;
  task_deleted_at: Date | null;

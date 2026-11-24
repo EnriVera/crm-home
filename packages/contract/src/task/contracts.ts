@@ -30,6 +30,22 @@ export const taskStateTitleSchema = z
 
 export const tastOrderSchema = z.number().int().min(0);
 
+/**
+ * Color de dato — token del design system (PRD-v4 §11.3), NO un hex.
+ * El frontend lo resuelve a `var(--color-data-*)`.
+ */
+export const dataColorSchema = z.enum([
+   "data-blue",
+   "data-green",
+   "data-pink",
+   "data-cyan",
+   "data-amber",
+   "data-purple",
+   "data-red",
+   "data-gray",
+]);
+export type DataColor = z.infer<typeof dataColorSchema>;
+
 /* ============================================================== */
 /*  Entity (read-side) schemas — wire format (snake_case)          */
 /* ============================================================== */
@@ -43,6 +59,7 @@ export const taskSchema = z.object({
    task_cate_id: uuidSchema.nullable(),
    task_clie_id: uuidSchema.nullable(),
    task_kanban_order: z.number(),
+   task_due_date: z.union([z.coerce.date(), z.null()]),
    task_created_at: z.coerce.date(),
    task_updated_at: z.coerce.date(),
 });
@@ -54,6 +71,7 @@ export const taskStateSchema = z.object({
    tast_id: uuidSchema,
    tast_name: z.string(),
    tast_order: tastOrderSchema,
+   tast_color: z.union([z.string(), z.null()]),
 });
 /** Wire shape (snake_case). */
 export type TaskStateWire = z.infer<typeof taskStateSchema>;
@@ -113,6 +131,7 @@ export const createTaskInputSchema = z.object({
    task_type_id: uuidSchema.nullable().optional(),
    task_cate_id: uuidSchema.nullable().optional(),
    task_clie_id: uuidSchema.nullable().optional(),
+   task_due_date: z.union([z.coerce.date(), z.null()]).optional(),
 });
 export const createTaskOutputSchema = taskSchema;
 
@@ -124,6 +143,7 @@ export const updateTaskInputSchema = z
      task_type_id: uuidSchema.nullable().optional(),
      task_cate_id: uuidSchema.nullable().optional(),
      task_clie_id: uuidSchema.nullable().optional(),
+     task_due_date: z.union([z.coerce.date(), z.null()]).optional(),
    })
    .strict();
 export const updateTaskOutputSchema = taskSchema;
@@ -148,6 +168,7 @@ export const listTaskStatesOutputSchema = z.array(taskStateSchema);
 export const createTaskStateInputSchema = z.object({
    tast_name: taskStateTitleSchema,
    tast_order: tastOrderSchema,
+   tast_color: dataColorSchema.nullable().optional(),
 });
 export const createTaskStateOutputSchema = taskStateSchema;
 
@@ -156,6 +177,7 @@ export const updateTaskStateInputSchema = z
      tast_id: uuidSchema,
      tast_name: taskStateTitleSchema.optional(),
      tast_order: tastOrderSchema.optional(),
+     tast_color: dataColorSchema.nullable().optional(),
    })
    .strict();
 export const updateTaskStateOutputSchema = taskStateSchema;

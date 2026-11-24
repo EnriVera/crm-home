@@ -21,6 +21,7 @@ function makeRepo() {
         userId: params.userId,
         name: params.name,
         modules: params.modules,
+        color: params.color ?? null,
         createdAt: new Date(),
       };
       rows.push(row);

@@ -22,10 +22,27 @@ export type TypeModules = readonly TypeModuleName[];
 export const typeModuleNameSchema = z.enum(TYPE_MODULE_NAMES);
 export const typeModulesSchema = z.array(typeModuleNameSchema);
 
+/**
+ * Color de dato — token del design system (PRD-v4 §11.3), NO un hex.
+ * El frontend lo resuelve a `var(--color-data-*)`.
+ */
+export const typeDataColorSchema = z.enum([
+ "data-blue",
+ "data-green",
+ "data-pink",
+ "data-cyan",
+ "data-amber",
+ "data-purple",
+ "data-red",
+ "data-gray",
+]);
+export type TypeDataColor = z.infer<typeof typeDataColorSchema>;
+
 export const typeSchema = z.object({
  type_id: uuidSchema,
  type_name: z.string().min(1).max(100),
  type_modules: typeModulesSchema,
+ type_color: z.union([z.string(), z.null()]),
  type_created_at: z.coerce.date(),
 });
 
@@ -46,12 +63,14 @@ export const listTypesInputSchema = z.object({
 export const createTypeInputSchema = z.object({
  type_name: typeNameSchema,
  type_modules: typeModulesSchema.default([]),
+ type_color: typeDataColorSchema.nullable().optional(),
 });
 
 export const updateTypeInputSchema = z.object({
  type_id: uuidSchema,
  type_name: typeNameSchema.optional(),
  type_modules: typeModulesSchema.optional(),
+ type_color: typeDataColorSchema.nullable().optional(),
 });
 
 export const removeTypeInputSchema = z.object({ type_id: uuidSchema });

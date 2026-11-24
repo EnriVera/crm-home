@@ -36,6 +36,7 @@
   --color-accent-fg: #ffffff;
   --color-error: #dc2626;
   --color-warning: #d97706;
+  --color-success: #15803d; /* estado de éxito (DESIGN.md §2.2) */
   --color-info-bg: var(--color-primary-50); /* banners informativos */
 
   /* Data palette: los 8 swatches de tipos/categorías/estados/cuentas */
@@ -47,6 +48,19 @@
   --color-data-purple: #7c3aed;
   --color-data-red: #dc2626;
   --color-data-gray: #3f3f46;
+
+  /* Texto sobre un chip sólido del color de dato.
+     El texto blanco sobre el color de dato NO alcanza AA en 4 de los 8
+     tokens (blue 3.68, green 2.28, cyan 3.68, amber 3.19), así que cada
+     token declara el foreground que sí lo alcanza (WCAG AA, R-25). */
+  --color-data-blue-fg: var(--color-zinc-900);
+  --color-data-green-fg: var(--color-zinc-900);
+  --color-data-pink-fg: #ffffff;
+  --color-data-cyan-fg: var(--color-zinc-900);
+  --color-data-amber-fg: var(--color-zinc-900);
+  --color-data-purple-fg: #ffffff;
+  --color-data-red-fg: #ffffff;
+  --color-data-gray-fg: #ffffff;
 
   /* Radius: marca registrada, esquinas suaves */
   --radius-sm: 0.5rem; /* inputs, selects, badges */
@@ -80,5 +94,6 @@
   --color-accent-fg: var(--color-zinc-950);
   --color-error: #f87171;
   --color-warning: #fbbf24;
+  --color-success: #4ade80;
   --shadow-elevation: 0 8px 24px rgb(0 0 0 / 0.4);
 }

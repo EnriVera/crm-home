@@ -3,6 +3,7 @@ import type {
   CategoryRow,
 } from "../../domain/ports/category-repository";
 import type { TypeRepository } from "../../domain/ports/type-repository";
+import type { DataColor } from "../../domain/types";
 import { CategoryNotFound, InvalidCategoryInput } from "./errors";
 
 export interface UpdateCategoryInput {
@@ -10,6 +11,8 @@ export interface UpdateCategoryInput {
   categoryId: string;
   name?: string;
   typeId?: string;
+  /** Color de dato (token del design system). `null` = quitar el color. */
+  color?: DataColor | null;
 }
 
 export interface UpdateCategoryDependencies {
@@ -58,6 +61,7 @@ export class UpdateCategory {
       categoryId: input.categoryId,
       ...(input.name !== undefined ? { name: input.name.trim() } : {}),
       ...(input.typeId !== undefined ? { typeId: input.typeId } : {}),
+      ...(input.color !== undefined ? { color: input.color } : {}),
     });
   }
 }

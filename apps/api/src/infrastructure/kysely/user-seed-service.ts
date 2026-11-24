@@ -112,6 +112,7 @@ export class KyselyUserSeedService implements UserSeedService {
       theme: "system",
       emailVerified: true,
       acceptedTermsAt: now,
+      studio: null,
       termsVersion: "1.0",
     };
   }

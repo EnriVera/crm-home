@@ -45,6 +45,16 @@ export const updateThemeInputSchema = z.object({
 });
 export type UpdateThemeInput = z.infer<typeof updateThemeInputSchema>;
 
+/**
+ * Perfil editable del usuario. `email` NO se edita: la identidad del
+ * usuario es el email (constraint UNIQUE en la DB).
+ */
+export const updateProfileInputSchema = z.object({
+  name: z.string().trim().min(1).max(120),
+  studio: z.string().trim().max(120).nullable().default(null),
+});
+export type UpdateProfileInput = z.infer<typeof updateProfileInputSchema>;
+
 /* ------------------------------------------------------------------ */
 /*  Response schemas (per procedure)                                   */
 /* ------------------------------------------------------------------ */
@@ -74,6 +84,11 @@ export const sessionUserSchema = z.object({
   email: z.string().email(),
   name: z.string(),
   userTheme: themeSettingSchema,
+  /**
+   * Estudio del usuario (perfil editable, PRD-v4 línea 231). `null` = sin
+   * definir. El `email` NO se edita: la identidad del usuario es el email.
+   */
+  studio: z.string().nullable().optional(),
 });
 export type SessionUser = z.infer<typeof sessionUserSchema>;
 
@@ -81,6 +96,20 @@ export const sessionOutputSchema = z.object({
   user: sessionUserSchema,
 });
 export type SessionOutput = z.infer<typeof sessionOutputSchema>;
+
+/**
+ * Salida de `auth.updateProfile`. Lleva `studio` —el perfil editable—
+ * y NO envuelve al usuario en `user` a diferencia de `session`, para que
+ * el frontend pueda differentiate sin ambiguidad.
+ */
+export const updateProfileOutputSchema = z.object({
+  id: z.string().uuid(),
+  email: z.string().email(),
+  name: z.string(),
+  studio: z.string().nullable(),
+  userTheme: themeSettingSchema,
+});
+export type UpdateProfileOutput = z.infer<typeof updateProfileOutputSchema>;
 
 /* ------------------------------------------------------------------ */
 /*  Flat router contract (mirrors @crm/types/contracts/auth.ts)         */
@@ -94,6 +123,9 @@ export const authContract = oc.router({
   logout: oc.output(logoutOutputSchema),
   session: oc.output(sessionOutputSchema),
   updateTheme: oc.input(updateThemeInputSchema).output(sessionOutputSchema),
+  updateProfile: oc
+    .input(updateProfileInputSchema)
+    .output(updateProfileOutputSchema),
 });
 
 export type AuthContract = typeof authContract;

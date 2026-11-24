@@ -16,13 +16,13 @@ import EditDrawer from "~/ui/organisms/edit-drawer.vue";
  *
  * The drawer edits exactly what the create/update API persists:
  * title (required), description (rich text), client (optional),
- * type (required) and the category cascade — Categoría stays disabled
+ * type (required), the category cascade — Categoría stays disabled
  * until a type is picked (PRD-v2 §8.3 acceptance), loaded per type via
- * the legacy categories-by-type endpoint.
+ * the legacy categories-by-type endpoint — and the due date.
  *
  * NOT in this drawer, per I-05: "Estado inicial" (tasks are always born
- * Pendiente — the kanban column "+" places them via task_tast_id), "Fecha
- * limit" (the wire has no due date field) and Attachments (Phase 2).
+ * Pendiente — the kanban column "+" places them via task_tast_id) and
+ * Attachments (Phase 2).
  */
 const props = defineProps<{
   open: boolean;
@@ -43,6 +43,7 @@ const emit = defineEmits<{
       clientId: string | null;
       typeId: string | null;
       categoryId: string | null;
+      dueDate: Date | null;
     },
   ];
   remove: [id: string];
@@ -56,6 +57,8 @@ const clientId = ref<string | null>(null);
 const typeId = ref<string | null>(null);
 const categoryId = ref<string | null>(null);
 const categories = ref<CategoryOption[]>([]);
+/** The deadline, as the `YYYY-MM-DD` the input understands. */
+const dueDate = ref("");
 
 watch(
   () => props.open,
@@ -69,6 +72,11 @@ watch(
     typeId.value = props.initial?.typeId ?? props.types[0]?.id ?? null;
     categoryId.value = props.initial?.categoryId ?? null;
     categories.value = [];
+    // The due date is a `timestamptz` but the form edits the DAY: the
+    // deadline of a task is a day, and the input cannot hold an instant.
+    dueDate.value = props.initial?.dueDate
+      ? `${props.initial.dueDate.getFullYear()}-${String(props.initial.dueDate.getMonth() + 1).padStart(2, "0")}-${String(props.initial.dueDate.getDate()).padStart(2, "0")}`
+      : "";
     if (typeId.value) void loadCategories(typeId.value);
   },
   { immediate: true },
@@ -112,6 +120,7 @@ function onSubmit() {
     clientId: clientId.value || null,
     typeId: typeId.value || null,
     categoryId: categoryId.value || null,
+    dueDate: dueDate.value ? new Date(`${dueDate.value}T00:00:00`) : null,
   });
 }
 </script>
@@ -208,6 +217,22 @@ function onSubmit() {
             </option>
           </select>
         </div>
+      </div>
+
+      <div>
+        <label for="task-due-date" class="mb-1.5 block text-sm font-medium text-text">
+          {{ t("tasks.drawer.dueDate") }}
+        </label>
+        <input
+          id="task-due-date"
+          v-model="dueDate"
+          type="date"
+          class="h-10 w-full rounded-[var(--radius-sm)] border border-border bg-surface px-3 text-sm text-text outline-none transition-colors focus:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          data-testid="task-due-date"
+        />
+        <p class="mt-1.5 text-xs text-text-2">
+          {{ t("tasks.drawer.dueDateHint") }}
+        </p>
       </div>
     </div>
 
