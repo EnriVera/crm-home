@@ -31,6 +31,19 @@ export const taskStateTitleSchema = z
 export const tastOrderSchema = z.number().int().min(0);
 
 /**
+ * Vencimiento de una tarea: un instante o `null` (sin fecha).
+ *
+ * El orden de las ramas importa y NO es negociable: `z.coerce.date()`
+ * absorbe el `null` (hace `new Date(null)`, que es el epoch) y la rama
+ * `z.null()` nunca llega a evaluarse. Con `z.union([z.coerce.date(),
+ * z.null()])`, mandar `null` para quitar el vencimiento devolvía
+ * `1970-01-01T00:00:00.000Z` — la tarea quedaba con fecha y, en el
+ * frontend, vencida. `z.coerce.date().nullable()` distingue los dos
+ * casos: `null` sigue siendo `null`, y una fecha ISO se convierte igual.
+ */
+export const taskDueDateSchema = z.coerce.date().nullable();
+
+/**
  * Color de dato — token del design system (PRD-v4 §11.3), NO un hex.
  * El frontend lo resuelve a `var(--color-data-*)`.
  */
@@ -59,7 +72,7 @@ export const taskSchema = z.object({
    task_cate_id: uuidSchema.nullable(),
    task_clie_id: uuidSchema.nullable(),
    task_kanban_order: z.number(),
-   task_due_date: z.union([z.coerce.date(), z.null()]),
+   task_due_date: taskDueDateSchema,
    task_created_at: z.coerce.date(),
    task_updated_at: z.coerce.date(),
 });
@@ -131,7 +144,7 @@ export const createTaskInputSchema = z.object({
    task_type_id: uuidSchema.nullable().optional(),
    task_cate_id: uuidSchema.nullable().optional(),
    task_clie_id: uuidSchema.nullable().optional(),
-   task_due_date: z.union([z.coerce.date(), z.null()]).optional(),
+   task_due_date: taskDueDateSchema.optional(),
 });
 export const createTaskOutputSchema = taskSchema;
 
@@ -143,7 +156,7 @@ export const updateTaskInputSchema = z
      task_type_id: uuidSchema.nullable().optional(),
      task_cate_id: uuidSchema.nullable().optional(),
      task_clie_id: uuidSchema.nullable().optional(),
-     task_due_date: z.union([z.coerce.date(), z.null()]).optional(),
+     task_due_date: taskDueDateSchema.optional(),
    })
    .strict();
 export const updateTaskOutputSchema = taskSchema;
