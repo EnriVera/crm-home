@@ -227,6 +227,81 @@ describeIntegration("auth HTTP endpoints (integration)", () => {
     expect(body.status).toBe(400);
   });
 
+  test("updateProfile guarda nombre y studio y los devuelve", async () => {
+    const email = `profile-ok-${Date.now()}@example.com`;
+    await handler(
+      new Request("http://localhost/rpc/auth/requestOtp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ json: { email } }),
+      }),
+    );
+    const verifyResponse = await handler(
+      new Request("http://localhost/rpc/auth/verifyOtp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ json: { email, code: "041283" } }),
+      }),
+    );
+    const cookieMatch = /crm_session=([^;]+)/.exec(
+      verifyResponse.headers.get("Set-Cookie") ?? "",
+    );
+    expect(cookieMatch).toBeDefined();
+
+    const response = await handler(
+      new Request("http://localhost/rpc/auth/updateProfile", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: cookieMatch![0],
+        },
+        body: JSON.stringify({
+          json: { name: "Enrique", studio: "Estudio Norte" },
+        }),
+      }),
+    );
+
+    expect(response.status).toBe(200);
+    const body = (await response.json()) as {
+      json: {
+        id: string;
+        email: string;
+        name: string;
+        studio: string | null;
+        userTheme: string;
+      };
+    };
+    expect(body.json.email).toBe(email);
+    expect(body.json.name).toBe("Enrique");
+    expect(body.json.studio).toBe("Estudio Norte");
+
+    // El perfil persiste: una sesión nueva lo lee igual.
+    const sessionResponse = await handler(
+      new Request("http://localhost/rpc/auth/session", {
+        method: "GET",
+        headers: { Cookie: cookieMatch![0] },
+      }),
+    );
+    expect(sessionResponse.status).toBe(200);
+    const sessionBody = (await sessionResponse.json()) as {
+      json: { user: { name: string; studio?: string | null } };
+    };
+    expect(sessionBody.json.user.name).toBe("Enrique");
+    expect(sessionBody.json.user.studio).toBe("Estudio Norte");
+  });
+
+  test("updateProfile sin sesión devuelve 401", async () => {
+    const response = await handler(
+      new Request("http://localhost/rpc/auth/updateProfile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ json: { name: "Sin sesión", studio: null } }),
+      }),
+    );
+
+    expect(response.status).toBe(401);
+  });
+
   test("updateProfile con nombre vacío devuelve 400 y no 500", async () => {
     const email = `profile-${Date.now()}@example.com`;
     await handler(
