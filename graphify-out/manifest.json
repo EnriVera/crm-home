@@ -732,15 +732,15 @@
     "semantic_hash": "d017bb52b93f12eabbecd1643c915f81"
   },
   "apps/api/src/http/auth.integration.test.ts": {
-    "mtime": 1795470211.2184453,
-    "seen": 1795470342.8014562,
-    "ast_hash": "cd8e433e109054de7390dab5fa72670f",
+    "mtime": 1795480251.1865416,
+    "seen": 1795480675.4493582,
+    "ast_hash": "ad72b858e8b3fa51b9c92d5ed7b3714e",
     "semantic_hash": ""
   },
   "apps/api/src/http/auth/auth-routes.ts": {
-    "mtime": 1795477942.4190202,
-    "seen": 1795479039.3837152,
-    "ast_hash": "8189ffa7144fa11dc32768357380b4af",
+    "mtime": 1795479719.011347,
+    "seen": 1795480675.4493606,
+    "ast_hash": "d07599e1a43583eca4a3029955911600",
     "semantic_hash": ""
   },
   "apps/api/src/http/auth/cookie.ts": {
@@ -798,9 +798,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/http/router.ts": {
-    "mtime": 1795477965.1841633,
-    "seen": 1795479039.3837342,
-    "ast_hash": "9a9c62a2b1f3e274e465d78ba65ea4df",
+    "mtime": 1795479730.7806976,
+    "seen": 1795480675.449383,
+    "ast_hash": "03534f357f4edd3c0e0bc1ec684b7a48",
     "semantic_hash": ""
   },
   "apps/api/src/http/routes.ts": {
@@ -2940,9 +2940,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/http/error-mapping.ts": {
-    "mtime": 1793414686.1752582,
-    "seen": 1795470342.8014677,
-    "ast_hash": "ad07ae5172dd8f3491165391545a30b2",
+    "mtime": 1795479698.286054,
+    "seen": 1795480675.4493742,
+    "ast_hash": "55f7dca10423c3b40733207484cda874",
     "semantic_hash": ""
   },
   "apps/api/src/http/request-user.ts": {
@@ -3402,9 +3402,9 @@
     "semantic_hash": ""
   },
   "apps/web-v3/app/ui/views/tasks.vue": {
-    "mtime": 1795476037.5084808,
-    "seen": 1795479039.3840559,
-    "ast_hash": "6c763041712258950e29d3e55d7bd4d6",
+    "mtime": 1795480469.558483,
+    "seen": 1795480675.449734,
+    "ast_hash": "ccdfafdad01eae0c00ba20a2824b4958",
     "semantic_hash": ""
   },
   "apps/web-v3/app/ui/views/terms.vue": {
@@ -3558,9 +3558,9 @@
     "semantic_hash": ""
   },
   "apps/web-v3/tests/unit/task-domain.test.ts": {
-    "mtime": 1793233881.9584446,
-    "seen": 1793316919.2316859,
-    "ast_hash": "f23820758a39b3ea3996b21cf6afd5b2",
+    "mtime": 1795480594.7929168,
+    "seen": 1795480675.4497702,
+    "ast_hash": "49e33c3be4f54460a494f18697023b5c",
     "semantic_hash": ""
   },
   "apps/web-v3/tests/unit/task-drawer.test.ts": {
