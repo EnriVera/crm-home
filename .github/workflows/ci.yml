@@ -19,8 +19,6 @@ env:
   BUN_VERSION: "1.4.0"
 
 jobs:
-  # ─── Linting + typecheck + tests unitarios (sin base de datos) ───────────
-  #
   # `apps/web` (@crm/web) queda EXCLUIDO a propósito: es la app legacy
   # congelada (la vigente es `apps/web-v3`) y su typecheck ya no pasa
   # (123 errores TS). Incluirla haría que TODO el CI esté rojo por código que
@@ -33,15 +31,15 @@ jobs:
     timeout-minutes: 20
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Install bun
-        uses: oven-sh/setup-bun@v2
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
           bun-version: ${{ env.BUN_VERSION }}
 
       - name: Cache de bun
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: ~/.bun/install/cache
           key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
@@ -54,6 +52,14 @@ jobs:
       # `dist/` está en `.gitignore` y `bun install` NO lo construye.
       - name: Build de @crm/email
         run: bun run build --filter=@crm/email
+
+      # `apps/web-v3` typechequea contra `.nuxt/tsconfig.json`, que genera
+      # `nuxt prepare`. El `postinstall` del workspace lo corre `bun install`
+      # sólo cuando los paquetes cambian; el paso explícito deja el typecheck
+      # igual de reproducible en un runner con el caché de bun ya tibio.
+      - name: Preparar los tipos de Nuxt
+        working-directory: apps/web-v3
+        run: bun run postinstall
 
       - name: Typecheck
         run: |
@@ -73,8 +79,6 @@ jobs:
         working-directory: apps/web-v3
         run: bun run typecheck:e2e
 
-  # ─── Integración de la API contra Postgres ───────────────────────────────
-  #
   # La suite de integración de `apps/api` necesita un Postgres real: usa
   # `TEST_DATABASE_URL` y su guardarraíl (`src/infrastructure/kysely/test-db.ts`)
   # aborta si la base no termina en `_test` o si la conexión real no es la de
@@ -121,15 +125,15 @@ jobs:
       SMTP_URL: smtp://localhost:1025
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Install bun
-        uses: oven-sh/setup-bun@v2
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
           bun-version: ${{ env.BUN_VERSION }}
 
       - name: Cache de bun
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: ~/.bun/install/cache
           key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
@@ -157,8 +161,6 @@ jobs:
         working-directory: apps/api
         run: bun run test:db
 
-  # ─── E2E de web-v3 ───────────────────────────────────────────────────────
-  #
   # Smoke e2e del camino de login contra la app real: la API y el Nuxt de
   # `apps/web-v3` levantados, con Postgres y Mailpit detrás.
   e2e:
@@ -203,15 +205,15 @@ jobs:
       MAILPIT_URL: http://localhost:8025
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Install bun
-        uses: oven-sh/setup-bun@v2
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
           bun-version: ${{ env.BUN_VERSION }}
 
       - name: Cache de bun
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: ~/.bun/install/cache
           key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
@@ -222,6 +224,14 @@ jobs:
 
       - name: Build de @crm/email
         run: bun run build --filter=@crm/email
+
+      # El typecheck de la app lee `.nuxt/tsconfig.json`, que `nuxt prepare`
+      # genera. El `postinstall` del workspace lo corre `bun install` sólo
+      # cuando los paquetes cambian; el paso explícito lo deja igual de
+      # reproducible en un runner con el caché de bun ya tibio.
+      - name: Preparar los tipos de Nuxt
+        working-directory: apps/web-v3
+        run: bun run postinstall
 
       - name: Preparar la base
         working-directory: apps/api
@@ -255,7 +265,7 @@ jobs:
       # sin esto, un fallo deja sólo el log de la consola.
       - name: Subir el reporte de Playwright
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: playwright-report
           path: |
