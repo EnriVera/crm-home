@@ -732,9 +732,9 @@
     "semantic_hash": "d017bb52b93f12eabbecd1643c915f81"
   },
   "apps/api/src/http/auth.integration.test.ts": {
-    "mtime": 1795480251.1865416,
-    "seen": 1795480675.4493582,
-    "ast_hash": "ad72b858e8b3fa51b9c92d5ed7b3714e",
+    "mtime": 1795486869.4519274,
+    "seen": 1795487158.2540138,
+    "ast_hash": "00621a9adea75d205667a046cb3bff6d",
     "semantic_hash": ""
   },
   "apps/api/src/http/auth/auth-routes.ts": {
@@ -3444,9 +3444,9 @@
     "semantic_hash": ""
   },
   "apps/web-v3/package.json": {
-    "mtime": 1795483990.5986166,
-    "seen": 1795484986.3684483,
-    "ast_hash": "1b06431948939f0a5dd8ede33ae4289e",
+    "mtime": 1795485298.5615363,
+    "seen": 1795486752.0290864,
+    "ast_hash": "d691bf54f9de1d7a2bead57c268456c4",
     "semantic_hash": ""
   },
   "apps/web-v3/tests/unit/base-view.test.ts": {
@@ -3846,9 +3846,9 @@
     "semantic_hash": ""
   },
   "packages/contract/src/task/contracts.ts": {
-    "mtime": 1795474019.613933,
-    "seen": 1795479039.3842306,
-    "ast_hash": "23e1eb271e14c2229a12808dc2144134",
+    "mtime": 1795485578.6235206,
+    "seen": 1795486752.0292618,
+    "ast_hash": "6af85005b6beb00a15ac74c56d6588c7",
     "semantic_hash": ""
   },
   "packages/contract/src/task/index.ts": {
@@ -6492,9 +6492,9 @@
     "semantic_hash": ""
   },
   ".github/workflows/ci.yml": {
-    "mtime": 1795484192.6717105,
-    "seen": 1795484986.3679087,
-    "ast_hash": "e809c8981c112c5721fa7b4ecc0d2b68",
+    "mtime": 1795487128.2351506,
+    "seen": 1795487158.2538054,
+    "ast_hash": "04c9ec551305ba10e5fac7e2e3164d5d",
     "semantic_hash": ""
   },
   "apps/api/src/application/auth/update-profile.test.ts": {
@@ -6552,15 +6552,39 @@
     "semantic_hash": ""
   },
   "apps/web-v3/tests/e2e/auth.smoke.spec.ts": {
-    "mtime": 1795483025.5088968,
-    "seen": 1795484986.3684516,
-    "ast_hash": "6ed64d62fbf744f307fa2064a3c356e2",
+    "mtime": 1795485397.2743082,
+    "seen": 1795486752.0290895,
+    "ast_hash": "cddb41ac0384a6f52566fabbf4bc91f6",
     "semantic_hash": ""
   },
   "apps/web-v3/tests/e2e/helpers.ts": {
-    "mtime": 1795484394.6746364,
-    "seen": 1795484986.3684528,
-    "ast_hash": "9226ac3fa3c991c5b48860a99fda1936",
+    "mtime": 1795485387.5053105,
+    "seen": 1795486752.029093,
+    "ast_hash": "fc9905cb385d4771fc5aa8753f58a396",
+    "semantic_hash": ""
+  },
+  "apps/api/src/http/data-colors-due-date.integration.test.ts": {
+    "mtime": 1795487134.929395,
+    "seen": 1795487158.2540257,
+    "ast_hash": "cbb79ee49f69f5fc6921fae67c403c75",
+    "semantic_hash": ""
+  },
+  "apps/web-v3/tests/e2e/cleanup.ts": {
+    "mtime": 1795485381.0878642,
+    "seen": 1795486752.0290906,
+    "ast_hash": "33affb37297b6b266f0829aae874e5c1",
+    "semantic_hash": ""
+  },
+  "apps/web-v3/tests/e2e/constants.ts": {
+    "mtime": 1795485353.1715305,
+    "seen": 1795486752.0290918,
+    "ast_hash": "4c4e94ef65451e46de49333b50b965c2",
+    "semantic_hash": ""
+  },
+  "packages/contract/src/task/contracts.test.ts": {
+    "mtime": 1795485586.853363,
+    "seen": 1795486752.0292609,
+    "ast_hash": "0c1ef1ec5e1ef0fbfa89617adb6803f6",
     "semantic_hash": ""
   }
 }

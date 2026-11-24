@@ -1,24 +1,24 @@
 # Graph Report - crm  (2026-11-23)
 
 ## Corpus Check
-- 1053 files · ~915,397 words
+- 1057 files · ~917,424 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 102 file(s) not represented in the graph (top: .tsrx 82, (none) 9, .example 3)
 
 ## Summary
-- 10842 nodes · 19169 edges · 628 communities (552 shown, 76 thin omitted)
+- 10859 nodes · 19206 edges · 601 communities (536 shown, 65 thin omitted)
 - Extraction: 91% EXTRACTED · 9% INFERRED · 0% AMBIGUOUS · INFERRED: 1705 edges (avg confidence: 0.94)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `fa1bb586`
+- Built from commit: `ea836482`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- request-otp.test.ts
+- octane-email-template-renderer.ts
 - routeTree.gen.ts
-- dependencies
+- web-v2/package.json
 - curate-media.mjs
 - ClientRow
 - ref_bun_test
@@ -36,19 +36,19 @@
 - tasks.vue
 - alpine.min.js
 - ExplorerBuildTests
-- domainError
+- use-task-form-listers.ts
 - Requirements
-- invalid
+- composition-root.ts
 - Dialog.vue
 - web/package.json
 - build_explorer.py
 - clients.vue
 - web-v3/eslint.config.ts
-- err
+- src/shared/vendor/orpc/index.ts
 - incomes-routes.ts
 - IconName
 - schedules-routes.ts
-- categories-routes.ts
+- User
 - web-v3/package.json
 - ShootBrowserTests
 - expenses.vue
@@ -62,20 +62,20 @@
 - app/shared/composables/use-auth.ts
 - seed-qa-data.ts
 - transfer-drawer.vue
-- edit-drawer.vue
+- income-drawer.vue
 - ref_node_path
 - schedule/entities.ts
 - Write Swift
 - CategoryRepository
-- AccountRepository
+- CurrencyRepository
 - move-task.ts
 - theme/use-theme.ts
-- client
+- DatabaseSchema
 - Requirements
 - useT
 - devDependencies
 - tasks.ts
-- create-transfer.ts
+- transfers-routes.ts
 - dashboard.vue
 - identifiers/index.ts
 - dropdown-menu (Radix `DropdownMenu` → Base UI `Menu`)
@@ -90,7 +90,7 @@
 - Tasks — tasks
 - CheckUpdateTest
 - Tone & Voice
-- Design — backend-auth
+- OtpVerifier
 - Telemetry
 - compilerOptions
 - web-v2/package.json
@@ -98,7 +98,7 @@
 - CORE DIRECTIVE: IMAGE-FIRST WEBSITE DESIGN TO CODE
 - CORE DIRECTIVE: PREMIUM MOBILE APP IMAGE DIRECTION
 - EmailSender
-- color-swatches.vue
+- edit-drawer.vue
 - steps
 - package.json
 - domainError
@@ -108,7 +108,7 @@
 - CurateMediaTests
 - web/tsconfig.json
 - validate-findings.test.cjs
-- Requirement: Kysely cableado con migraciones versionadas
+- @tanstack/vue-router
 - contracts/types.ts
 - router/routes.ts
 - CRM-HOME — PRD v2
@@ -119,7 +119,7 @@
 - value
 - select
 - OtpVerifier
-- TaskStateRepository
+- TypeRepository
 - TypeRow
 - disclosure-props.ts
 - Tasks — stack-alignment
@@ -134,13 +134,13 @@
 - Group 3: Quality Locks (consistency)
 - fn
 - Explore — theme-quieter-minimalist
-- validate-coverage-ledger.test.cjs
+- validate-findings.test.cjs
 - api/tsconfig.json
 - RichTextEditor
 - EditTaskDrawer.vue
 - auth-routes.ts
 - ref_orpc_contract
-- rpc-verifier.ts
+- Requirement: Tabla de rutas del módulo tasks con BaseView y detalle
 - web-v2/components.json
 - app-shell.vue
 - web-v3/components.json
@@ -149,9 +149,9 @@
 - Requirements
 - Verify Report — transactional-email
 - postgres
-- CurrencyRepository
+- Requirements
 - ATTACK-CLASSES.md
-- composition-root.ts
+- VerifyOtp
 - useFetch
 - 2. Decisiones
 - RECEIPT — change `tasks`
@@ -167,7 +167,7 @@
 - Design Engineering
 - The Fixes
 - useTimer
-- update-expense.ts
+- ClientRow
 - login-verification.page.vue
 - Requirements
 - Diseño — theme-quieter-minimalist
@@ -206,7 +206,7 @@
 - ADDED Requirements
 - Requirements
 - rpc.ts
-- kysely/expense-repository.ts
+- Database
 - expenses.ts
 - incomes.ts
 - Comments That Add Nothing
@@ -221,7 +221,7 @@
 - Requirements
 - Archive Report — stack-alignment
 - Explore — stack-alignment
-- SDD Tasks — transactional-email
+- Diseño — transactional-email
 - types-contracts.ts
 - Requirements
 - O
@@ -244,7 +244,7 @@
 - I
 - Animation Standards Reference
 - Design System: Taste Standard
-- finance-validation.ts
+- Telemetry
 - config-tabs-nuqs
 - Archive Report — frontend-foundation
 - Apply Progress — frontend-foundation
@@ -257,7 +257,8 @@
 - Animation Audit Playbook
 - Reverse image CDP and API recipes
 - oil-ui/SKILL.md
-- schedule/ports.ts
+- context-menu (Radix `ContextMenu` → Base UI `ContextMenu`)
+- shadcn/SKILL.md
 - Customization & Theming
 - __class-fixtures.test.ts
 - Phases
@@ -282,8 +283,8 @@
 - Component Composition
 - Styling & Customization
 - otp-machine.ts
-- recommend_once.py
-- preflightJsonText
+- get-client.ts
+- kysely/app-repository.ts
 - client-form.logic.ts
 - task-state-form.logic.ts
 - ODD — web-v3 /schedules (el timer)
@@ -310,7 +311,7 @@
 - BaseView: enable all 3 views
 - Upgrade de paquetes + fix de bugs residuales
 - Archive Report — monorepo-scaffold
-- Requirements
+- 002_tasks.integration.test.ts
 - Requirement: Tooling de entorno (docker-compose, .env.example, .gitignore, Makefile)
 - web-v2/vite.config.ts
 - compilerOptions
@@ -328,11 +329,11 @@
 - createLoginSubmitHandler
 - Group 1: Hard Gate (absolute, no exceptions)
 - Web fetch recipes
-- Progress.Indicator → Progress.Indicator
+- ref_pinia
 - Tasks flow UX polish (impeccable)
 - Aesthetic polish — tasks list
 - Apply Progress — stack-alignment
-- shellRoute
+- Work Unit 7 — Cliente RPC web, swap del verifier, login-form y guards del shell
 - Sync Report — backend-auth
 - Sync Report — transactional-email
 - Esquema PostgreSQL, migraciones y mapeo de filas
@@ -346,7 +347,7 @@
 - CORE DIRECTIVE: AWWWARDS-LEVEL DESIGN ENGINEERING
 - 22. STYLE VARIATION ENGINE
 - /layers-intro
-- expense-drawer.vue
+- kysely/client-repository.ts
 - toast
 - tooltip
 - dialog
@@ -363,10 +364,10 @@
 - Protocols, RPC, and Messaging Hunting
 - Resource Exhaustion and Availability Hunting
 - HTTP-Protocol and Authentication Hunting
-- config/ports.ts
+- Result
 - task-detail-page.logic.ts
 - /clients CRUD completo
-- pinia@4.1.0
+- main.ts
 - 8. Módulos — especificación funcional + visual
 - Spike Verification — transactional-email
 - compilerOptions
@@ -391,8 +392,8 @@
 - 6.1 `DESIGN.md` — 5 reescrituras a aplicar
 - 3. Diffs pinned (archivo por archivo)
 - Sync Report — theme-quieter-minimalist
-- Requirements
-- AttachmentRepository
+- Dispatch oRPC y mapeo de errores
+- accordion
 - Requirement: Verificación y pinning de @octanejs/dnd-kit y @octanejs/lexical (bloqueante para change tasks)
 - stack
 - project
@@ -411,7 +412,7 @@
 - ci.yml
 - scripts
 - env
-- ref_node_url
+- scroll-area
 - Aesthetic 2026-Q4 pages — STATUS
 - /expenses module (MVP completo)
 - Estado de web-v3 — handover
@@ -446,12 +447,12 @@
 - finance-collapsed.ts
 - Capas del backend y puertos de dominio
 - scripts
-- config-routes.ts
+- types-routes.ts
 - compilerOptions
 - 12. Routing en archivo único (requirement v4)
 - TypeRepository
 - Requirements
-- create-income.ts
+- Supply Chain and Release Hunting
 - Requirement: Redirect de la ruta raíz según sesión
 - Spike WU0 — npm verification gate
 - git
@@ -459,7 +460,7 @@
 - rules
 - testing
 - Composition root y superficie HTTP
-- Forms & Inputs
+- use-octane-query.ts
 - web.json
 - agent-browser
 - The Animation Decision Framework
@@ -488,7 +489,7 @@
 - True
 - toolbar
 - Pre-proposal state — theme-quieter-minimalist
-- vue-tsc@3.3.12
+- KyselyScheduleRepository
 - config.yaml
 - server.json
 - AGENTS.md
@@ -508,9 +509,9 @@
 - 5. Alcance — MVP y fases
 - use-timer.test.ts
 - Pre-proposal state — transactional-email
-- xstate@5.32.6
-- src/shared/vendor/icons/index.ts
-- Explore — tasks
+- ThemeStore
+- ref_vue
+- client
 - exceptions
 - tsconfig/package.json
 - types/tsconfig.json
@@ -534,7 +535,7 @@
 - 视觉与交互评审手册 (子 Agent 专用)
 - missing_python_notice
 - Auditoría web-v3 + API nueva — 2026-10-29
-- Work Unit 4 — Adapters de crypto, IDs y tiempo
+- ODD — web-v3 config
 - Fases
 - env.d.ts
 - 15. Coexistencia y cutover
@@ -544,17 +545,16 @@
 - recordTiming
 - free-dev-ports.sh
 - domain/README.md
-- Delta for Web Shell
-- kysely/transfer-repository.ts
+- shellRoute
+- The Sonner Principles (Building Loved Components)
 - TDD Cycle Evidence
-- @tanstack/vue-store@0.11.2
+- 9. Estructura tentativa (para proposal, no implementación)
 - helpers.ts
-- Verify Report — monorepo-scaffold
+- Work Unit 7 — Cliente RPC web multi-contract + rpc-verifier swap
 - ref_orpc_contract
 - tasks-form.test.ts
-- @zag-js/date-picker@1.44.0
+- Versions
 - Decisiones
-- @zag-js/switch@1.44.0
 - Requirement: Ruta /tasks-config del shell sin item de nav (accedida por ruedita)
 - Componente `BaseView`
 - application/README.md
@@ -572,46 +572,20 @@
 - antislop
 - Critical Rules
 - with
-- ODD — web-v3 /clients
 - Tasks — frontend-foundation
 - ODD — web-v3 /tasks (kanban + drawer)
 - expandTarget
 - Search the Web with Moli
 - Requirement: Wrapper vendor/otp-input con contrato estable
-- 2. Design flags resueltos
 - The Craftsmanship Standard
 - Reverse image search
 - Keyword search
-- @phosphor-icons/vue@2.2.1
-- 8. Frontend
 - Part 3: Liveliness Toolkit
 - coming-soon.vue
-- 6. Restricciones y consideraciones
 - 4. Design flags resueltos (resueltos en proposal, no se delegan a design)
-- splitpanes@^4.1.2
-- Pre-proposal state — tasks
-- Work Unit 11 — Molecules + organismos del módulo tasks
-- Icons
-- Auth flow audit + improvements
-- 6. Infraestructura y adapters
-- Pre-proposal state — backend-auth
 - 2. Decisiones de diseño
-- 4. Mapa de `tokens.css` con tinte verde → neutrales puros
-- plan
 - e2e
 - integration
-- 3. Arquitectura y data flow
-- 7. HTTP y cookies
-- 9. Tests
-- Requirement: Migración inicial versionada con tooling explícito
-- @orpc/client@1.15.4
-- @orpc/tanstack-query@1.15.4
-- @phosphor-icons/vue@2.2.1
-- tailwindcss-animate@1.0.7
-- @vueuse/core@15.0.0
-- @zag-js/tabs@1.44.0
-- @zag-js/vue@1.44.0
-- vee-validate@4.15.1
 
 ## God Nodes (most connected - your core abstractions)
 1. `Transaction` - 163 edges
@@ -640,55 +614,55 @@
 ## Import Cycles
 - None detected.
 
-## Communities (628 total, 76 thin omitted)
+## Communities (601 total, 65 thin omitted)
 
-### Community 0 - "request-otp.test.ts"
-Cohesion: 0.05
-Nodes (31): createUseCase(), FakeEmailTemplateRenderer, FakeIdGenerator, FakeOtpGenerator, FixedClock, InMemoryLoginRepository, InMemoryLoginRepository, EmailTemplateRenderer (+23 more)
+### Community 0 - "octane-email-template-renderer.ts"
+Cohesion: 0.20
+Nodes (7): RenderedEmail, OctaneEmailTemplateRenderer, OctaneEmailTemplateRendererDeps, getOtpEmailText(), OTP_EMAIL_SUBJECT, RenderedOtpEmail, renderOtp()
 
 ### Community 1 - "routeTree.gen.ts"
-Cohesion: 0.05
-Nodes (47): @tanstack/vue-router@1.170.37, Route, Route, Route, Route, Route, Route, Route (+39 more)
+Cohesion: 0.06
+Nodes (29): Route, Route, Route, Route, authedClientsIdRoute, authedClientsIndexRoute, authedConfigRoute, authedDashboardRoute (+21 more)
 
-### Community 2 - "dependencies"
-Cohesion: 0.05
-Nodes (41): dependencies, class-variance-authority@0.7.1, clsx@2.1.1, @crm/contract@workspace:*, effect@3.22.1, @fontsource/roboto@5.3.0, tailwind-merge@3.0.2, @tanstack/match-sorter-utils@9.1.2 (+33 more)
+### Community 2 - "web-v2/package.json"
+Cohesion: 0.04
+Nodes (78): dependencies, class-variance-authority@0.7.1, clsx@2.1.1, @crm/contract@workspace:*, effect@3.22.1, @fontsource/roboto@5.3.0, @orpc/client@1.15.4, @orpc/tanstack-query@1.15.4 (+70 more)
 
 ### Community 3 - "curate-media.mjs"
 Cohesion: 0.08
 Nodes (68): apiUrl(), catalogue(), contactSheet(), deliver(), describePixels(), download(), emptyCache(), escapeHtml() (+60 more)
 
 ### Community 4 - "ClientRow"
-Cohesion: 0.08
-Nodes (22): API, CreateClient, CreateClientDependencies, CreateClientInput, InMemoryClientRepository, DeleteClient, DeleteClientDependencies, DeleteClientInput (+14 more)
+Cohesion: 0.13
+Nodes (13): API, CreateClientDependencies, CreateClientInput, DeleteClient, DeleteClientDependencies, DeleteClientInput, ClientDomainError, ClientNotFound (+5 more)
 
 ### Community 5 - "ref_bun_test"
-Cohesion: 0.03
-Nodes (78): CreateTask, CreateTaskState, NOW, NOW, DeleteTask, DeleteTaskDependencies, DeleteTaskInput, DeleteTaskState (+70 more)
+Cohesion: 0.04
+Nodes (76): CreateTask, CreateTaskState, NOW, NOW, DeleteTask, DeleteTaskState, DeleteTaskStateInput, InvalidKanbanOrder (+68 more)
 
 ### Community 6 - "ref_bun_test"
-Cohesion: 0.06
-Nodes (50): main(), databaseUrl, fixedOtpGenerator, databaseUrl, fixedOtpGenerator, OrpcEnvelope, databaseUrl, fixedOtpGenerator (+42 more)
+Cohesion: 0.07
+Nodes (47): main(), databaseUrl, fixedOtpGenerator, databaseUrl, fixedOtpGenerator, OrpcEnvelope, databaseUrl, fixedOtpGenerator (+39 more)
 
 ### Community 7 - "Clock"
 Cohesion: 0.03
-Nodes (62): OTP_TTL_MS, RATE_LIMIT_MAX_ATTEMPTS, RATE_LIMIT_WINDOW_MS, SESSION_RENEWAL_THRESHOLD_MS, SESSION_TTL_MS, RateLimitedError, GetSessionDependencies, GetSessionInput (+54 more)
+Nodes (46): SESSION_RENEWAL_THRESHOLD_MS, SESSION_TTL_MS, RateLimitedError, GetSessionDependencies, GetSessionInput, GetSessionOutput, createUseCase(), FakeTokenHasher (+38 more)
 
 ### Community 8 - "_mappers.ts"
-Cohesion: 0.08
-Nodes (24): ListCategoriesByTypeDependencies, ListCategoriesByTypeInput, ListTypesForFormDependencies, ListTypesForFormInput, InMemoryTypeLookupRepository, CategoryLookupRepository, TypeLookupRepository, CategoryRow (+16 more)
+Cohesion: 0.06
+Nodes (26): ListCategoriesByTypeDependencies, ListCategoriesByTypeInput, ListTypesForFormDependencies, ListTypesForFormInput, InMemoryCategoryLookupRepository, InMemoryTypeLookupRepository, AttachmentRepository, CategoryLookupRepository (+18 more)
 
 ### Community 9 - "tasks.vue"
-Cohesion: 0.04
-Nodes (68): dataColorFgVar(), dayKey(), dueBucket, filterTasks(), isDueWithinDays(), moveNeighbors(), Task, TaskColumn (+60 more)
+Cohesion: 0.05
+Nodes (73): dataColorFgVar(), dayKey(), dueBucket, filterTasks(), isDueWithinDays(), moveNeighbors(), sortColumns(), Task (+65 more)
 
 ### Community 10 - "finance/entities.ts"
-Cohesion: 0.07
-Nodes (69): Account, accountColor(), averageAmount(), countOfMonth(), DATA_COLORS, distinctCategories(), Expense, formatAmount() (+61 more)
+Cohesion: 0.06
+Nodes (79): Account, accountColor(), averageAmount(), countOfMonth(), DATA_COLORS, distinctCategories(), Expense, formatAmount() (+71 more)
 
 ### Community 11 - "router.ts"
-Cohesion: 0.10
-Nodes (75): createAccountHandler(), createListAccountsHandler(), createRequestOtpHandler(), createUpdateProfileHandler(), createVerifyOtpHandler(), createCreateCategoryHandler(), createListCategoriesHandler(), createRemoveCategoryHandler() (+67 more)
+Cohesion: 0.09
+Nodes (79): createAccountHandler(), createListAccountsHandler(), createRequestOtpHandler(), createCreateCategoryHandler(), createListCategoriesHandler(), createRemoveCategoryHandler(), createUpdateCategoryHandler(), mapCategoryRowToContract() (+71 more)
 
 ### Community 12 - "api/package.json"
 Cohesion: 0.05
@@ -699,16 +673,16 @@ Cohesion: 0.29
 Nodes (6): Commands, @crm/web-v2, Development rules, Environment, Folder layout (PRD-v3 §5), Stack (locked, see `docs/PRD-v3.md` §3)
 
 ### Community 14 - "validate-coverage-ledger.cjs"
-Cohesion: 0.12
-Nodes (41): ATTEMPT_FIELDS, ATTEMPT_STATUSES, canonicalCoverageId(), collectUnitErrors(), createErrorList(), encodeCanonicalRef(), escapeUnsafeDiagnosticCharacters(), fs (+33 more)
+Cohesion: 0.06
+Nodes (65): ATTEMPT_FIELDS, ATTEMPT_STATUSES, canonicalCoverageId(), collectUnitErrors(), createErrorList(), encodeCanonicalRef(), escapeUnsafeDiagnosticCharacters(), fs (+57 more)
 
 ### Community 15 - "shoot.mjs"
 Cohesion: 0.05
 Nodes (44): ACTIONS, ALIASES, args, bases, booleanOptions, CELLS, closest(), compatibleSelector() (+36 more)
 
 ### Community 16 - "useConfig"
-Cohesion: 0.07
-Nodes (77): MEDIUM, AppModule, Category, categoryTypeName(), Currency, filterCategories(), filterCurrencies(), filterStates() (+69 more)
+Cohesion: 0.08
+Nodes (70): MEDIUM, AppModule, Category, categoryTypeName(), Currency, filterCategories(), filterCurrencies(), filterStates() (+62 more)
 
 ### Community 17 - "tasks.vue"
 Cohesion: 0.05
@@ -718,45 +692,45 @@ Nodes (34): activeView, emit, internalView, isControlled, persist(), props, sear
 Cohesion: 0.04
 Nodes (34): bn(), bo(), br(), Bt(), Ce(), ci(), D(), Do() (+26 more)
 
-### Community 20 - "domainError"
-Cohesion: 0.10
-Nodes (21): ClientRepository, domainError, taskRepository, taskStateRepository, DomainErrorToError, useCreateTask(), DomainErrorToError, useDeleteTask() (+13 more)
+### Community 20 - "use-task-form-listers.ts"
+Cohesion: 0.14
+Nodes (16): makeListCategoriesByType(), makeListTypesForForm(), makeSearchClients(), TaskFormListersRepository, taskFormListersRepository, CategoriesByTypeParams, DomainErrorToError, refDebounced() (+8 more)
 
 ### Community 21 - "Requirements"
-Cohesion: 0.08
-Nodes (25): Api Auth Specification, Purpose, Requirement: Contratos RPC de auth en @crm/types, Requirement: Estrategia de tests unit-first con integración opt-in, Requirement: Logout con borrado lógico, Requirement: Puerto EmailSender con adapters consola/SMTP y task de drenaje, Requirement: Sesiones persistentes con cookie httpOnly y renovación deslizante, Requirements (+17 more)
+Cohesion: 0.06
+Nodes (33): Api Auth Specification, Purpose, Requirement: Contratos RPC de auth en @crm/types, Requirement: Estrategia de tests unit-first con integración opt-in, Requirement: Logout con borrado lógico, Requirement: Migración inicial versionada con tooling explícito, Requirement: Puerto EmailSender con adapters consola/SMTP y task de drenaje, Requirement: Registro implícito con seed transaccional (+25 more)
 
-### Community 22 - "invalid"
-Cohesion: 0.09
-Nodes (27): invalid(), createRpcOtpVerifier(), Requirement: Verificación de OTP con reglas de seguridad server-side, Scenario: Comparación a tiempo constante, Scenario: Código con ceros a la izquierda valida end-to-end, Scenario: Código expirado rechazado, Scenario: Quinto intento fallido invalida el código, MODIFIED Requirements (+19 more)
+### Community 22 - "composition-root.ts"
+Cohesion: 0.06
+Nodes (32): OTP_TTL_MS, RATE_LIMIT_MAX_ATTEMPTS, RATE_LIMIT_WINDOW_MS, RequestOtpDependencies, RequestOtpInput, RequestOtpOutput, createUseCase(), FakeIdGenerator (+24 more)
 
 ### Community 23 - "Dialog.vue"
-Cohesion: 0.07
-Nodes (30): @zag-js/popover@1.44.0, cn(), api, backdropClass, closeButtonClass, contentClass, DialogSide, emit (+22 more)
+Cohesion: 0.06
+Nodes (32): @zag-js/dialog@1.44.0, @zag-js/popover@1.44.0, cn(), api, backdropClass, closeButtonClass, contentClass, DialogSide (+24 more)
 
 ### Community 24 - "web/package.json"
 Cohesion: 0.07
-Nodes (38): dependencies, effect@3.22.1, @fontsource/poppins@5.3.0, i18next@26.4.2, @octanejs/dnd-kit@0.1.50, @octanejs/lexical@0.1.56, @octanejs/nuqs@0.1.45, @octanejs/phosphor-icons@0.0.35 (+30 more)
+Nodes (36): dependencies, effect@3.22.1, @fontsource/poppins@5.3.0, i18next@26.4.2, @octanejs/dnd-kit@0.1.50, @octanejs/lexical@0.1.56, @octanejs/phosphor-icons@0.0.35, @octanejs/resizable-panels@0.0.14 (+28 more)
 
 ### Community 25 - "build_explorer.py"
 Cohesion: 0.05
-Nodes (38): apply_edits(), AssetCheck, check_css(), check_resource(), css_unescape(), embed_css(), embed_local_files(), ensure_head() (+30 more)
+Nodes (37): apply_edits(), AssetCheck, check_css(), check_resource(), css_unescape(), embed_css(), embed_local_files(), ensure_head() (+29 more)
 
 ### Community 26 - "clients.vue"
 Cohesion: 0.06
-Nodes (48): Item Definitions, Client, ClientDependencies, clientInitials(), filterClients(), ClientInput, createClient(), listClientDependencies() (+40 more)
+Nodes (49): Item Definitions, Client, ClientDependencies, clientInitials(), filterClients(), ClientInput, createClient(), listClientDependencies() (+41 more)
 
 ### Community 27 - "web-v3/eslint.config.ts"
 Cohesion: 0.18
 Nodes (6): vendorOnlyPackages, eslint-plugin-import@2.32.0, frameworkPackages, thirdPartyUiGroups, thirdPartyUiPackages, eslint-plugin-import
 
-### Community 28 - "err"
-Cohesion: 0.12
-Nodes (24): newOtpRequest(), DomainErrorCode, err(), ok(), mapOrpcError(), orpcCodeToDomainCode, AUTH_PROCEDURES, createOrpcAuthRepository() (+16 more)
+### Community 28 - "src/shared/vendor/orpc/index.ts"
+Cohesion: 0.22
+Nodes (10): AppOrpcClient, baseURL, link, orpcClient, AnyProcedure, Procedure, useOrpcMutation(), useOrpcQuery() (+2 more)
 
 ### Community 29 - "incomes-routes.ts"
-Cohesion: 0.10
-Nodes (14): CreateIncomeDependencies, ListIncomes, ListIncomesDependencies, ListIncomesInput, InMemoryIncomeRepository, RemoveIncome, RemoveIncomeDependencies, RemoveIncomeInput (+6 more)
+Cohesion: 0.08
+Nodes (22): CreateIncome, IncomeDomainError, IncomeNotFound, InvalidIncomeInput, ListIncomes, ListIncomesDependencies, ListIncomesInput, InMemoryIncomeRepository (+14 more)
 
 ### Community 30 - "IconName"
 Cohesion: 0.07
@@ -764,19 +738,19 @@ Nodes (29): ICON_COMPONENTS, IconName, EXPECTED_NAMES, Provenance, Set inicial (
 
 ### Community 31 - "schedules-routes.ts"
 Cohesion: 0.10
-Nodes (16): CreateScheduleDependencies, CreateScheduleInput, InvalidScheduleInput, ScheduleDomainError, ScheduleNotFound, ListSchedulesDependencies, ListSchedulesInput, RemoveScheduleDependencies (+8 more)
+Nodes (18): CreateSchedule, CreateScheduleDependencies, CreateScheduleInput, InvalidScheduleInput, ScheduleDomainError, ScheduleNotFound, ListSchedules, ListSchedulesDependencies (+10 more)
 
-### Community 32 - "categories-routes.ts"
-Cohesion: 0.11
-Nodes (15): CreateCategory, CategoryNotFound, InvalidCategoryInput, ListCategories, RemoveCategory, RemoveCategoryDependencies, RemoveCategoryInput, UpdateCategory (+7 more)
+### Community 32 - "User"
+Cohesion: 0.07
+Nodes (12): InMemoryUserRepository, InvalidProfileError, createUseCase(), FakeTokenHasher, FixedClock, InMemoryUserRepository, NOW, seedActiveSession() (+4 more)
 
 ### Community 33 - "web-v3/package.json"
 Cohesion: 0.05
-Nodes (39): dependencies, class-variance-authority@0.7.1, clsx@2.1.1, @crm/contract@workspace:*, @fontsource/roboto@5.3.0, nuxt@^4.0.0, @nuxtjs/i18n@^9.0.0, @orpc/client@1.15.4 (+31 more)
+Nodes (55): dependencies, class-variance-authority@0.7.1, clsx@2.1.1, @crm/contract@workspace:*, @fontsource/roboto@5.3.0, nuxt@^4.0.0, @nuxtjs/i18n@^9.0.0, @orpc/client@1.15.4 (+47 more)
 
 ### Community 35 - "expenses.vue"
-Cohesion: 0.02
-Nodes (78): dataColorVar(), ACCOUNT_COLORS, ACCOUNT_FALLBACK_COLOR, ACCOUNT_ICONS, AccountIcon, categoryColor(), sortColumns(), box (+70 more)
+Cohesion: 0.03
+Nodes (67): dataColorVar(), ACCOUNT_COLORS, ACCOUNT_FALLBACK_COLOR, ACCOUNT_ICONS, AccountIcon, categoryColor(), box, glyph (+59 more)
 
 ### Community 36 - "OiloilImageTests"
 Cohesion: 0.08
@@ -787,28 +761,24 @@ Cohesion: 0.16
 Nodes (12): authRedirect, redirectIfAuthenticated, requireSession, createAuthRedirect(), createRedirectIfAuthenticated(), hasSessionCookie(), redirectResponse(), SessionQuery (+4 more)
 
 ### Community 38 - "test_build_explorer.py"
-Cohesion: 0.09
-Nodes (5): Versions, png(), find_browser(), write_solid_png(), WorkdirTests
+Cohesion: 0.08
+Nodes (7): main(), marker(), utf8_output(), png(), find_browser(), write_solid_png(), WorkdirTests
 
 ### Community 39 - "ref_zod"
-Cohesion: 0.09
-Nodes (22): frequencySchema, getScheduleInputSchema, listSchedulesInputSchema, createScheduleInputSchema, listSchedulesInputSchema, removeScheduleInputSchema, scheduleAmountSchema, scheduleDateSchema (+14 more)
+Cohesion: 0.06
+Nodes (32): UpdateSchedule, RouterDependencies, frequencySchema, getScheduleInputSchema, listSchedulesInputSchema, SchedulesRouteDependencies, createScheduleInputSchema, listSchedulesInputSchema (+24 more)
 
 ### Community 40 - "config.vue"
 Cohesion: 0.03
-Nodes (51): *.module.css, *.vue, layout, layouts, route, theme, highlights, prefersDark (+43 more)
-
-### Community 41 - "kysely"
-Cohesion: 0.06
-Nodes (4): down(), up(), TYPE_MODULES_CLOSED_SET, kysely
+Nodes (41): currentSection, navGroups, navItems, route, { t }, theme, clientsSearchSchema, configSearchSchema (+33 more)
 
 ### Community 42 - "verify-otp.test.ts"
-Cohesion: 0.04
-Nodes (30): InMemoryUserRepository, createUseCase(), FailingTransactionManager, FakeIdGenerator, FakeSecureComparator, FakeTokenHasher, FakeUserSeedService, FixedClock (+22 more)
+Cohesion: 0.05
+Nodes (28): createUseCase(), FailingTransactionManager, FakeIdGenerator, FakeSecureComparator, FakeTokenHasher, FakeUserSeedService, FixedClock, NoopTransactionManager (+20 more)
 
 ### Community 43 - "app/shared/composables/use-auth.ts"
 Cohesion: 0.07
-Nodes (35): AuthCallError, AuthErrorCode, fetchSession(), logout(), ORPC_CODE_TO_AUTH_ERROR, requestOtp(), STATUS_TO_AUTH_ERROR, toAuthCallError() (+27 more)
+Nodes (34): AuthCallError, AuthErrorCode, fetchSession(), logout(), ORPC_CODE_TO_AUTH_ERROR, requestOtp(), STATUS_TO_AUTH_ERROR, toAuthCallError() (+26 more)
 
 ### Community 44 - "seed-qa-data.ts"
 Cohesion: 0.09
@@ -818,13 +788,13 @@ Nodes (26): accounts, AccountWire, argv, ars, byStateName(), categories, Categor
 Cohesion: 0.08
 Nodes (27): amount, amountNumber, amountValid, canSubmit, currencyName(), date, description, differentCurrency (+19 more)
 
-### Community 46 - "edit-drawer.vue"
-Cohesion: 0.07
-Nodes (32): decimals, emit, name, onSubmit(), props, symbol, { t }, close() (+24 more)
+### Community 46 - "income-drawer.vue"
+Cohesion: 0.15
+Nodes (13): accountId, amount, amountValid, canSubmit, currencyCode, date, description, emit (+5 more)
 
 ### Community 47 - "ref_node_path"
-Cohesion: 0.09
-Nodes (13): COMPOSITION_ROOT, FORBIDDEN_IMPORTS, ImportViolation, PORTS_DIR, WRAPPER_PATH, WRAPPER_PATH, WRAPPER_PATH, HOOK_PATH (+5 more)
+Cohesion: 0.06
+Nodes (20): COMPOSITION_ROOT, FORBIDDEN_IMPORTS, ImportViolation, PORTS_DIR, WRAPPER_PATH, WRAPPER_PATH, WRAPPER_PATH, HOOK_PATH (+12 more)
 
 ### Community 48 - "schedule/entities.ts"
 Cohesion: 0.14
@@ -835,32 +805,32 @@ Cohesion: 0.05
 Nodes (35): some(), 10. ARC and object lifetime, 11. Testing — Swift Testing by default, 12. Macros, 13. Logging and debugging, 14. Unsafe code and interop, 15. Modern syntax you should be using, 16. Migrating an existing codebase to Swift 6 (+27 more)
 
 ### Community 50 - "CategoryRepository"
-Cohesion: 0.11
-Nodes (16): CreateCategoryDependencies, CreateCategoryInput, ListCategoriesDependencies, ListCategoriesInput, CreateTaskStateInput, CreateTypeInput, UpdateTypeInput, CategoryRepository (+8 more)
+Cohesion: 0.09
+Nodes (19): CreateCategoryDependencies, CreateCategoryInput, CategoryNotFound, InvalidCategoryInput, ListCategories, ListCategoriesDependencies, ListCategoriesInput, RemoveCategoryDependencies (+11 more)
 
-### Community 51 - "AccountRepository"
-Cohesion: 0.11
-Nodes (12): CreateAccountDependencies, CreateAccountInput, CURRENCY, AccountDomainError, AccountNotFound, InvalidAccountInput, ListAccounts, ListAccountsDependencies (+4 more)
+### Community 51 - "CurrencyRepository"
+Cohesion: 0.05
+Nodes (43): CreateAccount, CreateAccountDependencies, CreateAccountInput, CURRENCY, AccountDomainError, AccountNotFound, InvalidAccountInput, ListAccounts (+35 more)
 
 ### Community 52 - "move-task.ts"
-Cohesion: 0.22
-Nodes (16): KANBAN_DEFAULT_STEP, KANBAN_GAP_REBALANCE_THRESHOLD, TASK_DESCRIPTION_MAX, TASK_TITLE_MAX, CreateTaskDependencies, CreateTaskInput, appendOrder(), computeInsertOrder() (+8 more)
+Cohesion: 0.18
+Nodes (19): KANBAN_DEFAULT_STEP, KANBAN_GAP_REBALANCE_THRESHOLD, TASK_DESCRIPTION_MAX, TASK_TITLE_MAX, CreateTaskInput, appendOrder(), computeInsertOrder(), prependOrder() (+11 more)
 
 ### Community 53 - "theme/use-theme.ts"
 Cohesion: 0.10
 Nodes (28): isPublicPath(), PUBLIC_PATHS, resolveTheme(), STORAGE_KEY, Theme, ThemeSetting, isThemeSetting(), LocalStorageThemeSource (+20 more)
 
-### Community 54 - "client"
+### Community 54 - "DatabaseSchema"
 Cohesion: 0.06
-Nodes (39): DatabaseSchema, client(), 6. Rollback, 1. Intent, 2. Scope, 5. Risks, 6. Rollback, 8. Proposal question round (+31 more)
+Nodes (33): DatabaseSchema, Delta for Api, MODIFIED Requirements, Requirement: Kysely cableado con migraciones versionadas, Scenario: Adapter kysely presente y confinado, Scenario: Migraciones solo vía script explícito, 15. Cambios por archivo (resumen), 4.1 `DatabaseSchema` extensión (kysely) (+25 more)
 
 ### Community 55 - "Requirements"
 Cohesion: 0.04
 Nodes (47): Requirement: Atomic design respetado para el módulo tasks, Requirement: Catálogo i18n extendido con sección tasks.*, Requirement: Closed-list green enforcement para el módulo tasks, Requirement: Componente BaseView compartido (PRD §9), Requirement: Configuración de /tasks-config limitada a Estados (MVP), Requirement: Constantes y helpers puros del algoritmo kanban, Requirement: Estrategia de tests unit-first con integración opt-in, Requirement: Rutas /tasks, /tasks/:id y /tasks-config registradas (+39 more)
 
 ### Community 56 - "useT"
-Cohesion: 0.10
-Nodes (32): createI18n(), getI18n(), subscribeLanguageChange(), t(), Addendum D-SA3 (stack-alignment): gate de `@octanejs/i18next` ejecutado — NO se adopta, vendor/i18n — wrapper propio sobre `i18next` (D6 → D-SA3, rama B), `vendor/` — frontera de librerías de UI (regla §9), i18n (+24 more)
+Cohesion: 0.07
+Nodes (40): createI18n(), getI18n(), subscribeLanguageChange(), t(), Addendum D-SA3 (stack-alignment): gate de `@octanejs/i18next` ejecutado — NO se adopta, vendor/i18n — wrapper propio sobre `i18next` (D6 → D-SA3, rama B), `vendor/` — frontera de librerías de UI (regla §9), i18n (+32 more)
 
 ### Community 57 - "devDependencies"
 Cohesion: 0.12
@@ -870,13 +840,13 @@ Nodes (17): devDependencies, @crm/tsconfig@workspace:*, @orpc/contract@1.15.4, t
 Cohesion: 0.07
 Nodes (43): CategoryForForm, categoryForFormSchema, listCategoriesByTypeInputSchema, listCategoriesByTypeOutputSchema, listTypesForFormInputSchema, listTypesForFormOutputSchema, TypeForForm, typeForFormSchema (+35 more)
 
-### Community 59 - "create-transfer.ts"
-Cohesion: 0.19
-Nodes (9): CreateTransferDependencies, CreateTransferInput, ListTransfersDependencies, ListTransfersInput, RemoveTransferDependencies, RemoveTransferInput, UpdateTransferDependencies, TransferRepository (+1 more)
+### Community 59 - "transfers-routes.ts"
+Cohesion: 0.11
+Nodes (18): normalizeAmount(), CreateTransfer, CreateTransferInput, InvalidTransferInput, TransferDomainError, TransferNotFound, ListTransfers, ListTransfersDependencies (+10 more)
 
 ### Community 60 - "dashboard.vue"
 Cohesion: 0.05
-Nodes (58): Reglas antislop (prioridad por tier), axisCeiling(), buildFinanceSeries(), ChartMovement, chartWindow(), FINANCE_CHART_MONTHS, FinanceMonth, FinanceSeries (+50 more)
+Nodes (53): axisCeiling(), buildFinanceSeries(), ChartMovement, chartWindow(), FINANCE_CHART_MONTHS, FinanceMonth, FinanceSeries, formatCompact() (+45 more)
 
 ### Community 61 - "identifiers/index.ts"
 Cohesion: 0.07
@@ -884,7 +854,7 @@ Nodes (40): draggingId, dragOverColumnId, emit, KanbanMovePayload, onDrop(), pro
 
 ### Community 62 - "dropdown-menu (Radix `DropdownMenu` → Base UI `Menu`)"
 Cohesion: 0.07
-Nodes (32): Picking the right call, Arrow / Item / Group / Label / CheckboxItem / RadioGroup / RadioItem / ItemIndicator / Separator / Sub / SubTrigger / SubContent, Arrow → Menu.Arrow, Base UI only, data attributes, CSS variables, Base UI only props worth knowing (Menu), CheckboxItem → Menu.CheckboxItem, Content → ContextMenu.Portal > Positioner > Popup, Content → Menu.Portal > Menu.Positioner > Menu.Popup (+24 more)
+Nodes (30): Picking the right call, Arrow → Menu.Arrow, Base UI only props worth knowing (Menu), CheckboxItem → Menu.CheckboxItem, Content → Menu.Portal > Menu.Positioner > Menu.Popup, CSS variable mapping (per menu flavor: `dropdown-menu` / `context-menu` / `menubar`), Data-attribute mapping (dropdown/context/menubar menus), dropdown-menu (Radix `DropdownMenu` → Base UI `Menu`) (+22 more)
 
 ### Community 63 - "brandkit/SKILL.md"
 Cohesion: 0.05
@@ -892,31 +862,31 @@ Nodes (42): 1. Logo Cover, 2 × 3 REFERENCE-STYLE LAYOUT, 2. Logo Construction, 
 
 ### Community 64 - "validate-findings.cjs"
 Cohesion: 0.10
-Nodes (39): canonicalKey(), append(), encode(), codePointLength(), collect(), collectDataLimitErrors(), collectFindingSemanticErrors(), collectSchemaErrors() (+31 more)
+Nodes (36): canonicalKey(), append(), encode(), codePointLength(), collect(), collectDataLimitErrors(), collectFindingSemanticErrors(), check() (+28 more)
 
 ### Community 65 - "octane"
-Cohesion: 0.15
-Nodes (6): octane@0.5.0, UseFetchResult, UsePersistedQueryStateOptions, SidebarCollapseContext, SidebarCollapseValue, octane
+Cohesion: 0.13
+Nodes (8): octane@0.5.0, @octanejs/nuqs@0.1.45, UseFetchResult, UsePersistedQueryStateOptions, SidebarCollapseContext, SidebarCollapseValue, octane, @octanejs/nuqs
 
 ### Community 66 - "tasks-routes.ts"
 Cohesion: 0.06
-Nodes (42): asCategoryForForm(), asClientListItem(), asTypeForForm(), categoryForFormSchema, clientListItemSchema, createTaskInputSchema, createTaskOutputSchema, createTaskStateInputSchema (+34 more)
+Nodes (43): asCategoryForForm(), asClientListItem(), asTypeForForm(), categoryForFormSchema, clientListItemSchema, createTaskInputSchema, createTaskOutputSchema, createTaskStateInputSchema (+35 more)
 
 ### Community 67 - "check_update.py"
-Cohesion: 0.13
-Nodes (23): auto_update(), cli_error(), config_path(), english(), fetch(), file_signature(), installation_state_path(), load() (+15 more)
+Cohesion: 0.11
+Nodes (26): main(), native_viewport(), utf8_output(), auto_update(), cli_error(), config_path(), english(), fetch() (+18 more)
 
 ### Community 68 - "err"
-Cohesion: 0.13
-Nodes (19): bootAuth(), getSession, makeGetSession(), makeRequestOtp(), makeSignOut(), makeVerifyOtp(), OtpRequest, parseOtp() (+11 more)
+Cohesion: 0.09
+Nodes (29): makeGetSession(), makeRequestOtp(), makeSignOut(), makeVerifyOtp(), newOtpRequest(), OtpRequest, parseOtp(), AuthRepository (+21 more)
 
 ### Community 69 - "CRM-HOME — PRD v3 (web-v2)"
-Cohesion: 0.06
-Nodes (32): 0. Delta from PRD-v2 (summary), 10. Testing strategy, 11.1 During the build, 11.2 Cutover gate, 11.3 Rollback, 11. Coexistence with `apps/web` (cutover plan), 12. Roadmap (post-v1, non-binding), 13. Risks and decisions pending (+24 more)
+Cohesion: 0.05
+Nodes (40): 0. Delta from PRD-v2 (summary), 10. Testing strategy, 11.1 During the build, 11.2 Cutover gate, 11.3 Rollback, 11. Coexistence with `apps/web` (cutover plan), 12. Roadmap (post-v1, non-binding), 13. Risks and decisions pending (+32 more)
 
 ### Community 70 - "Transaction"
-Cohesion: 0.04
-Nodes (29): RequestOtpDependencies, InMemoryEmailSendingRepository, ListAppsDependencies, GetTaskDependencies, GetTaskInput, ListTasksDependencies, ListTasksInput, InMemoryTaskRepository (+21 more)
+Cohesion: 0.03
+Nodes (43): InMemoryLoginRepository, InMemoryLoginRepository, ClientDependency, ListClientDependencies, ListClientDependenciesDependencies, ListClientDependenciesInput, CreateTaskDependencies, DeleteTaskDependencies (+35 more)
 
 ### Community 71 - "Tasks — tasks"
 Cohesion: 0.05
@@ -926,21 +896,21 @@ Nodes (39): GREEN, GREEN, GREEN, GREEN, GREEN (adapters), GREEN (ejecutar la ver
 Cohesion: 0.05
 Nodes (38): Actorless Passive, All-Caps Emphasis, antislop-copywriting, Aphorism Formulas, Boldface Overuse, Chatbot Closers, Copywriting Skill Checklist, Draft, audit, final (+30 more)
 
-### Community 74 - "Design — backend-auth"
-Cohesion: 0.25
-Nodes (7): 10. Seguridad, 13. Archivos a crear/modificar (resumen), 1. Resumen ejecutivo, 4. Contratos (`packages/types/src/contracts/auth.ts`), Design — backend-auth, Modificados, Nuevos
+### Community 74 - "OtpVerifier"
+Cohesion: 0.05
+Nodes (42): plan(), OtpVerifier, Direction contract, Surface brief — auth (login + verificación OTP), Apply Progress — backend-auth, Lista de verificación, Notas, Resumen de ejecución de tests (+34 more)
 
 ### Community 75 - "Telemetry"
-Cohesion: 0.10
-Nodes (14): CapturedSpan, Attributes, SpanHandle, Telemetry, createTelemetry(), NoopSpanHandle, NoopTelemetry, OtelSpanHandle (+6 more)
+Cohesion: 0.12
+Nodes (5): CapturedSpan, Attributes, SpanHandle, NoopSpanHandle, OtelSpanHandle
 
 ### Community 76 - "compilerOptions"
 Cohesion: 0.05
 Nodes (36): compilerOptions, allowSyntheticDefaultImports, baseUrl, esModuleInterop, exactOptionalPropertyTypes, isolatedModules, jsx, lib (+28 more)
 
 ### Community 77 - "web-v2/package.json"
-Cohesion: 0.08
-Nodes (35): devDependencies, @crm/tsconfig@workspace:*, eslint@9.20.0, eslint-plugin-vue@10.11.1, happy-dom@20.14.5, tailwindcss@4.3.3, @tailwindcss/vite@4.3.3, @testing-library/vue@8.1.0 (+27 more)
+Cohesion: 0.06
+Nodes (31): devDependencies, @crm/tsconfig@workspace:*, eslint@9.20.0, eslint-plugin-vue@10.11.1, happy-dom@20.14.5, tailwindcss@4.3.3, @tailwindcss/vite@4.3.3, @testing-library/vue@8.1.0 (+23 more)
 
 ### Community 78 - "Expo Animation Recipes"
 Cohesion: 0.06
@@ -956,11 +926,11 @@ Nodes (34): 10. DEVICE MOCKUP FRAME RULE, 11. ONBOARDING FLOW RULE, 12. FIRST SC
 
 ### Community 81 - "EmailSender"
 Cohesion: 0.03
-Nodes (95): EmailMessage, EmailSender, AppEnv, startEmailDrainLoop(), createConsoleEmailSender(), createEmailSender(), EmailSenderEnv, TaggedEmailSender (+87 more)
+Nodes (103): RequestOtp, FakeEmailTemplateRenderer, EmailMessage, EmailSender, EmailTemplateRenderer, AppEnv, createConsoleEmailSender(), EmailSenderEnv (+95 more)
 
-### Community 82 - "color-swatches.vue"
-Cohesion: 0.08
-Nodes (26): DATA_COLOR_TOKENS, DataColorToken, clear(), emit, isSelected(), props, select(), { t } (+18 more)
+### Community 82 - "edit-drawer.vue"
+Cohesion: 0.04
+Nodes (53): DATA_COLOR_TOKENS, DataColorToken, TYPE_MODULES, clear(), emit, isSelected(), props, select() (+45 more)
 
 ### Community 83 - "steps"
 Cohesion: 0.06
@@ -971,32 +941,32 @@ Cohesion: 0.07
 Nodes (34): devDependencies, @commitlint/cli@^20.5.3, @commitlint/config-conventional@^20.5.3, husky@^9.1.7, turbo@2.10.12, typescript@5.9.3, typescript, name (+26 more)
 
 ### Community 85 - "domainError"
-Cohesion: 0.09
-Nodes (35): listCategoriesByTypeInputSchema, listTasksQuerySchema, listTypesForFormInputSchema, makeCreateTask(), makeDeleteTask(), makeGetTask(), makeListTasks(), makeListTaskStates() (+27 more)
+Cohesion: 0.07
+Nodes (48): listCategoriesByTypeInputSchema, listTasksQuerySchema, listTypesForFormInputSchema, makeCreateTask(), makeDeleteTask(), makeGetTask(), makeListTasks(), makeListTaskStates() (+40 more)
 
 ### Community 86 - "schedules.vue"
 Cohesion: 0.09
 Nodes (25): Toast.Root → Toast.Root, groupByType(), startOfDay(), startOfWeek(), busy, chartSlices, DATA_COLORS, detailCategoryId (+17 more)
 
 ### Community 87 - "app/shared/vendor/orpc/client.ts"
-Cohesion: 0.10
-Nodes (35): Verificado correcto, AccountProcedure, AccountProcedureMap, AccountWire, AppWire, AuthProcedure, AuthProcedureMap, baseURL (+27 more)
+Cohesion: 0.09
+Nodes (37): Verificado correcto, AccountProcedure, AccountProcedureMap, AccountWire, AppWire, AuthProcedure, AuthProcedureMap, baseURL (+29 more)
 
 ### Community 88 - "effect"
 Cohesion: 0.05
-Nodes (47): effect(), ADDED Requirements, Delta for Api, Requirement: Base fundacional effect y xstate instalada y confinada, Scenario: Confinamiento verificable por grep, Scenario: Deps fundacionales pineadas, Scenario: Suite verde sin lógica nueva, Requirement: Base fundacional de api cableada en un adapter inicial mínimo (+39 more)
+Nodes (48): effect(), ADDED Requirements, Delta for Api, Requirement: Base fundacional effect y xstate instalada y confinada, Scenario: Confinamiento verificable por grep, Scenario: Deps fundacionales pineadas, Scenario: Suite verde sin lógica nueva, Purpose (+40 more)
 
 ### Community 90 - "web/tsconfig.json"
 Cohesion: 0.18
 Nodes (10): compilerOptions, allowImportingTsExtensions, jsxImportSource, paths, plugins, extends, include, @octanejs/resizable-panels (+2 more)
 
 ### Community 91 - "validate-findings.test.cjs"
-Cohesion: 0.10
-Nodes (27): Structured hunter result, Coverage and prior runs, Full audit workflow, LIMITS, assert, confirmed(), evidence(), fs (+19 more)
+Cohesion: 0.18
+Nodes (21): Structured hunter result, Cost budget, Coverage and prior runs, Full audit planning, Full audit workflow, Run profiles and scope, confirmed(), evidence() (+13 more)
 
-### Community 92 - "Requirement: Kysely cableado con migraciones versionadas"
-Cohesion: 0.33
-Nodes (5): Delta for Api, MODIFIED Requirements, Requirement: Kysely cableado con migraciones versionadas, Scenario: Adapter kysely presente y confinado, Scenario: Migraciones solo vía script explícito
+### Community 92 - "@tanstack/vue-router"
+Cohesion: 0.19
+Nodes (11): Route, Route, Route, Route, Route, searchSchema, Route, FileRoutesByPath (+3 more)
 
 ### Community 93 - "contracts/types.ts"
 Cohesion: 0.07
@@ -1004,19 +974,19 @@ Nodes (28): firstTypeFormError(), isTypeFormReadyToSubmit(), TYPE_FORM_MODULES, 
 
 ### Community 94 - "router/routes.ts"
 Cohesion: 0.11
-Nodes (15): NuxtRouterOptions, RouteMeta, routes, vue-router, { t }, { t }, { t }, { t } (+7 more)
+Nodes (14): NuxtRouterOptions, RouteMeta, routes, vue-router, { t }, { t }, { t }, { t } (+6 more)
 
 ### Community 95 - "CRM-HOME — PRD v2"
 Cohesion: 0.06
 Nodes (31): 10. Arquitectura y stack, 11. Estructura de BD (schema corregido), 12. Seeds obligatorios, 13. Riesgos y decisiones pendientes, 1. Problema, 2. Usuario objetivo, 3. Propuesta de valor, 4. Métricas de éxito (+23 more)
 
 ### Community 96 - "Work Unit 4 — Adapters de crypto, IDs y tiempo"
-Cohesion: 0.11
-Nodes (18): Convenciones aplicables, GREEN, GREEN, RED, RED, RED, REFACTOR, REFACTOR (+10 more)
+Cohesion: 0.06
+Nodes (31): Convenciones aplicables, GREEN, GREEN, GREEN, GREEN, GREEN, RED, RED (+23 more)
 
 ### Community 97 - "Design — tasks"
-Cohesion: 0.04
-Nodes (46): 10.1 Keys a añadir en `apps/web/src/lib/i18n/locales/es.json`, 10.2 Extensión de `i18n.test.ts` (NO requiere cambios), 10.3 Smoke de auto-detección, 10. i18n catalog, 11.1 Atributos permitidos / prohibidos (D6 — recordatorio), 11.2 Comando de grep gate (aplica en apply), 11.3 Spans definidos, 11. PII telemetry gate (+38 more)
+Cohesion: 0.05
+Nodes (36): 10.1 Keys a añadir en `apps/web/src/lib/i18n/locales/es.json`, 10.2 Extensión de `i18n.test.ts` (NO requiere cambios), 10.3 Smoke de auto-detección, 10. i18n catalog, 11.1 Atributos permitidos / prohibidos (D6 — recordatorio), 11.2 Comando de grep gate (aplica en apply), 11.3 Spans definidos, 11. PII telemetry gate (+28 more)
 
 ### Community 98 - "Worst-Case Catalog"
 Cohesion: 0.06
@@ -1027,8 +997,8 @@ Cohesion: 0.06
 Nodes (30): 10. FINAL PRE-FLIGHT CHECK, 1. ACTIVE BASELINE CONFIGURATION, 2. DEFAULT ARCHITECTURE & CONVENTIONS, 3. DESIGN ENGINEERING DIRECTIVES (Bias Correction), 4. CREATIVE PROACTIVITY (Anti-Slop Implementation), 5. PERFORMANCE GUARDRAILS, 6. TECHNICAL REFERENCE (Dial Definitions), 7. AI TELLS (Forbidden Patterns) (+22 more)
 
 ### Community 100 - "value"
-Cohesion: 0.09
-Nodes (26): Base UI only props worth knowing, Base UI only props worth knowing, CSS var mapping, CSS var mapping, Data-attribute mapping, Data-attribute mapping, tabs, Tabs.Content → Tabs.Panel (+18 more)
+Cohesion: 0.08
+Nodes (27): Base UI only props worth knowing, Base UI only props worth knowing, CSS var mapping, CSS var mapping, Data-attribute mapping, Data-attribute mapping, tabs, Tabs.Content → Tabs.Panel (+19 more)
 
 ### Community 101 - "select"
 Cohesion: 0.11
@@ -1036,23 +1006,27 @@ Nodes (19): Base UI only props worth knowing (select), CSS variable mapping (sel
 
 ### Community 102 - "OtpVerifier"
 Cohesion: 0.05
-Nodes (39): FakeOtpVerifier, OtpVerifier, Direction contract, Surface brief — auth (login + verificación OTP), Purpose, Requirement: Máquina de estados OTP tras el puerto OtpVerifier, Scenario: Bloqueo al agotar intentos, Scenario: Código inválido consume un intento (+31 more)
+Nodes (55): invalid(), FakeOtpVerifier, createRpcOtpVerifier(), Requirement: Máquina de estados OTP tras el puerto OtpVerifier, Scenario: Bloqueo al agotar intentos, Scenario: Código inválido consume un intento, Scenario: Swap del verifier sin tocar UI, Requirement: Máquina de estados OTP tras el puerto OtpVerifier (+47 more)
 
-### Community 103 - "TaskStateRepository"
-Cohesion: 0.08
-Nodes (16): CreateTaskStateDependencies, DeleteTaskStateDependencies, DeleteTaskStateInput, ListTaskStatesDependencies, ListTaskStatesInput, UpdateTaskStateDependencies, UpdateTaskStateInput, TaskStateRepository (+8 more)
+### Community 103 - "TypeRepository"
+Cohesion: 0.21
+Nodes (9): CreateTypeDependencies, ListTypesDependencies, ListTypesInput, UpdateTypeDependencies, UpdateTypeInput, TYPE_MODULE_NAMES, TypeModuleName, TypeModules (+1 more)
 
 ### Community 104 - "TypeRow"
-Cohesion: 0.14
-Nodes (10): ListTypes, ListTypesDependencies, ListTypesInput, InMemoryTypeRepository, TypeModules, TypeRow, KyselyTypeRepository, litModules() (+2 more)
+Cohesion: 0.23
+Nodes (5): InMemoryTypeRepository, TypeRow, KyselyTypeRepository, litModules(), mapTypeRow()
+
+### Community 105 - "disclosure-props.ts"
+Cohesion: 0.33
+Nodes (3): @zag-js/collapsible@1.42.0, toDisclosureProps(), @zag-js/collapsible
 
 ### Community 106 - "Tasks — stack-alignment"
-Cohesion: 0.08
-Nodes (20): OTP_INPUT_DEFAULT_LENGTH, toPinInputProps(), Addendum — D-SA1 (supersede D1), Estructura, Provenance y decisión de base, vendor/otp-input, 2. Decisiones, 3. Flujo de datos (+12 more)
+Cohesion: 0.11
+Nodes (14): OTP_INPUT_DEFAULT_LENGTH, toPinInputProps(), Addendum — D-SA1 (supersede D1), Estructura, Provenance y decisión de base, vendor/otp-input, clampSidebarSize(), isCollapsedSize() (+6 more)
 
 ### Community 107 - "devDependencies"
-Cohesion: 0.08
-Nodes (33): devDependencies, eslint@9.20.0, eslint-plugin-vue@10.11.1, happy-dom@20.14.5, tailwindcss@4.3.3, @tailwindcss/vite@4.3.3, @testing-library/vue@8.1.0, @types/node@26.6.4 (+25 more)
+Cohesion: 0.06
+Nodes (33): devDependencies, eslint@9.20.0, eslint-plugin-vue@10.11.1, happy-dom@20.14.5, pg@8.23.0, tailwindcss@4.3.3, @tailwindcss/vite@4.3.3, @testing-library/vue@8.1.0 (+25 more)
 
 ### Community 108 - "Requirements"
 Cohesion: 0.06
@@ -1063,8 +1037,8 @@ Cohesion: 0.06
 Nodes (30): 100vh Sections, antislop-layoutmobile, Bottom Nav That Eats Content, Breakpoint Driven by Device List, Breakpoints, Columns That Don't Collapse, Desktop-Only Layout, Desktop-Sized Everything (+22 more)
 
 ### Community 110 - "TasksContract"
-Cohesion: 0.07
-Nodes (31): 6.1 Contratos (`packages/types/src/contracts/tasks.ts`), 6.2 `lookups.ts` (no usado como namespace separado; clientes vive bajo `tasks.clients`), 6.3 Cliente web multi-contract (`apps/web/src/lib/api/rpc.ts` diff), 6.4 Handlers HTTP (`apps/api/src/http/tasks/tasks-routes.ts`), 6.5 `router.ts` diff (extract), 6. RPC multi-contract shape (D1 — detallado), 7. Success criteria, Requirement: Contratos RPC del módulo tasks en @crm/types (+23 more)
+Cohesion: 0.06
+Nodes (33): 6.1 Contratos (`packages/types/src/contracts/tasks.ts`), 6.2 `lookups.ts` (no usado como namespace separado; clientes vive bajo `tasks.clients`), 6.3 Cliente web multi-contract (`apps/web/src/lib/api/rpc.ts` diff), 6.4 Handlers HTTP (`apps/api/src/http/tasks/tasks-routes.ts`), 6.5 `router.ts` diff (extract), 6. RPC multi-contract shape (D1 — detallado), 3. Estado actual del frontend (`apps/web`), 7. Success criteria (+25 more)
 
 ### Community 111 - "Archive Report — theme-quieter-minimalist"
 Cohesion: 0.08
@@ -1072,11 +1046,11 @@ Nodes (26): AspectRatio (radix `AspectRatio.Root`: `asChild`, `ratio` default `1
 
 ### Community 112 - "database.ts"
 Cohesion: 0.09
-Nodes (23): AccountsTable, AppsTable, AttachmentTable, CategoriesTable, ClientTable, CurrencyTable, EmailSendingTable, ExpenseTable (+15 more)
+Nodes (24): AccountsTable, AppsTable, AttachmentTable, CategoriesTable, ClientTable, createDatabase(), CurrencyTable, EmailSendingTable (+16 more)
 
 ### Community 113 - "orpc-bridge.ts"
-Cohesion: 0.08
-Nodes (30): BridgeHttpError, bridgeHttpErrorFromResponse(), buildH3Event(), buildH3EventFromBase(), BuildH3EventOptions, extractCookiesFromH3Event(), extractHeadersFromH3Event(), invokeH3HandlerAndParse() (+22 more)
+Cohesion: 0.11
+Nodes (22): BridgeHttpError, bridgeHttpErrorFromResponse(), buildH3Event(), buildH3EventFromBase(), BuildH3EventOptions, extractCookiesFromH3Event(), extractHeadersFromH3Event(), invokeH3HandlerAndParse() (+14 more)
 
 ### Community 114 - "contract/package.json"
 Cohesion: 0.07
@@ -1091,12 +1065,12 @@ Cohesion: 0.10
 Nodes (28): 1. Monogram + Meaning, A(), ai(), an(), b(), Be(), cn(), dn() (+20 more)
 
 ### Community 117 - "Explore — theme-quieter-minimalist"
-Cohesion: 0.15
-Nodes (12): 10. Resumen ejecutivo, 1.1 Lo que la auditoría encuentra hoy, 1.2 Inventario de archivos tocados (verificado en disco), 1. Estado actual del sistema visual, 2. Auditoría del verde en `apps/web/src/` (per-file counts), 3. Sobre-uso identificado (violaciones de la lista cerrada), 5.1 Afirmaciones que se contradicen y deben reescribirse, 5.2 Afirmaciones que NO se tocan (+4 more)
+Cohesion: 0.08
+Nodes (23): 10. Resumen ejecutivo, 1.1 Lo que la auditoría encuentra hoy, 1.2 Inventario de archivos tocados (verificado en disco), 1. Estado actual del sistema visual, 2. Auditoría del verde en `apps/web/src/` (per-file counts), 3. Sobre-uso identificado (violaciones de la lista cerrada), 4.1 Bloque `:root` (claro) — revisar, 4.2 Bloque `.dark` (oscuro) — REESCRIBIR casi entero (+15 more)
 
-### Community 118 - "validate-coverage-ledger.test.cjs"
-Cohesion: 0.12
-Nodes (13): LIMITS, archivedAttempt(), assert, fs, localCheck(), os, path, sourceCheck() (+5 more)
+### Community 118 - "validate-findings.test.cjs"
+Cohesion: 0.13
+Nodes (12): collectSchemaErrors(), assert, errorsFor(), fs, os, path, rejectMutation(), { spawnSync } (+4 more)
 
 ### Community 119 - "api/tsconfig.json"
 Cohesion: 0.40
@@ -1104,31 +1078,31 @@ Nodes (4): extends, include, $schema, @crm/tsconfig/server.json
 
 ### Community 120 - "RichTextEditor"
 Cohesion: 0.07
-Nodes (32): RichTextEditor(), RichTextEditorProps, 13. Resoluciones D1–D10 (resumen ejecutivo), 1. Decisiones D1–D10, D10 — `client` lookup endpoint shape, D1 — RPC multi-contract shape, D2 — BaseView contract, D3 — half-step kanban + rebalanceo (+24 more)
+Nodes (33): RichTextEditor(), RichTextEditorProps, 13. Resoluciones D1–D10 (resumen ejecutivo), 1. Decisiones D1–D10, D10 — `client` lookup endpoint shape, D1 — RPC multi-contract shape, D2 — BaseView contract, D3 — half-step kanban + rebalanceo (+25 more)
 
 ### Community 121 - "EditTaskDrawer.vue"
 Cohesion: 0.05
-Nodes (39): makeListCategoriesByType(), makeListTypesForForm(), makeSearchClients(), taskFormListersRepository, CategoriesByTypeParams, DomainErrorToError, refDebounced(), SearchClientsParams (+31 more)
+Nodes (27): categoriesParams, categoriesQuery, [categoryId, categoryIdAttrs], [clientId, clientIdAttrs], clientLimit, clientQuery, clientsQuery, createTask (+19 more)
 
 ### Community 122 - "auth-routes.ts"
 Cohesion: 0.07
-Nodes (33): createLogoutHandler(), createSessionHandler(), deleteSessionCookie(), getSessionToken(), SESSION_COOKIE_MAX_AGE_SECONDS, SESSION_COOKIE_NAME, setSessionCookie(), GREEN (+25 more)
+Nodes (35): createLogoutHandler(), createSessionHandler(), createUpdateProfileHandler(), createUpdateThemeHandler(), createVerifyOtpHandler(), deleteSessionCookie(), getSessionToken(), SESSION_COOKIE_MAX_AGE_SECONDS (+27 more)
 
 ### Community 123 - "ref_orpc_contract"
-Cohesion: 0.12
-Nodes (14): healthContract, healthOutputSchema, createTransferInputSchema, listTransfersInputSchema, removeTransferInputSchema, Transfer, transferAmountSchema, transferDateSchema (+6 more)
+Cohesion: 0.09
+Nodes (20): App, appSchema, configContract, Currency, currencySchema, listAppsOutputSchema, listCurrenciesOutputSchema, uuidSchema (+12 more)
 
-### Community 124 - "rpc-verifier.ts"
-Cohesion: 0.12
-Nodes (15): RpcClient, Verdict, RpcOtpVerifierOptions, Requirement: Cliente RPC web multi-contract, Scenario: createRpcClient valida baseURL, Scenario: Migración de rpc.verifyOtp a rpc.auth.verifyOtp.mutate, Scenario: RpcClient expone namespaces auth y tasks, ADDED Requirements (+7 more)
+### Community 124 - "Requirement: Tabla de rutas del módulo tasks con BaseView y detalle"
+Cohesion: 0.22
+Nodes (8): ADDED Requirements, Requirement: Tabla de rutas del módulo tasks con BaseView y detalle, Scenario: BaseView es compartido (no fork por módulo), Scenario: Persistencia de filtros en localStorage namespaced, Scenario: /tasks/:id registrada con TaskDetailPage, Scenario: /tasks registrada con shellRoute y BaseView id=tasks-list, Scenario: TasksPage consume rpc.tasks.list vía cliente multi-contract, Web Specification (delta — change `tasks`)
 
 ### Community 125 - "web-v2/components.json"
 Cohesion: 0.07
 Nodes (26): aliases, components, composables, lib, ui, charts, color, fonts (+18 more)
 
 ### Community 126 - "app-shell.vue"
-Cohesion: 0.14
-Nodes (13): useTheme(), setPreference(), readStoredPreference(), readSystemPrefersDark(), useThemeStore, useUiStore, navItems, { profile, signOut: doSignOut } (+5 more)
+Cohesion: 0.13
+Nodes (10): Route, useUiStore, { profile }, t, navItems, { profile, signOut: doSignOut }, { resolved: themeResolved, setPreference: setThemePreference }, router (+2 more)
 
 ### Community 127 - "web-v3/components.json"
 Cohesion: 0.07
@@ -1139,12 +1113,12 @@ Cohesion: 0.07
 Nodes (26): 10. Qué NO hacer (bans), 11. Referencias, 1.1 Inspiración ClickUp — estructural, no visual, 1. Dirección visual, 2.1 Árbol de navegación (sidebar), 2.2 Tabla de rutas, 2. Secciones de la aplicación (rutas), 3.1 Mapeo de íconos por elemento (+18 more)
 
 ### Community 129 - "ClientLookupRepository"
-Cohesion: 0.12
-Nodes (10): ListClients, ListClientsDependencies, ListClientsInput, ListClientsForSelectorDependencies, ClientLookupRepository, KyselyClientLookupRepository, KyselyClientRepository, ClientDbRow (+2 more)
+Cohesion: 0.23
+Nodes (6): ListClientsDependencies, ListClientsInput, ListClientsForSelectorDependencies, ListClientsForSelectorInput, ClientLookupRepository, KyselyClientLookupRepository
 
 ### Community 130 - "Requirements"
-Cohesion: 0.10
-Nodes (20): Purpose, Requirement: Commits Conventional Commits en develop, Requirement: Paquetes compartidos @crm/tsconfig y @crm/types, Requirement: Smoke tests verdes en workspace raíz, Requirement: Tooling de entorno (docker-compose, .env.example, .gitignore, Makefile), Requirement: Verificación y pinning de versiones (bloqueante), Requirements, Scenario: Artefactos de build no se commitean (+12 more)
+Cohesion: 0.07
+Nodes (26): Purpose, Requirement: Commits Conventional Commits en develop, Requirement: Paquetes compartidos @crm/tsconfig y @crm/types, Requirement: Pipeline turborepo con fallback bun --filter, Requirement: Smoke tests verdes en workspace raíz, Requirement: Tooling de entorno (docker-compose, .env.example, .gitignore, Makefile), Requirement: Verificación y pinning de versiones (bloqueante), Requirement: Workspace bun con workspaces `apps/*` y `packages/*` (+18 more)
 
 ### Community 131 - "Verify Report — transactional-email"
 Cohesion: 0.10
@@ -1154,25 +1128,25 @@ Nodes (20): Blockers, `bun test` (workspace root, expected ~165/~16/0), `bunx tu
 Cohesion: 0.09
 Nodes (25): MP_SMTP_AUTH_ACCEPT_ANY, MP_SMTP_AUTH_ALLOW_INSECURE, POSTGRES_DB, POSTGRES_PASSWORD, POSTGRES_USER, interval, retries, test (+17 more)
 
-### Community 133 - "CurrencyRepository"
-Cohesion: 0.13
-Nodes (10): CreateCurrencyDependencies, CreateCurrencyInput, InvalidCurrencyInput, ListCurrenciesDependencies, CreateExpenseDependencies, UpdateExpenseDependencies, FinanceValidationDependencies, Currency (+2 more)
+### Community 133 - "Requirements"
+Cohesion: 0.11
+Nodes (17): Purpose, Requirement: Correcciones documentales del stack, Requirement: Criterios verificables globales del change, Requirement: Diferidos registrados con su change consumidor, Requirement: Instalación pineada de bindings con consumidor inmediato, Requirement: Stack base declarado instalado con limitaciones documentadas, Requirements, Scenario: Decisión de error-boundary registrada (+9 more)
 
 ### Community 134 - "ATTACK-CLASSES.md"
-Cohesion: 0.08
-Nodes (15): Attack Classes, Attack classes — choose and split based on Phase 1, Architecture summary and companion selection, Deterministic coverage ledger, Phase 1: Map the source and plan coverage, Prior-run input, Reconnaissance, CI and automation attack classes (subagent_type: `general`) (+7 more)
+Cohesion: 0.13
+Nodes (7): Attack Classes, Attack classes — choose and split based on Phase 1, Architecture summary and companion selection, Deterministic coverage ledger, Phase 1: Map the source and plan coverage, Prior-run input, Reconnaissance
 
-### Community 135 - "composition-root.ts"
-Cohesion: 0.03
-Nodes (74): CreateAccount, GetSession, Logout, RequestOtp, UpdateProfile, UpdateTheme, VerifyOtp, ClientDependency (+66 more)
+### Community 135 - "VerifyOtp"
+Cohesion: 0.05
+Nodes (43): GetSession, Logout, InvalidThemeError, UpdateTheme, VerifyOtp, AuthRouteDependencies, Architectural decisions, Auth flow audit + improvements (+35 more)
 
 ### Community 136 - "useFetch"
-Cohesion: 0.09
-Nodes (30): useFetch(), errorMessage(), Fetcher, getQueryClient(), OctaneQueryResult, shallowChanged(), toContract(), useOctaneQuery() (+22 more)
+Cohesion: 0.11
+Nodes (23): useFetch(), Architectural decisions, Migration contract, Out of scope, Phase 1 — Infrastructure (1 commit), Phase 2 — Per-page migration (9 commits), Phase 3 — Deferred (NOT in this change), Phases (+15 more)
 
 ### Community 137 - "2. Decisiones"
-Cohesion: 0.13
-Nodes (14): 1. Resumen ejecutivo, 2. Decisiones, 4. Contratos, 6. Rollout y tamaño, 7. Riesgos, 8. Criterios de aceptación (mapeados), D10 — Catálogo i18n y extensión del test de escaneo, D1 — Wrapper `vendor/otp-input/`: zagjs `pin-input` con adapter vanilla (+6 more)
+Cohesion: 0.14
+Nodes (13): 1. Resumen ejecutivo, 2. Decisiones, 4. Contratos, 6. Rollout y tamaño, 8. Criterios de aceptación (mapeados), D10 — Catálogo i18n y extensión del test de escaneo, D1 — Wrapper `vendor/otp-input/`: zagjs `pin-input` con adapter vanilla, D2 — Destino de `/`: redirect 302 a `/login` (+5 more)
 
 ### Community 138 - "RECEIPT — change `tasks`"
 Cohesion: 0.08
@@ -1183,12 +1157,12 @@ Cohesion: 0.08
 Nodes (24): Purpose, Requirement: Accesibilidad del nav (WCAG 2.2 AA), Requirement: Guard de sesión en las rutas del shell, Requirement: Layout app shell con sidebar y área de contenido, Requirement: Rutas destino del shell como placeholders protegidos, Requirement: Sidebar redimensionable con colapso y estado persistido, Requirement: Árbol de navegación canónico del PRD §7, Requirements (+16 more)
 
 ### Community 140 - "finance/contracts.ts"
-Cohesion: 0.05
-Nodes (46): AccountsRouteDependencies, DomainErrorResponse, STATUS_BY_CODE, toDomainError(), ExpensesRouteDependencies, getExpenseInputSchema, getIncomeInputSchema, IncomesRouteDependencies (+38 more)
+Cohesion: 0.08
+Nodes (23): Lo que hay hoy, accountSchema, AccountsContract, amountSchema, categorySchema, createAccountInputSchema, createExpenseInputSchema, createIncomeInputSchema (+15 more)
 
 ### Community 141 - "client/contracts.ts"
-Cohesion: 0.09
-Nodes (26): createClientHandler(), createClientInputSchema, getClientInputSchema, listClientsInputSchema, mapClientRowToContract(), removeClientInputSchema, updateClientHandler(), updateClientInputSchema (+18 more)
+Cohesion: 0.10
+Nodes (22): createClientInputSchema, getClientInputSchema, listClientsInputSchema, removeClientInputSchema, updateClientInputSchema, Client, clientDependenciesOutputSchema, clientDependencySchema (+14 more)
 
 ### Community 142 - "login-verification.vue"
 Cohesion: 0.07
@@ -1223,20 +1197,20 @@ Cohesion: 0.09
 Nodes (21): 10. Status bar color doesn't match, 11. Right in Chrome, wrong on phone, 1. Hover state stuck after tap, 2. Gray/blue flash on tap, 3. Layout has the wrong height, 4. Page zooms into the input, 5. Tap feels laggy, 6. Pull-to-refresh hijacks scroll (+13 more)
 
 ### Community 150 - "useTimer"
-Cohesion: 0.21
-Nodes (22): Quick Reference, totalSeconds(), getCurrentTimer(), heartbeatTimer(), listTimerRuns(), startTimer(), StartTimerInput, stopTimer() (+14 more)
+Cohesion: 0.23
+Nodes (21): totalSeconds(), getCurrentTimer(), heartbeatTimer(), listTimerRuns(), startTimer(), StartTimerInput, stopTimer(), TimerHistoryInput (+13 more)
 
-### Community 151 - "update-expense.ts"
-Cohesion: 0.14
-Nodes (10): UpdateExpense, UpdateExpenseInput, UpdateIncome, UpdateIncomeInput, validateMovementCurrencyChange(), normalizeAmount(), InvalidTransferInput, TransferDomainError (+2 more)
+### Community 151 - "ClientRow"
+Cohesion: 0.22
+Nodes (4): InMemoryClientRepository, InMemoryClientRepository, InMemoryClientRepository, ClientRow
 
 ### Community 152 - "login-verification.page.vue"
 Cohesion: 0.11
 Nodes (18): auth, canResend, code, email, errorKeyByCode, errorMessage, isResending, isSubmitting (+10 more)
 
 ### Community 153 - "Requirements"
-Cohesion: 0.06
-Nodes (28): InvalidThemeError, Api Auth Specification, Purpose, Requirement: Contratos RPC de auth en @crm/types, Requirement: Estrategia de tests unit-first con integración opt-in, Requirement: Logout con borrado lógico, Requirement: Sesiones persistentes con cookie httpOnly y renovación deslizante, Requirements (+20 more)
+Cohesion: 0.07
+Nodes (26): Api Auth Specification, Purpose, Requirement: Contratos RPC de auth en @crm/types, Requirement: Estrategia de tests unit-first con integración opt-in, Requirement: Logout con borrado lógico, Requirement: Migración inicial versionada con tooling explícito, Requirement: Registro implícito con seed transaccional, Requirement: Sesiones persistentes con cookie httpOnly y renovación deslizante (+18 more)
 
 ### Community 154 - "Diseño — theme-quieter-minimalist"
 Cohesion: 0.09
@@ -1259,12 +1233,12 @@ Cohesion: 0.10
 Nodes (19): Behavior contract, Markup, Reference wiring, Rules, Styles, The Picker, Hard Rules, Initial Response (+11 more)
 
 ### Community 159 - "expenses-routes.ts"
-Cohesion: 0.13
-Nodes (11): ExpenseDomainError, ExpenseNotFound, InvalidExpenseInput, ListExpenses, ListExpensesDependencies, ListExpensesInput, RemoveExpense, RemoveExpenseDependencies (+3 more)
+Cohesion: 0.10
+Nodes (19): CreateExpense, ExpenseDomainError, ExpenseNotFound, InvalidExpenseInput, ListExpenses, ListExpensesDependencies, ListExpensesInput, RemoveExpense (+11 more)
 
 ### Community 160 - "Requirements"
-Cohesion: 0.11
-Nodes (18): Requirement: Layout público con footer legal, Requirement: Pantalla /login con validación client-side, Requirement: Pantalla /login-verification con contexto del email, Requirement: Preservación de ceros a la izquierda y teclado numérico, Requirement: Wrapper vendor/otp-input con contrato estable, Requirements, Scenario: Con email en el query, Scenario: Contrato público intacto tras el swap (+10 more)
+Cohesion: 0.10
+Nodes (20): Purpose, Requirement: Layout público con footer legal, Requirement: Pantalla /login con validación client-side, Requirement: Pantalla /login-verification con contexto del email, Requirement: Preservación de ceros a la izquierda y teclado numérico, Requirement: Wrapper vendor/otp-input con contrato estable, Requirements, Scenario: Con email en el query (+12 more)
 
 ### Community 161 - "types/package.json"
 Cohesion: 0.11
@@ -1279,8 +1253,8 @@ Cohesion: 0.11
 Nodes (19): Animation Performance, Hard Rules, Initial Response, Operating Posture, Phase 1: Find what animates, Phase 2: Diagnose, Phase 3: Report, React: Don't Animate Through State (+11 more)
 
 ### Community 164 - "disclosure.md"
-Cohesion: 0.09
-Nodes (22): accordion, Accordion.Content → Accordion.Panel, Accordion.Header → Accordion.Header, Accordion.Item → Accordion.Item, Accordion.Root → Accordion.Root, Accordion.Trigger → Accordion.Trigger, Base UI only props worth knowing, Base UI only props worth knowing (+14 more)
+Cohesion: 0.14
+Nodes (13): Base UI only props worth knowing, Base UI only props worth knowing, collapsible, Collapsible.Content → Collapsible.Panel, Collapsible.Root → Collapsible.Root, Collapsible.Trigger → Collapsible.Trigger, CSS var mapping, CSS var mapping (+5 more)
 
 ### Community 165 - "jo"
 Cohesion: 0.11
@@ -1303,24 +1277,24 @@ Cohesion: 0.11
 Nodes (18): 1. Define the Atmosphere, 2. Map the Color Palette, 3. Establish Typography Rules, 4. Define the Hero Section, 5. Describe Component Stylings, 6. Define Layout Principles, 7. Define Responsive Rules, 8. Encode Motion Philosophy (+10 more)
 
 ### Community 171 - "login.page.vue"
-Cohesion: 0.09
-Nodes (17): emit, isDisabled, props, Size, sizeClass, Variant, variantClass, { profile } (+9 more)
+Cohesion: 0.17
+Nodes (9): Route, auth, email, errorKeyByCode, errorMessage, isSubmitting, onSubmit(), router (+1 more)
 
 ### Community 172 - "Detalles de las funcionalidades"
 Cohesion: 0.11
 Nodes (18): Arquitectura, Backend, Client, Config, Cosas a tener en caunta, si se crea una tabla de BD, CRM-HOME, Datos a tener en cuenta, Detalles de las funcionalidades (+10 more)
 
 ### Community 173 - "Config tabs CRUD — apps + monedas (Phase 1)"
-Cohesion: 0.11
-Nodes (19): ConfigRpcClient, 1. Backend (`apps/api/`), 2. Types contract (`packages/types/`), 3. Frontend RPC (`apps/web/src/lib/api/rpc.ts`), 4. Frontend UI (`apps/web/src/components/`), 5. i18n keys (`apps/web/src/lib/i18n/locales/es.json`), Config tabs CRUD — apps + monedas (Phase 1), Migration contract (+11 more)
+Cohesion: 0.12
+Nodes (15): 1. Backend (`apps/api/`), 4. Frontend UI (`apps/web/src/components/`), 5. i18n keys (`apps/web/src/lib/i18n/locales/es.json`), Config tabs CRUD — apps + monedas (Phase 1), Migration contract, Out of scope, Phase 1a — Backend domain + repos ✅, Phase 1b — Backend use cases + handlers + router + composition ✅ (+7 more)
 
 ### Community 174 - "Requirements"
 Cohesion: 0.11
 Nodes (18): Design System Specification, Purpose, Requirement: Archivo único de tokens con estructura de tres capas, Requirement: Componentes base como atoms/molecules consumiendo solo tokens, Requirement: Regla de contraste AA documentada y aplicada, Requirement: Sin flash de tema al cargar (anti-FOUC), Requirement: Tokens de estado y foco con contraste AA, Requirement: Variante dark por clase (+10 more)
 
 ### Community 175 - "Requirements"
-Cohesion: 0.12
-Nodes (16): Requirement: Layout público con footer legal, Requirement: Pantalla /login con validación client-side, Requirement: Pantalla /login-verification con contexto del email, Requirement: Preservación de ceros a la izquierda y teclado numérico, Requirement: Wrapper vendor/otp-input con contrato estable, Requirements, Scenario: Con email en el query, Scenario: Email inválido muestra error accesible (+8 more)
+Cohesion: 0.11
+Nodes (18): Purpose, Requirement: Layout público con footer legal, Requirement: Pantalla /login con validación client-side, Requirement: Pantalla /login-verification con contexto del email, Requirement: Preservación de ceros a la izquierda y teclado numérico, Requirement: Wrapper vendor/otp-input con contrato estable, Requirements, Scenario: Con email en el query (+10 more)
 
 ### Community 176 - "Requirements"
 Cohesion: 0.11
@@ -1331,24 +1305,24 @@ Cohesion: 0.11
 Nodes (18): 1. `bun test` (full workspace suite, runner: `bun test` per `openspec/config.yaml`), 2. `bunx turbo typecheck` (5 packages: api, email, types, web, tsconfig), 3. Control greps (design §2 D5 / proposal §7 SC #4–5), Exact blockers, Executive summary, Follow-up notes (non-blockers), Key Learnings, Requirement-level verdicts (+10 more)
 
 ### Community 178 - "Requirements"
-Cohesion: 0.11
-Nodes (18): Api Specification, Purpose, Requirement: Endpoint GET /health operativo, Requirement: Estructura clean architecture auditable por path, Requirement: Kysely cableado con migraciones versionadas, Requirement: OpenTelemetry con degradación a no-op, Requirement: Smoke test de arranque, Requirements (+10 more)
+Cohesion: 0.12
+Nodes (15): Api Specification, Purpose, Requirement: Endpoint GET /health operativo, Requirement: Estructura clean architecture auditable por path, Requirement: OpenTelemetry con degradación a no-op, Requirement: Smoke test de arranque, Requirements, Scenario: Arranque sin endpoint OTLP (+7 more)
 
 ### Community 179 - "Agent Skill: Principal UI/UX Architect & Motion Choreographer (Awwwards-Tier)"
 Cohesion: 0.11
 Nodes (17): 1. Meta Information & Core Directive, 2. THE "ABSOLUTE ZERO" DIRECTIVE (STRICT ANTI-PATTERNS), 3. THE CREATIVE VARIANCE ENGINE, 4. HAPTIC MICRO-AESTHETICS (COMPONENT MASTERY), 5. MOTION CHOREOGRAPHY (FLUID DYNAMICS), 6. PERFORMANCE GUARDRAILS, 7. EXECUTION PROTOCOL, 8. PRE-OUTPUT CHECKLIST (+9 more)
 
 ### Community 180 - "display-misc.md"
-Cohesion: 0.07
-Nodes (26): AccessibleIcon (radix `AccessibleIcon.Root`: `label` required), avatar, Avatar.Fallback → Avatar.Fallback, Avatar.Image → Avatar.Image, Avatar.Root → Avatar.Root, Base UI only props worth knowing, Base UI only props worth knowing, Base UI only props worth knowing (+18 more)
+Cohesion: 0.11
+Nodes (17): AccessibleIcon (radix `AccessibleIcon.Root`: `label` required), avatar, Avatar.Fallback → Avatar.Fallback, Avatar.Image → Avatar.Image, Avatar.Root → Avatar.Root, Base UI only props worth knowing, Base UI only props worth knowing, CSS variables (+9 more)
 
 ### Community 181 - "K"
 Cohesion: 0.15
 Nodes (18): ae(), entries(), every(), filter(), find(), findIndex(), findLast(), findLastIndex() (+10 more)
 
 ### Community 183 - "HealthRepository"
-Cohesion: 0.22
-Nodes (5): HealthPayload, HealthRepository, HealthStatus, StaticHealthRepository, 8. Riesgos
+Cohesion: 0.17
+Nodes (11): GetHealth, HealthPayload, HealthRepository, HealthStatus, CompositionRoot, StaticHealthRepository, 8. Riesgos, D4 — Estructura de `apps/api` y composition root (+3 more)
 
 ### Community 184 - "task-form.logic.ts"
 Cohesion: 0.22
@@ -1363,8 +1337,8 @@ Cohesion: 0.09
 Nodes (21): Assertion Quality, Baseline Preservation (web-auth-ui), Blockers, Changed File Coverage (without DB — integration tests skipped per design), Design Coherence, Executive Summary, Integration run (postgres + migrated schema), Key Learnings (+13 more)
 
 ### Community 187 - "web-v2 — task list (PRD-v3 implementation)"
-Cohesion: 0.12
-Nodes (16): Cross-track rules (always), Dependency graph (rough), Status legend, Track 0 — Repo wiring (foundation), Track 10 — Templates (page layouts), Track 11 — Pages (one per route), Track 12 — Router (TanStack Router), Track 13 — Tests (+8 more)
+Cohesion: 0.11
+Nodes (17): Cross-track rules (always), Dependency graph (rough), Status legend, Track 0 — Repo wiring (foundation), Track 10 — Templates (page layouts), Track 11 — Pages (one per route), Track 12 — Router (TanStack Router), Track 13 — Tests (+9 more)
 
 ### Community 188 - "ADDED Requirements"
 Cohesion: 0.11
@@ -1375,20 +1349,20 @@ Cohesion: 0.11
 Nodes (17): Api Specification, Purpose, Requirement: Endpoint GET /health operativo, Requirement: Estructura clean architecture auditable por path, Requirement: Kysely cableado sin migraciones, Requirement: OpenTelemetry con degradación a no-op, Requirement: Smoke test de arranque, Requirements (+9 more)
 
 ### Community 190 - "rpc.ts"
-Cohesion: 0.14
-Nodes (13): AuthRpcClient, ClientsRpcClient, createRpcClient(), ExpenseRpcClient, IncomeRpcClient, ScheduleRpcClient, TasksRpcClient, TransferRpcClient (+5 more)
-
-### Community 191 - "kysely/expense-repository.ts"
 Cohesion: 0.11
-Nodes (15): KyselyExpenseRepository, ExpenseDbRow, mapExpenseRow(), toDateString(), 2. La moneda se deriva de la cuenta, 3. La categoría no se muestra en ingresos, 4. Un solo campo de texto (Concepto), 5. Las cuentas: módulo mínimo nuevo (+7 more)
+Nodes (20): AuthRpcClient, ClientsRpcClient, ConfigRpcClient, createRpcClient(), ExpenseRpcClient, IncomeRpcClient, RpcClient, ScheduleRpcClient (+12 more)
+
+### Community 191 - "Database"
+Cohesion: 0.08
+Nodes (17): IncomeRow, Database, KyselyExpenseRepository, AttachmentDbRow, ExpenseDbRow, mapExpenseRow(), mapTransferRow(), ScheduleDbRow (+9 more)
 
 ### Community 192 - "expenses.ts"
 Cohesion: 0.11
 Nodes (17): CreateExpenseInput, createExpenseInputSchema, Expense, expenseAmountSchema, expenseCategorySchema, expenseDateSchema, expenseDescriptionSchema, expenseLimitSchema (+9 more)
 
 ### Community 193 - "incomes.ts"
-Cohesion: 0.08
-Nodes (25): App, appSchema, configContract, Currency, currencySchema, listAppsOutputSchema, listCurrenciesOutputSchema, CreateIncomeInput (+17 more)
+Cohesion: 0.11
+Nodes (17): CreateIncomeInput, createIncomeInputSchema, Income, incomeAmountSchema, incomeCategorySchema, incomeDateSchema, incomeDescriptionSchema, incomeLimitSchema (+9 more)
 
 ### Community 194 - "Comments That Add Nothing"
 Cohesion: 0.11
@@ -1415,8 +1389,8 @@ Cohesion: 0.12
 Nodes (17): 先删减，锁定主角与主动作, 先定调性，再求差异, 北极星与呼应, 参考怎样转为设计决定, 定色彩, 定首屏与工作区骨架, 小样、选择与品味, 差异检验 (+9 more)
 
 ### Community 200 - "Base vs Radix"
-Cohesion: 0.22
-Nodes (9): Accordion, Base vs Radix, Button / trigger as non-button element (base only), Composition: asChild (radix) vs render (base), Contents, Select, Select — multiple selection and object values (base only), Slider (+1 more)
+Cohesion: 0.11
+Nodes (17): Accordion, Base vs Radix, Button / trigger as non-button element (base only), Composition: asChild (radix) vs render (base), Contents, Select, Select — multiple selection and object values (base only), Slider (+9 more)
 
 ### Community 201 - "tasks.page.vue"
 Cohesion: 0.09
@@ -1424,7 +1398,7 @@ Nodes (15): toast, emit, setMode(), ViewMode, emit, columns, drawerOpen, drawerT
 
 ### Community 202 - "setup"
 Cohesion: 0.11
-Nodes (17): API, Falsos positivos de la tercera ronda (descartados con evidencia), Lo que quedó abierto y se cerró después, Tercera ronda (GGA sobre lo corregido en la segunda), Web, setup(), Activation Contract, Decision Gates (+9 more)
+Nodes (19): API, Falsos positivos de la tercera ronda (descartados con evidencia), Lo que quedó abierto y se cerró después, Reglas antislop (prioridad por tier), Tercera ronda (GGA sobre lo corregido en la segunda), Web, formatRelativeTime(), setup() (+11 more)
 
 ### Community 203 - "Requirements"
 Cohesion: 0.12
@@ -1435,12 +1409,12 @@ Cohesion: 0.12
 Nodes (15): ADDED requirements, Archive Report — stack-alignment, Archive status, Archived path, Artifacts read, Destructive merge guard, Memory observation IDs, MODIFIED requirements (+7 more)
 
 ### Community 205 - "Explore — stack-alignment"
-Cohesion: 0.12
-Nodes (16): 1. Brecha real de deps vs PRD §10, 2.2 `vendor/icons` → `@octanejs/phosphor-icons`, 2.3 `vendor/otp-input` → `@octanejs/zag` (preferido) o `@octanejs/input-otp`, 2.4 Sidebar colapsable → `@octanejs/resizable-panels`, 2.5 Hallazgo extra: segunda máquina hand-rolled candidata a xstate, 2. Wrappers hand-rolled actuales y su swap a bindings, 3. Bindings-status.md — estado de la consulta, 4. Instalar ahora vs diferir (criterio: uso inmediato o fundacional) (+8 more)
+Cohesion: 0.17
+Nodes (11): 1. Brecha real de deps vs PRD §10, 3. Bindings-status.md — estado de la consulta, 4. Instalar ahora vs diferir (criterio: uso inmediato o fundacional), 5. Riesgos, 6. Preguntas abiertas para specify/plan, apps/api (hoy: nitro, h3, orpc, kysely, pg, OTel completo), apps/web (hoy: 4 deps + 6 devDeps), Correcciones de docs detectadas (parte del objetivo del change) (+3 more)
 
-### Community 206 - "SDD Tasks — transactional-email"
-Cohesion: 0.18
-Nodes (10): Review Workload Forecast, Rollback plan rápido, SDD Tasks — transactional-email, Tasks, Tasks, TDD cycle, TDD cycle, TDD Evidence Requirement (+2 more)
+### Community 206 - "Diseño — transactional-email"
+Cohesion: 0.12
+Nodes (16): 10. Skill resolution, 3. Layout de archivos, 4. Contratos y flujo de datos, 5. Delta sobre specs, 6. Docker-compose y Makefile, 7. Estrategia de tests (strict TDD), 9. Riesgos y mitigaciones, Diseño — transactional-email (+8 more)
 
 ### Community 207 - "types-contracts.ts"
 Cohesion: 0.06
@@ -1463,20 +1437,20 @@ Cohesion: 0.20
 Nodes (14): launchChrome(), finish(), abortTransport(), cleanup(), connectTransport(), launchChrome(), removeFrames(), restartBrowser() (+6 more)
 
 ### Community 212 - "Security Audit"
-Cohesion: 0.12
-Nodes (16): Anti-patterns, Core principles, Cost budget, Full audit planning, Full audit setup, Operating modes, Platform terminology, Recommend the smallest effective source fix (+8 more)
+Cohesion: 0.15
+Nodes (13): Anti-patterns, Core principles, Full audit setup, Operating modes, Platform terminology, Recommend the smallest effective source fix, Require a boundary and result, Respect source visibility (+5 more)
 
 ### Community 213 - "Commands"
 Cohesion: 0.12
 Nodes (16): `add` — Add components, `apply` — Apply a preset to an existing project, `build` — Build a custom registry, Commands, Contents, `diff` — Check for updates, `docs` — Get component documentation URLs, Dry-Run Mode (+8 more)
 
 ### Community 214 - "TimerRunRepository"
-Cohesion: 0.05
-Nodes (41): InvalidTimerInput, TimerNotFound, GetCurrentTimerDependencies, GetCurrentTimerInput, repo(), run(), HeartbeatTimer, HeartbeatTimerDependencies (+33 more)
+Cohesion: 0.06
+Nodes (32): InvalidTimerInput, TimerNotFound, GetCurrentTimerDependencies, GetCurrentTimerInput, repo(), run(), HeartbeatTimer, HeartbeatTimerDependencies (+24 more)
 
 ### Community 215 - "main.ts"
-Cohesion: 0.13
-Nodes (7): bootstrap(), queryClient, i18n, t, t, t, t
+Cohesion: 0.11
+Nodes (9): Route, Route, Route, Route, i18n, t, t, t (+1 more)
 
 ### Community 216 - "RichTextEditor.vue"
 Cohesion: 0.13
@@ -1530,25 +1504,25 @@ Nodes (15): Accessibility, Animation Standards Reference, Asymmetric timing, Coh
 Cohesion: 0.13
 Nodes (14): 1. Visual Theme & Atmosphere, 2. Color Palette & Roles, 3. Typography Rules, 4. Component Stylings, 5. Hero Section, 6. Layout Principles, 7. Responsive Rules, 8. Motion & Interaction (Code-Phase Intent) (+6 more)
 
-### Community 229 - "finance-validation.ts"
-Cohesion: 0.17
-Nodes (14): CreateExpense, CreateExpenseInput, assertCurrencyExists(), assertCurrencyMatchesAccount(), assertOwnedAccount(), MovementCurrencyChange, ACCOUNT_EUR, ACCOUNT_USD (+6 more)
+### Community 229 - "Telemetry"
+Cohesion: 0.28
+Nodes (7): Telemetry, createTelemetry(), NoopTelemetry, OtelTelemetry, D10 — Smoke tests (qué testea cada app), Commit 2 — `feat(api): scaffold de @crm/api con clean architecture, health y OTel no-op`, Telemetría: no-op por diseño
 
 ### Community 230 - "config-tabs-nuqs"
-Cohesion: 0.12
-Nodes (16): Acceptance, Compatibility note, config-tabs-nuqs, Goal, Open question (a resolver antes de Phase 7), Phase 1 — Skill, Phase 2 — Docs de stack, Phase 3 — Install (+8 more)
+Cohesion: 0.10
+Nodes (17): ListTypes, Acceptance, Compatibility note, config-tabs-nuqs, Goal, Open question (a resolver antes de Phase 7), Phase 1 — Skill, Phase 2 — Docs de stack (+9 more)
 
 ### Community 231 - "Archive Report — frontend-foundation"
 Cohesion: 0.13
 Nodes (14): ADDED Requirements, Archive Report — frontend-foundation, Artifacts leídos, Destructive merge guard, Dominio existente `web` (delta merge), Dominios nuevos (copia completa a canonical), Dominios sincronizados, Estado del archive (+6 more)
 
 ### Community 232 - "Apply Progress — frontend-foundation"
-Cohesion: 0.40
-Nodes (4): Apply Progress — frontend-foundation, Commits (develop), Estado final de tests, Notas de proceso
+Cohesion: 0.33
+Nodes (5): Apply Progress — frontend-foundation, Commits (develop), Estado final de tests, Notas de proceso, TDD Cycle Evidence
 
 ### Community 233 - "Verify Report — frontend-foundation"
-Cohesion: 0.12
-Nodes (16): Auditoría por path (regla §9 de wrappers), Blockers, Cobertura por spec (con evidencia), Comandos de verificación ejecutados, Commits Conventional Commits — PASS (4/4), Detector impeccable, Findings menores (no bloqueantes), Re-verify remediación CRITICAL-1 (acotado, posterior al verify inicial) (+8 more)
+Cohesion: 0.13
+Nodes (14): Auditoría por path (regla §9 de wrappers), Blockers, Comandos de verificación ejecutados, Commits Conventional Commits — PASS (4/4), Detector impeccable, Findings menores (no bloqueantes), Re-verify remediación CRITICAL-1 (acotado, posterior al verify inicial), Recomendación (+6 more)
 
 ### Community 234 - "Proposal — monorepo-scaffold"
 Cohesion: 0.13
@@ -1578,9 +1552,13 @@ Nodes (11): 1. Purpose & frequency, 2. Easing & duration, 3. Physicality & origi
 Cohesion: 0.14
 Nodes (14): Amazon StyleSnap, Bing Visual Search, Browser Uploads, Contents, Driver Template, Lykdat, Other Upload and API Methods, Reuse Results and Structured Fields (+6 more)
 
-### Community 242 - "schedule/ports.ts"
+### Community 242 - "context-menu (Radix `ContextMenu` → Base UI `ContextMenu`)"
 Cohesion: 0.13
-Nodes (14): ScheduleRepository, 6.1 `@crm/contract` (new shared package), 9.1 Login (`/login` + `/login-verification`), 9.2 Dashboard (`/dashboard`), 9.3 Tasks (`/tasks`), 9.4 Schedule (`/schedules`), 9.5 Clients (`/clients`), 9.6 Config (`/config`) (+6 more)
+Nodes (14): Arrow / Item / Group / Label / CheckboxItem / RadioGroup / RadioItem / ItemIndicator / Separator / Sub / SubTrigger / SubContent, Base UI only, data attributes, CSS variables, Content → ContextMenu.Portal > Positioner > Popup, context-menu (Radix `ContextMenu` → Base UI `ContextMenu`), Data attributes / CSS variables, Menu → Menu.Root, menubar (Radix `Menubar` → Base UI `Menubar` + `Menu`), Portal / Content / Arrow / Item / Group / Label / CheckboxItem / RadioGroup / RadioItem / ItemIndicator / Separator / Sub / SubTrigger / SubContent (+6 more)
+
+### Community 243 - "shadcn/SKILL.md"
+Cohesion: 0.21
+Nodes (4): Icons, Icons in Button use data-icon attribute, No sizing classes on icons inside components, Pass icons as component objects, not string keys
 
 ### Community 244 - "Customization & Theming"
 Cohesion: 0.14
@@ -1623,16 +1601,16 @@ Cohesion: 0.14
 Nodes (13): 1. Intent (intención), 2.1 Design system (tokens + tema), 2.2 App shell (layout + sidebar + rutas placeholder), 2.3 Login + OTP (UI sola), 2.4 Tests (strict_tdd, sin excepción nueva), 2. Alcance, 3. Capabilities, 4. Riesgos y mitigaciones (+5 more)
 
 ### Community 254 - "Verify Report — stack-alignment"
-Cohesion: 0.12
-Nodes (18): clampSidebarSize(), isCollapsedSize(), SIDEBAR_LAYOUT, SIDEBAR_LAYOUT_ID, 1. vendor-bindings (7 requisitos, 12 escenarios), 2. api (1 requisito, 3 escenarios), 3. web-auth-ui (2 requisitos, 7 escenarios), 4. web-shell (2 requisitos, 7 escenarios) (+10 more)
+Cohesion: 0.22
+Nodes (8): Blockers, Evidencia dev/SSR (no re-ejecutada en esta fase), Findings, Review workload / PR boundary, Strict TDD compliance (ACTIVO — testing.strict_tdd: true), Task completion, Veredicto global: PASS CON WARNINGS (0 blockers, 0 critical), Verify Report — stack-alignment
 
 ### Community 255 - "Proposal — theme-quieter-minimalist"
 Cohesion: 0.14
 Nodes (13): 1. Intent, 2.1 In scope — implementación (PR principal), 2.2 Out of scope (no se toca), 2.3 Estimación de líneas (implementación), 2.4 In scope — governance follow-up (PR secundario, gateado), 2. Scope, 3. Affected areas, 5. Risks (+5 more)
 
 ### Community 257 - "quickstart.md"
-Cohesion: 0.15
-Nodes (5): Archivos, Archivos, Archivos, Directorios, Archivos
+Cohesion: 0.19
+Nodes (4): Archivos, Archivos, Directorios, Archivos
 
 ### Community 258 - "compilerOptions"
 Cohesion: 0.14
@@ -1643,8 +1621,8 @@ Cohesion: 0.14
 Nodes (13): dependsOn, outputs, cache, persistent, $schema, tasks, build, dev (+5 more)
 
 ### Community 260 - "toast"
-Cohesion: 0.16
-Nodes (16): Functions, Sonner API Reference, `toast()` options, `<Toaster />`, Initial Response, Recipes, Setup, Styling — the escalation ladder (+8 more)
+Cohesion: 0.24
+Nodes (11): Functions, Sonner API Reference, `toast()` options, `<Toaster />`, Initial Response, Recipes, Setup, Styling — the escalation ladder (+3 more)
 
 ### Community 261 - "form"
 Cohesion: 0.15
@@ -1671,16 +1649,16 @@ Cohesion: 0.15
 Nodes (13): Built-in variants first, className for layout only, Contents, No manual dark: color overrides, No manual z-index on overlay components, No raw color values for status/state indicators, No space-x-* / space-y-*, Prefer size-* over w-* h-* when equal (+5 more)
 
 ### Community 267 - "otp-machine.ts"
-Cohesion: 0.16
-Nodes (12): createOtpMachineDef(), OTP_CODE_LENGTH, OTP_EXPIRES_MINUTES, OTP_MAX_ATTEMPTS, OtpContext, OtpEvent, OtpMachine, OtpMachineOptions (+4 more)
+Cohesion: 0.10
+Nodes (22): createOtpMachine(), createOtpMachineDef(), OTP_CODE_LENGTH, OTP_EXPIRES_MINUTES, OTP_MAX_ATTEMPTS, OtpContext, OtpEvent, OtpMachine (+14 more)
 
-### Community 268 - "recommend_once.py"
-Cohesion: 0.24
-Nodes (5): main(), utf8_output(), main(), marker(), utf8_output()
+### Community 268 - "get-client.ts"
+Cohesion: 0.15
+Nodes (6): CreateClient, GetClient, GetClientDependencies, GetClientInput, ListClients, ClientsRouteDependencies
 
-### Community 269 - "preflightJsonText"
-Cohesion: 0.40
-Nodes (11): JsonStructureError, preflightJsonText(), beginContainer(), beginString(), beginValue(), closeContainer(), countValue(), currentContainer() (+3 more)
+### Community 269 - "kysely/app-repository.ts"
+Cohesion: 0.29
+Nodes (4): ListAppsDependencies, App, AppRepository, KyselyAppRepository
 
 ### Community 270 - "client-form.logic.ts"
 Cohesion: 0.26
@@ -1703,8 +1681,8 @@ Cohesion: 0.15
 Nodes (12): ADDED Requirements, MODIFIED Requirements, Requirement: Diferidos registrados con su change consumidor, Requirement: Patrón bind-and-wrap seguro para consumir un binding diferido, Scenario: Bind-and-wrap verificable por grep, Scenario: config.yaml stack.frontend.diferidos consistente, Scenario: Diferidos actualizados sin lexical ni dnd-kit, Scenario: Lista de diferidos actualizada al consumir (+4 more)
 
 ### Community 275 - "build"
-Cohesion: 0.06
-Nodes (44): 1. 什么时候该派发？触发什么模式？, 2. 派发前，主 Agent 要准备的“交接清单”, 3. 主 Agent 如何处理子 Agent 的反馈, 视觉评审派发协议 (主 Agent 专用), build(), lint(), Requirement: Pipeline turborepo con fallback bun --filter, Requirement: Workspace bun con workspaces `apps/*` y `packages/*` (+36 more)
+Cohesion: 0.04
+Nodes (61): 1. 什么时候该派发？触发什么模式？, 2. 派发前，主 Agent 要准备的“交接清单”, 3. 主 Agent 如何处理子 Agent 的反馈, 视觉评审派发协议 (主 Agent 专用), build(), lint(), Cierre del change (verificación integral, criterios de éxito §6 de la proposal), Commit 1 — `chore: configura workspace del monorepo (bun workspaces, turbo, compose, env)` (+53 more)
 
 ### Community 276 - "contrast-check.py"
 Cohesion: 0.28
@@ -1786,9 +1764,9 @@ Nodes (11): Cierre, Decisiones de scope, Fase 1 — Audit de versiones, Fase 2 �
 Cohesion: 0.17
 Nodes (11): actionContext / status findings, Active same-domain change warnings, Archive Report — monorepo-scaffold, Archive status, Archived path, Canonical spec sync, Final Task Completion Gate, Memory observation IDs (+3 more)
 
-### Community 297 - "Requirements"
-Cohesion: 0.17
-Nodes (11): Email Specification, Purpose, Requirement: Plantilla OTP con copy en español y fallback de texto plano, Requirement: Snapshot del render de la plantilla OTP, Requirement: Tooling de desarrollo y exportación con @octanejs/email-cli, Requirements, Scenario: Código destacado y copy completo en el HTML, Scenario: Exportación de la plantilla OTP en desarrollo (+3 more)
+### Community 297 - "002_tasks.integration.test.ts"
+Cohesion: 0.22
+Nodes (5): databaseUrl, ForeignKey, ForeignKeyRow, down(), up()
 
 ### Community 298 - "Requirement: Tooling de entorno (docker-compose, .env.example, .gitignore, Makefile)"
 Cohesion: 0.17
@@ -1839,20 +1817,20 @@ Cohesion: 0.18
 Nodes (10): Client-Side and Browser Hunting, Core discipline (include in every agent prompt for this domain), Cross-origin messaging and network attack classes (subagent_type: `general`), Cross-site information leak classes (subagent_type: `general`), DOM and object-state attack classes (subagent_type: `general`), Service-worker and browser-storage attack classes (subagent_type: `general`), UI-redress and navigation attack classes (subagent_type: `general`), Universal moves (apply across the above) (+2 more)
 
 ### Community 312 - "shadcn/ui"
-Cohesion: 0.20
-Nodes (10): Component Docs, Examples, and Usage, Component Selection, Current Project Context, Detailed References, Key Fields, Key Patterns, Principles, shadcn/ui (+2 more)
+Cohesion: 0.18
+Nodes (11): Component Docs, Examples, and Usage, Component Selection, Current Project Context, Detailed References, Key Fields, Key Patterns, Principles, Quick Reference (+3 more)
 
 ### Community 314 - "Group 1: Hard Gate (absolute, no exceptions)"
-Cohesion: 0.11
-Nodes (19): Tab, Group 1: Hard Gate (absolute, no exceptions), R-02 — Copywriting, R-03 — Mobile Responsiveness, R-17 — Data & Numbers, R-18 — Testimonials, R-23 — Clarification & Visual Assets, R-24 — Navigation (+11 more)
+Cohesion: 0.12
+Nodes (17): Group 1: Hard Gate (absolute, no exceptions), R-02 — Copywriting, R-03 — Mobile Responsiveness, R-17 — Data & Numbers, R-18 — Testimonials, R-23 — Clarification & Visual Assets, R-24 — Navigation, R-25 — Color Contrast (+9 more)
 
 ### Community 315 - "Web fetch recipes"
 Cohesion: 0.12
 Nodes (14): Contents, Dynamic Content and Frames, Failure Diagnosis, Multi-page Retrieval, Output selection, Page Evaluation, Readiness, Request State and Policy (+6 more)
 
-### Community 316 - "Progress.Indicator → Progress.Indicator"
+### Community 316 - "ref_pinia"
 Cohesion: 0.33
-Nodes (6): Base UI only props worth knowing, CSS variables, Data attributes, progress, Progress.Indicator → Progress.Indicator, Progress.Root → Progress.Root
+Nodes (6): useTheme(), setPreference(), readStoredPreference(), readSystemPrefersDark(), useThemeStore, UserTheme
 
 ### Community 317 - "Tasks flow UX polish (impeccable)"
 Cohesion: 0.18
@@ -1863,12 +1841,12 @@ Cohesion: 0.18
 Nodes (10): 1. Tasks list item — molecule, 2. Empty state — list level, 3. Header — tasks page, 4. Search input, Aesthetic polish — tasks list, Constraints, Diagnosis (from `/tmp/survey-tasks.png`), Plan (+2 more)
 
 ### Community 319 - "Apply Progress — stack-alignment"
-Cohesion: 0.18
-Nodes (10): Apply Progress — stack-alignment, Commit 8 — docs (D-SA2 + correcciones), Desviaciones del design, Esta sesión (continuación final — commits 7 y 8), Estado global, Próximo paso, Tareas restantes, TDD Cycle Evidence (commits 7-8 de esta sesión) (+2 more)
+Cohesion: 0.17
+Nodes (11): Apply Progress — stack-alignment, Commit 8 — docs (D-SA2 + correcciones), Desviaciones del design, Esta sesión (continuación final — commits 7 y 8), Estado global, Próximo paso, Tareas restantes, TDD Cycle Evidence (commits 7-8 de esta sesión) (+3 more)
 
-### Community 320 - "shellRoute"
-Cohesion: 0.08
-Nodes (29): authRoute(), shellRoute(), 3. Estructura de archivos (cambios), D5 — Helper `shellRoute` / `authRoute` y tabla generada desde lista canónica, web delta (6/6 requisitos, 8/8 escenarios) — PASS, 1. Estado actual del backend (`apps/api`), 2. Estado actual del frontend (`apps/web`), 3. Requisitos PRD §8.1 (fuente de verdad) (+21 more)
+### Community 320 - "Work Unit 7 — Cliente RPC web, swap del verifier, login-form y guards del shell"
+Cohesion: 0.13
+Nodes (15): GREEN, GREEN, GREEN, RED, RED, RED, RED, REFACTOR (+7 more)
 
 ### Community 321 - "Sync Report — backend-auth"
 Cohesion: 0.18
@@ -1922,9 +1900,9 @@ Nodes (10): 22. STYLE VARIATION ENGINE, Decorative Asset Set, Image Art Directio
 Cohesion: 0.20
 Nodes (9): Capturing work, Design is decision-making, Failure mode signals, How to use these skills, /layers-intro, Principles — apply across all sessions, The framework, The time dimension — probe proactively (+1 more)
 
-### Community 334 - "expense-drawer.vue"
-Cohesion: 0.13
-Nodes (15): accountId, amount, amountValid, canSubmit, category, currencySymbol, date, description (+7 more)
+### Community 334 - "kysely/client-repository.ts"
+Cohesion: 0.31
+Nodes (3): KyselyClientRepository, ClientDbRow, mapClientRow()
 
 ### Community 335 - "toast"
 Cohesion: 0.20
@@ -1990,9 +1968,9 @@ Nodes (9): Computational amplification attack classes (subagent_type: `general`)
 Cohesion: 0.20
 Nodes (10): API-key and mTLS attack classes (subagent_type: `general`), Browser-session attack classes (subagent_type: `general`), Core discipline (include in every agent prompt for this domain), Federated-identity attack classes (subagent_type: `general`), HTTP framing and cache attack classes (subagent_type: `general`), HTTP-Protocol and Authentication Hunting, MFA, passkey, and account-transition attack classes (subagent_type: `general`), Universal moves (apply across the above) (+2 more)
 
-### Community 351 - "config/ports.ts"
-Cohesion: 0.18
-Nodes (8): ConfigRepository, Account, App, Category, Currency, Type, UpdateUserConfigInput, UserConfig
+### Community 351 - "Result"
+Cohesion: 0.10
+Nodes (18): ClientRepository, ConfigRepository, ScheduleRepository, Result, 6.1 `@crm/contract` (new shared package), Client, ClientInput, ClientPatch (+10 more)
 
 ### Community 352 - "task-detail-page.logic.ts"
 Cohesion: 0.33
@@ -2002,9 +1980,9 @@ Nodes (8): buildRemoveParams(), closeDeleteConfirmation(), DeleteConfirmationSta
 Cohesion: 0.40
 Nodes (4): /clients CRUD completo, Contexto, Tests, Verificación
 
-### Community 354 - "pinia@4.1.0"
-Cohesion: 0.11
-Nodes (10): pinia@4.1.0, @tanstack/vue-table@9.2.4, @vee-validate/zod@4.15.1, @zag-js/accordion@1.44.0, @zag-js/pin-input@1.44.0, pinia, @vee-validate/zod, @zag-js/pin-input (+2 more)
+### Community 354 - "main.ts"
+Cohesion: 0.27
+Nodes (5): bootAuth(), getSession, bootstrap(), queryClient, authRepository
 
 ### Community 355 - "8. Módulos — especificación funcional + visual"
 Cohesion: 0.20
@@ -2039,8 +2017,8 @@ Cohesion: 0.22
 Nodes (9): 18. EXTRA CREATIVITY & IMPLEMENTATION EDGE, Composition variety check, Conversion focus, Cross-section contrast, CTA specificity, Cultural / tonal alignment, Data-viz restraint, Image variety inside one comp (+1 more)
 
 ### Community 363 - "2. Alcance"
-Cohesion: 0.11
-Nodes (17): 1. Intent (intención), 2.1 Instalar AHORA — consumidor inmediato, 2.3 Swap `vendor/otp-input` → binding (decisión de design), 2.4 Swap `vendor/icons` → `@octanejs/phosphor-icons`, 2.5 Sidebar → `@octanejs/resizable-panels`, 2.6 FSM de `lib/otp` → `@octanejs/xstate`, 2.7 Correcciones documentales, 2.8 Diferir al change de su feature (documentado, no olvidado) (+9 more)
+Cohesion: 0.10
+Nodes (19): 1. Intent (intención), 2.1 Instalar AHORA — consumidor inmediato, 2.2 Instalar AHORA — stack base declarado sin consumidor propio aún, 2.3 Swap `vendor/otp-input` → binding (decisión de design), 2.4 Swap `vendor/icons` → `@octanejs/phosphor-icons`, 2.5 Sidebar → `@octanejs/resizable-panels`, 2.6 FSM de `lib/otp` → `@octanejs/xstate`, 2.7 Correcciones documentales (+11 more)
 
 ### Community 364 - "hover-card → preview-card"
 Cohesion: 0.22
@@ -2102,13 +2080,13 @@ Nodes (9): 3.1 `apps/web/src/styles/tokens.css`, 3.2 `apps/web/src/components/at
 Cohesion: 0.22
 Nodes (8): Active same-domain change warnings, Annotation stripping audit, Key Learnings, Operations applied, skill_resolution, Status: PASS, Sync Report — theme-quieter-minimalist, Verificación cruzada
 
-### Community 379 - "Requirements"
-Cohesion: 0.11
-Nodes (17): Purpose, Requirement: Correcciones documentales del stack, Requirement: Criterios verificables globales del change, Requirement: Diferidos registrados con su change consumidor, Requirement: Instalación pineada de bindings con consumidor inmediato, Requirement: Stack base declarado instalado con limitaciones documentadas, Requirements, Scenario: Decisión de error-boundary registrada (+9 more)
+### Community 379 - "Dispatch oRPC y mapeo de errores"
+Cohesion: 0.20
+Nodes (7): Archivos, Cobertura del contrato, Dispatch oRPC y mapeo de errores, Envelope de transporte, Por qué un dispatcher manual, Rutas fuera del contrato, Tests relacionados
 
-### Community 380 - "AttachmentRepository"
-Cohesion: 0.23
-Nodes (5): AttachmentRepository, AttachmentRow, KyselyAttachmentRepository, mapAttachmentRow(), Scenario: AttachmentRepository sin consumidores MVP
+### Community 380 - "accordion"
+Cohesion: 0.22
+Nodes (9): accordion, Accordion.Content → Accordion.Panel, Accordion.Header → Accordion.Header, Accordion.Item → Accordion.Item, Accordion.Root → Accordion.Root, Accordion.Trigger → Accordion.Trigger, Base UI only props worth knowing, CSS var mapping (+1 more)
 
 ### Community 381 - "Requirement: Verificación y pinning de @octanejs/dnd-kit y @octanejs/lexical (bloqueante para change tasks)"
 Cohesion: 0.22
@@ -2178,17 +2156,17 @@ Nodes (9): scripts, build, db:migrate, dev, lint, test, test:db, test:db:setup (
 Cohesion: 0.50
 Nodes (4): POSTGRES_DB, POSTGRES_PASSWORD, POSTGRES_USER, env
 
-### Community 399 - "ref_node_url"
-Cohesion: 0.16
-Nodes (6): result, fail(), INIT_TIMEOUT, main(), out(), step()
+### Community 399 - "scroll-area"
+Cohesion: 0.22
+Nodes (9): Base UI only props worth knowing, CSS variables, Data attributes, scroll-area, ScrollArea.Corner → ScrollArea.Corner, ScrollArea.Root → ScrollArea.Root, ScrollArea.Viewport → ScrollArea.Viewport, ScrollAreaScrollbar → ScrollArea.Scrollbar (+1 more)
 
 ### Community 400 - "Aesthetic 2026-Q4 pages — STATUS"
 Cohesion: 0.25
 Nodes (7): Aesthetic 2026-Q4 pages — STATUS, Commits entregados, Decisiones de implementación, Deuda pendiente (no bloquea), Estado por task, Referencias, Tesis de diseño
 
 ### Community 401 - "/expenses module (MVP completo)"
-Cohesion: 0.11
-Nodes (17): income(), Contexto, /expenses module (MVP completo), Reuso desde /incomes, Schema (tabla `expense`), Tasks (un commit por task), Tests, Verificación (+9 more)
+Cohesion: 0.07
+Nodes (27): income(), Contexto, /expenses module (MVP completo), Reuso desde /incomes, Schema (tabla `expense`), Tasks (un commit por task), Tests, Verificación (+19 more)
 
 ### Community 402 - "Estado de web-v3 — handover"
 Cohesion: 0.25
@@ -2207,8 +2185,8 @@ Cohesion: 0.25
 Nodes (7): ADDED Requirements, Domains synced, MODIFIED Requirements, Notes, REMOVED Requirements, Same-domain active change warnings, Sync Report — stack-alignment
 
 ### Community 406 - "schedules.ts"
-Cohesion: 0.15
-Nodes (12): createScheduleInputSchema, listSchedulesInputSchema, removeScheduleInputSchema, Schedule, scheduleAmountSchema, scheduleDateSchema, scheduleDescriptionSchema, scheduleFrequencySchema (+4 more)
+Cohesion: 0.12
+Nodes (14): healthContract, healthOutputSchema, createScheduleInputSchema, listSchedulesInputSchema, removeScheduleInputSchema, Schedule, scheduleAmountSchema, scheduleDateSchema (+6 more)
 
 ### Community 407 - "Tasks — theme-quieter-minimalist"
 Cohesion: 0.25
@@ -2318,9 +2296,9 @@ Nodes (7): Aislamiento multi-usuario, Capas del backend y puertos de dominio, Ca
 Cohesion: 0.25
 Nodes (8): scripts, build, dev, lint, postinstall, test, typecheck, typecheck:e2e
 
-### Community 434 - "config-routes.ts"
-Cohesion: 0.24
-Nodes (5): CreateCurrency, ListApps, ListCurrencies, ConfigRouteDependencies, createCurrencyInputSchema
+### Community 434 - "types-routes.ts"
+Cohesion: 0.06
+Nodes (27): CreateCategory, RemoveCategory, CreateCurrency, CreateCurrencyDependencies, CreateCurrencyInput, InvalidCurrencyInput, ListApps, ListCurrencies (+19 more)
 
 ### Community 435 - "compilerOptions"
 Cohesion: 0.29
@@ -2331,16 +2309,16 @@ Cohesion: 0.29
 Nodes (7): 12.1 Configuración, 12.2 Tabla de rutas (`app/router/routes.ts`), 12.3 Layouts por meta, 12.4 Guards como middleware de ruta, 12.5 Search params tipados (sucesor de nuqs), 12.6 Anti-regresión, 12. Routing en archivo único (requirement v4)
 
 ### Community 437 - "TypeRepository"
-Cohesion: 0.12
-Nodes (12): CreateType, CreateTypeDependencies, InvalidTypeInput, TypeNotFound, RemoveType, RemoveTypeDependencies, RemoveTypeInput, UpdateTypeDependencies (+4 more)
+Cohesion: 0.13
+Nodes (7): CreateType, InvalidTypeInput, TypeNotFound, RemoveType, RemoveTypeDependencies, RemoveTypeInput, Phase 3 — Backend domain + use cases
 
 ### Community 438 - "Requirements"
-Cohesion: 0.12
-Nodes (16): Purpose, Requirement: Commits Conventional Commits en develop, Requirement: Paquetes compartidos @crm/tsconfig y @crm/types, Requirement: Smoke tests verdes en workspace raíz, Requirement: Tooling de entorno (docker-compose, .env.example, .gitignore, Makefile), Requirement: Verificación y pinning de versiones (bloqueante), Requirements, Scenario: Artefactos de build no se commitean (+8 more)
+Cohesion: 0.09
+Nodes (22): Purpose, Requirement: Commits Conventional Commits en develop, Requirement: Paquetes compartidos @crm/tsconfig y @crm/types, Requirement: Pipeline turborepo con fallback bun --filter, Requirement: Smoke tests verdes en workspace raíz, Requirement: Tooling de entorno (docker-compose, .env.example, .gitignore, Makefile), Requirement: Verificación y pinning de versiones (bloqueante), Requirement: Workspace bun con workspaces `apps/*` y `packages/*` (+14 more)
 
-### Community 439 - "create-income.ts"
-Cohesion: 0.18
-Nodes (8): CreateIncome, CreateIncomeInput, ACCOUNT, CURRENCY, INPUT, IncomeDomainError, IncomeNotFound, InvalidIncomeInput
+### Community 439 - "Supply Chain and Release Hunting"
+Cohesion: 0.22
+Nodes (8): CI and automation attack classes (subagent_type: `general`), Core discipline (include in every agent prompt for this domain), Dependency and build-input attack classes (subagent_type: `general`), Release and update attack classes (subagent_type: `general`), Supply Chain and Release Hunting, Universal moves (apply across the above), Validation rules (apply before reporting ANY finding here), When to use this file
 
 ### Community 440 - "Requirement: Redirect de la ruta raíz según sesión"
 Cohesion: 0.29
@@ -2367,12 +2345,12 @@ Cohesion: 0.29
 Nodes (7): change, reason, testing, runner, scope, strict_tdd, tdd_exceptions
 
 ### Community 446 - "Composition root y superficie HTTP"
-Cohesion: 0.25
-Nodes (8): Arranque, Composition root y superficie HTTP, CORS de desarrollo, Drenaje de emails en proceso, Modo degradado sin base de datos, Superficie HTTP, Tareas programadas de nitro, Tests relacionados
+Cohesion: 0.29
+Nodes (7): Arranque, Composition root y superficie HTTP, CORS de desarrollo, Drenaje de emails en proceso, Modo degradado sin base de datos, Tareas programadas de nitro, Tests relacionados
 
-### Community 447 - "Forms & Inputs"
-Cohesion: 0.25
-Nodes (8): Buttons inside inputs use InputGroup + InputGroupAddon, Contents, Field validation and disabled states, FieldSet + FieldLegend for grouping related fields, Forms & Inputs, Forms use FieldGroup + Field, InputGroup requires InputGroupInput/InputGroupTextarea, Option sets (2–7 choices) use ToggleGroup
+### Community 447 - "use-octane-query.ts"
+Cohesion: 0.33
+Nodes (7): errorMessage(), Fetcher, getQueryClient(), OctaneQueryResult, shallowChanged(), toContract(), useOctaneQuery()
 
 ### Community 448 - "web.json"
 Cohesion: 0.29
@@ -2512,7 +2490,7 @@ Nodes (5): 8.A Token Strategy (pick one, stick to it), 8.B Do Not Prescribe Spec
 
 ### Community 483 - "Config flow — full implementation"
 Cohesion: 0.13
-Nodes (15): createUpdateThemeHandler(), Architectural decisions, Config flow — full implementation, Implementation notes vs. the original plan, Migration contract, Out of scope, Phase 0 — Feature doc + planning (this file) ✅, Phase 1 — Backend: extend session, add updateTheme ✅ (+7 more)
+Nodes (14): Architectural decisions, Config flow — full implementation, Implementation notes vs. the original plan, Migration contract, Out of scope, Phase 0 — Feature doc + planning (this file) ✅, Phase 1 — Backend: extend session, add updateTheme ✅, Phase 2 — Frontend: ThemeSelect molecule ✅ (+6 more)
 
 ### Community 484 - "Spring Animations"
 Cohesion: 0.40
@@ -2546,10 +2524,6 @@ Nodes (5): nn(), pe(), rn(), tn(), Tt()
 Cohesion: 0.40
 Nodes (4): Cohorte host-safe re-exportada, Hooks AUSENTES (decisión explícita, no descuido), Reglas, vendor/hooks — wrapper de `@octanejs/usehooks-ts` (D-SA5)
 
-### Community 492 - "components/vendor/toast/index.ts"
-Cohesion: 0.29
-Nodes (4): @octanejs/sonner@0.1.51, ToastOptions, ToastVariant, @octanejs/sonner
-
 ### Community 493 - "5. Alcance — MVP y fases"
 Cohesion: 0.40
 Nodes (5): 5. Alcance — MVP y fases, Fase 1 (MVP), Fase 2, Fase 3 (futuro, fuera de compromiso), No-goals (explícitos)
@@ -2562,13 +2536,13 @@ Nodes (5): getCurrentTimer, heartbeatTimer, listTimerRuns, startTimer, stopTimer
 Cohesion: 0.40
 Nodes (4): Design flags for sdd-design (from explore, not blocking proposal), Pre-proposal state — transactional-email, Product decisions — CONFIRMED by product owner (2026-09-09), Risks carried
 
-### Community 497 - "src/shared/vendor/icons/index.ts"
-Cohesion: 0.29
-Nodes (8): icon, props, sizeValue, getIcon(), ICON_NAMES, iconMap, PhosphorName, PhosphorWeight
+### Community 497 - "ref_vue"
+Cohesion: 0.05
+Nodes (30): icon, props, sizeValue, getIcon(), ICON_NAMES, iconMap, PhosphorName, PhosphorWeight (+22 more)
 
-### Community 498 - "Explore — tasks"
-Cohesion: 0.11
-Nodes (17): 10. Skill resolution, 11. Lo que la fase siguiente (proposal) debe llevar al product owner, 12. Resumen ejecutivo, 1. Resumen ejecutivo, 3. Estado actual del frontend (`apps/web`), 4. Requisitos PRD §8.3 + §11 + §MVP Fase 1 (fuente de verdad), 6.1 Decisiones de producto (preguntar al product owner en el proposal gate), 6.2 Decisiones técnicas (resuelve design, no requieren product owner) (+9 more)
+### Community 498 - "client"
+Cohesion: 0.06
+Nodes (38): client(), Alcance, Backend (agregado), Contrato (fuentes normativas), Estado (cerrado 2026-10-28), No-goals (y por qué), ODD — web-v3 /clients, Pendiente (+30 more)
 
 ### Community 499 - "exceptions"
 Cohesion: 0.40
@@ -2651,12 +2625,12 @@ Cohesion: 0.67
 Nodes (3): 1. 全新界面与改版评审（打分制）, 2. 存量已有界面润色评审（只对齐规范，不打分）, 视觉与交互评审手册 (子 Agent 专用)
 
 ### Community 522 - "Auditoría web-v3 + API nueva — 2026-10-29"
-Cohesion: 0.17
-Nodes (10): Auditoría web-v3 + API nueva — 2026-10-29, CRÍTICO, Falsos positivos de la segunda ronda (descartados con evidencia), HIGH, Segunda ronda (GGA sobre el alcance ya corregido), Veredictos de GGA por lote, Web, GetCurrentTimer (+2 more)
+Cohesion: 0.14
+Nodes (12): Auditoría web-v3 + API nueva — 2026-10-29, CRÍTICO, Falsos positivos de la segunda ronda (descartados con evidencia), HIGH, Segunda ronda (GGA sobre el alcance ya corregido), Veredictos de GGA por lote, Web, GetCurrentTimer (+4 more)
 
-### Community 524 - "Work Unit 4 — Adapters de crypto, IDs y tiempo"
-Cohesion: 0.15
-Nodes (13): GREEN, GREEN, GREEN, RED, RED, RED, REFACTOR, REFACTOR (+5 more)
+### Community 524 - "ODD — web-v3 config"
+Cohesion: 0.33
+Nodes (5): Alcance (decisión de producto 2026-10-28), Contrato (fuentes normativas), Estado (BaseView + drawer, cerrado 2026-10-28, 2ª entrega), No-goals, ODD — web-v3 config
 
 ### Community 525 - "Fases"
 Cohesion: 0.18
@@ -2678,29 +2652,33 @@ Nodes (3): 9.1 Anatomía del drawer (patrón transversal), 9.2 Especificación p
 Cohesion: 1.00
 Nodes (3): recordTiming(), sample(), tick()
 
-### Community 536 - "Delta for Web Shell"
-Cohesion: 0.18
-Nodes (10): ADDED Requirements, Delta for Web Shell, MODIFIED Requirements, Requirement: Guard de sesión en las rutas del shell, Requirement: Rutas destino del shell como placeholders protegidos, Scenario: Con sesión continúa al shell, Scenario: Guard testeable sin DOM, Scenario: Placeholder renderiza dentro del shell con sesión (+2 more)
+### Community 536 - "shellRoute"
+Cohesion: 0.07
+Nodes (29): authRoute(), shellRoute(), 3. Estructura de archivos (cambios), D5 — Helper `shellRoute` / `authRoute` y tabla generada desde lista canónica, web delta (6/6 requisitos, 8/8 escenarios) — PASS, 8.1 Cliente RPC (`apps/web/src/lib/api/rpc.ts`), 8.2 OtpVerifier real (`apps/web/src/lib/otp/rpc-verifier.ts`), 8.3 Swap en `otp-form.tsrx` (+21 more)
 
-### Community 537 - "kysely/transfer-repository.ts"
-Cohesion: 0.31
-Nodes (3): mapTransferRow(), TransferDbRow, KyselyTransferRepository
+### Community 537 - "The Sonner Principles (Building Loved Components)"
+Cohesion: 0.40
+Nodes (5): Asymmetric enter/exit timing, Cohesion matters, Review your work the next day, The opacity + height combination, The Sonner Principles (Building Loved Components)
 
 ### Community 538 - "TDD Cycle Evidence"
 Cohesion: 0.27
 Nodes (8): KanbanRow, moveItem(), sortByOrder(), TDD Cycle Evidence, RED (i18n auto-detection debe fallar primero), REFACTOR, TRIANGULATE, Work Unit 10 — Catálogo i18n (43 claves `tasks.*`) + validación cliente + helpers kanban
 
-### Community 540 - "helpers.ts"
-Cohesion: 0.31
-Nodes (7): @playwright/test@^1.50.0, login(), MailpitMessage, mailpitMessages(), uniqueEmail(), waitForOtpCode(), @playwright/test
+### Community 539 - "9. Estructura tentativa (para proposal, no implementación)"
+Cohesion: 0.40
+Nodes (5): 9. Estructura tentativa (para proposal, no implementación), Backend — `apps/api/src/`, Backend — `packages/types/src/contracts/`, Frontend — `apps/web/src/`, Frontend — i18n
 
-### Community 541 - "Verify Report — monorepo-scaffold"
+### Community 540 - "helpers.ts"
 Cohesion: 0.20
-Nodes (9): actionContext / status, Blockers, Comandos ejecutados, Estado de tasks, Findings (no bloqueantes), Review workload / PR boundary, Spec: web (6/6 requisitos, 7/7 escenarios), Strict TDD (+1 more)
+Nodes (10): @playwright/test@^1.50.0, cleanupE2eData(), DELETES, E2E_EMAIL_PREFIX, login(), MailpitMessage, mailpitMessages(), uniqueEmail() (+2 more)
+
+### Community 541 - "Work Unit 7 — Cliente RPC web multi-contract + rpc-verifier swap"
+Cohesion: 0.40
+Nodes (5): GREEN, RED, REFACTOR, TRIANGULATE, Work Unit 7 — Cliente RPC web multi-contract + rpc-verifier swap
 
 ### Community 542 - "ref_orpc_contract"
-Cohesion: 0.20
-Nodes (8): CreateCurrencyInput, createCurrencyInputSchema, CurrencyWire, currencyWireSchema, ListAppsOutput, listAppsOutputSchema, ListCurrenciesOutput, listCurrenciesOutputSchema
+Cohesion: 0.17
+Nodes (10): 2. Types contract (`packages/types/`), ConfigContract, CreateCurrencyInput, createCurrencyInputSchema, CurrencyWire, currencyWireSchema, ListAppsOutput, listAppsOutputSchema (+2 more)
 
 ### Community 543 - "tasks-form.test.ts"
 Cohesion: 0.42
@@ -2730,10 +2708,6 @@ Nodes (8): Chat & Messaging → [chat.md](./rules/chat.md), CLI, Component Struc
 Cohesion: 0.25
 Nodes (8): with, bun-version, if-no-files-found, key, name, path, restore-keys, retention-days
 
-### Community 570 - "ODD — web-v3 /clients"
-Cohesion: 0.25
-Nodes (7): Alcance, Backend (agregado), Contrato (fuentes normativas), Estado (cerrado 2026-10-28), No-goals (y por qué), ODD — web-v3 /clients, Pendiente
-
 ### Community 571 - "Tasks — frontend-foundation"
 Cohesion: 0.29
 Nodes (6): OtpState, Commit 2 — `feat(web): componentes base y wrappers vendor/icons y vendor/otp-input`, Commit 4 — `feat(web): login y verificación OTP (UI)`, Review Workload Forecast, Tasks — frontend-foundation, Verificación final del change (post-commit 4, antes de archive)
@@ -2754,10 +2728,6 @@ Nodes (5): Fast Path, Operating Rules, Parallel Execution, Search the Web with M
 Cohesion: 0.29
 Nodes (6): Delta for Web Auth UI, MODIFIED Requirements, Requirement: Wrapper vendor/otp-input con contrato estable, Scenario: Contrato público intacto tras el swap, Scenario: Máquina testeable sin DOM, Scenario: Regla de wrapper auditable
 
-### Community 576 - "2. Design flags resueltos"
-Cohesion: 0.29
-Nodes (7): 2. Design flags resueltos, D1. Tooling de migraciones (primera del repo), D2. Renovación deslizante de sesión, D3. Cookie en dev cross-origin web↔api, D4. Hashing de token y comparación de OTP a tiempo constante, D5. Estrategia de tests con postgres, D7. Cliente RPC en web
-
 ### Community 577 - "The Craftsmanship Standard"
 Cohesion: 0.33
 Nodes (6): C-1 — Intentionality, C-2 — Functional Completeness, C-3 — Content-Driven Composition, C-4 — Resilience, C-5 — Evidence Over Claims, The Craftsmanship Standard
@@ -2770,61 +2740,17 @@ Nodes (4): Prepare the Image, Public URL, Reverse image search, Upload and API
 Cohesion: 0.50
 Nodes (4): Bing Extraction, Capture, Fetch and Readiness, Keyword search
 
-### Community 582 - "8. Frontend"
-Cohesion: 0.33
-Nodes (6): 8.1 Cliente RPC (`apps/web/src/lib/api/rpc.ts`), 8.2 OtpVerifier real (`apps/web/src/lib/otp/rpc-verifier.ts`), 8.3 Swap en `otp-form.tsrx`, 8.4 Login-form, 8.5 Shell guard, 8. Frontend
-
 ### Community 586 - "Part 3: Liveliness Toolkit"
 Cohesion: 0.50
 Nodes (4): Design Read (how the dials are set), Levers (how the dials become visual decisions), Part 3: Liveliness Toolkit, Three Dials (required)
-
-### Community 594 - "6. Restricciones y consideraciones"
-Cohesion: 0.33
-Nodes (6): 6.1 Contraste (WCAG 2.2 AA), 6.2 Consistencia cross-theme, 6.3 Tokens existentes a reusar, 6.4 Componentes que NO requieren cambios, 6.5 Tests, 6. Restricciones y consideraciones
 
 ### Community 598 - "4. Design flags resueltos (resueltos en proposal, no se delegan a design)"
 Cohesion: 0.33
 Nodes (6): 4. Design flags resueltos (resueltos en proposal, no se delegan a design), D1 — Hex exactos del light theme (pure-neutral), D2 — Skip-link fill on focus sin verde, D3 — Cabecera de grupo de nav "Finance" cuando un hijo está activo, D4 — Soporte de `caret-color` en navegadores, D5 — Tests que asuman valores hex de tokens
 
-### Community 604 - "splitpanes@^4.1.2"
-Cohesion: 0.14
-Nodes (8): splitpanes@^4.1.2, tailwind-merge@3.0.2, @vee-validate/zod@4.15.1, xstate@5.32.6, tailwind-merge, @vee-validate/zod, xstate, splitpanes
-
-### Community 605 - "Pre-proposal state — tasks"
-Cohesion: 0.33
-Nodes (5): Delivery decisions — PENDING (deferred to apply gate), Design flags for sdd-design (not blocking proposal), Pre-proposal state — tasks, Product decisions — CONFIRMED by product owner (2026-09-10), Risks carried
-
-### Community 606 - "Work Unit 11 — Molecules + organismos del módulo tasks"
-Cohesion: 0.33
-Nodes (6): GREEN (molecules), GREEN (organisms), RED, REFACTOR, TRIANGULATE, Work Unit 11 — Molecules + organismos del módulo tasks
-
-### Community 607 - "Icons"
-Cohesion: 0.40
-Nodes (4): Icons, Icons in Button use data-icon attribute, No sizing classes on icons inside components, Pass icons as component objects, not string keys
-
-### Community 608 - "Auth flow audit + improvements"
-Cohesion: 0.40
-Nodes (4): Auth flow audit + improvements, Gaps identificados, Tasks (un commit por task), Verificación
-
-### Community 609 - "6. Infraestructura y adapters"
-Cohesion: 0.40
-Nodes (5): 6.1 Migración inicial (`001_initial.ts`), 6.2 Crypto adapters, 6.3 Email, 6.4 Kysely, 6. Infraestructura y adapters
-
-### Community 610 - "Pre-proposal state — backend-auth"
-Cohesion: 0.40
-Nodes (4): Open design flags (for sdd-design, not blocking proposal), Pre-proposal state — backend-auth, Product decisions — CONFIRMED by product owner (2026-09-08), Risks carried from explore
-
 ### Community 611 - "2. Decisiones de diseño"
 Cohesion: 0.40
 Nodes (5): 2. Decisiones de diseño, D1 — Hex exactos del light theme (pure-neutral), D2 — Skip-link discoverability sin quemar el acento en fill, D3 — Cabecera de grupo de nav "Finance" cuando un hijo está activo, D4 — Soporte de `caret-color` en navegadores
-
-### Community 612 - "4. Mapa de `tokens.css` con tinte verde → neutrales puros"
-Cohesion: 0.40
-Nodes (5): 4.1 Bloque `:root` (claro) — revisar, 4.2 Bloque `.dark` (oscuro) — REESCRIBIR casi entero, 4.3 Bloque `@theme` (escala primaria) — MANTENER, 4.4 `@theme inline` — sin cambios estructurales, 4. Mapa de `tokens.css` con tinte verde → neutrales puros
-
-### Community 613 - "plan"
-Cohesion: 0.50
-Nodes (3): plan(), 11. Riesgos y mitigaciones, 7. Plan tentativo (para `specify`/`plan`, no para `implement` aquí)
 
 ### Community 614 - "e2e"
 Cohesion: 0.50
@@ -2834,41 +2760,25 @@ Nodes (4): name, runs-on, timeout-minutes, e2e
 Cohesion: 0.50
 Nodes (4): name, runs-on, timeout-minutes, integration
 
-### Community 616 - "3. Arquitectura y data flow"
-Cohesion: 0.50
-Nodes (4): 3.1 Capas (PRD §10 / spec api), 3.2 Flujo OTP, 3.3 Flujo sesión, 3. Arquitectura y data flow
-
-### Community 617 - "7. HTTP y cookies"
-Cohesion: 0.50
-Nodes (4): 7.1 Router, 7.2 Cookie helpers (`src/http/auth/cookie.ts`), 7.3 Handlers, 7. HTTP y cookies
-
-### Community 618 - "9. Tests"
-Cohesion: 0.50
-Nodes (4): 9.1 Unitarios (obligatorios, primero), 9.2 Integración opt-in, 9.3 Smoke test existente, 9. Tests
-
-### Community 619 - "Requirement: Migración inicial versionada con tooling explícito"
-Cohesion: 0.50
-Nodes (4): Requirement: Migración inicial versionada con tooling explícito, Scenario: db:migrate crea el schema del change, Scenario: down revierte el schema, Scenario: Sin migración automática al arrancar
-
 ## Knowledge Gaps
 - **13 isolated node(s):** `@statelyai/mcp`, `RFC-4122`, `@crm/tsconfig/server.json`, `@crm/tsconfig/base.json`, `./.nuxt/tsconfig.json` (+8 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 5447 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **76 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 5452 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **65 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `effect()` connect `effect` to `shellRoute`, `Arquitectura del frontend web-v2 (Vue 3)`, `Tasks — stack-alignment`, `2. Alcance`, `RECEIPT — change `tasks``, `Explore — stack-alignment`, `TasksContract`, `Requirements`, `Capas del backend y puertos de dominio`, `alpine.min.js`, `ADDED Requirements`, `useT`, `Requirements`, `Verify Report — stack-alignment`?**
-  _High betweenness centrality (0.059) - this node is a cross-community bridge._
+- **Why does `effect()` connect `effect` to `Requirements`, `Arquitectura del frontend web-v2 (Vue 3)`, `Tasks — stack-alignment`, `otp-machine.ts`, `2. Alcance`, `Explore — stack-alignment`, `TasksContract`, `RECEIPT — change `tasks``, `Requirements`, `Capas del backend y puertos de dominio`, `alpine.min.js`, `ADDED Requirements`, `useT`, `HealthRepository`, `Apply Progress — stack-alignment`?**
+  _High betweenness centrality (0.069) - this node is a cross-community bridge._
 - **What connects `@statelyai/mcp`, `RFC-4122`, `@crm/tsconfig/server.json` to the rest of the system?**
   _13 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `request-otp.test.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.0523532522474881 - nodes in this community are weakly interconnected._
-- **Why does `build()` connect `build` to `3. Decisiones`, `Requirements`, `check_update.py`, `Verify Report — transactional-email`, `test_build_explorer.py`, `Proposal — monorepo-scaffold`, `Requirement: Tooling de entorno (docker-compose, .env.example, .gitignore, Makefile)`, `recommend_once.py`, `EmailSender`, `Commands`, `Requirements`, `build_explorer.py`?**
-  _High betweenness centrality (0.050) - this node is a cross-community bridge._
 - **Should `routeTree.gen.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.05328218243819267 - nodes in this community are weakly interconnected._
-- **Why does `t()` connect `useT` to `3. Decisiones`, `BaseView: enable all 3 views`, `setup`, `useConfig`, `Phases`, `effect`, `ODD — web-v3 /clients`, `Requirements`, `dashboard.vue`, `dropdown-menu (Radix `DropdownMenu` → Base UI `Menu`)`, `CRM-HOME — PRD v2`?**
-  _High betweenness centrality (0.050) - this node is a cross-community bridge._
-- **Should `dependencies` be split into smaller, more focused modules?**
-  _Cohesion score 0.04878048780487805 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.06156156156156156 - nodes in this community are weakly interconnected._
+- **Why does `build()` connect `build` to `3. Decisiones`, `Requirements`, `check_update.py`, `Verify Report — transactional-email`, `test_build_explorer.py`, `Proposal — monorepo-scaffold`, `Requirement: Tooling de entorno (docker-compose, .env.example, .gitignore, Makefile)`, `EmailSender`, `Commands`, `Requirements`, `build_explorer.py`?**
+  _High betweenness centrality (0.060) - this node is a cross-community bridge._
+- **Should `web-v2/package.json` be split into smaller, more focused modules?**
+  _Cohesion score 0.03700097370983447 - nodes in this community are weakly interconnected._
+- **Why does `useT()` connect `useT` to `Requirements`, `effect`, `tasks.page.vue`, `2. Decisiones`, `login.page.vue`, `otp-machine.ts`, `2. Alcance`, `Requirements`, `ADDED Requirements`, `Explore — frontend-foundation`, `main.ts`, `login-verification.page.vue`, `Tasks — frontend-foundation`, `src/shared/vendor/orpc/index.ts`, `Proposal — frontend-foundation`, `app-shell.vue`, `Apply Progress — stack-alignment`?**
+  _High betweenness centrality (0.048) - this node is a cross-community bridge._
+- **Should `curate-media.mjs` be split into smaller, more focused modules?**
+  _Cohesion score 0.08157349896480331 - nodes in this community are weakly interconnected._
