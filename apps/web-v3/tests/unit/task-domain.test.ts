@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  dueBucket,
   filterTasks,
   moveNeighbors,
   sortColumns,
@@ -92,5 +93,36 @@ describe("sortColumns", () => {
       { id: "c", name: "C", order: 2 },
     ];
     expect(sortColumns(unsorted).map((c) => c.id)).toEqual(["a", "b", "c"]);
+  });
+});
+
+describe("board filtered by due date", () => {
+  const now = new Date("2026-06-15T12:00:00.000Z");
+  const overdue = task("vencida", { stateId: "s1", dueDate: new Date("2026-06-10T12:00:00.000Z") });
+  const today = task("hoy", { stateId: "s1", dueDate: new Date("2026-06-15T12:00:00.000Z") });
+  const later = task("futura", { stateId: "s2", dueDate: new Date("2026-07-20T12:00:00.000Z") });
+  const undated = task("sin-fecha", { stateId: "s2", dueDate: null });
+  const all = [overdue, today, later, undated];
+
+  it("groups only the overdue tasks into the board", () => {
+    const filtered = all.filter((t) => dueBucket(t.dueDate, now) === "overdue");
+    const board = tasksByColumn(filtered, columns);
+
+    expect(board.get("s1")?.map((t) => t.id)).toEqual(["vencida"]);
+    expect(board.get("s2")).toEqual([]);
+  });
+
+  it("groups only the tasks without a deadline into the board", () => {
+    const filtered = all.filter((t) => t.dueDate === null);
+    const board = tasksByColumn(filtered, columns);
+
+    expect(board.get("s1")).toEqual([]);
+    expect(board.get("s2")?.map((t) => t.id)).toEqual(["sin-fecha"]);
+  });
+
+  it("keeps every column present when the filter empties them all", () => {
+    const board = tasksByColumn([], columns);
+    expect(board.get("s1")).toEqual([]);
+    expect(board.get("s2")).toEqual([]);
   });
 });

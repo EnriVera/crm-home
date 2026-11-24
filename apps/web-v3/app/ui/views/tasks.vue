@@ -4,6 +4,7 @@ import {
   dueBucket,
   filterTasks,
   isDueWithinDays,
+  tasksByColumn,
   type Task,
 } from "~/domain/task/entities";
 import { useTasks } from "~/shared/composables/use-tasks";
@@ -28,7 +29,6 @@ const {
   columns,
   clients,
   types,
-  board,
   isLoading,
   error,
   clientNameById,
@@ -103,6 +103,17 @@ const visibleTasks = computed(() => {
 function dueFilterCount(filter: DueFilter): number {
   return tasks.value.filter((task) => matchesDueFilter(task, filter)).length;
 }
+
+/**
+ * The Kanban board built from the filtered tasks.
+ *
+ * The board of `useTasks` groups every task; the filter has to be applied
+ * before grouping or the pills would only change the count and leave the
+ * board untouched.
+ */
+const visibleBoard = computed(() =>
+  tasksByColumn(visibleTasks.value, columns.value),
+);
 
 const activeCount = computed(() => tasks.value.length);
 
@@ -332,7 +343,7 @@ function categoryColor(task: Task): string | null {
       <KanbanBoard
         v-else
         :columns="columns"
-        :board="board"
+        :board="visibleBoard"
         :client-name-by-id="clientNameById"
         :category-name-by-id="categoryNameById"
         :category-color-by-id="categoryColorById"
